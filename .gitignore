@@ -54,3 +54,11 @@ docs/**
 
 # Packaging metadata
 pico.egg-info/
+
+# IDE settings
+.vscode/
+.idea/
+
+# Coding agents
+.claude/
+.codex/
