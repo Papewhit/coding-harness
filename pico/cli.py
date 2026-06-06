@@ -421,7 +421,7 @@ def handle_repl_command(agent, user_input):
             True,
             False,
             json.dumps(
-                agent.prompt_metadata("", "")["context_usage"], indent=2, sort_keys=True
+                agent.prompt_metadata("", "")["context_usage"], indent=2, sort_keys=True, ensure_ascii=False
             ),
         )
     if user_input == "/usage":
@@ -452,7 +452,7 @@ def handle_repl_command(agent, user_input):
             True,
             False,
             json.dumps(
-                agent.compact_history(trigger="manual"), indent=2, sort_keys=True
+                agent.compact_history(trigger="manual"), indent=2, sort_keys=True, ensure_ascii=False
             ),
         )
     if user_input == "/reset":
