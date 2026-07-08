@@ -1,5 +1,9 @@
 """Runtime mode tool definitions."""
 
+from __future__ import annotations
+
+from typing import Any
+
 PLAN_TOOL_SPECS = {
     "enter_plan_mode": {
         "schema": {"topic": "str", "path": "str?"},
@@ -20,11 +24,11 @@ PLAN_TOOL_EXAMPLES = {
 
 
 
-def tool_enter_plan_mode(agent, args):
+def tool_enter_plan_mode(agent: Any, args: dict[str, Any]) -> str:
     path = agent.enter_plan_mode(args["topic"], path=args.get("path"))
     return f"mode: plan\nplan path: {path}"
 
 
-def tool_exit_plan_mode(agent, args):
+def tool_exit_plan_mode(agent: Any, args: dict[str, Any]) -> str:
     agent.exit_plan_mode()
     return "mode: default"

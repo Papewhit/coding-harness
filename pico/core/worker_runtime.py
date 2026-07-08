@@ -1,9 +1,13 @@
 """Child runtime construction for worker tasks."""
 
+from __future__ import annotations
+
+from typing import Any
+
 from .workspace import WorkspaceContext
 
 
-def build_child_runtime(parent, subagent_type, write_scope):
+def build_child_runtime(parent: Any, subagent_type: str, write_scope: tuple[str, ...]) -> Any:
     from .runtime import Pico
 
     child = Pico(
@@ -31,7 +35,7 @@ def build_child_runtime(parent, subagent_type, write_scope):
     return child
 
 
-def new_model_client(parent):
+def new_model_client(parent: Any) -> Any:
     factory = getattr(parent, "model_client_factory", None)
     if factory is not None:
         return factory()

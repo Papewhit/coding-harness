@@ -4,6 +4,8 @@ The runtime owns state and persistence. Engine owns the control loop that turns
 one user request into model calls, tool executions, and user-visible events.
 """
 
+from __future__ import annotations
+
 import time
 
 from ..providers.base import complete_model
@@ -18,6 +20,7 @@ from .engine_helpers import (
 )
 from .task_state import TaskState
 from .workspace import clip, now
+from typing import Any, Iterator
 
 CHECKPOINT_NONE_STATUS = "no-checkpoint"
 CHECKPOINT_PARTIAL_STALE_STATUS = "partial-stale"
@@ -25,17 +28,17 @@ CHECKPOINT_WORKSPACE_MISMATCH_STATUS = "workspace-mismatch"
 
 
 class Engine:
-    def __init__(self, runtime):
+    def __init__(self, runtime: Any):
         self.runtime = runtime
 
-    def ask(self, user_message):
+    def ask(self, user_message: str) -> str:
         final_answer = ""
         for event in self.run_turn(user_message):
             if event["type"] in {"final", "stop"}:
                 final_answer = event["content"]
         return final_answer
 
-    def drain_worker_notifications(self):
+    def drain_worker_notifications(self) -> list[Any]:
         agent = self.runtime
         notifications = agent.worker_manager.drain_notifications()
         for notification in notifications:
@@ -49,7 +52,7 @@ class Engine:
             )
         return notifications
 
-    def _drain_worker_notification_events(self):
+    def _drain_worker_notification_events(self) -> Iterator[dict[str, Any]]:
         for notification in self.drain_worker_notifications():
             yield {
                 "type": "worker_notification",
@@ -57,7 +60,7 @@ class Engine:
                 "content": notification,
             }
 
-    def run_turn(self, user_message):
+    def run_turn(self, user_message: str) -> Iterator[dict[str, Any]]:
         agent = self.runtime
         run_started_at = time.monotonic()
         task_state = TaskState.create(

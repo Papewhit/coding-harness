@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 
 @dataclass(frozen=True)
@@ -95,7 +96,7 @@ class RunEvidence:
         haystack = json.dumps(self.report.get("runtime_reminders") or [], ensure_ascii=False)
         return str(text) in haystack
 
-    def has_session_event(self, event_name: str, **fields) -> bool:
+    def has_session_event(self, event_name: str, **fields: Any) -> bool:
         for event in self.session_events:
             if event.get("event") != event_name:
                 continue

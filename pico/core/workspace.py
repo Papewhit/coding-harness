@@ -1,8 +1,10 @@
 """工作区快照工具。
 
-这个模块负责在 agent 按需读文件之前，先给它一份便宜的“仓库第一印象”。
+这个模块负责在 agent 按需读文件之前，先给它一份便宜的"仓库第一印象"。
 这份快照刻意保持小而稳定：主要包含 Git 事实和少量白名单项目文档。
 """
+
+from __future__ import annotations
 
 import subprocess
 import textwrap
@@ -14,23 +16,23 @@ from pathlib import Path
 MAX_TOOL_OUTPUT = 4000
 MAX_HISTORY = 12000
 # 这些文件最可能直接影响 agent 的行动方式。
-# 我们不会预加载整个仓库，只会先给模型一小份“导航包”。
+# 我们不会预加载整个仓库，只会先给模型一小份"导航包"。
 DOC_NAMES = ("AGENTS.md", "README.md", "pyproject.toml", "package.json")
 IGNORED_PATH_NAMES = {".git", ".pico", "__pycache__", ".pytest_cache", ".ruff_cache", ".venv", "venv"}
 
 
-def now():
+def now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-def clip(text, limit=MAX_TOOL_OUTPUT):
+def clip(text: str, limit: int = MAX_TOOL_OUTPUT) -> str:
     text = str(text)
     if len(text) <= limit:
         return text
     return text[:limit] + f"\n...[truncated {len(text) - limit} chars]"
 
 
-def middle(text, limit):
+def middle(text: str, limit: int) -> str:
     text = str(text).replace("\n", " ")
     if len(text) <= limit:
         return text
@@ -42,7 +44,7 @@ def middle(text, limit):
 
 
 class WorkspaceContext:
-    def __init__(self, cwd, repo_root, branch, default_branch, status, recent_commits, project_docs):
+    def __init__(self, cwd: str, repo_root: str, branch: str, default_branch: str, status: str, recent_commits: list[str], project_docs: dict[str, str]):
         self.cwd = cwd
         self.repo_root = repo_root
         self.branch = branch
@@ -52,7 +54,7 @@ class WorkspaceContext:
         self.project_docs = project_docs
 
     @classmethod
-    def build(cls, cwd, repo_root_override=None):
+    def build(cls, cwd: str | Path, repo_root_override: str | Path | None = None) -> WorkspaceContext:
         cwd = Path(cwd).resolve()
 
         def git(args, fallback=""):
@@ -99,7 +101,7 @@ class WorkspaceContext:
             project_docs=docs,
         )
 
-    def text(self):
+    def text(self) -> str:
         # 这段文本会被塞进 prompt prefix，作为相对稳定的基线上下文。
         commits = "\n".join(f"- {line}" for line in self.recent_commits) or "- none"
         docs = "\n".join(f"- {path}\n{snippet}" for path, snippet in self.project_docs.items()) or "- none"
@@ -119,7 +121,7 @@ class WorkspaceContext:
             """
         ).strip()
 
-    def fingerprint(self):
+    def fingerprint(self) -> str:
         # 这个指纹用来判断仓库状态是否发生了足够大的变化，
         # 从而决定是否需要重建缓存中的 prompt prefix。
         payload = {

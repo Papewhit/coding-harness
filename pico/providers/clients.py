@@ -5,7 +5,10 @@ runtime 只关心一件事：给我一个 prompt，我拿回一段文本。
 这些差异都在这里被抹平成统一的 complete() 接口。
 """
 
+from __future__ import annotations
+
 import json
+from typing import Any
 import socket
 import time
 from http.client import RemoteDisconnected
@@ -18,14 +21,14 @@ OPENAI_COMPATIBLE_USER_AGENT = "pico/0.1"
 RETRYABLE_HTTP_STATUS = {408, 409, 425, 429, 500, 502, 503, 504}
 
 
-def _normalize_versioned_base_url(base_url):
+def _normalize_versioned_base_url(base_url: str) -> str:
     base = str(base_url).rstrip("/")
     if not base.endswith("/v1"):
         base += "/v1"
     return base
 
 
-def _extract_openai_text(data):
+def _extract_openai_text(data: dict[str, Any]) -> str:
     if data.get("output_text"):
         return data["output_text"]
 
@@ -52,7 +55,7 @@ def _extract_openai_text(data):
     return ""
 
 
-def _extract_openai_text_from_sse(body_text):
+def _extract_openai_text_from_sse(body_text: str) -> str:
     last_response = None
     deltas = []
     for line in body_text.splitlines():
@@ -102,7 +105,7 @@ def _extract_openai_text_from_sse(body_text):
     return ""
 
 
-def _extract_openai_response_from_sse(body_text):
+def _extract_openai_response_from_sse(body_text: str) -> tuple[str, dict[str, Any]]:
     last_response = None
     deltas = []
     for line in body_text.splitlines():
@@ -143,7 +146,7 @@ def _extract_openai_response_from_sse(body_text):
     return "", {}
 
 
-def _extract_usage_cache_details(data):
+def _extract_usage_cache_details(data: dict[str, Any]) -> dict[str, Any]:
     # 把不同 OpenAI-compatible 返回里的 usage 字段整理成统一结构，
     # 让 runtime/trace/report 不需要关心 provider 细节。
     usage = data.get("usage") or {}
@@ -160,7 +163,7 @@ def _extract_usage_cache_details(data):
     }
 
 
-def _request_with_retries(provider, model, base_url, request, timeout, retry_budget=2):
+def _request_with_retries(provider: str, model: str, base_url: str, request: urllib.request.Request, timeout: int | float, retry_budget: int = 2) -> tuple[str, str, dict[str, Any]]:
     retry_count = 0
     attempts = int(retry_budget) + 1
     for attempt in range(attempts):
@@ -210,7 +213,7 @@ def _request_with_retries(provider, model, base_url, request, timeout, retry_bud
     raise AssertionError("unreachable provider retry loop")
 
 
-def _provider_metadata(provider, model, base_url, attempts, retry_count):
+def _provider_metadata(provider: str, model: str, base_url: str, attempts: int, retry_count: int) -> dict[str, Any]:
     return {
         "provider_protocol": provider,
         "provider_model": model,
@@ -220,7 +223,7 @@ def _provider_metadata(provider, model, base_url, attempts, retry_count):
     }
 
 
-def _http_error_code(status):
+def _http_error_code(status: int) -> str:
     status = int(status)
     if status == 401 or status == 403:
         return "auth_error"
@@ -233,7 +236,7 @@ def _http_error_code(status):
     return "http_error"
 
 
-def _transport_error_code(exc):
+def _transport_error_code(exc: Exception) -> str:
     reason = getattr(exc, "reason", None)
     text = f"{exc} {reason}".lower()
     if isinstance(exc, (TimeoutError, socket.timeout)) or isinstance(reason, (TimeoutError, socket.timeout)) or "timed out" in text:
@@ -241,14 +244,14 @@ def _transport_error_code(exc):
     return "network_error"
 
 
-def _retry_delay(attempt, headers):
+def _retry_delay(attempt: int, headers: Any) -> float:
     retry_after = _retry_after_seconds(headers)
     if retry_after is not None:
         return min(retry_after, 2.0)
     return 0.5 * (attempt + 1)
 
 
-def _retry_after_seconds(headers):
+def _retry_after_seconds(headers: Any) -> float | None:
     if not headers:
         return None
     try:
@@ -263,7 +266,7 @@ def _retry_after_seconds(headers):
         return None
 
 
-def _provider_failure(provider, model, base_url, code, message, request_metadata=None, cause=None):
+def _provider_failure(provider: str, model: str, base_url: str, code: str, message: str, request_metadata: dict[str, Any] | None = None, cause: Exception | None = None) -> ProviderError:
     request_metadata = request_metadata or {}
     error = ProviderError(
         message,
@@ -280,7 +283,7 @@ def _provider_failure(provider, model, base_url, code, message, request_metadata
 
 
 class OpenAICompatibleModelClient:
-    def __init__(self, model, base_url, api_key, temperature, timeout):
+    def __init__(self, model: str, base_url: str, api_key: str, temperature: float | None, timeout: int | float):
         self.model = model
         self.base_url = _normalize_versioned_base_url(base_url)
         self.api_key = api_key
@@ -291,7 +294,7 @@ class OpenAICompatibleModelClient:
         self.supports_prompt_cache = any(host in self.base_url for host in ("openai.com", "right.codes"))
         self.last_completion_metadata = {}
 
-    def complete(self, prompt, max_new_tokens, prompt_cache_key=None, prompt_cache_retention=None):
+    def complete(self, prompt: str, max_new_tokens: int, prompt_cache_key: str | None = None, prompt_cache_retention: int | None = None) -> str:
         """向 OpenAI-compatible `/responses` 接口发起一次模型调用。
 
         为什么存在：
@@ -434,7 +437,7 @@ class OpenAICompatibleModelClient:
         raise error
 
 
-def _extract_anthropic_text(data):
+def _extract_anthropic_text(data: dict[str, Any]) -> str:
     for item in data.get("content", []):
         if isinstance(item, dict) and item.get("type") == "text":
             text = item.get("text")
@@ -444,7 +447,7 @@ def _extract_anthropic_text(data):
 
 
 class AnthropicCompatibleModelClient:
-    def __init__(self, model, base_url, api_key, temperature, timeout):
+    def __init__(self, model: str, base_url: str, api_key: str, temperature: float | None, timeout: int | float):
         self.model = model
         self.base_url = _normalize_versioned_base_url(base_url)
         self.api_key = api_key
@@ -453,7 +456,7 @@ class AnthropicCompatibleModelClient:
         self.supports_prompt_cache = False
         self.last_completion_metadata = {}
 
-    def complete(self, prompt, max_new_tokens, prompt_cache_key=None, prompt_cache_retention=None):
+    def complete(self, prompt: str, max_new_tokens: int, prompt_cache_key: str | None = None, prompt_cache_retention: int | None = None) -> str:
         # 为了保持统一接口，runtime 仍然会传缓存参数进来；
         # 这里只是显式丢弃，因为当前 Anthropic-compatible 路径没有接缓存复用。
         del prompt_cache_key, prompt_cache_retention

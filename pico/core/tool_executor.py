@@ -1,15 +1,23 @@
 """Tool execution guardrail used by Pico runtime."""
 
-import re
+from __future__ import annotations
 
-from .tool_policy import ToolPolicyChecker
+import re
+from typing import TYPE_CHECKING, Any
+
+from .tool_policy import ToolPolicyChecker, ToolPolicyDecision
 from .tool_repetition import repeated_tool_call_metadata
 from .workspace import clip
+
+if TYPE_CHECKING:
+    from .permissions import PermissionDecision
+    from .runtime import Pico
+    from ..tools.base import RegisteredTool
 
 INLINE_TOOL_OUTPUT_LIMIT = 1000
 
 
-def run_tool(agent, name, args):
+def run_tool(agent: Pico, name: str, args: dict[str, Any]) -> str:
     tool = agent.tools.get(name)
     if tool is None:
         agent._last_tool_result_metadata = {
@@ -128,7 +136,7 @@ def run_tool(agent, name, args):
         return f"error: tool {name} failed: {exc}"
 
 
-def _render_tool_result(agent, name, full_result):
+def _render_tool_result(agent: Pico, name: str, full_result: str) -> tuple[str, str]:
     full_result = str(full_result)
     if name != "run_shell" or len(full_result) <= INLINE_TOOL_OUTPUT_LIMIT:
         return clip(full_result), ""
@@ -139,7 +147,7 @@ def _render_tool_result(agent, name, full_result):
     return f"full output saved: {relative}\n" + clip(full_result, INLINE_TOOL_OUTPUT_LIMIT), relative
 
 
-def _emit_permission_decision(agent, tool, args, decision):
+def _emit_permission_decision(agent: Pico, tool: RegisteredTool, args: dict[str, Any], decision: PermissionDecision) -> None:
     agent.session_event_bus.emit(
         "permission_decision",
         {
@@ -153,14 +161,14 @@ def _emit_permission_decision(agent, tool, args, decision):
     )
 
 
-def _emit_tool_policy_decision(agent, tool, args, decision):
+def _emit_tool_policy_decision(agent: Pico, tool: RegisteredTool, args: dict[str, Any], decision: ToolPolicyDecision) -> None:
     agent.session_event_bus.emit(
         "tool_policy_decision",
         {"tool_name": tool.name, "decision": decision.decision, "reason": decision.reason, "args": args or {}},
     )
 
 
-def _permission_error(agent, tool, decision):
+def _permission_error(agent: Pico, tool: RegisteredTool, decision: PermissionDecision) -> str:
     if decision.reason == "plan_mode_path_mismatch":
         return f"error: plan mode can only write the active plan artifact ({agent.plan_mode.plan_path})"
     if decision.reason == "plan_mode_tool_not_allowed":

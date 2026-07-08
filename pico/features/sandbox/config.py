@@ -1,6 +1,9 @@
 """Sandbox configuration for shell execution."""
 
+from __future__ import annotations
+
 from dataclasses import dataclass
+from typing import Any
 
 SANDBOX_MODES = {"off", "best_effort", "required"}
 SANDBOX_BACKENDS = {"auto", "bubblewrap", "none"}
@@ -17,11 +20,11 @@ class SandboxConfig:
     deny_write: tuple[str, ...] = ()
 
     @property
-    def enabled(self):
+    def enabled(self) -> bool:
         return self.mode != "off"
 
 
-def resolve_sandbox_config(values):
+def resolve_sandbox_config(values: dict[str, Any] | None) -> SandboxConfig:
     sandbox = dict((values or {}).get("sandbox", {}) or {})
     filesystem = dict(sandbox.get("filesystem", {}) or {})
     mode = str(sandbox.get("mode", "off") or "off")

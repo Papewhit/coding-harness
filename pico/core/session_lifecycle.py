@@ -1,7 +1,10 @@
 """Runtime session switching helpers."""
 
+from __future__ import annotations
+
 import uuid
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from ..features import memory as memorylib
 from .plan_mode import PlanModeController
@@ -10,15 +13,18 @@ from .todo_ledger import TodoLedger
 from .worker_manager import WorkerManager
 from .workspace import now
 
+if TYPE_CHECKING:
+    from .runtime import Pico
 
-def resume_runtime_session(runtime, session_id):
+
+def resume_runtime_session(runtime: Pico, session_id: str) -> str:
     _shutdown_workers(runtime)
     runtime.session = runtime.session_store.load(session_id)
     _rebind(runtime, emit_started=False)
     return runtime.session["id"]
 
 
-def clear_runtime_session(runtime):
+def clear_runtime_session(runtime: Pico) -> str:
     _shutdown_workers(runtime)
     runtime.session = {
         "id": datetime.now().strftime("%Y%m%d-%H%M%S") + "-" + uuid.uuid4().hex[:6],
@@ -31,7 +37,7 @@ def clear_runtime_session(runtime):
     return runtime.session["id"]
 
 
-def _rebind(runtime, emit_started):
+def _rebind(runtime: Pico, emit_started: bool) -> None:
     runtime._ensure_session_shape()
     runtime.session_event_bus = SessionEventBus(
         runtime.session["id"],
@@ -66,7 +72,7 @@ def _rebind(runtime, emit_started):
     runtime.refresh_prefix(force=True)
 
 
-def _shutdown_workers(runtime):
+def _shutdown_workers(runtime: Pico) -> None:
     manager = getattr(runtime, "worker_manager", None)
     shutdown = getattr(manager, "shutdown", None)
     if callable(shutdown):

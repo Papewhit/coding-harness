@@ -1,10 +1,13 @@
 """Parser for Pico's text model protocol."""
 
+from __future__ import annotations
+
 import json
 import re
+from typing import Any
 
 
-def parse(raw):
+def parse(raw: str) -> tuple[Any, Any]:
     raw = str(raw)
     if "<tool" in raw and (
         "<final>" not in raw or raw.find("<tool") < raw.find("<final>")
@@ -23,7 +26,7 @@ def parse(raw):
     return "retry", retry_notice("missing <tool> or <final> tag")
 
 
-def retry_notice(problem=None):
+def retry_notice(problem: str | None = None) -> str:
     detail = f" Problem: {problem}." if problem else ""
     return (
         "Your previous response could not be executed."
@@ -31,7 +34,7 @@ def retry_notice(problem=None):
     )
 
 
-def normalize_tool_payload(payload):
+def normalize_tool_payload(payload: Any) -> list[dict[str, Any]] | str:
     if isinstance(payload, list):
         if not payload:
             return "tool JSON list must not be empty"
@@ -50,7 +53,7 @@ def normalize_tool_payload(payload):
     return [{"name": payload["name"], "args": args}]
 
 
-def parse_tool_blocks(raw):
+def parse_tool_blocks(raw: str) -> list[dict[str, Any]] | str:
     tools = []
     errors = []
     for match in re.finditer(
@@ -80,13 +83,13 @@ def parse_tool_blocks(raw):
     return []
 
 
-def _tool_kind(tools):
+def _tool_kind(tools: list[dict[str, Any]]) -> tuple[str, Any]:
     if len(tools) == 1:
         return "tool", tools[0]
     return "tools", tools
 
 
-def parse_xml_tools(raw):
+def parse_xml_tools(raw: str) -> list[dict[str, Any]]:
     tools = []
     for match in re.finditer(
         r"<tool\b(?P<attrs>[^>]*)>(?P<body>.*?)</tool>", str(raw), flags=re.DOTALL
@@ -97,7 +100,7 @@ def parse_xml_tools(raw):
     return tools
 
 
-def parse_xml_tool(raw):
+def parse_xml_tool(raw: str) -> dict[str, Any] | None:
     match = re.search(
         r"<tool\b(?P<attrs>[^>]*)>(?P<body>.*?)</tool>", str(raw), flags=re.DOTALL
     )
@@ -106,7 +109,7 @@ def parse_xml_tool(raw):
     return parse_xml_tool_match(match)
 
 
-def parse_xml_tool_match(match):
+def parse_xml_tool_match(match: re.Match[str]) -> dict[str, Any] | None:
     attrs = parse_attrs(match.group("attrs"))
     body = match.group("body")
     name = attrs.get("name", "").strip()
@@ -122,7 +125,7 @@ def parse_xml_tool_match(match):
     return {"name": name, "args": args}
 
 
-def parse_attrs(text):
+def parse_attrs(text: str) -> dict[str, str]:
     attrs = {}
     for key, value in re.findall(
         r'([A-Za-z_][A-Za-z0-9_-]*)="(.*?)"', text, flags=re.DOTALL
@@ -131,14 +134,14 @@ def parse_attrs(text):
     return attrs
 
 
-def extract(text, tag):
+def extract(text: str, tag: str) -> str:
     match = re.search(rf"<{tag}>(.*?)</{tag}>", text, flags=re.DOTALL)
     if not match:
         return text.strip()
     return match.group(1).strip()
 
 
-def extract_raw(text, tag):
+def extract_raw(text: str, tag: str) -> str | None:
     match = re.search(rf"<{tag}>(.*?)</{tag}>", text, flags=re.DOTALL)
     if not match:
         return None

@@ -1,11 +1,15 @@
 """Derived runtime state consumers."""
 
+from __future__ import annotations
+
+from typing import Any
+
 from .artifacts import build_artifact_graph, build_verifier_suggestions
 from .workspace import clip
 
 
 class ArtifactGraphConsumer:
-    def handle(self, runtime, task_state, event):
+    def handle(self, runtime: Any, task_state: Any, event: dict[str, Any]) -> None:
         if event.get("event") not in {"tool_executed", "run_finished", "checkpoint_created"}:
             return
         if not task_state.changed_paths and not event.get("artifact_paths"):
@@ -15,7 +19,7 @@ class ArtifactGraphConsumer:
 
 
 class VerifierSuggestionConsumer:
-    def handle(self, runtime, task_state, event):
+    def handle(self, runtime: Any, task_state: Any, event: dict[str, Any]) -> None:
         if event.get("event") not in {"tool_executed", "run_finished", "checkpoint_created"}:
             return
         graph = task_state.artifact_graph or build_artifact_graph(runtime.root, task_state.changed_paths)
@@ -23,7 +27,7 @@ class VerifierSuggestionConsumer:
 
 
 class ReminderConsumer:
-    def handle(self, runtime, task_state, event):
+    def handle(self, runtime: Any, task_state: Any, event: dict[str, Any]) -> None:
         if event.get("event") != "tool_executed":
             return
         status = str(event.get("status", ""))
@@ -40,5 +44,5 @@ class ReminderConsumer:
         task_state.runtime_reminders.append(reminder)
 
 
-def default_runtime_consumers():
+def default_runtime_consumers() -> list[Any]:
     return [ArtifactGraphConsumer(), VerifierSuggestionConsumer(), ReminderConsumer()]

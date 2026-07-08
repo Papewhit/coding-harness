@@ -1,5 +1,9 @@
 """Coordinator subagent tool definitions."""
 
+from __future__ import annotations
+
+from typing import Any
+
 from ..core.worker_manager import dumps_payload
 
 AGENT_TOOL_NAMES = {"agent", "send_message", "task_stop"}
@@ -34,7 +38,7 @@ AGENT_TOOL_EXAMPLES = {
 }
 
 
-def validate_agent_runtime(agent, name, args):
+def validate_agent_runtime(agent: Any, name: str, args: dict[str, Any]) -> None:
     """Runtime-aware checks that can't be expressed in the Pydantic schema."""
     if name == "agent":
         subagent_type = str(args.get("subagent_type", "worker")).strip()
@@ -42,7 +46,7 @@ def validate_agent_runtime(agent, name, args):
             raise ValueError("plan mode only allows Explore agents")
 
 
-def tool_agent(agent, args):
+def tool_agent(agent: Any, args: dict[str, Any]) -> str:
     return dumps_payload(
         agent.worker_manager.spawn(
             args["description"],
@@ -53,9 +57,9 @@ def tool_agent(agent, args):
     )
 
 
-def tool_send_message(agent, args):
+def tool_send_message(agent: Any, args: dict[str, Any]) -> str:
     return dumps_payload(agent.worker_manager.continue_task(args["to"], args["message"]))
 
 
-def tool_task_stop(agent, args):
+def tool_task_stop(agent: Any, args: dict[str, Any]) -> str:
     return dumps_payload(agent.worker_manager.stop_task(args["task_id"]))

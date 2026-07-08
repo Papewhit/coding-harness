@@ -1,9 +1,16 @@
 """Tool usage policy checks above raw permission gates."""
 
+from __future__ import annotations
+
 import re
 from dataclasses import dataclass
+from typing import TYPE_CHECKING, Any
 
 from ..features import memory as memorylib
+
+if TYPE_CHECKING:
+    from .runtime import Pico
+    from ..tools.base import RegisteredTool
 
 # 只在"主命令位置"禁这些工具——命令开头，或被 ; && || 串联起的开头。
 # 管道 | 之后允许：模型常把 `... | tail -5` 用来截断输出，不是在搜索 workspace。
@@ -32,10 +39,10 @@ class ToolPolicyDecision:
 
 
 class ToolPolicyChecker:
-    def __init__(self, runtime):
+    def __init__(self, runtime: Pico):
         self.runtime = runtime
 
-    def check(self, tool, args):
+    def check(self, tool: RegisteredTool, args: dict[str, Any] | None) -> ToolPolicyDecision:
         args = args or {}
         if self.runtime.runtime_mode == "plan":
             return ToolPolicyDecision.allow("plan_mode")
@@ -54,7 +61,7 @@ class ToolPolicyChecker:
                 )
         return ToolPolicyDecision.allow()
 
-    def _has_fresh_read(self, path):
+    def _has_fresh_read(self, path: str) -> bool:
         canonical = self.runtime.memory.canonical_path(path)
         summary = self.runtime.memory.to_dict().get("file_summaries", {}).get(canonical, {})
         if summary and summary.get("freshness") == memorylib.file_freshness(canonical, self.runtime.root):
@@ -63,7 +70,7 @@ class ToolPolicyChecker:
         return bool(freshness and freshness == memorylib.file_freshness(canonical, self.runtime.root))
 
     @staticmethod
-    def _prior_read_required(tool_name, path):
+    def _prior_read_required(tool_name: str, path: str) -> ToolPolicyDecision:
         return ToolPolicyDecision.deny(
             "prior_read_required",
             f"error: {tool_name} requires a fresh read_file of {path} before modifying it",

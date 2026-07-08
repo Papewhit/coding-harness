@@ -1,6 +1,9 @@
 """Named tool capability surfaces for runtime modes."""
 
+from __future__ import annotations
+
 from dataclasses import dataclass
+from typing import Any
 
 
 @dataclass(frozen=True)
@@ -8,11 +11,11 @@ class ToolSetProfile:
     name: str
     allowed_tools: frozenset[str]
 
-    def allows(self, tool_name):
+    def allows(self, tool_name: str) -> bool:
         return tool_name in self.allowed_tools
 
 
-def build_tool_profiles(tools):
+def build_tool_profiles(tools: dict[str, Any]) -> dict[str, ToolSetProfile]:
     all_tools = frozenset(tools)
     coordinator_tools = frozenset({"agent", "send_message", "task_stop"})
     mode_tools = frozenset({"enter_plan_mode", "exit_plan_mode"})

@@ -1,8 +1,12 @@
 """Optional shell sandbox runner."""
 
+from __future__ import annotations
+
 import subprocess
+from collections.abc import Callable
 from pathlib import Path
 from shutil import which as default_which
+from typing import Any
 
 from .checker import SandboxChecker
 from .command_matcher import command_is_excluded
@@ -10,13 +14,27 @@ from .config import SandboxConfig
 
 
 class SandboxRunner:
-    def __init__(self, config=None, *, which=None, run=None, emit_event=None):
+    def __init__(
+        self,
+        config: SandboxConfig | None = None,
+        *,
+        which: Callable[[str], str | None] | None = None,
+        run: Callable[..., Any] | None = None,
+        emit_event: Callable[[str, dict[str, Any]], None] | None = None,
+    ):
         self.config = config or SandboxConfig()
         self.which = which or default_which
         self.run_process = run
         self.emit_event = emit_event or (lambda event, payload: None)
 
-    def run(self, command, *, cwd, env, timeout):
+    def run(
+        self,
+        command: str,
+        *,
+        cwd: str | Path,
+        env: dict[str, str] | None,
+        timeout: float | int,
+    ) -> subprocess.CompletedProcess:
         config = self.config
         if config.mode == "off" or (
             config.mode != "required"
@@ -44,7 +62,14 @@ class SandboxRunner:
             argv, cwd=cwd, capture_output=True, text=True, timeout=timeout, env=env
         )
 
-    def _plain(self, command, *, cwd, env, timeout):
+    def _plain(
+        self,
+        command: str,
+        *,
+        cwd: str | Path,
+        env: dict[str, str] | None,
+        timeout: float | int,
+    ) -> subprocess.CompletedProcess:
         run_process = self.run_process or subprocess.run
         return run_process(
             command,
@@ -56,7 +81,13 @@ class SandboxRunner:
             env=env,
         )
 
-    def _bubblewrap_argv(self, backend_path, command, cwd, config):
+    def _bubblewrap_argv(
+        self,
+        backend_path: str,
+        command: str,
+        cwd: Path,
+        config: SandboxConfig,
+    ) -> list[str]:
         argv = [
             backend_path,
             "--die-with-parent",

@@ -1,10 +1,13 @@
 """Turn-aware transcript rendering."""
 
+from __future__ import annotations
+
 import json
 from collections import OrderedDict
+from typing import Any
 
 
-def tail_clip(text, limit):
+def tail_clip(text: str, limit: int) -> str:
     text = str(text)
     if limit <= 0:
         return ""
@@ -16,10 +19,10 @@ def tail_clip(text, limit):
 
 
 class TurnHistoryBuilder:
-    def __init__(self, agent):
+    def __init__(self, agent: Any):
         self.agent = agent
 
-    def enrich(self, item):
+    def enrich(self, item: dict[str, Any]) -> dict[str, Any]:
         item = dict(item)
         if not item.get("turn_id"):
             current_turn = str(getattr(self.agent, "current_turn_id", "") or "")
@@ -37,12 +40,12 @@ class TurnHistoryBuilder:
         item.setdefault("source", "runtime")
         return item
 
-    def raw_text(self, history):
+    def raw_text(self, history: list[dict[str, Any]]) -> str:
         if not history:
             return "Transcript:\n- empty"
         return "\n".join(["Transcript:", *self._render_turn_lines(history, line_limit=2000)])
 
-    def render_section(self, budget):
+    def render_section(self, budget: int) -> tuple[str, dict[str, Any]]:
         history = list(getattr(self.agent, "session", {}).get("history", []))
         raw = self.raw_text(history)
         if not history:
@@ -77,14 +80,14 @@ class TurnHistoryBuilder:
         details["rendered_turns"] = sum(1 for line in rendered_entries if line.startswith("Turn "))
         return rendered, details
 
-    def _group_turns(self, history):
+    def _group_turns(self, history: list[dict[str, Any]]) -> OrderedDict[str, list[dict[str, Any]]]:
         turns = OrderedDict()
         for item in history:
             turn_id = str(item.get("turn_id") or "legacy")
             turns.setdefault(turn_id, []).append(item)
         return turns
 
-    def _compressed_turn_entries(self, turns, recent_turns):
+    def _compressed_turn_entries(self, turns: OrderedDict[str, list[dict[str, Any]]], recent_turns: set[str]) -> tuple[list[dict[str, Any]], dict[str, Any]]:
         entries = []
         seen_older_reads = set()
         details = {
@@ -122,7 +125,7 @@ class TurnHistoryBuilder:
             entries.append({"turn_id": turn_id, "lines": lines})
         return entries, details
 
-    def _render_turn_lines(self, history, line_limit):
+    def _render_turn_lines(self, history: list[dict[str, Any]], line_limit: int) -> list[str]:
         lines = []
         for turn_id, items in self._group_turns(history).items():
             lines.append(f"Turn {turn_id}:")
@@ -130,7 +133,7 @@ class TurnHistoryBuilder:
                 lines.extend(self._render_item(item, line_limit))
         return lines
 
-    def _render_item(self, item, line_limit):
+    def _render_item(self, item: dict[str, Any], line_limit: int) -> list[str]:
         if item.get("kind") == "compact_summary":
             return str(item.get("content", "")).splitlines()
         if item.get("role") == "tool":
@@ -139,14 +142,14 @@ class TurnHistoryBuilder:
             return [prefix, content]
         return [f"[{item.get('role', '')}] {tail_clip(item.get('content', ''), line_limit)}"]
 
-    def _reusable_file_summary(self, path):
+    def _reusable_file_summary(self, path: str) -> str:
         memory = getattr(self.agent, "memory", None)
         if memory is None or not hasattr(memory, "to_dict"):
             return ""
         summary = memory.to_dict().get("file_summaries", {}).get(str(path), {})
         return str(summary.get("summary", "")).strip()
 
-    def _summarize_old_tool_item(self, item):
+    def _summarize_old_tool_item(self, item: dict[str, Any]) -> str:
         if item.get("name") == "run_shell":
             command = str(item.get("args", {}).get("command", "")).strip() or "shell"
             lines = [line.strip() for line in str(item.get("content", "")).splitlines() if line.strip()]

@@ -1,14 +1,17 @@
 """Runtime artifact graph and verifier suggestion helpers."""
 
+from __future__ import annotations
+
 import json
 import re
 from pathlib import Path
+from typing import Any
 
 DEPENDENCY_FILES = {"package.json", "pyproject.toml", "requirements.txt", "uv.lock", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"}
 ROUTE_RE = re.compile(r"""["'](/api/[^"'\s)]*)["']""")
 
 
-def build_artifact_graph(root, changed_paths):
+def build_artifact_graph(root: Path | str, changed_paths: list[str]) -> dict[str, Any]:
     root = Path(root)
     paths = sorted(dict.fromkeys(str(path) for path in changed_paths if str(path).strip()))
     graph = {
@@ -27,7 +30,7 @@ def build_artifact_graph(root, changed_paths):
     return graph
 
 
-def build_verifier_suggestions(root, graph):
+def build_verifier_suggestions(root: Path | str, graph: dict[str, Any]) -> list[dict[str, str]]:
     root = Path(root)
     suggestions = []
     package_json = root / "package.json"
@@ -44,7 +47,7 @@ def build_verifier_suggestions(root, graph):
     return suggestions[:8]
 
 
-def _category(path):
+def _category(path: str) -> str:
     normalized = path.replace("\\", "/")
     name = normalized.rsplit("/", 1)[-1]
     suffix = Path(name).suffix.lower()
@@ -61,7 +64,7 @@ def _category(path):
     return "other"
 
 
-def _collect_refs(graph, text):
+def _collect_refs(graph: dict[str, Any], text: str) -> None:
     for line in text.splitlines()[:500]:
         refs = ROUTE_RE.findall(line)
         if not refs:
@@ -72,7 +75,7 @@ def _collect_refs(graph, text):
             graph["route_refs"].extend(refs)
 
 
-def _read_text(path):
+def _read_text(path: Path) -> str:
     try:
         if not path.is_file() or path.stat().st_size > 200_000:
             return ""
@@ -81,13 +84,13 @@ def _read_text(path):
         return ""
 
 
-def _package_scripts(path):
+def _package_scripts(path: Path) -> dict[str, Any]:
     try:
         return dict(json.loads(path.read_text(encoding="utf-8")).get("scripts", {}) or {})
     except (OSError, json.JSONDecodeError):
         return {}
 
 
-def _has_python_tests(root):
+def _has_python_tests(root: Path) -> bool:
     tests_dir = root / "tests"
     return tests_dir.is_dir() and any(path.suffix == ".py" for path in tests_dir.rglob("*.py"))

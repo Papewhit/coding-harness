@@ -5,12 +5,15 @@
 最后进入 one-shot 或交互式循环。
 """
 
+from __future__ import annotations
+
 import argparse
 import json
 import os
 import shutil
 import sys
 import textwrap
+from typing import Any
 from urllib.parse import urlparse
 
 from .commands.slash import command_help_text, parse_subagent_args, resolve_command
@@ -70,7 +73,7 @@ DEFAULT_OPENAI_BASE_URL = PROVIDER_DEFAULTS["openai"]["base_url"]
 SECRET_ENV_NAMES_VAR = "PICO_SECRET_ENV_NAMES"
 
 
-def _configured_secret_names(args):
+def _configured_secret_names(args: argparse.Namespace) -> list[str]:
     configured_secret_names = set(DEFAULT_SECRET_ENV_NAMES)
     configured_secret_names.update(str(name).upper() for name in args.secret_env_names)
     extra_names = os.environ.get(SECRET_ENV_NAMES_VAR, "")
@@ -81,7 +84,7 @@ def _configured_secret_names(args):
     return sorted(configured_secret_names)
 
 
-def _build_model_client(args):
+def _build_model_client(args: argparse.Namespace) -> OpenAICompatibleModelClient | AnthropicCompatibleModelClient:
     config = resolve_provider_config(
         getattr(args, "provider", None),
         start=getattr(args, "cwd", "."),
@@ -112,7 +115,7 @@ def _build_model_client(args):
     raise ValueError(f"unknown provider protocol: {config.protocol}")
 
 
-def build_welcome(agent, model, host):
+def build_welcome(agent: Pico, model: str, host: str) -> str:
     width = max(68, min(shutil.get_terminal_size((80, 20)).columns, 84))
     inner = width - 4
     gap = 3
@@ -157,7 +160,7 @@ def build_welcome(agent, model, host):
     return "\n".join([line, *rows, line])
 
 
-def build_agent(args):
+def build_agent(args: argparse.Namespace) -> Pico:
     """根据 CLI 参数装配出一个可运行的 Pico 实例。
 
     为什么存在：
@@ -245,7 +248,7 @@ def build_agent(args):
     )
 
 
-def build_arg_parser():
+def build_arg_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
         description="Minimal coding agent for provider profiles backed by OpenAI-compatible or Anthropic-compatible APIs.",
@@ -360,7 +363,7 @@ def build_arg_parser():
     return parser
 
 
-def handle_repl_command(agent, user_input):
+def handle_repl_command(agent: Pico, user_input: str) -> tuple[bool, bool, str]:
     raw_command = ""
     command_args = ""
     command_name = ""
@@ -464,7 +467,7 @@ def handle_repl_command(agent, user_input):
     return False, False, ""
 
 
-def _format_mode_status(agent):
+def _format_mode_status(agent: Pico) -> str:
     lines = [f"runtime mode: {agent.runtime_mode}"]
     plan_path = getattr(agent.plan_mode, "plan_path", "")
     if plan_path:
@@ -472,7 +475,7 @@ def _format_mode_status(agent):
     return "\n".join(lines)
 
 
-def _format_session_status(agent):
+def _format_session_status(agent: Pico) -> str:
     task_state = getattr(agent, "current_task_state", None)
     run_id = getattr(task_state, "run_id", "") or ""
     run_dir = str(agent.run_store.run_dir(run_id)) if run_id else "-"
@@ -502,7 +505,7 @@ def _format_session_status(agent):
     )
 
 
-def _format_subagent_status(agent):
+def _format_subagent_status(agent: Pico) -> str:
     return "\n".join(
         [
             "subagent tools: agent(description, prompt, subagent_type='Explore|worker', write_scope=[]), send_message(to, message), task_stop(task_id)",
@@ -511,14 +514,14 @@ def _format_subagent_status(agent):
     )
 
 
-def _worker_summary(agent):
+def _worker_summary(agent: Pico) -> str:
     items = agent.worker_manager.to_dict().get("items", [])
     if not items:
         return "none"
     return ", ".join(f"{item.get('id')}:{item.get('status')}" for item in items)
 
 
-def _format_usage(agent):
+def _format_usage(agent: Pico) -> str:
     metadata = dict(getattr(agent, "last_completion_metadata", {}) or {})
     context_usage = dict(
         (getattr(agent, "last_prompt_metadata", {}) or {}).get("context_usage", {})
@@ -543,11 +546,11 @@ def _format_usage(agent):
     return "\n".join(lines)
 
 
-def _format_model(agent):
+def _format_model(agent: Pico) -> str:
     return f"model: {getattr(agent.model_client, 'model', '-') or '-'}"
 
 
-def _format_history(agent):
+def _format_history(agent: Pico) -> str:
     rows = agent.session_store.list_sessions()
     if not rows:
         return "(no sessions)"
@@ -560,7 +563,7 @@ def _format_history(agent):
     return "\n".join(lines)
 
 
-def _resolve_session_id(agent, target):
+def _resolve_session_id(agent: Pico, target: str) -> str:
     if target == "latest":
         return agent.session_store.latest()
     rows = agent.session_store.list_sessions()
@@ -575,7 +578,7 @@ def _resolve_session_id(agent, target):
     return ""
 
 
-def _cli_ask_user(question, choices):
+def _cli_ask_user(question: str, choices: list[str]) -> str:
     if choices:
         print(question)
         for index, choice in enumerate(choices, start=1):
@@ -587,14 +590,14 @@ def _cli_ask_user(question, choices):
     return input(question + " ").strip()
 
 
-def _drain_idle_worker_notifications(agent):
+def _drain_idle_worker_notifications(agent: Pico) -> list[Any]:
     notifications = agent.engine.drain_worker_notifications()
     for notification in notifications:
         print(f"\n[worker notification]\n{notification}")
     return notifications
 
 
-def interaction_mode(args):
+def interaction_mode(args: argparse.Namespace) -> str:
     if args.prompt:
         return "one_shot"
     if getattr(args, "repl", False):
@@ -604,7 +607,7 @@ def interaction_mode(args):
     return "repl"
 
 
-def main(argv=None):
+def main(argv: list[str] | None = None) -> int:
     args = build_arg_parser().parse_args(argv)
     try:
         agent = build_agent(args)

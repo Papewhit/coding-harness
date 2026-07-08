@@ -1,30 +1,33 @@
 """Plan mode policy for sessions."""
 
+from __future__ import annotations
+
 import re
+from typing import Any
 
 
-def _slug(value):
+def _slug(value: str) -> str:
     slug = re.sub(r"[^a-zA-Z0-9]+", "-", str(value).strip().lower()).strip("-")
     return slug or "plan"
 
 
 class PlanModeManager:
-    def __init__(self, runtime):
+    def __init__(self, runtime: Any) -> None:
         self.runtime = runtime
 
     @property
-    def state(self):
+    def state(self) -> dict[str, Any]:
         return self.runtime.session.setdefault("runtime_mode", {"mode": "default"})
 
     @property
-    def mode(self):
+    def mode(self) -> str:
         return str(self.state.get("mode", "default") or "default")
 
     @property
-    def plan_path(self):
+    def plan_path(self) -> str:
         return str(self.state.get("plan_path", "") or "")
 
-    def enter(self, topic, path=None):
+    def enter(self, topic: str, path: str | None = None) -> str:
         plan_path = _plan_path(topic, path)
         self.runtime.session["runtime_mode"] = {
             "mode": "plan",
@@ -42,7 +45,7 @@ class PlanModeManager:
         )
         return plan_path
 
-    def exit(self):
+    def exit(self) -> None:
         previous = dict(self.state)
         self.runtime.session["runtime_mode"] = {"mode": "default"}
         self.runtime.set_tool_profile("default")
@@ -59,16 +62,16 @@ class PlanModeManager:
             },
         )
 
-    def can_finish(self):
+    def can_finish(self) -> bool:
         if self.mode != "plan":
             return True
         path = self.runtime.path(self.plan_path)
         return path.is_file() and bool(path.read_text(encoding="utf-8").strip())
 
-    def final_notice(self):
+    def final_notice(self) -> str:
         return f"Plan mode requires writing the active plan artifact before final answer: {self.plan_path}"
 
-    def prompt_text(self):
+    def prompt_text(self) -> str:
         if self.mode != "plan":
             return ""
         return (
@@ -87,7 +90,7 @@ PlanModeController = PlanModeManager
 _PLAN_DIR_MARKER = "/.pico/plans/"
 
 
-def _plan_path(topic, path=None):
+def _plan_path(topic: str, path: str | None = None) -> str:
     if path:
         value = str(path).strip()
         # 模型有时给绝对路径，如 /Users/u/repo/.pico/plans/foo；自动把它相对化。

@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+from typing import Callable
+
 from .skills import Skill
 
 
-def bundled_skills():
+def bundled_skills() -> list[Skill]:
     return [
         Skill(
             name="simplify",
@@ -73,8 +75,8 @@ def bundled_skills():
     ]
 
 
-def _with_optional_section(title, paragraphs, section_title):
-    def render(arguments=""):
+def _with_optional_section(title: str, paragraphs: list[str], section_title: str) -> Callable[[str], str]:
+    def render(arguments: str = "") -> str:
         lines = [title, "", *paragraphs]
         if arguments:
             lines.extend(["", f"## {section_title}", "", str(arguments)])

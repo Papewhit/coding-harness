@@ -5,7 +5,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable
+from typing import Any, Callable
 
 FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n?", re.DOTALL)
 SKILL_FILE_CREATION_GUIDE = """When creating Pico skill files at .pico/skills/<name>/SKILL.md or skills/<name>/SKILL.md, use frontmatter:
@@ -61,7 +61,7 @@ class Skill:
         }
 
 
-def discover_skills(root, home=None):
+def discover_skills(root: str | Path, home: str | Path | None = None) -> dict[str, Skill]:
     from .skills_bundled import bundled_skills
 
     skills = {skill.name: skill for skill in bundled_skills()}
@@ -76,7 +76,7 @@ def discover_skills(root, home=None):
     return dict(sorted(skills.items()))
 
 
-def load_skills_from_dir(skills_dir, source):
+def load_skills_from_dir(skills_dir: str | Path, source: str) -> list[Skill]:
     skills_dir = Path(skills_dir).expanduser()
     if not skills_dir.exists():
         return []
@@ -89,7 +89,7 @@ def load_skills_from_dir(skills_dir, source):
     return [skill for path in files if (skill := load_skill_file(path, source=source))]
 
 
-def load_skill_file(path, source):
+def load_skill_file(path: str | Path, source: str) -> Skill | None:
     path = Path(path)
     metadata, body = parse_frontmatter(path.read_text(encoding="utf-8"))
     default_name = path.parent.name if path.name == "SKILL.md" else path.stem
@@ -113,7 +113,7 @@ def load_skill_file(path, source):
     )
 
 
-def parse_frontmatter(text):
+def parse_frontmatter(text: str) -> tuple[dict[str, Any], str]:
     match = FRONTMATTER_RE.match(str(text))
     if not match:
         return {}, str(text)
@@ -127,7 +127,7 @@ def parse_frontmatter(text):
     return metadata, str(text)[match.end() :]
 
 
-def render_prompt_section(skills):
+def render_prompt_section(skills: dict[str, Skill]) -> str:
     visible = [skill for skill in list_skills(skills, user_invocable_only=False) if _should_show_in_prompt(skill)]
     if not visible:
         return "Available skills:\n- none"

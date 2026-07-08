@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from typing import Any
 
 from rich.text import Text
 from textual.containers import VerticalScroll
@@ -114,7 +115,7 @@ class UserMessage(Static):
         super().__init__("", markup=False)
         self.content = content
 
-    def compose(self):
+    def compose(self) -> Any:
         yield Static(f"> {self.content}", classes="message-label")
 
 
@@ -147,7 +148,7 @@ class AssistantMessage(Static):
         super().__init__(markup=False)
         self.content = content
 
-    def compose(self):
+    def compose(self) -> Any:
         yield Static("pico", classes="message-label")
         yield Markdown(self.content)
 
@@ -186,7 +187,7 @@ class ToolCard(Static):
         self._collapsible: Collapsible | None = None
         self._output_widget: Static | None = None
 
-    def compose(self):
+    def compose(self) -> Any:
         self._output_widget = Static("", classes="tool-output")
         self._collapsible = Collapsible(
             self._output_widget, title=self._label(), collapsed=False
@@ -423,7 +424,7 @@ class StatusBar(Static):
         self.context_text = "context -"
         self.agent_text = ""
 
-    def update_agent(self, agent) -> None:
+    def update_agent(self, agent: Any) -> None:
         model = getattr(agent.model_client, "model", "")
         mode = getattr(agent, "runtime_mode", "default")
         session = str(agent.session.get("id", ""))[-10:]
@@ -535,7 +536,7 @@ class InputBar(Static):
         self._slash_suggestions: list[SlashCommand] = []
         self._slash_index = 0
 
-    def compose(self):
+    def compose(self) -> Any:
         yield self.input
         yield SlashSuggestions()
 

@@ -1,13 +1,16 @@
 """Worker thread execution routine."""
 
+from __future__ import annotations
+
 import time
+from typing import Any
 
 from .worker_artifacts import collect_worker_artifacts
 from .worker_notifications import render_worker_notification
 from .workspace import clip, now
 
 
-def run_worker(manager, task, prompt, action):
+def run_worker(manager: Any, task: Any, prompt: str, action: str) -> None:
     item = manager._get_item(task.id)
     with manager._lock:
         item["status"] = "running"

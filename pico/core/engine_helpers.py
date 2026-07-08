@@ -1,13 +1,23 @@
 """Helper routines for Engine control-loop side effects."""
 
+from __future__ import annotations
+
 import time
+from typing import TYPE_CHECKING, Any, Generator
 
 from ..providers.base import complete_model
 from ..providers.errors import ProviderError
 from .workspace import clip, now
 
+if TYPE_CHECKING:
+    from .engine import Engine
+    from .runtime import Pico
+from .task_state import TaskState
 
-def execute_tool_payload(engine, task_state, user_message, payload):
+
+def execute_tool_payload(
+    engine: Engine, task_state: TaskState, user_message: str, payload: dict[str, Any]
+) -> Generator[dict[str, Any], None, None]:
     agent = engine.runtime
     name = payload.get("name", "")
     args = payload.get("args", {})
@@ -79,8 +89,8 @@ def execute_tool_payload(engine, task_state, user_message, payload):
 
 
 def finish_stopped_run(
-    engine, task_state, user_message, final, stop_reason, run_started_at
-):
+    engine: Engine, task_state: TaskState, user_message: str, final: str, stop_reason: str, run_started_at: float
+) -> Generator[dict[str, Any], None, None]:
     agent = engine.runtime
     task_state.stop(stop_reason, final_answer=final)
     agent.abort_requested = False
@@ -129,7 +139,9 @@ def finish_stopped_run(
     }
 
 
-def finish_limited_run(engine, task_state, user_message, final, run_started_at):
+def finish_limited_run(
+    engine: Engine, task_state: TaskState, user_message: str, final: str, run_started_at: float
+) -> Generator[dict[str, Any], None, None]:
     agent = engine.runtime
     agent.record({"role": "assistant", "content": final, "created_at": now()})
     agent.session_event_bus.emit(
@@ -183,7 +195,7 @@ def finish_limited_run(engine, task_state, user_message, final, run_started_at):
     }
 
 
-def should_retry_model_error(exc, provider_retries):
+def should_retry_model_error(exc: Exception, provider_retries: dict[str, int]) -> bool:
     if not isinstance(exc, ProviderError):
         return False
     code = str(getattr(exc, "code", "") or "")
@@ -192,7 +204,7 @@ def should_retry_model_error(exc, provider_retries):
     return provider_retries.get(code, 0) < 1
 
 
-def maintain_memory_safely(agent, task_state, final_answer):
+def maintain_memory_safely(agent: Pico, task_state: TaskState, final_answer: str) -> None:
     try:
         agent.maintain_memory_after_turn(final_answer)
     except Exception as exc:
@@ -217,7 +229,7 @@ _STEP_LIMIT_SUMMARY_NOTICE = (
 )
 
 
-def request_step_limit_summary(engine, task_state, user_message):
+def request_step_limit_summary(engine: Engine, task_state: TaskState, user_message: str) -> str | None:
     """Ask the model to write a graceful step-limit summary.
 
     Returns the final text, or None if the model fails or refuses to comply.

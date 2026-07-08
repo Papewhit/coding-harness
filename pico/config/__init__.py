@@ -1,5 +1,7 @@
 """Project-local configuration helpers."""
 
+from __future__ import annotations
+
 import os
 import re
 import sys
@@ -131,14 +133,14 @@ LEGACY_ENV_NAMES = {
 }
 
 
-def _strip_quotes(value):
+def _strip_quotes(value: str) -> str:
     value = value.strip()
     if len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}:
         return value[1:-1]
     return value
 
 
-def _parse_env_line(line):
+def _parse_env_line(line: str) -> tuple[str, str] | None:
     line = line.strip()
     if not line or line.startswith("#"):
         return None
@@ -153,7 +155,7 @@ def _parse_env_line(line):
     return name, _strip_quotes(value)
 
 
-def find_project_env(start):
+def find_project_env(start: str | Path) -> Path | None:
     current = Path(start).resolve()
     if current.is_file():
         current = current.parent
@@ -164,7 +166,7 @@ def find_project_env(start):
     return None
 
 
-def find_project_config(start):
+def find_project_config(start: str | Path) -> Path | None:
     current = Path(start).resolve()
     if current.is_file():
         current = current.parent
@@ -175,7 +177,7 @@ def find_project_config(start):
     return None
 
 
-def load_project_env(start, override=True):
+def load_project_env(start: str | Path, override: bool = True) -> dict[str, str]:
     env_path = find_project_env(start)
     if env_path is None:
         return {}
@@ -191,7 +193,7 @@ def load_project_env(start, override=True):
     return loaded
 
 
-def provider_env(name, legacy_names=(), default=""):
+def provider_env(name: str, legacy_names: tuple[str, ...] = (), default: str = "") -> str:
     for env_name in (name, *legacy_names):
         value = os.environ.get(env_name)
         if value:
@@ -407,7 +409,7 @@ def _first_mapping_value(values: dict[str, str], names: tuple[str, ...]) -> str:
     return ""
 
 
-def _first_value(*values):
+def _first_value(*values: str | None) -> str:
     for value in values:
         if value:
             return value

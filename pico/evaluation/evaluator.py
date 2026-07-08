@@ -1,11 +1,15 @@
+from __future__ import annotations
+
 import hashlib
 import json
 import locale as locale_module
 import shutil
 import subprocess
 import tempfile
+from collections.abc import Callable
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 from zoneinfo import ZoneInfo
 
 from ..features import memory as memorylib
@@ -111,7 +115,7 @@ SCRIPTED_MODEL_OUTPUTS = {
 }
 
 
-def _git_value(args, fallback="", cwd=None):
+def _git_value(args: list[str], fallback: str = "", cwd: str | Path | None = None) -> str:
     try:
         result = subprocess.run(
             ["git", *args],
@@ -126,36 +130,36 @@ def _git_value(args, fallback="", cwd=None):
         return fallback
 
 
-def _current_locale():
+def _current_locale() -> str:
     try:
         return locale_module.setlocale(locale_module.LC_CTYPE)
     except Exception:
         return locale_module.getdefaultlocale()[0] or "C"
 
 
-def _now_in_timezone(timezone_name):
+def _now_in_timezone(timezone_name: str) -> str:
     return datetime.now(ZoneInfo(timezone_name)).strftime("%Y-%m-%dT%H:%M:%S%z")
 
 
-def _artifact_path_for_task(task):
+def _artifact_path_for_task(task: dict[str, Any]) -> str:
     fixture_repo_name = Path(str(task["fixture_repo"])).name
     if fixture_repo_name not in TASK_FIXTURE_ARTIFACTS:
         raise ValueError(f"unsupported fixture repo for artifact lookup: {fixture_repo_name}")
     return TASK_FIXTURE_ARTIFACTS[fixture_repo_name]
 
 
-def _workspace_relative(path, workspace_root):
+def _workspace_relative(path: str | Path, workspace_root: str | Path) -> str:
     return str(Path(path).resolve().relative_to(Path(workspace_root).resolve()))
 
 
-def _scripted_outputs_for_task(task):
+def _scripted_outputs_for_task(task: dict[str, Any]) -> list[str]:
     outputs = SCRIPTED_MODEL_OUTPUTS.get(task["id"])
     if outputs is None:
         raise ValueError(f"no scripted model outputs for benchmark task: {task['id']}")
     return list(outputs)
 
 
-def _fixture_snapshot_id(fixture_paths):
+def _fixture_snapshot_id(fixture_paths: list[str | Path]) -> str:
     sha = hashlib.sha256()
     for fixture_path in sorted({Path(path).resolve() for path in fixture_paths}, key=lambda path: str(path)):
         for path in sorted((item for item in fixture_path.rglob("*") if item.is_file()), key=lambda item: str(item.relative_to(fixture_path))):
@@ -168,7 +172,7 @@ def _fixture_snapshot_id(fixture_paths):
     return "sha256:" + sha.hexdigest()
 
 
-def validate_benchmark(data, repo_root=None):
+def validate_benchmark(data: dict[str, Any], repo_root: str | Path | None = None) -> dict[str, Any]:
     if not isinstance(data, dict):
         raise ValueError("benchmark must be a mapping")
 
@@ -238,7 +242,7 @@ def validate_benchmark(data, repo_root=None):
     return normalized
 
 
-def load_benchmark(path=DEFAULT_BENCHMARK_PATH, repo_root=None):
+def load_benchmark(path: str | Path = DEFAULT_BENCHMARK_PATH, repo_root: str | Path | None = None) -> dict[str, Any]:
     path = Path(path)
     data = json.loads(path.read_text(encoding="utf-8"))
     if repo_root is None:
@@ -246,7 +250,7 @@ def load_benchmark(path=DEFAULT_BENCHMARK_PATH, repo_root=None):
     return validate_benchmark(data, repo_root=repo_root)
 
 
-def summarize_rows(rows):
+def summarize_rows(rows: list[dict[str, Any]]) -> dict[str, Any]:
     rows = list(rows)
     passed = sum(1 for row in rows if row.get("passed") or row.get("status") == "pass")
     failed = len(rows) - passed
@@ -274,17 +278,17 @@ def summarize_rows(rows):
 
 
 def _checkpoint_payload(
-    checkpoint_id,
-    current_goal,
-    next_step,
-    runtime_identity,
+    checkpoint_id: str,
+    current_goal: str,
+    next_step: str,
+    runtime_identity: dict[str, Any],
     *,
-    schema_version=BENCHMARK_SCHEMA_VERSION,
-    current_blocker="",
-    key_files=None,
-    freshness=None,
-    summary="",
-):
+    schema_version: int = BENCHMARK_SCHEMA_VERSION,
+    current_blocker: str = "",
+    key_files: list[dict[str, Any]] | None = None,
+    freshness: dict[str, Any] | None = None,
+    summary: str = "",
+) -> dict[str, Any]:
     return {
         "checkpoint_id": checkpoint_id,
         "parent_checkpoint_id": "",
@@ -302,7 +306,7 @@ def _checkpoint_payload(
     }
 
 
-def _apply_task_setup(agent, task, fixture_copy_root):
+def _apply_task_setup(agent: Pico, task: dict[str, Any], fixture_copy_root: Path) -> None:
     setup = dict(task.get("setup", {}) or {})
     if not setup:
         return
@@ -380,16 +384,16 @@ def _apply_task_setup(agent, task, fixture_copy_root):
 class BenchmarkEvaluator:
     def __init__(
         self,
-        benchmark_path=DEFAULT_BENCHMARK_PATH,
-        artifact_path=DEFAULT_ARTIFACT_PATH,
-        workspace_root=None,
-        model_name=DEFAULT_MODEL_NAME,
-        model_version=DEFAULT_MODEL_VERSION,
-        temperature=DEFAULT_TEMPERATURE,
-        top_p=DEFAULT_TOP_P,
-        max_new_tokens=DEFAULT_MAX_NEW_TOKENS,
-        timezone_name=DEFAULT_TIMEZONE,
-        model_client_factory=None,
+        benchmark_path: str | Path = DEFAULT_BENCHMARK_PATH,
+        artifact_path: str | Path = DEFAULT_ARTIFACT_PATH,
+        workspace_root: str | Path | None = None,
+        model_name: str = DEFAULT_MODEL_NAME,
+        model_version: str = DEFAULT_MODEL_VERSION,
+        temperature: float = DEFAULT_TEMPERATURE,
+        top_p: float = DEFAULT_TOP_P,
+        max_new_tokens: int = DEFAULT_MAX_NEW_TOKENS,
+        timezone_name: str = DEFAULT_TIMEZONE,
+        model_client_factory: Callable[..., Any] | None = None,
     ):
         self.benchmark_path = Path(benchmark_path)
         self.artifact_path = Path(artifact_path)
@@ -405,10 +409,10 @@ class BenchmarkEvaluator:
         self.model_client_factory = model_client_factory
         self.repo_root = self.benchmark_path.resolve().parent.parent
 
-    def load(self):
+    def load(self) -> dict[str, Any]:
         return load_benchmark(self.benchmark_path, repo_root=self.repo_root)
 
-    def run(self):
+    def run(self) -> dict[str, Any]:
         benchmark = self.load()
         rows = [self.run_task(task) for task in benchmark["tasks"]]
         summary = summarize_rows(rows)
@@ -444,7 +448,7 @@ class BenchmarkEvaluator:
         self._write_artifact(artifact)
         return artifact
 
-    def run_task(self, task):
+    def run_task(self, task: dict[str, Any]) -> dict[str, Any]:
         task = dict(task)
         fixture_source = self.repo_root / task["fixture_repo"]
         fixture_copy_root = self.workspace_root / task["id"] / fixture_source.name
@@ -553,11 +557,11 @@ class BenchmarkEvaluator:
 
     def _failure_category(
         self,
-        within_budget,
-        verifier_passed,
-        expected_artifact_exists,
-        non_failure_stop_reason,
-    ):
+        within_budget: bool,
+        verifier_passed: bool,
+        expected_artifact_exists: bool,
+        non_failure_stop_reason: bool,
+    ) -> str:
         if not expected_artifact_exists:
             return "missing_artifact"
         if not within_budget:
@@ -568,27 +572,27 @@ class BenchmarkEvaluator:
             return "failure_stop_reason"
         return "unknown"
 
-    def _write_artifact(self, artifact):
+    def _write_artifact(self, artifact: dict[str, Any]) -> None:
         self.artifact_path.parent.mkdir(parents=True, exist_ok=True)
         self.artifact_path.write_text(json.dumps(artifact, indent=2, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
-def _digest_file(path):
+def _digest_file(path: str | Path) -> str:
     return "sha256:" + hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
 def run_fixed_benchmark(
-    benchmark_path=DEFAULT_BENCHMARK_PATH,
-    artifact_path=DEFAULT_ARTIFACT_PATH,
-    workspace_root=None,
-    model_name=DEFAULT_MODEL_NAME,
-    model_version=DEFAULT_MODEL_VERSION,
-    temperature=DEFAULT_TEMPERATURE,
-    top_p=DEFAULT_TOP_P,
-    max_new_tokens=DEFAULT_MAX_NEW_TOKENS,
-    timezone_name=DEFAULT_TIMEZONE,
-    model_client_factory=None,
-):
+    benchmark_path: str | Path = DEFAULT_BENCHMARK_PATH,
+    artifact_path: str | Path = DEFAULT_ARTIFACT_PATH,
+    workspace_root: str | Path | None = None,
+    model_name: str = DEFAULT_MODEL_NAME,
+    model_version: str = DEFAULT_MODEL_VERSION,
+    temperature: float = DEFAULT_TEMPERATURE,
+    top_p: float = DEFAULT_TOP_P,
+    max_new_tokens: int = DEFAULT_MAX_NEW_TOKENS,
+    timezone_name: str = DEFAULT_TIMEZONE,
+    model_client_factory: Callable[..., Any] | None = None,
+) -> dict[str, Any]:
     evaluator = BenchmarkEvaluator(
         benchmark_path=benchmark_path,
         artifact_path=artifact_path,
@@ -605,17 +609,17 @@ def run_fixed_benchmark(
 
 
 def run_harness_regression_v2(
-    benchmark_path=DEFAULT_BENCHMARK_PATH,
-    artifact_path=DEFAULT_HARNESS_REGRESSION_V2_ARTIFACT_PATH,
-    workspace_root=None,
-    model_name=DEFAULT_MODEL_NAME,
-    model_version=DEFAULT_MODEL_VERSION,
-    temperature=DEFAULT_TEMPERATURE,
-    top_p=DEFAULT_TOP_P,
-    max_new_tokens=DEFAULT_MAX_NEW_TOKENS,
-    timezone_name=DEFAULT_TIMEZONE,
-    model_client_factory=None,
-):
+    benchmark_path: str | Path = DEFAULT_BENCHMARK_PATH,
+    artifact_path: str | Path = DEFAULT_HARNESS_REGRESSION_V2_ARTIFACT_PATH,
+    workspace_root: str | Path | None = None,
+    model_name: str = DEFAULT_MODEL_NAME,
+    model_version: str = DEFAULT_MODEL_VERSION,
+    temperature: float = DEFAULT_TEMPERATURE,
+    top_p: float = DEFAULT_TOP_P,
+    max_new_tokens: int = DEFAULT_MAX_NEW_TOKENS,
+    timezone_name: str = DEFAULT_TIMEZONE,
+    model_client_factory: Callable[..., Any] | None = None,
+) -> dict[str, Any]:
     return run_fixed_benchmark(
         benchmark_path=benchmark_path,
         artifact_path=artifact_path,

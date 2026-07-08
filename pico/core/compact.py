@@ -1,14 +1,20 @@
 """Session compaction boundary."""
 
+from __future__ import annotations
+
+from typing import Any
+
 from .context_usage import estimate_tokens
 from .workspace import now
 
 
 class CompactManager:
-    def __init__(self, agent):
+    def __init__(self, agent: Any) -> None:
         self.agent = agent
 
-    def compact(self, trigger="manual", keep_recent_turns=2):
+    def compact(
+        self, trigger: str = "manual", keep_recent_turns: int = 2
+    ) -> dict[str, Any]:
         history = list(self.agent.session.get("history", []))
         groups = self._group(history)
         if len(groups) <= keep_recent_turns:
@@ -41,9 +47,11 @@ class CompactManager:
         return summary
 
     @staticmethod
-    def _group(history):
+    def _group(
+        history: list[dict[str, Any]],
+    ) -> list[tuple[str, list[dict[str, Any]]]]:
         groups = []
-        by_id = {}
+        by_id: dict[str, list[dict[str, Any]]] = {}
         for item in history:
             turn_id = str(item.get("turn_id") or "legacy")
             if turn_id not in by_id:
@@ -52,7 +60,13 @@ class CompactManager:
             by_id[turn_id].append(item)
         return groups
 
-    def _summary(self, trigger, before, after, summary_text):
+    def _summary(
+        self,
+        trigger: str,
+        before: list[dict[str, Any]],
+        after: list[dict[str, Any]],
+        summary_text: str,
+    ) -> dict[str, Any]:
         pre_chars = sum(len(str(item.get("content", ""))) for item in before)
         post_chars = sum(len(str(item.get("content", ""))) for item in after)
         return {
@@ -65,7 +79,7 @@ class CompactManager:
             "summary_chars": len(summary_text),
         }
 
-    def _summary_text(self, items):
+    def _summary_text(self, items: list[dict[str, Any]]) -> str:
         files_read = []
         files_modified = []
         user_requests = []

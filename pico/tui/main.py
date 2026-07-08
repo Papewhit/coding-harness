@@ -6,7 +6,7 @@ from pico.cli import build_agent, build_arg_parser
 from pico.tui.app import PicoTuiApp
 
 
-def main(argv=None):
+def main(argv: list[str] | None = None) -> int:
     parser = build_arg_parser()
     args = parser.parse_args(argv)
     if args.prompt:

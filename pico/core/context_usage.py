@@ -1,19 +1,23 @@
 """Context usage estimation for prompt transparency."""
 
+from __future__ import annotations
+
+from typing import Any
+
 
 DEFAULT_CONTEXT_WINDOW = 200_000
 TOKEN_ESTIMATION_METHOD = "chars_div_4"
 
 
-def estimate_tokens(chars):
+def estimate_tokens(chars: int) -> int:
     return max(0, (int(chars) + 3) // 4)
 
 
 class ContextUsageAnalyzer:
-    def __init__(self, agent):
+    def __init__(self, agent: Any):
         self.agent = agent
 
-    def analyze(self, rendered):
+    def analyze(self, rendered: dict[str, Any]) -> dict[str, Any]:
         tools_chars = self._tools_chars()
         sections = {}
         for name, section in rendered.items():
@@ -43,13 +47,13 @@ class ContextUsageAnalyzer:
             "auto_compact_threshold": int(window * 0.8),
         }
 
-    def _context_window(self):
+    def _context_window(self) -> int:
         model = str(getattr(getattr(self.agent, "model_client", None), "model", "")).lower()
         if "1m" in model or "1000000" in model:
             return 1_000_000
         return DEFAULT_CONTEXT_WINDOW
 
-    def _tools_chars(self):
+    def _tools_chars(self) -> int:
         total = 0
         for name, tool in self.agent.available_tools().items():
             fields = ", ".join(f"{key}: {value}" for key, value in tool.schema.items())

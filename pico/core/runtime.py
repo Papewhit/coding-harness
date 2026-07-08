@@ -5,6 +5,8 @@ The turn control loop lives in core.engine; tool execution and model-output
 parsing live in focused helper modules.
 """
 
+from __future__ import annotations
+
 import json
 import os
 import textwrap
@@ -13,6 +15,7 @@ import hashlib
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
+from typing import Any, Callable, Sequence
 
 from ..features import memory as memorylib, skills as skillslib
 from ..features.sandbox import SandboxConfig, SandboxRunner
@@ -30,6 +33,7 @@ from .runtime_secrets import REDACTED_VALUE, RuntimeSecretsMixin
 from .session_events import SessionEventBus
 from .session_lifecycle import clear_runtime_session, resume_runtime_session
 from .session_store import SessionStore as SessionStore  # noqa: F401
+from .task_state import TaskState
 from .tool_repetition import is_repeated_tool_call
 from .tool_profiles import build_tool_profiles
 from .todo_ledger import TodoLedger
@@ -81,29 +85,29 @@ class PromptPrefix:
 class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
     def __init__(
         self,
-        model_client,
-        workspace,
-        session_store,
-        session=None,
-        run_store=None,
-        approval_policy="ask",
-        max_steps=50,
-        max_new_tokens=8192,
-        depth=0,
-        max_depth=1,
-        read_only=False,
-        shell_env_allowlist=None,
-        secret_env_names=None,
-        feature_flags=None,
-        write_scope=None,
-        memory_dir=None,
-        auto_dream=True,
-        dream_interval_hours=24.0,
-        dream_min_sessions=5,
-        model_client_factory=None,
-        sandbox_config=None,
-        ask_user_callback=None,
-        allowed_tools=None,
+        model_client: Any,
+        workspace: WorkspaceContext,
+        session_store: SessionStore,
+        session: dict[str, Any] | None = None,
+        run_store: RunStore | None = None,
+        approval_policy: str = "ask",
+        max_steps: int = 50,
+        max_new_tokens: int = 8192,
+        depth: int = 0,
+        max_depth: int = 1,
+        read_only: bool = False,
+        shell_env_allowlist: Sequence[str] | None = None,
+        secret_env_names: Sequence[str] | None = None,
+        feature_flags: dict[str, bool] | None = None,
+        write_scope: str | list[str] | None = None,
+        memory_dir: str | Path | None = None,
+        auto_dream: bool = True,
+        dream_interval_hours: float = 24.0,
+        dream_min_sessions: int = 5,
+        model_client_factory: Callable | None = None,
+        sandbox_config: SandboxConfig | None = None,
+        ask_user_callback: Callable | None = None,
+        allowed_tools: Sequence[str] | None = None,
     ):
         self.model_client = model_client
         self.model_client_factory = model_client_factory
@@ -220,7 +224,14 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         }
 
     @classmethod
-    def from_session(cls, model_client, workspace, session_store, session_id, **kwargs):
+    def from_session(
+        cls,
+        model_client: Any,
+        workspace: WorkspaceContext,
+        session_store: SessionStore,
+        session_id: str,
+        **kwargs: Any,
+    ) -> "Pico":
         return cls(
             model_client=model_client,
             workspace=workspace,
@@ -229,7 +240,7 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
             **kwargs,
         )
 
-    def _resolve_memory_dir(self, memory_dir):
+    def _resolve_memory_dir(self, memory_dir: str | Path | None) -> Path:
         if memory_dir:
             path = Path(memory_dir).expanduser()
             path = path if path.is_absolute() else self.root / path
@@ -240,7 +251,7 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
             raise ValueError(f"memory_dir must stay inside workspace: {memory_dir}")
         return resolved
 
-    def _ensure_session_shape(self):
+    def _ensure_session_shape(self) -> None:
         self.session.setdefault("history", [])
         self.session.setdefault("memory", memorylib.default_memory_state())
         checkpoints = self.session.setdefault("checkpoints", {})
@@ -259,7 +270,7 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         if not isinstance(runtime_mode, dict):
             self.session["runtime_mode"] = {"mode": "default"}
 
-    def current_runtime_identity(self):
+    def current_runtime_identity(self) -> dict[str, Any]:
         return {
             "session_id": self.session.get("id", ""),
             "cwd": str(self.root),
@@ -279,23 +290,23 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
             "tool_signature": self.tool_signature(),
         }
 
-    def checkpoint_state(self):
+    def checkpoint_state(self) -> dict[str, Any]:
         self._ensure_session_shape()
         return self.session["checkpoints"]
 
-    def current_checkpoint(self):
+    def current_checkpoint(self) -> dict[str, Any] | None:
         state = self.checkpoint_state()
         checkpoint_id = str(state.get("current_id", "")).strip()
         if not checkpoint_id:
             return None
         return state.get("items", {}).get(checkpoint_id)
 
-    def invalidate_stale_memory(self):
+    def invalidate_stale_memory(self) -> Any:
         invalidated = self.memory.invalidate_stale_file_summaries()
         self.session["memory"] = self.memory.to_dict()
         return invalidated
 
-    def evaluate_resume_state(self):
+    def evaluate_resume_state(self) -> dict[str, Any]:
         previous_resume_state = dict(self.session.get("resume_state", {}) or {})
         invalidated = self.invalidate_stale_memory()
         checkpoint = self.current_checkpoint()
@@ -361,7 +372,7 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         self.session["runtime_identity"] = self.current_runtime_identity()
         return resume_state
 
-    def render_checkpoint_text(self):
+    def render_checkpoint_text(self) -> str:
         checkpoint = self.current_checkpoint()
         if not checkpoint:
             return ""
@@ -398,7 +409,7 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         return "\n".join(lines)
 
     @staticmethod
-    def remember(bucket, item, limit):
+    def remember(bucket: list[Any], item: Any, limit: int) -> None:
         if not item:
             return
         if item in bucket:
@@ -406,11 +417,11 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         bucket.append(item)
         del bucket[:-limit]
 
-    def build_tools(self):
+    def build_tools(self) -> dict[str, Any]:
         return toolkit.build_tool_registry(self)
 
     @staticmethod
-    def _normalize_allowed_tools(allowed_tools):
+    def _normalize_allowed_tools(allowed_tools: Sequence[str] | None) -> tuple[str, ...] | None:
         if allowed_tools is None:
             return None
         normalized = tuple(str(name).strip() for name in allowed_tools)
@@ -418,7 +429,7 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
             raise ValueError("allowed_tools must be a non-empty sequence of tool names")
         return normalized
 
-    def _apply_tool_allowlist(self, tools):
+    def _apply_tool_allowlist(self, tools: dict[str, Any]) -> dict[str, Any]:
         if self.allowed_tools is None:
             return tools
         unknown = [name for name in self.allowed_tools if name not in tools]
@@ -428,19 +439,19 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         return {name: tool for name, tool in tools.items() if name in allowed}
 
     @property
-    def active_tool_profile(self):
+    def active_tool_profile(self) -> Any:
         return self.tool_profiles[self._active_tool_profile_name]
 
-    def set_tool_profile(self, name):
+    def set_tool_profile(self, name: str) -> None:
         if name not in self.tool_profiles:
             raise ValueError(f"unknown tool profile: {name}")
         self._active_tool_profile_name = name
 
-    def available_tools(self):
+    def available_tools(self) -> dict[str, Any]:
         profile = self.active_tool_profile
         return {name: tool for name, tool in self.tools.items() if profile.allows(name)}
 
-    def tool_signature(self):
+    def tool_signature(self) -> str:
         payload = []
         for name in sorted(self.available_tools()):
             tool = self.available_tools()[name]
@@ -456,7 +467,7 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
             json.dumps(payload, sort_keys=True).encode("utf-8")
         ).hexdigest()
 
-    def build_prefix(self):
+    def build_prefix(self) -> PromptPrefix:
         tool_lines = []
         for name, tool in self.available_tools().items():
             fields = ", ".join(
@@ -522,11 +533,11 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
             built_at=now(),
         )
 
-    def _apply_prefix_state(self, prefix_state):
+    def _apply_prefix_state(self, prefix_state: PromptPrefix) -> None:
         self.prefix_state = prefix_state
         self.prefix = prefix_state.text
 
-    def refresh_prefix(self, force=False):
+    def refresh_prefix(self, force: bool = False) -> dict[str, bool]:
         previous_hash = getattr(getattr(self, "prefix_state", None), "hash", None)
         previous_workspace_fingerprint = getattr(
             getattr(self, "prefix_state", None), "workspace_fingerprint", None
@@ -557,25 +568,25 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         }
         return dict(self._last_prefix_refresh)
 
-    def memory_text(self):
+    def memory_text(self) -> str:
         return self.memory.render_memory_text()
 
     @property
-    def runtime_mode(self):
+    def runtime_mode(self) -> str:
         return str(
             self.session.get("runtime_mode", {}).get("mode", "default") or "default"
         )
 
-    def runtime_mode_text(self):
+    def runtime_mode_text(self) -> str:
         return self.plan_mode.prompt_text()
 
-    def enter_plan_mode(self, topic, path=None):
+    def enter_plan_mode(self, topic: str, path: str | None = None) -> Any:
         return self.plan_mode.enter(topic, path=path)
 
-    def exit_plan_mode(self):
+    def exit_plan_mode(self) -> Any:
         return self.plan_mode.exit()
 
-    def history_text(self):
+    def history_text(self) -> str:
         history = self.session["history"]
         if not history:
             return "- empty"
@@ -603,22 +614,22 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
 
         return clip("\n".join(lines), MAX_HISTORY)
 
-    def feature_enabled(self, name):
+    def feature_enabled(self, name: str) -> bool:
         return bool(self.feature_flags.get(str(name), False))
 
-    def prompt(self, user_message):
+    def prompt(self, user_message: str) -> str:
         prompt, _ = self._build_prompt_and_metadata(user_message)
         return prompt
 
-    def record(self, item):
+    def record(self, item: dict[str, Any]) -> None:
         self.session["history"].append(self.turn_history.enrich(item))
         self.session_path = self.session_store.save(self.session)
 
-    def prompt_metadata(self, user_message, prompt):
+    def prompt_metadata(self, user_message: str, prompt: str) -> dict[str, Any]:
         _, metadata = self._build_prompt_and_metadata(user_message)
         return metadata
 
-    def _build_prompt_and_metadata(self, user_message):
+    def _build_prompt_and_metadata(self, user_message: str) -> tuple[str, dict[str, Any]]:
         refresh = self.refresh_prefix()
         self.resume_state = self.evaluate_resume_state()
         prompt, metadata = self.context_manager.build(user_message)
@@ -670,15 +681,15 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         self.session_event_bus.emit("context_usage_recorded", usage_payload)
         return prompt, metadata
 
-    def compact_history(self, trigger="manual", keep_recent_turns=2):
+    def compact_history(self, trigger: str = "manual", keep_recent_turns: int = 2) -> Any:
         return self.compact_manager.compact(
             trigger=trigger, keep_recent_turns=keep_recent_turns
         )
 
-    def durable_memory_index_text(self):
+    def durable_memory_index_text(self) -> str:
         return memorylib.load_memory_index_text(self.memory_dir)
 
-    def remember_durable_note(self, text):
+    def remember_durable_note(self, text: str) -> str | None:
         path = memorylib.append_to_daily_log(self.memory_dir, text)
         if path:
             self.session_event_bus.emit(
@@ -691,26 +702,26 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
             )
         return path
 
-    def memory_command_text(self):
+    def memory_command_text(self) -> str:
         index = self.durable_memory_index_text()
         if index:
             return index
         return "No durable memories yet. Use /remember <text> and /dream to consolidate daily logs."
 
-    def run_dream(self, quiet=False, session_ids=None):
+    def run_dream(self, quiet: bool = False, session_ids: list[str] | None = None) -> Any:
         return memorylib.run_dream(self, quiet=quiet, session_ids=session_ids)
 
-    def maintain_memory_after_turn(self, final_answer):
+    def maintain_memory_after_turn(self, final_answer: str) -> Any:
         return memorylib.maintain_memory_after_turn(self, final_answer)
 
-    def wait_for_memory_maintenance(self, timeout=None):
+    def wait_for_memory_maintenance(self, timeout: float | None = None) -> bool:
         thread = self._memory_maintenance_thread
         if thread is None:
             return True
         thread.join(timeout=timeout)
         return not thread.is_alive()
 
-    def emit_trace(self, task_state, event, payload=None):
+    def emit_trace(self, task_state: TaskState, event: str, payload: dict[str, Any] | None = None) -> Any:
         payload = self.redact_artifact(payload or {})
         for path in payload.get("affected_paths", []) or []:
             if path not in task_state.changed_paths:
@@ -725,7 +736,7 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         self.run_store.write_task_state(task_state)
         return payload
 
-    def infer_next_step(self, task_state):
+    def infer_next_step(self, task_state: TaskState) -> str:
         if task_state.status == "completed":
             return "No next step recorded."
         if task_state.stop_reason == "step_limit_reached":
@@ -734,7 +745,7 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
             return f"Decide the next action after {task_state.last_tool}."
         return "Continue the task from the latest checkpoint."
 
-    def update_memory_after_tool(self, name, args, result):
+    def update_memory_after_tool(self, name: str, args: dict[str, Any], result: Any) -> None:
         """把少量高价值工具结果沉淀到 working memory。
 
         为什么存在：
@@ -776,10 +787,10 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         elif name in {"write_file", "patch_file"}:
             self.memory.invalidate_file_summary(canonical_path)
 
-    def note_tool(self, name, args, result):
+    def note_tool(self, name: str, args: dict[str, Any], result: Any) -> None:
         self.update_memory_after_tool(name, args, result)
 
-    def record_process_note_for_tool(self, name, metadata):
+    def record_process_note_for_tool(self, name: str, metadata: dict[str, Any]) -> None:
         status = str(metadata.get("tool_status", "")).strip()
         if status not in {"partial_success", "error", "rejected"}:
             return
@@ -799,21 +810,21 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         self.memory.append_note(text, tags=tuple(tags), source=name, kind="process")
         self.session["memory"] = self.memory.to_dict()
 
-    def reject_durable_reason(self, note_text):
+    def reject_durable_reason(self, note_text: str) -> Any:
         return memorylib.reject_durable_reason(note_text, redacted_value=REDACTED_VALUE)
 
-    def extract_durable_promotions(self, user_message, final_answer):
+    def extract_durable_promotions(self, user_message: str, final_answer: str) -> Any:
         return memorylib.extract_durable_promotions(
             user_message, final_answer, redacted_value=REDACTED_VALUE
         )
 
-    def promote_durable_memory(self, user_message, final_answer):
+    def promote_durable_memory(self, user_message: str, final_answer: str) -> Any:
         return memorylib.promote_durable_memory(self, user_message, final_answer)
 
-    def ask(self, user_message):
+    def ask(self, user_message: str) -> str:
         return self.engine.ask(user_message)
 
-    def abort_current_turn(self):
+    def abort_current_turn(self) -> None:
         self.abort_requested = True
         abort = getattr(self.model_client, "abort", None)
         if callable(abort):
@@ -822,26 +833,26 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
             except Exception:
                 pass
 
-    def ask_user(self, question, choices=None):
+    def ask_user(self, question: str, choices: Sequence[str] | None = None) -> str:
         if self.ask_user_callback is None:
             return "error: ask_user requires interactive mode"
         choices = [str(choice) for choice in (choices or [])]
         return str(self.ask_user_callback(str(question), choices))
 
-    def resume_session(self, session_id):
+    def resume_session(self, session_id: str) -> Any:
         return resume_runtime_session(self, session_id)
 
-    def clear_session(self):
+    def clear_session(self) -> Any:
         return clear_runtime_session(self)
 
-    def run_tool(self, name, args):
+    def run_tool(self, name: str, args: dict[str, Any]) -> Any:
         return tool_executor.run_tool(self, name, args)
 
-    def repeated_tool_call(self, name, args):
+    def repeated_tool_call(self, name: str, args: dict[str, Any]) -> bool:
         return is_repeated_tool_call(self.session["history"], name, args)
 
     @staticmethod
-    def new_task_id():
+    def new_task_id() -> str:
         return (
             "task_"
             + datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -850,7 +861,7 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         )
 
     @staticmethod
-    def new_run_id():
+    def new_run_id() -> str:
         return (
             "run_"
             + datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -858,7 +869,7 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
             + uuid.uuid4().hex[:6]
         )
 
-    def build_report(self, task_state):
+    def build_report(self, task_state: TaskState) -> dict[str, Any]:
         # report 是一次运行的最终摘要；
         return {
             "run_id": task_state.run_id,
@@ -886,17 +897,17 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
             "workers": self.worker_manager.to_dict(),
         }
 
-    def tool_example(self, name):
+    def tool_example(self, name: str) -> Any:
         return toolkit.tool_example(name)
 
-    def validate_tool(self, name, args):
+    def validate_tool(self, name: str, args: dict[str, Any]) -> None:
         """把通用工具校验和 runtime 级额外约束串起来。"""
         toolkit.validate_tool(self, name, args)
 
-    def tool_run_shell(self, args):
+    def tool_run_shell(self, args: dict[str, Any]) -> Any:
         return toolkit.tool_run_shell(self, args)
 
-    def approve(self, name, args):
+    def approve(self, name: str, args: dict[str, Any]) -> bool:
         if self.read_only:
             return False
         if self.approval_policy == "auto":
@@ -918,7 +929,7 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
     extract = staticmethod(model_output.extract)
     extract_raw = staticmethod(model_output.extract_raw)
 
-    def reset(self):
+    def reset(self) -> None:
         self.session["history"] = []
         self.session["memory"].clear()
         self.session["memory"].update(memorylib.default_memory_state())
@@ -928,7 +939,7 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         self.self_authored_file_freshness.clear()
         self.session_store.save(self.session)
 
-    def path(self, raw_path):
+    def path(self, raw_path: str | Path) -> Path:
         path = Path(raw_path)
         path = path if path.is_absolute() else self.root / path
         resolved = path.resolve()

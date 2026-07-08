@@ -1,7 +1,10 @@
 """Runtime permission decisions for tool execution."""
 
+from __future__ import annotations
+
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 
 @dataclass(frozen=True)
@@ -11,23 +14,23 @@ class PermissionDecision:
     security_event_type: str = ""
 
     @classmethod
-    def allow(cls, reason):
+    def allow(cls, reason: str) -> PermissionDecision:
         return cls("allow", reason)
 
     @classmethod
-    def deny(cls, reason, security_event_type=""):
+    def deny(cls, reason: str, security_event_type: str = "") -> PermissionDecision:
         return cls("deny", reason, security_event_type)
 
     @property
-    def allowed(self):
+    def allowed(self) -> bool:
         return self.decision == "allow"
 
 
 class PermissionChecker:
-    def __init__(self, runtime):
+    def __init__(self, runtime: Any) -> None:
         self.runtime = runtime
 
-    def check(self, tool, args):
+    def check(self, tool: Any, args: dict[str, Any] | None) -> PermissionDecision:
         args = args or {}
         profile = self.runtime.active_tool_profile
         if not profile.allows(tool.name):
@@ -52,7 +55,7 @@ class PermissionChecker:
             return PermissionDecision.allow("approval_prompt")
         return PermissionDecision.deny("approval_denied", "approval_denied")
 
-    def _check_plan(self, tool, args):
+    def _check_plan(self, tool: Any, args: dict[str, Any]) -> PermissionDecision:
         if tool.read_only:
             return PermissionDecision.allow("plan_read_only")
         if tool.name not in {"write_file", "patch_file"}:
@@ -63,7 +66,7 @@ class PermissionChecker:
             return PermissionDecision.deny("plan_mode_path_mismatch", "plan_mode_write_guard")
         return PermissionDecision.allow("plan_artifact_write")
 
-    def _check_write_scope(self, tool, args):
+    def _check_write_scope(self, tool: Any, args: dict[str, Any]) -> PermissionDecision:
         requested = self.runtime.path(args.get("path", ""))
         for raw_scope in self.runtime.write_scope:
             scope = self.runtime.path(raw_scope)

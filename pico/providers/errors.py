@@ -1,23 +1,26 @@
 """Structured provider failure types."""
 
+from __future__ import annotations
+
+from typing import Any
 from urllib.parse import urlsplit, urlunsplit
 
 
 class ProviderError(RuntimeError):
     def __init__(
         self,
-        message,
+        message: str,
         *,
-        provider="",
-        model="",
-        base_url="",
-        code="provider_error",
-        http_status=None,
-        retryable=False,
-        attempts=1,
-        retry_count=0,
-        body_excerpt="",
-        cause_type="",
+        provider: str = "",
+        model: str = "",
+        base_url: str = "",
+        code: str = "provider_error",
+        http_status: int | None = None,
+        retryable: bool = False,
+        attempts: int = 1,
+        retry_count: int = 0,
+        body_excerpt: str = "",
+        cause_type: str = "",
     ):
         super().__init__(message)
         self.provider = str(provider or "")
@@ -31,7 +34,7 @@ class ProviderError(RuntimeError):
         self.body_excerpt = _clip(body_excerpt, 500)
         self.cause_type = str(cause_type or "")
 
-    def to_metadata(self):
+    def to_metadata(self) -> dict[str, Any]:
         payload = {
             "provider_error": {
                 "code": self.code,
@@ -56,14 +59,14 @@ class ProviderError(RuntimeError):
         return payload
 
 
-def _clip(value, limit):
+def _clip(value: str, limit: int) -> str:
     text = str(value or "")
     if len(text) <= limit:
         return text
     return text[:limit] + f"\n...[truncated {len(text) - limit} chars]"
 
 
-def sanitize_url(value):
+def sanitize_url(value: str) -> str:
     text = str(value or "")
     if not text:
         return ""

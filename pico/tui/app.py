@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import threading
 from functools import partial
+from typing import Any
 
 from textual.app import App, ComposeResult
 from textual.binding import Binding
@@ -46,7 +47,7 @@ class PicoTuiApp(App):
         Binding("ctrl+q", "quit", "Quit"),
     ]
 
-    def __init__(self, agent, **kwargs) -> None:
+    def __init__(self, agent: Any, **kwargs) -> None:
         super().__init__(**kwargs)
         self.agent = agent
         self._turn_count = 0

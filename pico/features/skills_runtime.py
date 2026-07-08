@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+from collections.abc import Generator
 from contextlib import contextmanager
+from typing import Any
 
 from ..core.tool_profiles import ToolSetProfile
 
 
-def invoke_skill(agent, name, arguments=""):
+def invoke_skill(agent: Any, name: str, arguments: str = "") -> str:
     skill = agent.skills.get(str(name).lstrip("/"))
     if not skill:
         raise KeyError(name)
@@ -22,7 +24,7 @@ def invoke_skill(agent, name, arguments=""):
     return answer
 
 
-def _run_fork(agent, skill, prompt):
+def _run_fork(agent: Any, skill: Any, prompt: str) -> str:
     child = type(agent)(
         model_client=agent.model_client,
         workspace=agent.workspace,
@@ -43,15 +45,15 @@ def _run_fork(agent, skill, prompt):
     return answer
 
 
-def _skill_prompt(skill, arguments):
+def _skill_prompt(skill: Any, arguments: str) -> str:
     return (
         f"Skill: {skill.name}\nSource: {skill.source}\nContext: {skill.context}\n"
         f"Arguments: {arguments}\n\n{skill.render(arguments)}"
     )
 
 
-def _event_payload(skill, arguments, prompt, status="", answer=""):
-    payload = {
+def _event_payload(skill: Any, arguments: str, prompt: str, status: str = "", answer: str = "") -> dict[str, Any]:
+    payload: dict[str, Any] = {
         "skill": skill.name,
         "source": skill.source,
         "context": skill.context,
@@ -68,7 +70,7 @@ def _event_payload(skill, arguments, prompt, status="", answer=""):
 
 
 @contextmanager
-def _skill_tool_profile(agent, skill):
+def _skill_tool_profile(agent: Any, skill: Any) -> Generator[None, None, None]:
     if not skill.allowed_tools:
         yield
         return
@@ -85,7 +87,7 @@ def _skill_tool_profile(agent, skill):
 
 
 @contextmanager
-def _model_override(agent, model):
+def _model_override(agent: Any, model: str | None) -> Generator[None, None, None]:
     if not model:
         yield
         return

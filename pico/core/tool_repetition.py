@@ -1,9 +1,16 @@
 """Repeated tool-call guardrails."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from ..tools.base import RegisteredTool
+
 FILE_MUTATION_TOOLS = {"write_file", "patch_file"}
 
 
-def is_repeated_tool_call(history, name, args):
+def is_repeated_tool_call(history: list[dict[str, Any]], name: str, args: dict[str, Any]) -> bool:
     current_turn = _current_turn_history(history)
     tool_events = [
         (index, item)
@@ -25,7 +32,7 @@ def is_repeated_tool_call(history, name, args):
     return len(matches) >= 2
 
 
-def repeated_tool_call_metadata(tool):
+def repeated_tool_call_metadata(tool: RegisteredTool) -> dict[str, Any]:
     return {
         "tool_status": "rejected",
         "tool_error_code": "repeated_identical_call",
@@ -38,7 +45,7 @@ def repeated_tool_call_metadata(tool):
     }
 
 
-def _failed_file_write_retry_is_now_informed(current_turn, last_index, last_match):
+def _failed_file_write_retry_is_now_informed(current_turn: list[dict[str, Any]], last_index: int, last_match: dict[str, Any]) -> bool:
     content = str(last_match.get("content", ""))
     if not content.startswith("error:"):
         return False
@@ -57,7 +64,7 @@ def _failed_file_write_retry_is_now_informed(current_turn, last_index, last_matc
     return False
 
 
-def _current_turn_history(history):
+def _current_turn_history(history: list[dict[str, Any]]) -> list[dict[str, Any]]:
     history = list(history)
     for index in range(len(history) - 1, -1, -1):
         if history[index].get("role") == "user":

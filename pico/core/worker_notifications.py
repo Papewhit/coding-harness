@@ -1,9 +1,12 @@
 """Worker notification rendering."""
 
+from __future__ import annotations
+
+from typing import Any
 from xml.sax.saxutils import escape
 
 
-def render_worker_notification(item):
+def render_worker_notification(item: dict[str, Any]) -> str:
     result = str(item.get("result", ""))
     parts = [
         "<task-notification>",

@@ -4,10 +4,13 @@
 如何做参数校验，以及最终如何执行，都是在这里定义的。
 """
 
+from __future__ import annotations
+
 import shutil
 import subprocess
 import textwrap
 from functools import partial
+from typing import Any
 
 from pydantic import ValidationError
 
@@ -128,7 +131,7 @@ TOOL_EXAMPLES = {
 }
 
 
-def build_tool_registry(agent):
+def build_tool_registry(agent: Any) -> dict[str, RegisteredTool]:
     # 工具不是动态发现的，而是显式注册的。
     # 这样模型看到的是一个有边界、可审计的动作集合。
     tools = {
@@ -144,11 +147,11 @@ def build_tool_registry(agent):
     return tools
 
 
-def tool_example(name):
+def tool_example(name: str) -> str:
     return TOOL_EXAMPLES.get(name, "")
 
 
-def validate_tool(agent, name, args):
+def validate_tool(agent: Any, name: str, args: dict[str, Any] | None) -> None:
     args = args or {}
 
     schema_cls = _TOOL_SCHEMAS.get(name)
@@ -192,7 +195,7 @@ def validate_tool(agent, name, args):
         validate_agent_runtime(agent, name, args)
 
 
-def tool_list_files(agent, args):
+def tool_list_files(agent: Any, args: dict[str, Any]) -> str:
     path = agent.path(args.get("path", "."))
     if not path.is_dir():
         raise ValueError("path is not a directory")
@@ -210,7 +213,7 @@ def tool_list_files(agent, args):
     return "\n".join(lines) or "(empty)"
 
 
-def tool_read_file(agent, args):
+def tool_read_file(agent: Any, args: dict[str, Any]) -> str:
     path = agent.path(args["path"])
     if not path.is_file():
         raise ValueError("path is not a file")
@@ -226,7 +229,7 @@ def tool_read_file(agent, args):
     return f"# {path.relative_to(agent.root)}\n{body}"
 
 
-def tool_search(agent, args):
+def tool_search(agent: Any, args: dict[str, Any]) -> str:
     pattern = str(args.get("pattern", "")).strip()
     if not pattern:
         raise ValueError("pattern must not be empty")
@@ -268,7 +271,7 @@ def tool_search(agent, args):
     return "\n".join(matches) or "(no matches)"
 
 
-def tool_run_shell(agent, args):
+def tool_run_shell(agent: Any, args: dict[str, Any]) -> str:
     command = str(args.get("command", "")).strip()
     if not command:
         raise ValueError("command must not be empty")
@@ -306,7 +309,7 @@ def tool_run_shell(agent, args):
     ).strip()
 
 
-def tool_write_file(agent, args):
+def tool_write_file(agent: Any, args: dict[str, Any]) -> str:
     path = agent.path(args["path"])
     content = str(args["content"])
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -314,7 +317,7 @@ def tool_write_file(agent, args):
     return f"wrote {path.relative_to(agent.root)} ({len(content)} chars)"
 
 
-def tool_patch_file(agent, args):
+def tool_patch_file(agent: Any, args: dict[str, Any]) -> str:
     path = agent.path(args["path"])
     if not path.is_file():
         raise ValueError("path is not a file")

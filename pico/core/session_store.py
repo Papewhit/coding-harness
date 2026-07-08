@@ -1,27 +1,30 @@
 """Session JSON storage."""
 
+from __future__ import annotations
+
 import json
 import os
 import threading
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 
 from .workspace import clip
 
 
 class SessionStore:
-    def __init__(self, root):
+    def __init__(self, root: str | Path) -> None:
         self.root = Path(root)
         self.root.mkdir(parents=True, exist_ok=True)
         self._lock = threading.RLock()
 
-    def path(self, session_id):
+    def path(self, session_id: str) -> Path:
         return self.root / f"{_safe_session_id(session_id)}.json"
 
-    def event_path(self, session_id):
+    def event_path(self, session_id: str) -> Path:
         return self.root / f"{_safe_session_id(session_id)}.events.jsonl"
 
-    def save(self, session):
+    def save(self, session: dict[str, Any]) -> Path:
         path = self.path(session["id"])
         payload = json.dumps(session, indent=2, ensure_ascii=False)
         with self._lock:
@@ -32,15 +35,15 @@ class SessionStore:
             os.replace(tmp_path, path)
         return path
 
-    def load(self, session_id):
+    def load(self, session_id: str) -> dict[str, Any]:
         with self._lock:
             return json.loads(self.path(session_id).read_text(encoding="utf-8"))
 
-    def latest(self):
+    def latest(self) -> str | None:
         files = sorted(self.root.glob("*.json"), key=lambda path: path.stat().st_mtime)
         return files[-1].stem if files else None
 
-    def list_sessions(self):
+    def list_sessions(self) -> list[dict[str, Any]]:
         rows = []
         for index, path in enumerate(
             sorted(
@@ -75,14 +78,14 @@ class SessionStore:
         return rows
 
 
-def _last_final_preview(history):
+def _last_final_preview(history: list[dict[str, Any]]) -> str:
     for item in reversed(history):
         if item.get("role") == "assistant":
             return clip(item.get("content", ""), 80)
     return ""
 
 
-def _safe_session_id(session_id):
+def _safe_session_id(session_id: str) -> str:
     value = str(session_id or "").strip()
     if not value or value in {".", ".."} or "/" in value or "\\" in value:
         raise ValueError("invalid session id")

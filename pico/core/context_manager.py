@@ -6,6 +6,7 @@
 
 from __future__ import annotations
 
+from typing import Any
 from dataclasses import dataclass
 
 from ..features import memory as memorylib, skills as skillslib
@@ -53,11 +54,11 @@ class SectionRender:
 class ContextManager:
     def __init__(
         self,
-        agent,
-        total_budget=DEFAULT_TOTAL_BUDGET,
-        section_budgets=None,
-        section_floors=None,
-        reduction_order=None,
+        agent: Any,
+        total_budget: int = DEFAULT_TOTAL_BUDGET,
+        section_budgets: dict[str, int] | None = None,
+        section_floors: dict[str, int] | None = None,
+        reduction_order: tuple[str, ...] | None = None,
     ):
         self.agent = agent
         self.total_budget = int(total_budget)
@@ -69,7 +70,7 @@ class ContextManager:
         self.reduction_order = tuple(reduction_order or DEFAULT_REDUCTION_ORDER)
         self.history_builder = TurnHistoryBuilder(agent)
 
-    def build(self, user_message):
+    def build(self, user_message: str) -> tuple[str, dict[str, Any]]:
         """按预算组装一轮完整 prompt。
 
         为什么存在：
@@ -181,7 +182,7 @@ class ContextManager:
         )
         return prompt, metadata
 
-    def _render_sections_without_reduction(self, section_texts, selected_notes=None):
+    def _render_sections_without_reduction(self, section_texts: dict[str, str], selected_notes: list[dict[str, Any]] | None = None) -> dict[str, SectionRender]:
         selected_notes = selected_notes or []
         relevant_lines = ["Relevant memory:"]
         if selected_notes:
@@ -216,7 +217,7 @@ class ContextManager:
             ),
         }
 
-    def _compute_section_floors(self):
+    def _compute_section_floors(self) -> dict[str, int]:
         floors = {
             section: max(20, int(budget) // 4)
             for section, budget in self.section_budgets.items()
@@ -224,7 +225,7 @@ class ContextManager:
         floors.update(self._section_floor_overrides)
         return floors
 
-    def _render_sections(self, section_texts, budgets, selected_notes=None):
+    def _render_sections(self, section_texts: dict[str, str], budgets: dict[str, int], selected_notes: list[dict[str, Any]] | None = None) -> dict[str, SectionRender]:
         rendered = {}
         for section in SECTION_ORDER:
             budget = budgets.get(section)
@@ -241,7 +242,7 @@ class ContextManager:
                 rendered[section] = SectionRender(raw=raw, budget=int(budget) if budget is not None else 0, rendered=rendered_text, details={})
         return rendered
 
-    def _render_relevant_memory(self, selected_notes, budget):
+    def _render_relevant_memory(self, selected_notes: list[dict[str, Any]], budget: int) -> SectionRender:
         header = "Relevant memory:"
         note_texts = [str(note.get("text", "")) for note in selected_notes if str(note.get("text", "")).strip()]
         raw_lines = [header] + [f"- {text}" for text in note_texts]
@@ -288,14 +289,14 @@ class ContextManager:
             },
         )
 
-    def _per_note_budget(self, budget, note_count, header):
+    def _per_note_budget(self, budget: int, note_count: int, header: str) -> int:
         if note_count <= 0:
             return 0
         overhead = len(header) + 3 * note_count
         usable = max(0, budget - overhead)
         return max(1, usable // note_count)
 
-    def _render_history_section(self, budget):
+    def _render_history_section(self, budget: int) -> SectionRender:
         history = list(getattr(self.agent, "session", {}).get("history", []))
         raw = self.history_builder.raw_text(history)
         if not history:
@@ -323,11 +324,11 @@ class ContextManager:
             details=history_details,
         )
 
-    def _assemble_prompt(self, rendered):
+    def _assemble_prompt(self, rendered: dict[str, SectionRender]) -> str:
         # 顺序是刻意设计的：稳定规则放前面，最新请求放最后。
         return "\n\n".join(rendered[section].rendered for section in SECTION_ORDER).strip()
 
-    def _metadata(self, prompt, rendered, budgets, reduction_log, selected_notes, user_message, section_texts):
+    def _metadata(self, prompt: str, rendered: dict[str, SectionRender], budgets: dict[str, int], reduction_log: list[dict[str, Any]], selected_notes: list[dict[str, Any]], user_message: str, section_texts: dict[str, str]) -> dict[str, Any]:
         section_metadata = {}
         for section in SECTION_ORDER[:-1]:
             section_metadata[section] = {
@@ -385,7 +386,7 @@ class ContextManager:
             "context_usage": ContextUsageAnalyzer(self.agent).analyze(rendered),
         }
 
-    def _skills_metadata(self):
+    def _skills_metadata(self) -> dict[str, Any]:
         skills = getattr(self.agent, "skills", {})
         items = [skill.metadata() for skill in skillslib.list_skills(skills, user_invocable_only=False)]
         return {
