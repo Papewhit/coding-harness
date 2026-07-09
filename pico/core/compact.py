@@ -2,14 +2,16 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
+if TYPE_CHECKING:
+    from .runtime import Pico
 from .context_usage import estimate_tokens
 from .workspace import now
 
 
 class CompactManager:
-    def __init__(self, agent: Any) -> None:
+    def __init__(self, agent: Pico) -> None:
         self.agent = agent
 
     def compact(

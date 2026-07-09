@@ -19,6 +19,8 @@ from typing import Any, Callable, Sequence
 
 from ..features import memory as memorylib, skills as skillslib
 from ..features.sandbox import SandboxConfig, SandboxRunner
+from ..providers.base import ModelClient
+from ..tools.base import RegisteredTool
 from .compact import CompactManager
 from .context_manager import ContextManager
 from .engine import Engine
@@ -35,7 +37,7 @@ from .session_lifecycle import clear_runtime_session, resume_runtime_session
 from .session_store import SessionStore as SessionStore  # noqa: F401
 from .task_state import TaskState
 from .tool_repetition import is_repeated_tool_call
-from .tool_profiles import build_tool_profiles
+from .tool_profiles import ToolSetProfile, build_tool_profiles
 from .todo_ledger import TodoLedger
 from .turn_history import TurnHistoryBuilder
 from .worker_manager import WorkerManager
@@ -85,7 +87,7 @@ class PromptPrefix:
 class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
     def __init__(
         self,
-        model_client: Any,
+        model_client: ModelClient,
         workspace: WorkspaceContext,
         session_store: SessionStore,
         session: dict[str, Any] | None = None,
@@ -104,7 +106,7 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         auto_dream: bool = True,
         dream_interval_hours: float = 24.0,
         dream_min_sessions: int = 5,
-        model_client_factory: Callable | None = None,
+        model_client_factory: Callable[[], ModelClient] | None = None,
         sandbox_config: SandboxConfig | None = None,
         ask_user_callback: Callable | None = None,
         allowed_tools: Sequence[str] | None = None,
@@ -226,7 +228,7 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
     @classmethod
     def from_session(
         cls,
-        model_client: Any,
+        model_client: ModelClient,
         workspace: WorkspaceContext,
         session_store: SessionStore,
         session_id: str,
@@ -417,7 +419,7 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         bucket.append(item)
         del bucket[:-limit]
 
-    def build_tools(self) -> dict[str, Any]:
+    def build_tools(self) -> dict[str, RegisteredTool]:
         return toolkit.build_tool_registry(self)
 
     @staticmethod
@@ -429,7 +431,7 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
             raise ValueError("allowed_tools must be a non-empty sequence of tool names")
         return normalized
 
-    def _apply_tool_allowlist(self, tools: dict[str, Any]) -> dict[str, Any]:
+    def _apply_tool_allowlist(self, tools: dict[str, RegisteredTool]) -> dict[str, RegisteredTool]:
         if self.allowed_tools is None:
             return tools
         unknown = [name for name in self.allowed_tools if name not in tools]
@@ -439,7 +441,7 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         return {name: tool for name, tool in tools.items() if name in allowed}
 
     @property
-    def active_tool_profile(self) -> Any:
+    def active_tool_profile(self) -> ToolSetProfile:
         return self.tool_profiles[self._active_tool_profile_name]
 
     def set_tool_profile(self, name: str) -> None:
@@ -447,7 +449,7 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
             raise ValueError(f"unknown tool profile: {name}")
         self._active_tool_profile_name = name
 
-    def available_tools(self) -> dict[str, Any]:
+    def available_tools(self) -> dict[str, RegisteredTool]:
         profile = self.active_tool_profile
         return {name: tool for name, tool in self.tools.items() if profile.allows(name)}
 

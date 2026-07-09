@@ -37,7 +37,7 @@ Two clients, both exposing a `complete(prompt, max_new_tokens, **kwargs)` method
 - **`OpenAICompatibleModelClient`** — POSTs to `/v1/responses`, supports `prompt_cache_key` for `openai.com` / `right.codes` hosts, handles both JSON and SSE responses
 - **`AnthropicCompatibleModelClient`** — POSTs to `/v1/messages`, no cache support
 
-`providers/base.py` provides `complete_model()` which wraps either `complete_result()` (returns `ModelResult` directly) or `complete()` (returns raw text), normalizing the interface.
+`providers/base.py` provides `complete_model()` which wraps either `complete_result()` (returns `ModelResult` directly, inactive now) or `complete()` (returns raw text), normalizing the interface.
 
 ### Configuration (`config/`)
 
@@ -86,3 +86,8 @@ Built with Textual. `tui/main.py` entry point. Connects to the same `Pico` runti
 - **Feature flags**: `memory`, `relevant_memory`, `context_reduction`, `prompt_cache` are toggled via `DEFAULT_FEATURE_FLAGS` dict in `runtime.py` and influence prompt building and memory behavior.
 - **No dynamic tool discovery**: Tools are explicitly registered; the model sees a bounded, auditable action set.
 - **Atomic file writes**: `SessionStore.save()` writes to a temp file then `os.replace()` for atomicity. `write_file` creates parent directories automatically.
+
+## Documentation
+
+- **In-project resources**: `release/v3` AI-generated learning material, for quick overview and key pattern insights.
+- **Online resources**: `pico` at 飞书云文档, mirrors v2 but could be treated as valid learning material for core module design. Access through Lark CLI.

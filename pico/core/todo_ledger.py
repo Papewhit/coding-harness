@@ -2,16 +2,18 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from .workspace import now
+if TYPE_CHECKING:
+    from .runtime import Pico
 
 VALID_STATUS = {"pending", "in_progress", "done", "blocked"}
 VALID_PRIORITY = {"low", "normal", "high"}
 
 
 class TodoLedger:
-    def __init__(self, runtime: Any) -> None:
+    def __init__(self, runtime: Pico) -> None:
         self.runtime = runtime
         self.runtime.session.setdefault("todos", {"next_id": 1, "items": []})
 

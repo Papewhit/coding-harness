@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 import re
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from .runtime import Pico
 
 
 def _slug(value: str) -> str:
@@ -12,7 +15,7 @@ def _slug(value: str) -> str:
 
 
 class PlanModeManager:
-    def __init__(self, runtime: Any) -> None:
+    def __init__(self, runtime: Pico) -> None:
         self.runtime = runtime
 
     @property

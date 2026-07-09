@@ -294,7 +294,7 @@ class OpenAICompatibleModelClient:
         self.supports_prompt_cache = any(host in self.base_url for host in ("openai.com", "right.codes"))
         self.last_completion_metadata = {}
 
-    def complete(self, prompt: str, max_new_tokens: int, prompt_cache_key: str | None = None, prompt_cache_retention: int | None = None) -> str:
+    def complete(self, prompt: str, max_new_tokens: int, prompt_cache_key: str | None = None, prompt_cache_retention: str | None = None) -> str:
         """向 OpenAI-compatible `/responses` 接口发起一次模型调用。
 
         为什么存在：
@@ -456,7 +456,7 @@ class AnthropicCompatibleModelClient:
         self.supports_prompt_cache = False
         self.last_completion_metadata = {}
 
-    def complete(self, prompt: str, max_new_tokens: int, prompt_cache_key: str | None = None, prompt_cache_retention: int | None = None) -> str:
+    def complete(self, prompt: str, max_new_tokens: int, prompt_cache_key = None, prompt_cache_retention = None) -> str:
         # 为了保持统一接口，runtime 仍然会传缓存参数进来；
         # 这里只是显式丢弃，因为当前 Anthropic-compatible 路径没有接缓存复用。
         del prompt_cache_key, prompt_cache_retention

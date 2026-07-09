@@ -4,7 +4,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+from ..tools.base import RegisteredTool
+
+if TYPE_CHECKING:
+    from .runtime import Pico
 
 
 @dataclass(frozen=True)
@@ -27,10 +32,10 @@ class PermissionDecision:
 
 
 class PermissionChecker:
-    def __init__(self, runtime: Any) -> None:
+    def __init__(self, runtime: Pico) -> None:
         self.runtime = runtime
 
-    def check(self, tool: Any, args: dict[str, Any] | None) -> PermissionDecision:
+    def check(self, tool: RegisteredTool, args: dict[str, Any] | None) -> PermissionDecision:
         args = args or {}
         profile = self.runtime.active_tool_profile
         if not profile.allows(tool.name):
@@ -55,7 +60,7 @@ class PermissionChecker:
             return PermissionDecision.allow("approval_prompt")
         return PermissionDecision.deny("approval_denied", "approval_denied")
 
-    def _check_plan(self, tool: Any, args: dict[str, Any]) -> PermissionDecision:
+    def _check_plan(self, tool: RegisteredTool, args: dict[str, Any]) -> PermissionDecision:
         if tool.read_only:
             return PermissionDecision.allow("plan_read_only")
         if tool.name not in {"write_file", "patch_file"}:
@@ -66,7 +71,7 @@ class PermissionChecker:
             return PermissionDecision.deny("plan_mode_path_mismatch", "plan_mode_write_guard")
         return PermissionDecision.allow("plan_artifact_write")
 
-    def _check_write_scope(self, tool: Any, args: dict[str, Any]) -> PermissionDecision:
+    def _check_write_scope(self, tool: RegisteredTool, args: dict[str, Any]) -> PermissionDecision:
         requested = self.runtime.path(args.get("path", ""))
         for raw_scope in self.runtime.write_scope:
             scope = self.runtime.path(raw_scope)

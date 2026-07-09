@@ -4,7 +4,10 @@ from __future__ import annotations
 
 import json
 from collections import OrderedDict
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from .runtime import Pico
 
 
 def tail_clip(text: str, limit: int) -> str:
@@ -19,7 +22,7 @@ def tail_clip(text: str, limit: int) -> str:
 
 
 class TurnHistoryBuilder:
-    def __init__(self, agent: Any):
+    def __init__(self, agent: Pico):
         self.agent = agent
 
     def enrich(self, item: dict[str, Any]) -> dict[str, Any]:

@@ -27,7 +27,7 @@ from .config import (
 )
 from .features import skills as skillslib
 from .features.skills_runtime import invoke_skill
-from .providers import AnthropicCompatibleModelClient, OpenAICompatibleModelClient
+from .providers import ModelClient, AnthropicCompatibleModelClient, OpenAICompatibleModelClient
 from .core.runtime import Pico, SessionStore
 from .core.workspace import WorkspaceContext, middle
 
@@ -84,7 +84,7 @@ def _configured_secret_names(args: argparse.Namespace) -> list[str]:
     return sorted(configured_secret_names)
 
 
-def _build_model_client(args: argparse.Namespace) -> OpenAICompatibleModelClient | AnthropicCompatibleModelClient:
+def _build_model_client(args: argparse.Namespace) -> ModelClient:
     config = resolve_provider_config(
         getattr(args, "provider", None),
         start=getattr(args, "cwd", "."),

@@ -7,11 +7,13 @@ import queue
 import threading
 import time
 from dataclasses import dataclass, field
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from .worker_execution import run_worker
 from .worker_runtime import build_child_runtime
 from .workspace import now
+if TYPE_CHECKING:
+    from .runtime import Pico
 
 
 @dataclass
@@ -27,7 +29,7 @@ class WorkerTask:
 
 
 class WorkerManager:
-    def __init__(self, runtime: Any) -> None:
+    def __init__(self, runtime: Pico) -> None:
         self.runtime = runtime
         self.runtime.session.setdefault("workers", {"next_id": 1, "items": []})
         self._tasks: dict[str, WorkerTask] = {}

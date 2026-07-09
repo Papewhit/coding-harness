@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+
+from ..tools.base import RegisteredTool
 
 
 @dataclass(frozen=True)
@@ -15,7 +16,7 @@ class ToolSetProfile:
         return tool_name in self.allowed_tools
 
 
-def build_tool_profiles(tools: dict[str, Any]) -> dict[str, ToolSetProfile]:
+def build_tool_profiles(tools: dict[str, RegisteredTool]) -> dict[str, ToolSetProfile]:
     all_tools = frozenset(tools)
     coordinator_tools = frozenset({"agent", "send_message", "task_stop"})
     mode_tools = frozenset({"enter_plan_mode", "exit_plan_mode"})

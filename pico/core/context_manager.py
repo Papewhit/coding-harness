@@ -6,9 +6,11 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from dataclasses import dataclass
 
+if TYPE_CHECKING:
+    from .runtime import Pico
 from ..features import memory as memorylib, skills as skillslib
 from .context_usage import ContextUsageAnalyzer
 from .turn_history import TurnHistoryBuilder, tail_clip
@@ -54,7 +56,7 @@ class SectionRender:
 class ContextManager:
     def __init__(
         self,
-        agent: Any,
+        agent: Pico,
         total_budget: int = DEFAULT_TOTAL_BUDGET,
         section_budgets: dict[str, int] | None = None,
         section_floors: dict[str, int] | None = None,

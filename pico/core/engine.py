@@ -20,7 +20,9 @@ from .engine_helpers import (
 )
 from .task_state import TaskState
 from .workspace import clip, now
-from typing import Any, Iterator
+from typing import TYPE_CHECKING, Any, Iterator
+if TYPE_CHECKING:
+    from .runtime import Pico
 
 CHECKPOINT_NONE_STATUS = "no-checkpoint"
 CHECKPOINT_PARTIAL_STALE_STATUS = "partial-stale"
@@ -28,7 +30,7 @@ CHECKPOINT_WORKSPACE_MISMATCH_STATUS = "workspace-mismatch"
 
 
 class Engine:
-    def __init__(self, runtime: Any):
+    def __init__(self, runtime: Pico):
         self.runtime = runtime
 
     def ask(self, user_message: str) -> str:

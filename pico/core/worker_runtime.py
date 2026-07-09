@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING
 
+from ..providers.base import ModelClient
 from .workspace import WorkspaceContext
+if TYPE_CHECKING:
+    from .runtime import Pico
 
 
-def build_child_runtime(parent: Any, subagent_type: str, write_scope: tuple[str, ...]) -> Any:
+def build_child_runtime(parent: Pico, subagent_type: str, write_scope: tuple[str, ...]) -> Pico:
     from .runtime import Pico
 
     child = Pico(
@@ -35,7 +38,7 @@ def build_child_runtime(parent: Any, subagent_type: str, write_scope: tuple[str,
     return child
 
 
-def new_model_client(parent: Any) -> Any:
+def new_model_client(parent: Pico) -> ModelClient:
     factory = getattr(parent, "model_client_factory", None)
     if factory is not None:
         return factory()
