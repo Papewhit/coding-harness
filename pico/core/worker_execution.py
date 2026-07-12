@@ -3,15 +3,17 @@
 from __future__ import annotations
 
 import time
-from typing import Any
+from typing import TYPE_CHECKING
 
 from .worker_artifacts import collect_worker_artifacts
 from .worker_notifications import render_worker_notification
 from .workspace import clip, now
+if TYPE_CHECKING:
+    from .worker_manager import WorkerTask, WorkerManager
 
 
-def run_worker(manager: Any, task: Any, prompt: str, action: str) -> None:
-    item = manager._get_item(task.id)
+def run_worker(manager: WorkerManager, task: WorkerTask, prompt: str, action: str) -> None:
+    item = manager._get_item(task.id) # 修改的是 manager 内部状态
     with manager._lock:
         item["status"] = "running"
         item["updated_at"] = now()

@@ -22,7 +22,7 @@ class WorkerTask:
     description: str
     subagent_type: str
     write_scope: tuple[str, ...]
-    runtime: object
+    runtime: Pico
     thread: threading.Thread | None = None
     stop_requested: bool = False
     state: dict = field(default_factory=dict)
@@ -41,6 +41,11 @@ class WorkerManager:
         return self.runtime.session.setdefault("workers", {"next_id": 1, "items": []})
 
     def spawn(self, description: str, prompt: str, subagent_type: str = "worker", write_scope: list[str] | None = None) -> dict[str, Any]:
+        """
+        Spawn a new worker task and return its public payload.
+        If the runtime supports background execution, the worker will run in a daemon thread;
+        otherwise, it will run synchronously.
+        """
         subagent_type = _clean_type(subagent_type)
         if self.runtime.runtime_mode == "plan" and subagent_type != "Explore":
             raise ValueError("plan mode only allows Explore agents")
@@ -53,6 +58,7 @@ class WorkerManager:
         return self._public_payload(task)
 
     def continue_task(self, task_id: str, message: str) -> dict[str, Any]:
+        """Continue an existing worker task by id with a message. Returns the current status of the task."""
         task = self._get_active_task(task_id)
         item = self._get_item(task_id)
         if item.get("status") in {"running", "stopping"}:
@@ -66,6 +72,7 @@ class WorkerManager:
         return self._public_payload(task)
 
     def stop_task(self, task_id: str) -> dict[str, Any]:
+        """Request that a running worker task be stopped. Returns the current status of the task."""
         item = self._get_item(task_id)
         if item["status"] == "running":
             task = self._tasks.get(str(task_id))
@@ -84,6 +91,7 @@ class WorkerManager:
         }
 
     def shutdown(self, timeout: float = 2.0) -> dict[str, Any]:
+        """Stop all running workers and wait for them to finish, up to the given timeout in seconds."""
         tasks = list(self._tasks.values())
         for task in tasks:
             item = self._get_item(task.id)
@@ -114,7 +122,7 @@ class WorkerManager:
             "items": [dict(item) for item in self.state.get("items", [])],
         }
 
-    def _new_task(self, description: str, subagent_type: str, write_scope: Any) -> WorkerTask:
+    def _new_task(self, description: str, subagent_type: str, write_scope: list[str]) -> WorkerTask:
         with self._lock:
             worker_id = f"agent_{int(self.state.get('next_id', 1))}"
             self.state["next_id"] = int(self.state.get("next_id", 1)) + 1
@@ -143,6 +151,7 @@ class WorkerManager:
         return getattr(self.runtime, "model_client_factory", None) is not None
 
     def _start_background(self, task: WorkerTask, prompt: str, action: str) -> None:
+        # 在 daemon 线程中运行子代理
         thread = threading.Thread(
             target=run_worker,
             args=(self, task, prompt, action),

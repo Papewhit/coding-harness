@@ -6,8 +6,10 @@ import json
 from pathlib import Path
 from typing import Any
 
+from ..core.runtime import Pico
 
-def collect_worker_artifacts(root: Path, child: Any, task_state: Any) -> dict[str, Any]:
+
+def collect_worker_artifacts(root: Path, child: Pico, task_state: dict[str, Any] | None) -> dict[str, Any]:
     run_dir = getattr(child, "current_run_dir", None)
     payload = {
         "run_id": str(getattr(task_state, "run_id", "") or ""),

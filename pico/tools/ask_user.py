@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from ..core.runtime import Pico
+
 ASK_USER_TOOL_SPECS = {
     "ask_user": {
         "schema": {"question": "str", "choices": "list[str]=[]"},
@@ -18,5 +20,5 @@ ASK_USER_TOOL_EXAMPLES = {
 
 
 
-def tool_ask_user(agent: Any, args: dict[str, Any]) -> str:
+def tool_ask_user(agent: Pico, args: dict[str, Any]) -> str:
     return agent.ask_user(str(args["question"]), choices=args.get("choices", []) or [])

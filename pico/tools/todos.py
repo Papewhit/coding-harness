@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from ..core.runtime import Pico
+
 TODO_TOOL_SPECS = {
     "todo_add": {
         "schema": {"content": "str", "status": "str='pending'", "priority": "str='normal'", "note": "str=''"},
@@ -26,7 +28,7 @@ TODO_TOOL_EXAMPLES = {
 
 
 
-def tool_todo_add(agent: Any, args: dict[str, Any]) -> str:
+def tool_todo_add(agent: Pico, args: dict[str, Any]) -> str:
     item = agent.todo_ledger.add(
         args["content"],
         status=args.get("status", "pending"),
@@ -36,7 +38,7 @@ def tool_todo_add(agent: Any, args: dict[str, Any]) -> str:
     return f"added {item['id']} [{item['status']}] {item['priority']} - {item['content']}"
 
 
-def tool_todo_update(agent: Any, args: dict[str, Any]) -> str:
+def tool_todo_update(agent: Pico, args: dict[str, Any]) -> str:
     item = agent.todo_ledger.update(
         args["todo_id"],
         status=args.get("status"),
@@ -47,5 +49,5 @@ def tool_todo_update(agent: Any, args: dict[str, Any]) -> str:
     return f"updated {item['id']} [{item['status']}] {item['priority']} - {item['content']}"
 
 
-def tool_todo_list(agent: Any, args: dict[str, Any]) -> str:
+def tool_todo_list(agent: Pico, args: dict[str, Any]) -> str:
     return agent.todo_ledger.render_list()

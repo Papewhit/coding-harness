@@ -64,6 +64,7 @@ class ToolPolicyChecker:
     def _has_fresh_read(self, path: str) -> bool:
         canonical = self.runtime.memory.canonical_path(path)
         summary = self.runtime.memory.to_dict().get("file_summaries", {}).get(canonical, {})
+        # TODO 编辑文件需要定位，summary 无法承载定位信息，但错误根源应该不在这里
         if summary and summary.get("freshness") == memorylib.file_freshness(canonical, self.runtime.root):
             return True
         freshness = self.runtime.self_authored_file_freshness.get(canonical)

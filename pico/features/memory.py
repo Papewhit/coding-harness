@@ -14,8 +14,10 @@ import threading
 from datetime import date, datetime
 import re
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
+if TYPE_CHECKING:
+    from ..core.runtime import Pico
 from ..core.workspace import WorkspaceContext, clip, now
 
 WORKING_FILE_LIMIT = 8
@@ -121,14 +123,14 @@ def default_memory_maintenance_audit(auto_dream: bool = True) -> dict[str, Any]:
     }
 
 
-def _agent_relative_path(agent: Any, path: str | Path) -> str:
+def _agent_relative_path(agent: Pico, path: str | Path) -> str:
     try:
         return Path(path).resolve().relative_to(agent.root).as_posix()
     except ValueError:
         return str(path)
 
 
-def _memory_file_snapshot(agent: Any) -> dict[str, str]:
+def _memory_file_snapshot(agent: Pico) -> dict[str, str]:
     memory_dir = Path(agent.memory_dir)
     if not memory_dir.exists():
         return {}
@@ -148,14 +150,14 @@ def _changed_memory_files(before: dict[str, str], after: dict[str, str]) -> list
     return sorted(path for path in set(before) | set(after) if before.get(path) != after.get(path))
 
 
-def _emit_memory_trace(agent: Any, event: str, payload: Any) -> Any:
+def _emit_memory_trace(agent: Pico, event: str, payload: Any) -> Any:
     task_state = getattr(agent, "current_task_state", None)
     if task_state is None:
         return None
     return agent.emit_trace(task_state, event, payload)
 
 
-def _write_memory_maintenance_report(agent: Any, task_state: Any, audit: dict[str, Any]) -> None:
+def _write_memory_maintenance_report(agent: Pico, task_state: Any, audit: dict[str, Any]) -> None:
     try:
         if agent.run_store.report_path(task_state).exists():
             report = agent.run_store.load_report(task_state)
@@ -493,7 +495,7 @@ def extract_durable_promotions(user_message: str, final_answer: str, redacted_va
     return promotions, rejections
 
 
-def promote_durable_memory(agent: Any, user_message: str, final_answer: str) -> tuple[list[str], list[str], list[str]]:
+def promote_durable_memory(agent: Pico, user_message: str, final_answer: str) -> tuple[list[str], list[str], list[str]]:
     promotions, rejections = extract_durable_promotions(user_message, final_answer)
     promoted, superseded = agent.memory.promote_durable(promotions)
     agent.session["memory"] = agent.memory.to_dict()
@@ -503,7 +505,7 @@ def promote_durable_memory(agent: Any, user_message: str, final_answer: str) -> 
     return promoted, rejections, superseded
 
 
-def run_dream(agent: Any, quiet: bool = False, session_ids: list[str] | None = None) -> str:
+def run_dream(agent: Pico, quiet: bool = False, session_ids: list[str] | None = None) -> str:
     from ..core.runtime import Pico
 
     ensure_memory_dir(agent.memory_dir)
@@ -542,7 +544,7 @@ def run_dream(agent: Any, quiet: bool = False, session_ids: list[str] | None = N
     return result
 
 
-def maintain_memory_after_turn(agent: Any, final_answer: str) -> dict[str, Any]:
+def maintain_memory_after_turn(agent: Pico, final_answer: str) -> dict[str, Any]:
     audit = default_memory_maintenance_audit(auto_dream=agent.auto_dream)
     agent.last_memory_maintenance = audit
     for entry in extract_memory_tags(final_answer):

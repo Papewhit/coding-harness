@@ -32,7 +32,7 @@ def run_tool(agent: Pico, name: str, args: dict[str, Any]) -> str:
         }
         return f"error: unknown tool '{name}'"
     try:
-        agent.validate_tool(name, args)
+        agent.validate_tool(name, args) # Schema checker
     except Exception as exc:
         example = agent.tool_example(name)
         message = f"error: invalid arguments for {name}: {exc}"
@@ -50,10 +50,10 @@ def run_tool(agent: Pico, name: str, args: dict[str, Any]) -> str:
             "diff_summary": [],
         }
         return message
-    if agent.repeated_tool_call(name, args):
+    if agent.repeated_tool_call(name, args): # Repeated tool call guardrail
         agent._last_tool_result_metadata = repeated_tool_call_metadata(tool)
         return f"error: repeated identical tool call for {name}; choose a different tool or return a final answer"
-    decision = agent.permission_checker.check(tool, args)
+    decision = agent.permission_checker.check(tool, args) # Permission checker
     _emit_permission_decision(agent, tool, args, decision)
     if not decision.allowed:
         agent._last_tool_result_metadata = {
@@ -67,7 +67,7 @@ def run_tool(agent: Pico, name: str, args: dict[str, Any]) -> str:
             "diff_summary": [],
         }
         return _permission_error(agent, tool, decision)
-    policy = ToolPolicyChecker(agent).check(tool, args)
+    policy = ToolPolicyChecker(agent).check(tool, args) # ToolPolicy checker
     _emit_tool_policy_decision(agent, tool, args, policy)
     if not policy.allowed:
         agent._last_tool_result_metadata = {
@@ -82,7 +82,7 @@ def run_tool(agent: Pico, name: str, args: dict[str, Any]) -> str:
         }
         agent.record_process_note_for_tool(name, agent._last_tool_result_metadata)
         return policy.message
-    before_snapshot = agent.capture_workspace_snapshot() if tool.risky else {}
+    before_snapshot = agent.capture_workspace_snapshot() if tool.risky else {} # Workspace snapshot for risky tools
     after_snapshot = before_snapshot
     try:
         full_result = tool.execute(args).content
@@ -101,7 +101,7 @@ def run_tool(agent: Pico, name: str, args: dict[str, Any]) -> str:
             elif exit_code != 0:
                 tool_status = "error"
                 tool_error_code = "tool_failed"
-        agent.update_memory_after_tool(name, args, result)
+        agent.update_memory_after_tool(name, args, result) # Update memory after tool execution
         agent._last_tool_result_metadata = {
             "tool_status": tool_status,
             "tool_error_code": tool_error_code,
