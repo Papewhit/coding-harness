@@ -34,7 +34,7 @@ class Skill:
     paths: tuple[str, ...] = ()
     prompt_fn: Callable[[str], str] | None = None
 
-    def render(self, arguments=""):
+    def render(self, arguments: str = "") -> str:
         text = self.prompt_fn(str(arguments)) if self.prompt_fn else self.prompt
         replacements = {
             "$ARGUMENTS": str(arguments),
@@ -47,7 +47,7 @@ class Skill:
             text = text.replace(old, new)
         return text.strip()
 
-    def metadata(self):
+    def metadata(self) -> dict[str, Any]:
         return {
             "name": self.name,
             "description": self.description,
@@ -139,7 +139,7 @@ def render_prompt_section(skills: dict[str, Skill]) -> str:
     return "\n".join(lines)
 
 
-def render_skills_list(skills):
+def render_skills_list(skills: dict[str, Skill]) -> str:
     lines = []
     for skill in list_skills(skills):
         description = skill.description or skill.when_to_use or "No description"
@@ -148,14 +148,14 @@ def render_skills_list(skills):
     return "\n".join(lines)
 
 
-def list_skills(skills, user_invocable_only=True):
+def list_skills(skills: dict[str, Skill], user_invocable_only: bool = True) -> list[Skill]:
     items = [skills[name] for name in sorted(skills)]
     if user_invocable_only:
         items = [skill for skill in items if skill.user_invocable]
     return sorted(items, key=lambda skill: (skill.source != "builtin", skill.name))
 
 
-def parse_slash_command(text):
+def parse_slash_command(text: str) -> tuple[str, str]:
     text = str(text).strip()
     if not text.startswith("/") or text == "/":
         return "", ""
@@ -163,7 +163,7 @@ def parse_slash_command(text):
     return command.strip(), arguments.strip()
 
 
-def _parse_value(value):
+def _parse_value(value: str) -> Any:
     value = value.strip().strip("\"'")
     if value.lower() in {"true", "yes"}:
         return True
@@ -174,13 +174,13 @@ def _parse_value(value):
     return value
 
 
-def _list_value(value):
+def _list_value(value: Any) -> list[str]:
     if isinstance(value, (list, tuple)):
         return [str(item).strip() for item in value if str(item).strip()]
     return [item.strip() for item in str(value or "").split(",") if item.strip()]
 
 
-def _string(value, default=""):
+def _string(value: Any, default: str = "") -> str:
     if value is None:
         return default
     if isinstance(value, (list, tuple)):
@@ -188,11 +188,11 @@ def _string(value, default=""):
     return str(value)
 
 
-def _bool_value(value):
+def _bool_value(value: Any) -> bool:
     if isinstance(value, bool):
         return value
     return str(value).strip().lower() not in {"0", "false", "no", "off"}
 
 
-def _should_show_in_prompt(skill):
+def _should_show_in_prompt(skill: Skill) -> bool:
     return skill.user_invocable or bool(skill.paths)

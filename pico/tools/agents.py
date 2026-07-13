@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from ..core.runtime import Pico
+if TYPE_CHECKING:
+    from ..core.runtime import Pico
 from ..core.worker_manager import dumps_payload
 
 AGENT_TOOL_NAMES = {"agent", "send_message", "task_stop"}

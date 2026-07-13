@@ -3,13 +3,15 @@ from __future__ import annotations
 import asyncio
 import threading
 from functools import partial
-from typing import Any
+from typing import TYPE_CHECKING
 
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.css.query import NoMatches
 from textual.events import Key
 
+if TYPE_CHECKING:
+    from ..core.runtime import Pico
 from ..cli import HELP_DETAILS, handle_repl_command
 from .widgets import (
     AskUserPrompt,
@@ -47,7 +49,7 @@ class PicoTuiApp(App):
         Binding("ctrl+q", "quit", "Quit"),
     ]
 
-    def __init__(self, agent: Any, **kwargs) -> None:
+    def __init__(self, agent: Pico, **kwargs) -> None:
         super().__init__(**kwargs)
         self.agent = agent
         self._turn_count = 0

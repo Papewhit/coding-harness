@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from ..core.runtime import Pico
+if TYPE_CHECKING:
+    from .runtime import Pico
 
 
 def collect_worker_artifacts(root: Path, child: Pico, task_state: dict[str, Any] | None) -> dict[str, Any]:

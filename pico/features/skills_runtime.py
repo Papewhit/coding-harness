@@ -4,12 +4,16 @@ from __future__ import annotations
 
 from collections.abc import Generator
 from contextlib import contextmanager
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
+
+if TYPE_CHECKING:
+    from ..core.runtime import Pico
 from ..core.tool_profiles import ToolSetProfile
+from .skills import Skill
 
 
-def invoke_skill(agent: Any, name: str, arguments: str = "") -> str:
+def invoke_skill(agent: Pico, name: str, arguments: str = "") -> str:
     skill = agent.skills.get(str(name).lstrip("/"))
     if not skill:
         raise KeyError(name)
@@ -18,13 +22,15 @@ def invoke_skill(agent: Any, name: str, arguments: str = "") -> str:
     if skill.disable_model_invocation:
         agent.session_event_bus.emit("skill_completed", _event_payload(skill, arguments, prompt, status="prompt_only"))
         return skill.render(arguments)
+    # 使用上下文管理器临时覆盖模型和工具配置，以确保技能在执行时使用正确的环境设置
     with _model_override(agent, skill.model), _skill_tool_profile(agent, skill):
+        # 根据技能的 context metadata 决定是否在子会话中运行技能
         answer = _run_fork(agent, skill, prompt) if skill.context == "fork" else agent.ask(prompt)
     agent.session_event_bus.emit("skill_completed", _event_payload(skill, arguments, prompt, status="completed", answer=answer))
     return answer
 
 
-def _run_fork(agent: Any, skill: Any, prompt: str) -> str:
+def _run_fork(agent: Pico, skill: Skill, prompt: str) -> str:
     child = type(agent)(
         model_client=agent.model_client,
         workspace=agent.workspace,
@@ -45,14 +51,14 @@ def _run_fork(agent: Any, skill: Any, prompt: str) -> str:
     return answer
 
 
-def _skill_prompt(skill: Any, arguments: str) -> str:
+def _skill_prompt(skill: Skill, arguments: str) -> str:
     return (
         f"Skill: {skill.name}\nSource: {skill.source}\nContext: {skill.context}\n"
         f"Arguments: {arguments}\n\n{skill.render(arguments)}"
     )
 
 
-def _event_payload(skill: Any, arguments: str, prompt: str, status: str = "", answer: str = "") -> dict[str, Any]:
+def _event_payload(skill: Skill, arguments: str, prompt: str, status: str = "", answer: str = "") -> dict[str, Any]:
     payload: dict[str, Any] = {
         "skill": skill.name,
         "source": skill.source,
@@ -70,7 +76,7 @@ def _event_payload(skill: Any, arguments: str, prompt: str, status: str = "", an
 
 
 @contextmanager
-def _skill_tool_profile(agent: Any, skill: Any) -> Generator[None, None, None]:
+def _skill_tool_profile(agent: Pico, skill: Skill) -> Generator[None, None, None]:
     if not skill.allowed_tools:
         yield
         return
@@ -87,7 +93,7 @@ def _skill_tool_profile(agent: Any, skill: Any) -> Generator[None, None, None]:
 
 
 @contextmanager
-def _model_override(agent: Any, model: str | None) -> Generator[None, None, None]:
+def _model_override(agent: Pico, model: str | None) -> Generator[None, None, None]:
     if not model:
         yield
         return
@@ -97,6 +103,7 @@ def _model_override(agent: Any, model: str | None) -> Generator[None, None, None
     try:
         yield
     finally:
+        # Restore the previous model if it was set, otherwise remove the attribute
         if previous is sentinel:
             delattr(agent.model_client, "model")
         else:
