@@ -3,6 +3,7 @@ import io
 import json
 import subprocess
 import sys
+import threading
 import urllib.error
 from pathlib import Path
 from unittest.mock import patch
@@ -1632,7 +1633,7 @@ def test_auto_dream_runs_in_background_after_session_gate(tmp_path):
     assert report["memory_maintenance"]["auto_dream"]["session_count"] == 2
     assert report["memory_maintenance"]["auto_dream"]["changed_files"] == []
 
-    agent.wait_for_memory_maintenance(timeout=2)
+    assert agent.wait_for_memory_maintenance(timeout=10) is True
 
     post_report = json.loads(agent.run_store.report_path(agent.current_task_state).read_text(encoding="utf-8"))
     trace = agent.run_store.trace_path(agent.current_task_state).read_text(encoding="utf-8")
@@ -1654,7 +1655,12 @@ def test_background_auto_dream_failure_restores_lock_and_reports_error(tmp_path,
         session_path.parent.mkdir(parents=True, exist_ok=True)
         session_path.write_text("{}", encoding="utf-8")
 
+    dream_started = threading.Event()
+    release_failure = threading.Event()
+
     def fail_dream(*_args, **_kwargs):
+        dream_started.set()
+        assert release_failure.wait(timeout=10)
         raise RuntimeError("dream provider unavailable")
 
     monkeypatch.setattr("pico.features.memory.run_dream", fail_dream)
@@ -1666,8 +1672,10 @@ def test_background_auto_dream_failure_restores_lock_and_reports_error(tmp_path,
     )
 
     assert agent.ask("Finish and trigger failing memory maintenance") == "<memory>Project: keep memory observable.</memory>"
+    assert dream_started.wait(timeout=10)
+    release_failure.set()
 
-    agent.wait_for_memory_maintenance(timeout=2)
+    assert agent.wait_for_memory_maintenance(timeout=10) is True
 
     report = json.loads(agent.run_store.report_path(agent.current_task_state).read_text(encoding="utf-8"))
     events = agent.session_store.event_path(agent.session["id"]).read_text(encoding="utf-8")

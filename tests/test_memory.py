@@ -15,6 +15,79 @@ from pico.features.memory import (
 )
 
 
+PUBLIC_MEMORY_SYMBOLS = {
+    "DREAM_MIN_NEW_TOKENS",
+    "DREAM_SESSION_CAP",
+    "DURABLE_MEMORY_INTENT_PATTERN",
+    "DURABLE_MEMORY_INTENT_ZH_PATTERN",
+    "DURABLE_MEMORY_LINE_PATTERNS",
+    "DURABLE_MEMORY_LIST_PREFIX_PATTERN",
+    "DURABLE_TOPIC_DEFAULTS",
+    "ENTRYPOINT_NAME",
+    "EPISODIC_NOTE_LIMIT",
+    "FILE_SUMMARY_LIMIT",
+    "HOLDER_STALE_S",
+    "LOCK_FILE_NAME",
+    "MAX_ENTRYPOINT_LINES",
+    "MAX_MEMORY_INDEX_CHARS",
+    "SECRET_SHAPED_TEXT_PATTERN",
+    "WORKING_FILE_LIMIT",
+    "DurableMemoryStore",
+    "LayeredMemory",
+    "append_note",
+    "append_to_daily_log",
+    "build_dream_prompt",
+    "build_memory_system_section",
+    "canonicalize_path",
+    "daily_log_path",
+    "default_memory_maintenance_audit",
+    "default_memory_state",
+    "ensure_memory_dir",
+    "evaluate_auto_dream_gate",
+    "extract_durable_promotions",
+    "extract_memory_tags",
+    "file_freshness",
+    "invalidate_file_summary",
+    "invalidate_stale_file_summaries",
+    "is_effectively_empty",
+    "list_sessions_since",
+    "load_memory_index_text",
+    "maintain_memory_after_turn",
+    "normalize_memory_state",
+    "promote_durable_memory",
+    "read_last_consolidated_at",
+    "record_consolidation",
+    "reject_durable_reason",
+    "release_lock",
+    "remember_file",
+    "render_memory_text",
+    "resolve_workspace_path",
+    "retrieval_candidates",
+    "retrieval_view",
+    "run_dream",
+    "set_file_summary",
+    "set_task_summary",
+    "should_auto_dream",
+    "summarize_read_result",
+    "try_acquire_lock",
+}
+
+
+def test_memory_module_preserves_public_surface():
+    from pico.features import memory
+
+    assert PUBLIC_MEMORY_SYMBOLS <= set(vars(memory))
+
+
+def test_memory_implementation_is_split_by_responsibility():
+    from pico.features import memory, memory_durable, memory_working
+
+    assert memory.DurableMemoryStore is memory_durable.DurableMemoryStore
+    assert memory.build_dream_prompt is memory_durable.build_dream_prompt
+    assert memory.LayeredMemory is memory_working.LayeredMemory
+    assert memory.normalize_memory_state is memory_working.normalize_memory_state
+
+
 def test_working_memory_tracks_summary_and_recent_files():
     memory = LayeredMemory()
 
