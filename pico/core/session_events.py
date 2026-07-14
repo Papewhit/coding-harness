@@ -27,6 +27,7 @@ class SessionEventBus:
         record["created_at"] = now()
         record = self.redact(record)
         self.path.parent.mkdir(parents=True, exist_ok=True)
+        # append-only，数据完整性要求不如 session.json 高，没有原子写入
         with self.path.open("a", encoding="utf-8") as file:
             file.write(json.dumps(record, sort_keys=True, ensure_ascii=False) + "\n")
         return record

@@ -47,12 +47,14 @@ class RunStore:
         return run_dir
 
     def write_task_state(self, task_state: Any) -> Path:
+        """写入可覆盖的当前 task state"""
         path = self.task_state_path(task_state)
         path.parent.mkdir(parents=True, exist_ok=True)
         self._write_json_atomic(path, task_state.to_dict())
         return path
 
     def append_trace(self, task_state: Any, event: dict[str, Any]) -> Path:
+        """追加写入 run trace 事件"""
         path = self.trace_path(task_state)
         path.parent.mkdir(parents=True, exist_ok=True)
         # trace 采用 jsonl 追加写入，原因是 agent 运行过程是流式事件序列，
@@ -63,6 +65,7 @@ class RunStore:
         return path
 
     def write_text_artifact(self, task_state: Any, stem: str, content: str) -> Path:
+        """写入长工具输出到 artifacts/ 目录"""
         directory = self.artifacts_dir(task_state)
         directory.mkdir(parents=True, exist_ok=True)
         index = len(list(directory.glob(f"{stem}-*.txt"))) + 1
@@ -71,6 +74,7 @@ class RunStore:
         return path
 
     def write_report(self, task_state: Any, report: dict[str, Any]) -> Path:
+        """写入最终报告"""
         path = self.report_path(task_state)
         path.parent.mkdir(parents=True, exist_ok=True)
         self._write_json_atomic(path, report)

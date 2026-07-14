@@ -27,6 +27,7 @@ class SessionStore:
     def save(self, session: dict[str, Any]) -> Path:
         path = self.path(session["id"])
         payload = json.dumps(session, indent=2, ensure_ascii=False)
+        # 原子写入，避免在多线程/多进程环境下出现损坏的 session.json
         with self._lock:
             tmp_path = path.with_name(
                 f".{path.name}.{os.getpid()}.{threading.get_ident()}.tmp"

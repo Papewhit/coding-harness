@@ -2,14 +2,18 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from .artifacts import build_artifact_graph, build_verifier_suggestions
 from .workspace import clip
 
+if TYPE_CHECKING:
+    from ..core.runtime import Pico
+    from ..core.task_state import TaskState
+
 
 class ArtifactGraphConsumer:
-    def handle(self, runtime: Any, task_state: Any, event: dict[str, Any]) -> None:
+    def handle(self, runtime: Pico, task_state: TaskState, event: dict[str, Any]) -> None:
         if event.get("event") not in {"tool_executed", "run_finished", "checkpoint_created"}:
             return
         if not task_state.changed_paths and not event.get("artifact_paths"):
@@ -19,7 +23,7 @@ class ArtifactGraphConsumer:
 
 
 class VerifierSuggestionConsumer:
-    def handle(self, runtime: Any, task_state: Any, event: dict[str, Any]) -> None:
+    def handle(self, runtime: Pico, task_state: TaskState, event: dict[str, Any]) -> None:
         if event.get("event") not in {"tool_executed", "run_finished", "checkpoint_created"}:
             return
         graph = task_state.artifact_graph or build_artifact_graph(runtime.root, task_state.changed_paths)
@@ -27,7 +31,7 @@ class VerifierSuggestionConsumer:
 
 
 class ReminderConsumer:
-    def handle(self, runtime: Any, task_state: Any, event: dict[str, Any]) -> None:
+    def handle(self, runtime: Pico, task_state: TaskState, event: dict[str, Any]) -> None:
         if event.get("event") != "tool_executed":
             return
         status = str(event.get("status", ""))

@@ -2,15 +2,19 @@
 
 from __future__ import annotations
 
-from typing import Any, Generator
+from typing import TYPE_CHECKING, Any, Generator
 
 from ..providers.errors import ProviderError
 from .workspace import clip, now
 
+if TYPE_CHECKING:
+    from ..core.engine import Engine
+    from ..core.task_state import TaskState
+
 
 def finish_model_error(
-    engine: Any,
-    task_state: Any,
+    engine: Engine,
+    task_state: TaskState,
     user_message: str,
     prompt_metadata: dict[str, Any],
     exc: BaseException,
