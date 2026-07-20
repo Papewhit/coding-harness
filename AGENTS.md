@@ -45,3 +45,17 @@ PICO_LIVE_SMOKE=1 uv run pytest tests/test_release_smoke.py -q  # Test a configu
 
 On Windows in Codex sandboxed mode, consult `docs/annoying-uv-codex.md` if
 `uv` cannot write to its cache.
+
+## Pico v3 Evaluation and Native Tool Calling
+
+- The current plan-level thread only summarizes user decisions and Wave results; use a fresh non-ticket Integrator thread for every Wave.
+- Work from `.codex/eval/PLAN.json` and one ticket per ticket thread.
+- The current Wave Integrator is the only writer of the canonical `.codex/eval/state/STATUS.json` and `FREEZE.json`; tickets emit `status_proposal` / `freeze_proposal` files instead.
+- Formal Runtime and online Evaluation must not add or retain executable `<tool>/<final>` fallbacks.
+- Provider SDKs stay at the Adapter/transport boundary. Do not use SDK Tool Runners, Agents Runners, or SDK-managed execution of Pico tools.
+- Core, Session, and Checkpoint persist only Pico contracts and JSON-safe opaque continuation, never SDK objects.
+- Match every native tool call/result one-to-one using the provider call ID and preserve the existing safety chain.
+- Do not run formal online effectiveness evaluation before `TOOL-050-S`, or formal Resume evaluation before `TOOL-062-G`.
+- Every write ticket uses its own worktree/branch from an immutable base SHA. Run shards do not change source and write only their exclusive artifact directory.
+- Freeze fixture/oracle/metric inputs before product fixes; never change frozen questions to improve results.
+- Continue downstream work only through Git SHA, STATUS/FREEZE hashes, handoffs, and artifacts, not through a preceding long conversation.

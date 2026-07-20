@@ -1,0 +1,20 @@
+{
+  "schema_version": "pico-eval-wave-handoff-v1",
+  "wave": "<WAVE_ID>",
+  "wave_base_sha": "<sha>",
+  "integration_sha": "<sha>",
+  "status_sha256": "<sha256>",
+  "freeze_sha256": "<sha256>",
+  "accepted_tickets": [],
+  "blocked_tickets": [],
+  "ticket_handoffs": {},
+  "artifacts": {},
+  "exit_gate": {
+    "status": "accepted|blocked",
+    "commands": [],
+    "evidence": []
+  },
+  "risks": [],
+  "user_decisions_required": [],
+  "next_wave": "<WAVE_ID_OR_NULL>"
+}
