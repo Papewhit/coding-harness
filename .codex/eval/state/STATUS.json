@@ -23,13 +23,36 @@
     "native_resume_ready": "pending"
   },
   "accepted_tickets": {},
-  "active_tickets": {},
+  "active_tickets": {
+    "EVAL-000": "W0-EVAL-000-01"
+  },
   "blocked_tickets": {},
-  "ticket_instances": {},
+  "ticket_instances": {
+    "W0-EVAL-000-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "EVAL-000",
+      "instance_id": "W0-EVAL-000-01",
+      "wave": "W0",
+      "role": "integrator",
+      "thread_id": "019f7fbb-1aec-71a3-b714-36696a29a7a0",
+      "base_sha": "8ff3a261aa246ddd2798c2f065cac188766ef99c",
+      "branch": "codex/eval-v3-w0-eval-000",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\ad14\\pico",
+      "dependency_handoff_hashes": {},
+      "dependency_commits": [],
+      "freeze_hashes": {},
+      "allowed_write_paths": [
+        ".codex/eval/proposals/EVAL-000.status.json",
+        ".codex/eval/state/preflight.json",
+        ".codex/eval/state/native-baseline.json",
+        ".codex/eval/handoffs/EVAL-000.json"
+      ],
+      "prompt_sha256": "ccd4e11b0771f814bc09ad1466bdfab26549b4c5b6dd4c99aadced4f71b52614",
+      "status": "active"
+    }
+  },
   "wave_handoffs": {},
-  "ready_tickets": [
-    "EVAL-000"
-  ],
+  "ready_tickets": [],
   "last_gate": null,
-  "updated_at": "2026-07-20T21:31:44.5962795+08:00"
+  "updated_at": "2026-07-20T21:34:16.2097554+08:00"
 }
