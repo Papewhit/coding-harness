@@ -8,6 +8,7 @@
   "branch": "<BRANCH_OR_NULL>",
   "worktree": "<ABSOLUTE_PATH>",
   "dependency_handoff_hashes": {},
+  "dependency_commits": [],
   "freeze_hashes": {},
   "allowed_write_paths": [],
   "prompt_sha256": "<sha256>",

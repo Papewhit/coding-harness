@@ -14,7 +14,7 @@
     "dashscope-a"
   ],
   "plan_sha256": "69231c4d159024750ccd4a52b45074306fe12fbd3131c3a1ebdae05ca4582c5d",
-  "control_sha256": "0b9c10cf71e3d0d143d716c7eb6c550a6edadfd01f2653ef726096445d7f7301",
+  "control_sha256": "485df7a681e944a18d36fff1d28f9de397aed16c7153d52698e269e788699a95",
   "status_sha256": "c4d532d3ced5d85512ee42320f19a3eb151f20e3f4c083cecb35ce5486c187ca",
   "freeze_sha256": "c2138429ec04c016b225ed2888365f7e6df17db5c93aa5e14717430142f4a9cd",
   "ready_wave": "W0",

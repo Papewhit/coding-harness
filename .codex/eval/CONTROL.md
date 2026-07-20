@@ -63,7 +63,7 @@ manifest 必须包含 source/evaluator/taskset/provider profile/native conforman
 
 W0 必须保留当前 `pico/core/runtime_checkpoints.py` 既有工作区修改，记录原 diff hash，并创建所有 worktree 共用的 bootstrap snapshot commit。不得从纯净基准 commit 覆盖该文件。
 
-同一 Wave 所有线程从同一 `wave_base_sha` 启动。线程执行中不得吸收 integration branch 新提交。非琐碎冲突必须另开 integration-fix ticket。
+同一 Wave 所有线程从同一 `wave_base_sha` 创建分支并先验证共同基线。若 ticket 依赖同 Wave 已验收的代码提交，Wave Integrator 必须在 instance manifest 中列出精确 `dependency_commits`；下游线程只能在共同 base 上应用这些提交，不得吸收 integration branch 的其他新提交。handoff 分开记录 dependency commits 与本 ticket 自有 commits。非琐碎冲突必须另开 integration-fix ticket。
 
 每个 ticket instance 必须在启动 handoff/manifest 中记录 ticket ID、instance ID、role、base SHA、branch/worktree、dependency handoff/freeze hash、allowed paths 与 prompt hash。重复 shard 必须使用唯一 instance ID。
 
