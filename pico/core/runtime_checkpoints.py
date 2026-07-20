@@ -4,10 +4,13 @@ from __future__ import annotations
 
 import hashlib
 import uuid
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from ..features import memory as memorylib
 from .workspace import IGNORED_PATH_NAMES, clip, now
+
+if TYPE_CHECKING:
+    from ..core.task_state import TaskState
 
 CHECKPOINT_SCHEMA_VERSION = "phase1-v1"
 
@@ -44,7 +47,7 @@ class RuntimeCheckpointsMixin:
                 summaries.append(f"modified:{path}")
         return changed_paths, summaries
 
-    def create_checkpoint(self, task_state: Any, user_message: str, trigger: str) -> dict[str, Any]:
+    def create_checkpoint(self, task_state: TaskState, user_message: str, trigger: str) -> dict[str, Any]:
         state = self.checkpoint_state()
         current = self.current_checkpoint()
         checkpoint_id = "ckpt_" + uuid.uuid4().hex[:8]
