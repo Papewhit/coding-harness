@@ -1,0 +1,24 @@
+{
+  "schema_version": "pico-eval-installation-handoff-v1",
+  "base_commit": "45e7921b766b13a56fbd713d75431fa089e75a02",
+  "integration_branch": "eval/v3-integration",
+  "provider_example_commit": "35df942",
+  "control_plane_commit": "0d3c16c328733d47be647678d03e14b88901e1cb",
+  "artifact_root": "F:\\dev\\llm\\pico-eval-artifacts",
+  "local_config_path": "F:\\dev\\llm\\pico\\.pico.toml",
+  "configured_profile_names": [
+    "dashscope-o",
+    "deepseek"
+  ],
+  "unconfigured_profile_names": [
+    "dashscope-a"
+  ],
+  "plan_sha256": "69231c4d159024750ccd4a52b45074306fe12fbd3131c3a1ebdae05ca4582c5d",
+  "control_sha256": "0b9c10cf71e3d0d143d716c7eb6c550a6edadfd01f2653ef726096445d7f7301",
+  "status_sha256": "c4d532d3ced5d85512ee42320f19a3eb151f20e3f4c083cecb35ce5486c187ca",
+  "freeze_sha256": "c2138429ec04c016b225ed2888365f7e6df17db5c93aa5e14717430142f4a9cd",
+  "ready_wave": "W0",
+  "ready_tickets": [
+    "EVAL-000"
+  ]
+}

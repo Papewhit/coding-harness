@@ -11,9 +11,9 @@
   "program_supervisor_thread": "<fill>",
   "current_wave_integrator_thread": null,
   "profiles": {
-    "qwen_openai_responses": "dashscope-o",
-    "qwen_anthropic_messages": "dashscope-a",
-    "deepseek_anthropic_messages": "deepseek"
+    "qwen_openai_responses": {"local_name": "dashscope-o", "configured": "<true-or-false>"},
+    "qwen_anthropic_messages": {"local_name": "dashscope-a", "configured": "<true-or-false>"},
+    "deepseek_anthropic_messages": {"local_name": "deepseek", "configured": "<true-or-false>"}
   },
   "bootstrap_sha": "<fill-after-EVAL-000>",
   "current_wave": "W0",

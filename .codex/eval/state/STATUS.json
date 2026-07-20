@@ -1,0 +1,35 @@
+{
+  "schema_version": "pico-eval-control-v3",
+  "project": "pico-v3-evaluation-native-tools",
+  "integration_branch": "eval/v3-integration",
+  "repo_root": "F:\\dev\\llm\\pico",
+  "base_commit": "45e7921b766b13a56fbd713d75431fa089e75a02",
+  "installation_sha": "0d3c16c328733d47be647678d03e14b88901e1cb",
+  "work_branch": "eval/v3-integration",
+  "local_config_path": "F:\\dev\\llm\\pico\\.pico.toml",
+  "artifact_root": "F:\\dev\\llm\\pico-eval-artifacts",
+  "program_supervisor_thread": "current plan-level Codex task",
+  "current_wave_integrator_thread": null,
+  "profiles": {
+    "qwen_openai_responses": {"local_name": "dashscope-o", "configured": true},
+    "qwen_anthropic_messages": {"local_name": "dashscope-a", "configured": false},
+    "deepseek_anthropic_messages": {"local_name": "deepseek", "configured": true}
+  },
+  "bootstrap_sha": null,
+  "current_wave": "W0",
+  "wave_base_sha": null,
+  "gates": {
+    "native_eval_ready": "pending",
+    "native_resume_ready": "pending"
+  },
+  "accepted_tickets": {},
+  "active_tickets": {},
+  "blocked_tickets": {},
+  "ticket_instances": {},
+  "wave_handoffs": {},
+  "ready_tickets": [
+    "EVAL-000"
+  ],
+  "last_gate": null,
+  "updated_at": "2026-07-20T21:23:50.0116095+08:00"
+}
