@@ -1,0 +1,42 @@
+{
+  "schema_version": "pico-eval-status-proposal-v1",
+  "ticket_id": "EVAL-000",
+  "instance_id": "W0-EVAL-000-01",
+  "wave": "W0",
+  "base_sha": "8ff3a261aa246ddd2798c2f065cac188766ef99c",
+  "source_status_sha256": "c4d532d3ced5d85512ee42320f19a3eb151f20e3f4c083cecb35ce5486c187ca",
+  "proposed_at": "2026-07-20T21:40:33.5272133+08:00",
+  "proposed_changes": {
+    "wave_base_sha": "8ff3a261aa246ddd2798c2f065cac188766ef99c",
+    "bootstrap_sha": {
+      "resolve_to": "commit containing this proposal together with preflight.json and native-baseline.json",
+      "reason": "A committed JSON artifact cannot contain its own commit SHA."
+    },
+    "accepted_tickets": {
+      "EVAL-000": {
+        "instance_id": "W0-EVAL-000-01",
+        "status": "complete",
+        "handoff_path": ".codex/eval/handoffs/EVAL-000.json"
+      }
+    },
+    "ticket_instances": {
+      "W0-EVAL-000-01": {
+        "ticket_id": "EVAL-000",
+        "role": "integrator",
+        "branch": "codex/eval-v3-w0-eval-000",
+        "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\ad14\\pico",
+        "base_sha": "8ff3a261aa246ddd2798c2f065cac188766ef99c",
+        "prompt_sha256": "ccd4e11b0771f814bc09ad1466bdfab26549b4c5b6dd4c99aadced4f71b52614",
+        "status": "complete"
+      }
+    },
+    "ready_tickets_remove": [
+      "EVAL-000"
+    ],
+    "ready_tickets_add": [
+      "EVAL-001"
+    ]
+  },
+  "canonical_status_written": false,
+  "canonical_freeze_written": false
+}

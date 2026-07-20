@@ -1,0 +1,143 @@
+{
+  "schema_version": "pico-native-baseline-v1",
+  "ticket_id": "EVAL-000",
+  "instance_id": "W0-EVAL-000-01",
+  "captured_at": "2026-07-20T21:40:33.5272133+08:00",
+  "source_sha": "8ff3a261aa246ddd2798c2f065cac188766ef99c",
+  "runtime_native_ready": false,
+  "formal_online_evaluation_ready": false,
+  "live_probe_performed": false,
+  "provider_profiles": {
+    "qwen_openai_responses": {
+      "local_name": "dashscope-o",
+      "configured": true,
+      "native_eligibility": "not_probed"
+    },
+    "qwen_anthropic_messages": {
+      "local_name": "dashscope-a",
+      "configured": false,
+      "native_eligibility": "not_probed"
+    },
+    "deepseek_anthropic_messages": {
+      "local_name": "deepseek",
+      "configured": true,
+      "native_eligibility": "not_probed"
+    }
+  },
+  "text_protocol": {
+    "active": true,
+    "search_command": "rg -n --no-heading --color never '<tool>|<final>' pico tests scripts benchmarks",
+    "matching_line_count": 286,
+    "matching_line_count_by_root": {
+      "pico": 69,
+      "tests": 165,
+      "scripts": 52,
+      "benchmarks": 0
+    },
+    "normalized_search_output_sha256": "a72476979133fbbbee5376ca9fb51cc99db405e00fe53eede384ca2de233d99e",
+    "normalization": "ripgrep Windows output order and path separators, joined with LF and terminated by LF",
+    "references": [
+      {"file": "pico/core/engine_helpers.py", "role": "runtime step-limit prompt", "count": 1, "lines": [226]},
+      {"file": "pico/core/model_output.py", "role": "active text protocol parser", "count": 4, "lines": [13, 21, 26, 33]},
+      {"file": "pico/core/runtime.py", "role": "active runtime prompt and examples", "count": 8, "lines": [483, 484, 487, 488, 489, 500, 502, 506]},
+      {"file": "pico/evaluation/evaluator.py", "role": "evaluation parser and fixtures", "count": 27, "lines": [52, 54, 57, 59, 62, 64, 67, 69, 72, 74, 77, 79, 82, 83, 85, 88, 89, 91, 94, 95, 96, 98, 101, 104, 107, 110, 113]},
+      {"file": "pico/evaluation/metrics.py", "role": "evaluation prompts and fixtures", "count": 16, "lines": [238, 241, 251, 254, 257, 258, 977, 980, 981, 982, 984, 985, 986, 1019, 1269, 1270]},
+      {"file": "pico/tools/agents.py", "role": "tool instructions", "count": 3, "lines": [37, 38, 39]},
+      {"file": "pico/tools/ask_user.py", "role": "tool instructions", "count": 1, "lines": [19]},
+      {"file": "pico/tools/plan.py", "role": "tool instructions", "count": 2, "lines": [24, 25]},
+      {"file": "pico/tools/registry.py", "role": "tool instructions", "count": 4, "lines": [123, 124, 125, 126]},
+      {"file": "pico/tools/todos.py", "role": "tool instructions", "count": 3, "lines": [25, 26, 27]},
+      {"file": "scripts/run_business_scenario_dogfood.py", "role": "scenario fixtures", "count": 3, "lines": [149, 240, 256]},
+      {"file": "scripts/run_real_session_acceptance.py", "role": "scenario fixtures", "count": 29, "lines": [121, 122, 124, 125, 158, 159, 160, 161, 162, 164, 201, 202, 226, 228, 229, 231, 232, 257, 258, 271, 272, 305, 306, 308, 309, 310, 350, 352, 453]},
+      {"file": "scripts/run_v3_human_scenario_gate.py", "role": "human scenario fixtures", "count": 20, "lines": [170, 205, 235, 277, 286, 318, 370, 424, 503, 585, 652, 668, 770, 816, 820, 872, 1014, 1061, 1101, 1121]},
+      {"file": "tests/test_agent_workers_acceptance.py", "role": "test fixtures", "count": 26, "lines": [67, 120, 145, 177, 209, 210, 211, 212, 251, 253, 254, 256, 257, 292, 294, 295, 315, 317, 318, 332, 333, 334, 354, 355, 356, 358]},
+      {"file": "tests/test_context_governance_acceptance.py", "role": "test fixtures", "count": 6, "lines": [26, 48, 49, 50, 68, 88]},
+      {"file": "tests/test_engine_acceptance.py", "role": "test fixtures", "count": 13, "lines": [34, 120, 121, 124, 151, 169, 170, 171, 186, 192, 194, 213, 214]},
+      {"file": "tests/test_permissions_acceptance.py", "role": "test fixtures", "count": 2, "lines": [100, 157]},
+      {"file": "tests/test_pico.py", "role": "test fixtures", "count": 74, "lines": [49, 50, 65, 66, 82, 83, 84, 95, 138, 154, 155, 156, 165, 173, 189, 200, 204, 301, 321, 362, 395, 418, 444, 506, 517, 540, 555, 571, 575, 590, 611, 635, 675, 691, 931, 932, 970, 971, 1001, 1065, 1113, 1137, 1156, 1183, 1215, 1239, 1254, 1255, 1277, 1301, 1313, 1318, 1333, 1375, 1398, 1434, 1499, 1533, 1553, 1572, 1617, 1618, 1619, 1620, 1669, 1694, 1720, 1740, 1769, 1770, 1792, 1793, 1820, 1836]},
+      {"file": "tests/test_release_smoke.py", "role": "test fixtures", "count": 7, "lines": [46, 47, 48, 65, 66, 84, 86]},
+      {"file": "tests/test_runtime_evidence_acceptance.py", "role": "test fixtures", "count": 2, "lines": [35, 71]},
+      {"file": "tests/test_skills_acceptance.py", "role": "test fixtures", "count": 10, "lines": [77, 128, 129, 130, 131, 151, 152, 211, 244, 245]},
+      {"file": "tests/test_todo_ledger_acceptance.py", "role": "test fixtures", "count": 4, "lines": [42, 61, 62, 63]},
+      {"file": "tests/test_tool_policy_acceptance.py", "role": "test fixtures", "count": 5, "lines": [47, 49, 102, 163, 164]},
+      {"file": "tests/test_tui.py", "role": "test fixtures", "count": 8, "lines": [246, 282, 299, 326, 365, 391, 421, 422]},
+      {"file": "tests/test_usage.py", "role": "test fixtures", "count": 3, "lines": [23, 62, 67]},
+      {"file": "tests/test_v3_runtime.py", "role": "test fixtures", "count": 5, "lines": [35, 65, 88, 120, 122]}
+    ]
+  },
+  "active_runtime_path": {
+    "model_contract": "ModelClient.complete(prompt, max_new_tokens, prompt_cache_key, prompt_cache_retention) -> str",
+    "completion_wrapper": "complete_model converts complete() output to ModelResult(text, metadata)",
+    "parser": "pico.core.model_output.parse",
+    "parser_binding": "Pico.parse = staticmethod(model_output.parse)",
+    "engine_use": "Engine parses provider text through agent.parse(raw)",
+    "tool_call_forms": [
+      "<tool>{JSON object or list}</tool>",
+      "<tool name=\"...\" ...>XML body</tool>"
+    ],
+    "final_form": "<final>text</final>",
+    "provider_call_id_supported": false,
+    "structured_tool_result_supported": false,
+    "native_tool_declarations_supported": false
+  },
+  "provider_client_contract": {
+    "sdk_boundary": {
+      "provider_sdk_dependency_present": false,
+      "transport": "Python stdlib urllib.request",
+      "sdk_tool_runner_present": false,
+      "sdk_agents_runner_present": false
+    },
+    "shared_retry": {
+      "implementation": "pico.providers.clients._request_with_retries",
+      "default_retry_budget": 2,
+      "maximum_attempts": 3,
+      "configurable_from_ModelClient": false,
+      "formal_evaluation_attempts_one_currently_enforceable": false
+    },
+    "openai_compatible": {
+      "class": "OpenAICompatibleModelClient",
+      "endpoint": "/v1/responses",
+      "stream": false,
+      "request_content": "single user input_text block",
+      "tools_field_sent": false,
+      "tool_choice_sent": false,
+      "response_contract": "text only; output_text/output content/message content extracted",
+      "native_tool_calls_extracted": false,
+      "provider_call_id_preserved": false,
+      "unknown_nontext_blocks_preserved": false
+    },
+    "anthropic_compatible": {
+      "class": "AnthropicCompatibleModelClient",
+      "endpoint": "/v1/messages",
+      "stream": false,
+      "request_content": "single user text block",
+      "tools_field_sent": false,
+      "tool_choice_sent": false,
+      "response_contract": "first text content block only",
+      "native_tool_use_extracted": false,
+      "provider_call_id_preserved": false,
+      "unknown_nontext_blocks_preserved": false
+    },
+    "source_hashes": {
+      "pico/providers/base.py": "0e6156e96fdcd9bc01b81f49c3d4271361258363bedcd9f4d5efc2fcdad457e5",
+      "pico/providers/clients.py": "0e442f47348ec47fa0968bcd703f9ea1cfd9c011e5401a5a16fe78eacb68f39b",
+      "pico/config/__init__.py": "eda7002b11ff3c83dc528b8e1e0f4638a4b424e7981635a8a09b77411de196c9"
+    }
+  },
+  "native_invariant_baseline": {
+    "one_result_per_call": "unsupported",
+    "call_id_result_matching": "unsupported",
+    "pico_safety_chain_for_native_calls": "not_wired",
+    "opaque_continuation": "unsupported",
+    "unknown_block_preservation": "unsupported",
+    "text_envelope_executable": true,
+    "implicit_sdk_retry_seen": false,
+    "internal_transport_retry_present": true
+  },
+  "source_hashes": {
+    "pico/core/model_output.py": "927b2ef2985326457fe08f1a8e227ffb71f08515836fb3366d0afca7a6690bab",
+    "pico/core/runtime.py": "8b41f5e27e84fd4293c12ee06c2e7adbf8b8249b2a9d6202f5842f9b0c48998f",
+    "pico/core/engine.py": "9a1d68077726496a0cd42ddfea16df0163152f0e7ab2f8e743e5f07a5688db4e",
+    "pico/core/engine_helpers.py": "7aabf50716dde00e7cdfd7b2d11221771e8f3ca5f8f28ed8ea122be62b172a64"
+  }
+}
