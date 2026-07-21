@@ -40,7 +40,9 @@
       "handoff_sha256": "2dc1741e0081e8724cb16a46c6a655847bdb0ce8539d7e15252a18d6fb2faf18"
     }
   },
-  "active_tickets": {},
+  "active_tickets": {
+    "EVAL-001": "W0-EVAL-001-01"
+  },
   "blocked_tickets": {},
   "ticket_instances": {
     "W0-EVAL-000-01": {
@@ -74,12 +76,36 @@
       ],
       "handoff_sha256": "2dc1741e0081e8724cb16a46c6a655847bdb0ce8539d7e15252a18d6fb2faf18",
       "status": "accepted"
+    },
+    "W0-EVAL-001-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "EVAL-001",
+      "instance_id": "W0-EVAL-001-01",
+      "wave": "W0",
+      "role": "implementer",
+      "thread_id": "019f827f-2616-7920-a344-4e43fd2e0b26",
+      "base_sha": "8ff3a261aa246ddd2798c2f065cac188766ef99c",
+      "branch": "codex/eval-v3-w0-eval-001",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\af4e\\pico",
+      "dependency_handoff_hashes": {
+        "EVAL-000": "2dc1741e0081e8724cb16a46c6a655847bdb0ce8539d7e15252a18d6fb2faf18"
+      },
+      "dependency_commits": [
+        "31fded1559fed404cb26018a2a009a0f1fa727b0",
+        "9d6bfc4567b6c1dff45908a3ed00335b947a52f9"
+      ],
+      "freeze_hashes": {},
+      "allowed_write_paths": [
+        "pico/evaluation/contracts.py",
+        "tests/test_evaluation_contracts.py",
+        ".codex/eval/handoffs/EVAL-001.json"
+      ],
+      "prompt_sha256": "d3dbdf2e6f52f509c9c4315385256a5daaca71366d9902ec3a63ef1b01741166",
+      "status": "active"
     }
   },
   "wave_handoffs": {},
-  "ready_tickets": [
-    "EVAL-001"
-  ],
+  "ready_tickets": [],
   "last_gate": null,
-  "updated_at": "2026-07-21T10:25:10.4800516+08:00"
+  "updated_at": "2026-07-21T10:27:49.9453748+08:00"
 }
