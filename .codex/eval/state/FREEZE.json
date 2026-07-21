@@ -35,7 +35,15 @@
   "native_resume_contract": null,
   "native_resume_gate": null,
   "auto_dream": null,
-  "context_assets": null,
+  "context_assets": {
+    "version": "pico-context-asset-contract-v1",
+    "path": "benchmarks/v3/context-assets/assets.json",
+    "sha256": "d8349c034524cc488958a1f3b460a7b6080915eed0b03b64c635810c21bf8e15",
+    "hash_basis": "git_blob_bytes",
+    "source_ticket": "EVAL-030",
+    "source_head_sha": "7b8badf1ad9aeb5111f5537438686a473191e176",
+    "integration_sha": "a6284ba08edde6cefd6a924edfd5305288dc6508"
+  },
   "local_taskset": null,
   "resume_predicates": null,
   "context_ablation_selection": null

@@ -1,0 +1,150 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "EVAL-030",
+  "instance_id": "W1-EVAL-030-01",
+  "wave": "W1",
+  "role": "implementer",
+  "status": "complete",
+  "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+  "head_sha": "7b8badf1ad9aeb5111f5537438686a473191e176",
+  "branch": "codex/eval-v3-w1-eval-030",
+  "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\03bb\\pico",
+  "prompt_sha256": "3ead142fe01cf703bffbe57557bae691b389d336c316d3c8ee3952417f9cb56e",
+  "dependency_commits": [
+    "387216cf4393edc34bce30e7facfa2dbc35cc524",
+    "e08cb3e8c93e6eb63df4118ce0f065f4dd0bcc48"
+  ],
+  "applied_dependency_commits": [
+    {
+      "ticket_id": "TOOL-010",
+      "source_commit": "387216cf4393edc34bce30e7facfa2dbc35cc524",
+      "applied_commit": "0a2ebe3a7194cda7cc66e51cf0f4dd200d2dba3b"
+    },
+    {
+      "ticket_id": "TOOL-011",
+      "source_commit": "e08cb3e8c93e6eb63df4118ce0f065f4dd0bcc48",
+      "applied_commit": "4dcfe8dd81db99d510f67cef92494c17d5cf7583"
+    }
+  ],
+  "dependency_handoff_hashes": {
+    "TOOL-010": "300faf3f58f369248291ba72be3aefca9e3444dac9999cf45c5767c4eefbde0d",
+    "TOOL-011": "825e0d3a64abd065e3a9c67a3ce3d1bb9c06d2bbe1b5b00b8b24423cfa3d4dfa"
+  },
+  "dependency_freeze_hashes": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f"
+  },
+  "own_commits": [
+    "7b8badf1ad9aeb5111f5537438686a473191e176"
+  ],
+  "files_changed": [
+    "benchmarks/v3/context-assets/assets.json",
+    "docs/metrics/pico-v3-context-asset-contract.md",
+    ".codex/eval/handoffs/EVAL-030.json"
+  ],
+  "commands_run": [
+    "git cherry-pick 387216cf4393edc34bce30e7facfa2dbc35cc524",
+    "git cherry-pick e08cb3e8c93e6eb63df4118ce0f065f4dd0bcc48",
+    "UV_CACHE_DIR=<task-temp-cache> UV_PROJECT_ENVIRONMENT=<task-temp-venv> uv sync",
+    "UV_CACHE_DIR=<task-temp-cache> UV_PROJECT_ENVIRONMENT=<task-temp-venv> uv run python -c <contract-json-and-doc-self-check>",
+    "UV_CACHE_DIR=<task-temp-cache> UV_PROJECT_ENVIRONMENT=<task-temp-venv> uv run pytest tests/test_context_manager.py tests/test_context_governance_acceptance.py tests/test_provider_contracts.py tests/test_tool_schema_export.py -q",
+    "UV_CACHE_DIR=<task-temp-cache> UV_PROJECT_ENVIRONMENT=<task-temp-venv> uv run ruff check pico/providers/contracts.py pico/providers/base.py pico/tools/definitions.py pico/tools/base.py pico/tools/registry.py pico/tools/schemas.py tests/test_provider_contracts.py tests/test_tool_schema_export.py",
+    "UV_CACHE_DIR=<task-temp-cache> UV_PROJECT_ENVIRONMENT=<task-temp-venv> uv run ruff check .",
+    "git diff --cached --check",
+    "SHA-256 Git blob bytes for committed outputs"
+  ],
+  "tests": [
+    {
+      "command": "uv run python -c <contract-json-and-doc-self-check>",
+      "result": "passed",
+      "details": "Parsed JSON; asserted exactly Skills/Todo/Plan/Checkpoint/Worker/Durable/Compact/Pointer; required producer/activation/lifetime/priority/floor/drop/routing/metadata/duplication/evidence fields; observed classification for current behavior; current request never-drop; tools-only schema routing; unfinished native turn non-compactable; and documented observed-versus-guaranteed matrix."
+    },
+    {
+      "command": "uv run pytest tests/test_context_manager.py tests/test_context_governance_acceptance.py tests/test_provider_contracts.py tests/test_tool_schema_export.py -q",
+      "result": "passed",
+      "details": "30 passed in the task-specific temporary UV environment."
+    },
+    {
+      "command": "uv run ruff check pico/providers/contracts.py pico/providers/base.py pico/tools/definitions.py pico/tools/base.py pico/tools/registry.py pico/tools/schemas.py tests/test_provider_contracts.py tests/test_tool_schema_export.py",
+      "result": "passed",
+      "details": "All checks passed."
+    },
+    {
+      "command": "uv run ruff check .",
+      "result": "failed",
+      "details": "14 pre-existing findings, all in scripts/readable_session.py: one unused os import and thirteen placeholder-free f-strings. The file is unchanged by all three commits and is outside EVAL-030 ownership."
+    },
+    {
+      "command": "git diff --cached --check",
+      "result": "passed",
+      "details": "No whitespace errors before the ticket content commit."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "benchmarks/v3/context-assets/assets.json",
+      "sha256": "d8349c034524cc488958a1f3b460a7b6080915eed0b03b64c635810c21bf8e15",
+      "hash_basis": "git_blob_bytes",
+      "hash_source": "7b8badf1ad9aeb5111f5537438686a473191e176:benchmarks/v3/context-assets/assets.json",
+      "coverage": "Eight structured context asset policies; four request surfaces; current-request, native-tool, unfinished-native-turn, duplication, and evidence invariants."
+    },
+    {
+      "path": "docs/metrics/pico-v3-context-asset-contract.md",
+      "sha256": "d18c88c1b661ad0a47f1af89d8e941197d4306e1b64ad683996f9f810a0dd3df",
+      "hash_basis": "git_blob_bytes",
+      "hash_source": "7b8badf1ad9aeb5111f5537438686a473191e176:docs/metrics/pico-v3-context-asset-contract.md",
+      "coverage": "Surface boundaries, eight-asset policy table, semantic floor/drop rules, observed-versus-guaranteed matrix, evaluation evidence, and frozen inputs."
+    },
+    {
+      "path": ".codex/eval/handoffs/EVAL-030.json",
+      "persistence": "Ticket output generated after the content commit so it can record immutable source, applied dependency, and own commit SHAs separately."
+    }
+  ],
+  "contract_hashes": {
+    "context_assets": "d8349c034524cc488958a1f3b460a7b6080915eed0b03b64c635810c21bf8e15",
+    "context_assets_hash_basis": "git_blob_bytes"
+  },
+  "frozen_hashes": {
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": null,
+    "provider_selection": null,
+    "native_resume_gate": null
+  },
+  "native_protocol_observations": {
+    "observation_scope": "Static contract authoring and local deterministic tests only; no provider request or online evaluation was issued.",
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0
+  },
+  "defects": [
+    {
+      "id": "pre-existing-repository-ruff-findings",
+      "scope": "scripts/readable_session.py",
+      "details": "Repository-wide Ruff reports 14 findings outside this ticket's allowed paths; directed affected-file Ruff is green."
+    }
+  ],
+  "risks": [
+    "The contract is an evaluation target; Context Runtime still assembles a monolithic prompt and must be changed only by its designated owner.",
+    "Several asset drop and semantic-floor policies are intentionally marked target because the current Runtime does not guarantee them.",
+    "Deterministic fixture and evaluator tickets must preserve the four-surface attribution and must not reinterpret observed behavior as guaranteed."
+  ],
+  "status_proposal": {
+    "ticket_id": "EVAL-030",
+    "status": "complete",
+    "head_sha": "7b8badf1ad9aeb5111f5537438686a473191e176"
+  },
+  "freeze_proposal": {
+    "context_assets": {
+      "version": "pico-context-asset-contract-v1",
+      "sha256": "d8349c034524cc488958a1f3b460a7b6080915eed0b03b64c635810c21bf8e15",
+      "hash_basis": "git_blob_bytes",
+      "source": "7b8badf1ad9aeb5111f5537438686a473191e176:benchmarks/v3/context-assets/assets.json"
+    }
+  },
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}
