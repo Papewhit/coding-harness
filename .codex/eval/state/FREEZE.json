@@ -61,7 +61,28 @@
     "source_head_sha": "1347952a3d6af33714074b5d837a11685fde67a3",
     "integration_sha": "b76d5332343a5273c676b707d9077087a9fbf6db"
   },
-  "sdk_dependency_lock": null,
+  "sdk_dependency_lock": {
+    "version": "pico-sdk-dependency-lock-v1",
+    "path": "uv.lock",
+    "sha256": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+    "hash_basis": "git_blob_bytes",
+    "project_path": "pyproject.toml",
+    "project_sha256": "441af16eb3f3797fc541381ff296971ba7c6a45d4fcd1351df0aa4a6f123ca6e",
+    "provider_extra": "providers",
+    "packages": {
+      "openai": "2.46.0",
+      "anthropic": "0.117.0",
+      "httpx": "0.28.1",
+      "socksio": "1.0.0"
+    },
+    "sdk_max_retries": 0,
+    "lazy_imports": true,
+    "sdk_tool_or_agent_runner_allowed": false,
+    "sdk_managed_pico_tool_execution_allowed": false,
+    "source_ticket": "TOOL-019-D",
+    "source_head_sha": "4f1a74a67a02f84ad6c4cbe14b318790d2754177",
+    "integration_sha": "74c05e74b99ff303287ea60525fc4d5e99ffdab7"
+  },
   "native_deterministic_gate": null,
   "native_scripted_fixtures": {
     "version": "pico-scripted-native-model-client-v1",

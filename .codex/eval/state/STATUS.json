@@ -388,10 +388,23 @@
       "handoff_sha256": "0eb6213eab7261daf535b9b30cce5787533c4070195f7a5e6b2c383ab40ee55a",
       "decision_sha256": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
       "stable_patch_id": "dafdec9bcdd2dfd5412aa74a2c8443f28502d83b"
+    },
+    "TOOL-019-D": {
+      "instance_id": "W3-TOOL-019-D-01",
+      "status": "accepted",
+      "base_sha": "807dc8f348c609bf885f4b65e69cebd781e8f1ba",
+      "head_sha": "9fe84c249ccab450504a7928c1ad8a3b2649b175",
+      "own_commits": ["4f1a74a67a02f84ad6c4cbe14b318790d2754177", "9fe84c249ccab450504a7928c1ad8a3b2649b175"],
+      "integration_commits": ["74c05e74b99ff303287ea60525fc4d5e99ffdab7"],
+      "handoff_path": ".codex/eval/handoffs/TOOL-019-D.json",
+      "handoff_sha256": "22c3072d90b258717ee1b20261b4f22d19c4f049a05d663bb8d40717b3b0ac64",
+      "sdk_dependency_lock_sha256": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+      "stable_patch_id": "9973a742d9a2cf49538ea7f1522d059cb5cddf68"
     }
   },
   "active_tickets": {
-    "TOOL-019-D": {"instance_id": "W3-TOOL-019-D-01", "status": "active"},
+    "TOOL-020-O": {"instance_id": "W3-TOOL-020-O-01", "status": "active"},
+    "TOOL-020-A": {"instance_id": "W3-TOOL-020-A-01", "status": "active"},
     "TOOL-021-P": {"instance_id": "W3-TOOL-021-P-01", "status": "active"}
   },
   "blocked_tickets": {},
@@ -1328,6 +1341,75 @@
         ".codex/eval/handoffs/TOOL-019-D.json"
       ],
       "prompt_sha256": "ad0217ff38d2d0dcfb3f8872b27938b83331d901b3517a85931304d1f4473237",
+      "head_sha": "9fe84c249ccab450504a7928c1ad8a3b2649b175",
+      "own_commits": ["4f1a74a67a02f84ad6c4cbe14b318790d2754177", "9fe84c249ccab450504a7928c1ad8a3b2649b175"],
+      "integration_commits": ["74c05e74b99ff303287ea60525fc4d5e99ffdab7"],
+      "handoff_sha256": "22c3072d90b258717ee1b20261b4f22d19c4f049a05d663bb8d40717b3b0ac64",
+      "stable_patch_id": "9973a742d9a2cf49538ea7f1522d059cb5cddf68",
+      "status": "accepted"
+    },
+    "W3-TOOL-020-O-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "TOOL-020-O",
+      "instance_id": "W3-TOOL-020-O-01",
+      "wave": "W3",
+      "role": "implementer",
+      "thread_id": "/root/w3_tool_020_o",
+      "base_sha": "807dc8f348c609bf885f4b65e69cebd781e8f1ba",
+      "branch": "codex/eval-v3-w3-tool-020-o",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\w3-020o\\pico",
+      "dependency_handoff_hashes": {
+        "TOOL-010": "300faf3f58f369248291ba72be3aefca9e3444dac9999cf45c5767c4eefbde0d",
+        "TOOL-011": "825e0d3a64abd065e3a9c67a3ce3d1bb9c06d2bbe1b5b00b8b24423cfa3d4dfa",
+        "TOOL-013-S": "0eb6213eab7261daf535b9b30cce5787533c4070195f7a5e6b2c383ab40ee55a",
+        "TOOL-019-D": "22c3072d90b258717ee1b20261b4f22d19c4f049a05d663bb8d40717b3b0ac64"
+      },
+      "dependency_commits": ["4f1a74a67a02f84ad6c4cbe14b318790d2754177", "9fe84c249ccab450504a7928c1ad8a3b2649b175"],
+      "applied_dependency_commits": ["c652874a26f7f5dc6ac7a250e1f835da9f08060b", "fce73906bfb74cd14b0b2b2a9c7803cade7566f9"],
+      "freeze_hashes": {
+        "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+        "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+        "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+        "sdk_dependency_lock": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657"
+      },
+      "allowed_write_paths": [
+        "pico/providers/openai_responses.py",
+        "tests/test_openai_responses_tools.py",
+        ".codex/eval/handoffs/TOOL-020-O.json"
+      ],
+      "prompt_sha256": "f9310ff54b74b646df04ce0f124e6e9db4d021ce0f9f576afa58fc899a6de56f",
+      "status": "active"
+    },
+    "W3-TOOL-020-A-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "TOOL-020-A",
+      "instance_id": "W3-TOOL-020-A-01",
+      "wave": "W3",
+      "role": "implementer",
+      "thread_id": "/root/w3_tool_020_a",
+      "base_sha": "807dc8f348c609bf885f4b65e69cebd781e8f1ba",
+      "branch": "codex/eval-v3-w3-tool-020-a",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\w3-020a\\pico",
+      "dependency_handoff_hashes": {
+        "TOOL-010": "300faf3f58f369248291ba72be3aefca9e3444dac9999cf45c5767c4eefbde0d",
+        "TOOL-011": "825e0d3a64abd065e3a9c67a3ce3d1bb9c06d2bbe1b5b00b8b24423cfa3d4dfa",
+        "TOOL-013-S": "0eb6213eab7261daf535b9b30cce5787533c4070195f7a5e6b2c383ab40ee55a",
+        "TOOL-019-D": "22c3072d90b258717ee1b20261b4f22d19c4f049a05d663bb8d40717b3b0ac64"
+      },
+      "dependency_commits": ["4f1a74a67a02f84ad6c4cbe14b318790d2754177", "9fe84c249ccab450504a7928c1ad8a3b2649b175"],
+      "applied_dependency_commits": ["ed12994ee8ae003cd276c76090cdd1a5f78a5ce9", "8c5d575b32b4e8ffd1e71e206466cd28e9b57562"],
+      "freeze_hashes": {
+        "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+        "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+        "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+        "sdk_dependency_lock": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657"
+      },
+      "allowed_write_paths": [
+        "pico/providers/anthropic_messages.py",
+        "tests/test_anthropic_messages_tools.py",
+        ".codex/eval/handoffs/TOOL-020-A.json"
+      ],
+      "prompt_sha256": "8e76b174ff098d7073c92681f93ffb7d8b7e4c29705f3b0b343d6115c8349840",
       "status": "active"
     },
     "W3-TOOL-021-P-01": {
@@ -1377,7 +1459,18 @@
     "initial_ready_tickets": ["TOOL-019-D", "TOOL-021-P"],
     "opened_at": "2026-07-21T20:31:24.8635511+08:00"
   },
-  "batch_checkpoints": [],
+  "batch_checkpoints": [
+    {
+      "wave": "W3",
+      "batch": 1,
+      "canonical_head": "74c05e74b99ff303287ea60525fc4d5e99ffdab7",
+      "accepted_tickets": ["TOOL-019-D"],
+      "dispatched_tickets": ["TOOL-020-O", "TOOL-020-A"],
+      "dependency_commits": ["4f1a74a67a02f84ad6c4cbe14b318790d2754177", "9fe84c249ccab450504a7928c1ad8a3b2649b175"],
+      "stable_patch_ids_verified": true,
+      "checkpointed_at": "2026-07-21T20:42:21.9140888+08:00"
+    }
+  ],
   "last_gate": {
     "wave": "W2",
     "status": "accepted",
@@ -1415,5 +1508,5 @@
     "discrepancies": [],
     "accepted_at": "2026-07-21T16:25:12.2097623+08:00"
   },
-  "updated_at": "2026-07-21T20:31:24.8635511+08:00"
+  "updated_at": "2026-07-21T20:42:21.9140888+08:00"
 }
