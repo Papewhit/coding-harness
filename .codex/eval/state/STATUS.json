@@ -225,10 +225,22 @@
       "handoff_path": ".codex/eval/handoffs/EVAL-030.json",
       "handoff_sha256": "40834e95152f29485dcaa6f94d63ce5e28fb4791ad3f33a2bb09d2e03564df84",
       "context_assets_sha256": "d8349c034524cc488958a1f3b460a7b6080915eed0b03b64c635810c21bf8e15"
+    },
+    "EVAL-041": {
+      "instance_id": "W1-EVAL-041-01",
+      "status": "accepted",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "head_sha": "69347c68453eea4649078091f7de0c8057d02539",
+      "dependency_commits": ["387216cf4393edc34bce30e7facfa2dbc35cc524"],
+      "applied_dependency_commits": ["8323b7f42614513999342b6dc05e4fbc52f2111e"],
+      "own_commits": ["69347c68453eea4649078091f7de0c8057d02539"],
+      "integration_commits": ["925015cc4a07e39f86cdf9e73aa689dc9e425fcc"],
+      "handoff_path": ".codex/eval/handoffs/EVAL-041.json",
+      "handoff_sha256": "4be73c8aeb7730419bc42dfd892d34c0862f8bae1ed2a16dd6382432c1e8c347",
+      "live_task_runner_sha256": "9254bf0204176d2a07c50542d8fa8955b61066f05b2aea93992c855a19dca5d2"
     }
   },
   "active_tickets": {
-    "EVAL-041": "W1-EVAL-041-01",
     "EVAL-040-A": "W1-EVAL-040-A-01",
     "EVAL-040-B": "W1-EVAL-040-B-01",
     "EVAL-040-C": "W1-EVAL-040-C-01"
@@ -683,7 +695,13 @@
         ".codex/eval/handoffs/EVAL-041.json"
       ],
       "prompt_sha256": "6ba88b4c19734a725992114a958d0327ec8a39c1f22cff3e248499971623a473",
-      "status": "active"
+      "head_sha": "69347c68453eea4649078091f7de0c8057d02539",
+      "applied_dependency_commits": ["8323b7f42614513999342b6dc05e4fbc52f2111e"],
+      "own_commits": ["69347c68453eea4649078091f7de0c8057d02539"],
+      "integration_commits": ["925015cc4a07e39f86cdf9e73aa689dc9e425fcc"],
+      "handoff_sha256": "4be73c8aeb7730419bc42dfd892d34c0862f8bae1ed2a16dd6382432c1e8c347",
+      "live_task_runner_sha256": "9254bf0204176d2a07c50542d8fa8955b61066f05b2aea93992c855a19dca5d2",
+      "status": "accepted"
     },
     "W1-EVAL-022-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -819,5 +837,5 @@
     "discrepancies": [],
     "accepted_at": "2026-07-21T11:03:17.8274184+08:00"
   },
-  "updated_at": "2026-07-21T13:36:00+08:00"
+  "updated_at": "2026-07-21T13:43:00+08:00"
 }
