@@ -400,13 +400,44 @@
       "handoff_sha256": "22c3072d90b258717ee1b20261b4f22d19c4f049a05d663bb8d40717b3b0ac64",
       "sdk_dependency_lock_sha256": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
       "stable_patch_id": "9973a742d9a2cf49538ea7f1522d059cb5cddf68"
+    },
+    "TOOL-020-O": {
+      "instance_id": "W3-TOOL-020-O-01",
+      "status": "accepted",
+      "base_sha": "807dc8f348c609bf885f4b65e69cebd781e8f1ba",
+      "head_sha": "8556a59f1a7ae9195b7a55ad90454ca6c726da91",
+      "dependency_commits": ["4f1a74a67a02f84ad6c4cbe14b318790d2754177", "9fe84c249ccab450504a7928c1ad8a3b2649b175"],
+      "own_commits": ["7b9f1ac62eb893ad6067eb5ef1b30026c00c621a", "8556a59f1a7ae9195b7a55ad90454ca6c726da91"],
+      "integration_commits": ["104b7ae9e3d5f78e489074a7c922fc6c93a0a053"],
+      "handoff_path": ".codex/eval/handoffs/TOOL-020-O.json",
+      "handoff_sha256": "14b3d7350348e52c37cd6a91b0b6a7cadfba71d595dcb8fd01f15f4390e43435",
+      "stable_patch_id": "370a402d75f5e799938358267a884d235e6c3a8d"
+    },
+    "TOOL-020-A": {
+      "instance_id": "W3-TOOL-020-A-01",
+      "status": "accepted",
+      "base_sha": "807dc8f348c609bf885f4b65e69cebd781e8f1ba",
+      "head_sha": "c76522d072d4ea45bfe03afb1ba88dde824c7c48",
+      "dependency_commits": ["4f1a74a67a02f84ad6c4cbe14b318790d2754177", "9fe84c249ccab450504a7928c1ad8a3b2649b175"],
+      "own_commits": ["4f5f91b0fee2bd711b290835f17a0b2fd633252d", "c76522d072d4ea45bfe03afb1ba88dde824c7c48"],
+      "integration_commits": ["79761cbd9b0c51575d68dc62aee0d6a24dd15b56"],
+      "handoff_path": ".codex/eval/handoffs/TOOL-020-A.json",
+      "handoff_sha256": "90c8ed270c670109b57e63984e4e5f4288b35f8c1ec11a06321a834e950cd2a9",
+      "stable_patch_id": "245cab48a0b278c6d143902308af3e6c89f6fc46"
+    },
+    "TOOL-021-P": {
+      "instance_id": "W3-TOOL-021-P-01",
+      "status": "accepted",
+      "base_sha": "807dc8f348c609bf885f4b65e69cebd781e8f1ba",
+      "head_sha": "2b446cbeae89942b1adf59bb32e8e3dac6811c03",
+      "own_commits": ["aa34b73dc920540489771715131b43cec4691f30", "2b446cbeae89942b1adf59bb32e8e3dac6811c03"],
+      "integration_commits": ["ad72d28347cb48ef928fd3fcec3eb2802a0dea6a"],
+      "handoff_path": ".codex/eval/handoffs/TOOL-021-P.json",
+      "handoff_sha256": "7fe89f8337b5b2873d2cc5616f66a8f3819433c86d796df9d4cb22ea91488551",
+      "stable_patch_id": "c99d37f69994a53384ef2956209a60857cd3650c"
     }
   },
-  "active_tickets": {
-    "TOOL-020-O": {"instance_id": "W3-TOOL-020-O-01", "status": "active"},
-    "TOOL-020-A": {"instance_id": "W3-TOOL-020-A-01", "status": "active"},
-    "TOOL-021-P": {"instance_id": "W3-TOOL-021-P-01", "status": "active"}
-  },
+  "active_tickets": {},
   "blocked_tickets": {},
   "ticket_instances": {
     "W0-EVAL-000-01": {
@@ -1378,7 +1409,12 @@
         ".codex/eval/handoffs/TOOL-020-O.json"
       ],
       "prompt_sha256": "f9310ff54b74b646df04ce0f124e6e9db4d021ce0f9f576afa58fc899a6de56f",
-      "status": "active"
+      "head_sha": "8556a59f1a7ae9195b7a55ad90454ca6c726da91",
+      "own_commits": ["7b9f1ac62eb893ad6067eb5ef1b30026c00c621a", "8556a59f1a7ae9195b7a55ad90454ca6c726da91"],
+      "integration_commits": ["104b7ae9e3d5f78e489074a7c922fc6c93a0a053"],
+      "handoff_sha256": "14b3d7350348e52c37cd6a91b0b6a7cadfba71d595dcb8fd01f15f4390e43435",
+      "stable_patch_id": "370a402d75f5e799938358267a884d235e6c3a8d",
+      "status": "accepted"
     },
     "W3-TOOL-020-A-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -1410,7 +1446,12 @@
         ".codex/eval/handoffs/TOOL-020-A.json"
       ],
       "prompt_sha256": "8e76b174ff098d7073c92681f93ffb7d8b7e4c29705f3b0b343d6115c8349840",
-      "status": "active"
+      "head_sha": "c76522d072d4ea45bfe03afb1ba88dde824c7c48",
+      "own_commits": ["4f5f91b0fee2bd711b290835f17a0b2fd633252d", "c76522d072d4ea45bfe03afb1ba88dde824c7c48"],
+      "integration_commits": ["79761cbd9b0c51575d68dc62aee0d6a24dd15b56"],
+      "handoff_sha256": "90c8ed270c670109b57e63984e4e5f4288b35f8c1ec11a06321a834e950cd2a9",
+      "stable_patch_id": "245cab48a0b278c6d143902308af3e6c89f6fc46",
+      "status": "accepted"
     },
     "W3-TOOL-021-P-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -1441,7 +1482,12 @@
         ".codex/eval/handoffs/TOOL-021-P.json"
       ],
       "prompt_sha256": "dea46b3f3ea2bdd5e2ecfd36d96139becb2f56f3b3e8004b003b47c149293db6",
-      "status": "active"
+      "head_sha": "2b446cbeae89942b1adf59bb32e8e3dac6811c03",
+      "own_commits": ["aa34b73dc920540489771715131b43cec4691f30", "2b446cbeae89942b1adf59bb32e8e3dac6811c03"],
+      "integration_commits": ["ad72d28347cb48ef928fd3fcec3eb2802a0dea6a"],
+      "handoff_sha256": "7fe89f8337b5b2873d2cc5616f66a8f3819433c86d796df9d4cb22ea91488551",
+      "stable_patch_id": "c99d37f69994a53384ef2956209a60857cd3650c",
+      "status": "accepted"
     }
   },
   "wave_handoffs": {
@@ -1449,15 +1495,16 @@
     "W1": ".codex/eval/state/W1-wave-handoff.json",
     "W2": ".codex/eval/state/W2-wave-handoff.json"
   },
-  "ready_tickets": [],
+  "ready_tickets": ["TOOL-030-E", "TOOL-031-S", "TOOL-032-C"],
   "wave_open": {
     "wave": "W3",
-    "status": "active",
+    "status": "accepted",
     "wave_base_sha": "807dc8f348c609bf885f4b65e69cebd781e8f1ba",
     "control_overlay_sha256": "5a93b38406604431edf56dbb3f472b03881057e797777e0ed702308947895eaf",
     "upstream_handoff_sha256": "d9a34c770b20ec9b81f80ef073fa77c1d09e8b7edff046d57f90d1430b633feb",
     "initial_ready_tickets": ["TOOL-019-D", "TOOL-021-P"],
-    "opened_at": "2026-07-21T20:31:24.8635511+08:00"
+    "opened_at": "2026-07-21T20:31:24.8635511+08:00",
+    "closed_at": "2026-07-21T20:59:31.9387107+08:00"
   },
   "batch_checkpoints": [
     {
@@ -1469,44 +1516,72 @@
       "dependency_commits": ["4f1a74a67a02f84ad6c4cbe14b318790d2754177", "9fe84c249ccab450504a7928c1ad8a3b2649b175"],
       "stable_patch_ids_verified": true,
       "checkpointed_at": "2026-07-21T20:42:21.9140888+08:00"
+    },
+    {
+      "wave": "W3",
+      "batch": 2,
+      "canonical_head": "ad72d28347cb48ef928fd3fcec3eb2802a0dea6a",
+      "accepted_tickets": ["TOOL-020-O", "TOOL-020-A", "TOOL-021-P"],
+      "dispatched_tickets": [],
+      "stable_patch_ids_verified": true,
+      "checkpointed_at": "2026-07-21T20:59:31.9387107+08:00"
     }
   ],
-  "last_gate": {
-    "wave": "W2",
+  "wave_close": {
+    "wave": "W3",
     "status": "accepted",
-    "wave_integrator_thread": "019f8383-2ce3-72c1-808c-68c3b030ae99",
-    "wave_base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
-    "accepted_ticket_count": 10,
+    "ticket_integration_head": "ad72d28347cb48ef928fd3fcec3eb2802a0dea6a",
+    "accepted_ticket_count": 4,
+    "active_ticket_count": 0,
+    "blocked_ticket_count": 0,
+    "worker_bundle": {
+      "path": "F:\\dev\\llm\\pico-eval-artifacts\\wave-bundles\\W3-workers.bundle",
+      "sha256": "a2d93faa5d3c6d6562bb2714d8e39c67439a062f0d35c73b68c4abb076a42801",
+      "size_bytes": 16211271,
+      "ref_count": 4,
+      "verified": true
+    },
+    "next_wave": "W4",
+    "next_wave_ready_tickets": ["TOOL-030-E", "TOOL-031-S", "TOOL-032-C"],
+    "next_wave_started": false,
+    "closed_at": "2026-07-21T20:59:31.9387107+08:00"
+  },
+  "last_gate": {
+    "wave": "W3",
+    "status": "accepted",
+    "wave_integrator_thread": "019f84a4-e3fa-7bb3-94dd-df62c7d60fed",
+    "wave_base_sha": "807dc8f348c609bf885f4b65e69cebd781e8f1ba",
+    "accepted_ticket_count": 4,
     "plan_validation": "VALID: 63 ticket templates, 11 waves",
     "initial_ready_set_match": true,
-    "initial_ready_ticket_count": 9,
+    "initial_ready_ticket_count": 2,
     "allowed_path_ownership_conflicts": [],
     "sdk_transport_decision_frozen": true,
-    "local_taskset_frozen": true,
-    "context_fragments_frozen": true,
-    "native_scripted_fixtures_frozen": true,
-    "sdk_wire_results": {
-      "dashscope-o": "3 provider HTTP 400 responses; tested thinking/tool_choice=required configuration protocol-ineligible",
-      "dashscope-a": "3/3 native call/result roundtrips",
-      "deepseek": "3/3 native call/result roundtrips"
-    },
+    "sdk_dependency_lock_frozen": true,
+    "sdk_dependency_lock_sha256": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+    "openai_responses_adapter_accepted": true,
+    "anthropic_messages_adapter_accepted": true,
+    "provider_profile_capabilities_explicit": true,
+    "core_sdk_import_count": 0,
+    "w3_core_changed_paths": [],
+    "sdk_runner_usage_count": 0,
+    "new_text_fallback_count": 0,
     "formal_online_evaluation_run": false,
     "online_effectiveness_conclusions": false,
     "final_evaluation_model_selected": false,
-    "w3_started": false,
+    "w4_started": false,
     "targeted_test_evidence": {
-      "w2_deterministic_targets": "52 passed",
-      "local_repo_matrix": "9 baseline failures / 9 reference passes / 9 inverted failures",
-      "ruff_changed_python_files": "passed",
-      "architecture_safety_policy_permissions": "16 passed, 11 baseline-identical failures on canonical and wave base"
+      "w3_provider_and_adapter_contracts": "60 passed",
+      "ruff_pico_tests": "passed",
+      "architecture_safety_policy_permissions": "16 passed, 11 failures identical to the W2 canonical baseline"
     },
     "known_baseline_failures": {
       "architecture": "pico/core/runtime.py remains 952 lines against the unchanged 950-line budget",
-      "windows_environment": "10 unchanged Windows permission/path/home/shell-command failures; exact test outcome matches wave base"
+      "windows_environment": "10 unchanged Windows symlink/home/path/shell-command failures; exact test outcome matches the W2 canonical baseline"
     },
-    "worker_bundle_sha256": "a3cbcba639217b054bc30494b8a3a092ee041670390a574dde226155dd18fc19",
+    "worker_bundle_sha256": "a2d93faa5d3c6d6562bb2714d8e39c67439a062f0d35c73b68c4abb076a42801",
     "discrepancies": [],
-    "accepted_at": "2026-07-21T16:25:12.2097623+08:00"
+    "accepted_at": "2026-07-21T20:59:31.9387107+08:00"
   },
-  "updated_at": "2026-07-21T20:42:21.9140888+08:00"
+  "updated_at": "2026-07-21T20:59:31.9387107+08:00"
 }
