@@ -114,6 +114,7 @@
   },
   "active_tickets": {
     "EVAL-020": "W1-EVAL-020-01",
+    "EVAL-022": "W1-EVAL-022-01",
     "EVAL-040-A": "W1-EVAL-040-A-01",
     "EVAL-040-B": "W1-EVAL-040-B-01",
     "EVAL-040-C": "W1-EVAL-040-C-01"
@@ -337,6 +338,32 @@
       "prompt_sha256": "e5ac5b957ea04c7c138c71e3f2da16c7fb867054c72458974676241c4717eca7",
       "status": "active"
     },
+    "W1-EVAL-022-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "EVAL-022",
+      "instance_id": "W1-EVAL-022-01",
+      "wave": "W1",
+      "role": "implementer",
+      "thread_id": "019f82ee-65ef-7222-82e2-38160687ca02",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "branch": "codex/eval-v3-w1-eval-022",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\05c5\\pico",
+      "dependency_handoff_hashes": {
+        "EVAL-001": "cc8c951e0a0e0dac20e46c611b102bc538a6863099310a90690eb639f931a3be"
+      },
+      "dependency_commits": [],
+      "freeze_hashes": {
+        "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1"
+      },
+      "allowed_write_paths": [
+        "pico/evaluation/dream_lifecycle_eval.py",
+        "tests/test_dream_lifecycle_evaluator.py",
+        "benchmarks/v3/auto-dream/lifecycle.json",
+        ".codex/eval/handoffs/EVAL-022.json"
+      ],
+      "prompt_sha256": "bb90730adf9f96d488470054ac1251bee5e312daaeae74e186ce134a1d663cf6",
+      "status": "active"
+    },
     "W1-EVAL-040-A-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
       "ticket_id": "EVAL-040-A",
@@ -428,7 +455,6 @@
   "ready_tickets": [
     "TOOL-012-O",
     "TOOL-012-A",
-    "EVAL-022",
     "EVAL-030",
     "EVAL-041"
   ],
@@ -444,5 +470,5 @@
     "discrepancies": [],
     "accepted_at": "2026-07-21T11:03:17.8274184+08:00"
   },
-  "updated_at": "2026-07-21T12:29:00+08:00"
+  "updated_at": "2026-07-21T12:36:00+08:00"
 }
