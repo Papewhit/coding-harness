@@ -238,13 +238,42 @@
       "handoff_path": ".codex/eval/handoffs/EVAL-041.json",
       "handoff_sha256": "4be73c8aeb7730419bc42dfd892d34c0862f8bae1ed2a16dd6382432c1e8c347",
       "live_task_runner_sha256": "9254bf0204176d2a07c50542d8fa8955b61066f05b2aea93992c855a19dca5d2"
+    },
+    "EVAL-040-A": {
+      "instance_id": "W1-EVAL-040-A-01",
+      "status": "accepted",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "head_sha": "fa8cea2e695163c865cc761adccdd2a0015d324d",
+      "own_commits": ["2e8af03a3bd743c0de9a0817e39eb6592a526d36", "fa8cea2e695163c865cc761adccdd2a0015d324d"],
+      "integration_commits": ["0999ae67fbde0320c17dd9eb4135f971582b70c7", "a7742f81de9b8fbd09db1978e3edd59f12eda3f9"],
+      "handoff_path": ".codex/eval/handoffs/EVAL-040-A.json",
+      "handoff_sha256": "f23fb48cc4f4d2cee342b0ad4a18ce05c2296b6e2599c783f86f7e73940748ef",
+      "fragment_sha256": "24d42d41038f8fa08d90d27fc0664b8fda75579896f9072d058eadc4dfc7b3ba"
+    },
+    "EVAL-040-B": {
+      "instance_id": "W1-EVAL-040-B-01",
+      "status": "accepted",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "head_sha": "662a73e222745d4c6c6854c31025f3e221cf61a8",
+      "own_commits": ["662a73e222745d4c6c6854c31025f3e221cf61a8"],
+      "integration_commits": ["7b61bf36bd5c61d3d57e9f9c18d124e24da479c2"],
+      "handoff_path": ".codex/eval/handoffs/EVAL-040-B.json",
+      "handoff_sha256": "62f410f8e59cd066583b4e9a142b59bce6132434c278a420e50bf011ed4bd608",
+      "fragment_sha256": "dcea7a08048653285782e8f00c9326322c6d5fe5eeab36e32c16c19d79d9f622"
+    },
+    "EVAL-040-C": {
+      "instance_id": "W1-EVAL-040-C-01",
+      "status": "accepted",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "head_sha": "bd3cc58f2937f1a05c5c3d08b47a3cb641a4f378",
+      "own_commits": ["5677fef23f8b9eebaa82a5d5eb79505526c611b1", "bd3cc58f2937f1a05c5c3d08b47a3cb641a4f378"],
+      "integration_commits": ["e3dae1c9442618cdb89d596dab20e86b16805264", "27e60ae60dce0b0437b7a73e7a4e662c1c7bef65"],
+      "handoff_path": ".codex/eval/handoffs/EVAL-040-C.json",
+      "handoff_sha256": "37df819fa4eee7ed5df4c8c71787609096586289bfb5fc9a3088194a00be7b78",
+      "fragment_sha256": "3e8d833b4b424b3d389705d51431b350142acc4367864ca1dcab870ed86fa382"
     }
   },
-  "active_tickets": {
-    "EVAL-040-A": "W1-EVAL-040-A-01",
-    "EVAL-040-B": "W1-EVAL-040-B-01",
-    "EVAL-040-C": "W1-EVAL-040-C-01"
-  },
+  "active_tickets": {},
   "blocked_tickets": {},
   "ticket_instances": {
     "W0-EVAL-000-01": {
@@ -761,7 +790,12 @@
         ".codex/eval/handoffs/EVAL-040-A.json"
       ],
       "prompt_sha256": "abd573def06fef33c4a4f03d7b0d7028f7ebd27f5e75d1023927fffb76ffc399",
-      "status": "active"
+      "head_sha": "fa8cea2e695163c865cc761adccdd2a0015d324d",
+      "own_commits": ["2e8af03a3bd743c0de9a0817e39eb6592a526d36", "fa8cea2e695163c865cc761adccdd2a0015d324d"],
+      "integration_commits": ["0999ae67fbde0320c17dd9eb4135f971582b70c7", "a7742f81de9b8fbd09db1978e3edd59f12eda3f9"],
+      "handoff_sha256": "f23fb48cc4f4d2cee342b0ad4a18ce05c2296b6e2599c783f86f7e73940748ef",
+      "fragment_sha256": "24d42d41038f8fa08d90d27fc0664b8fda75579896f9072d058eadc4dfc7b3ba",
+      "status": "accepted"
     },
     "W1-EVAL-040-B-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -789,7 +823,12 @@
         ".codex/eval/handoffs/EVAL-040-B.json"
       ],
       "prompt_sha256": "9cc4eaa30ce84f324b16c92f5439851e2042e4f07a63cbd6d4ad9ffde57b36ce",
-      "status": "active"
+      "head_sha": "662a73e222745d4c6c6854c31025f3e221cf61a8",
+      "own_commits": ["662a73e222745d4c6c6854c31025f3e221cf61a8"],
+      "integration_commits": ["7b61bf36bd5c61d3d57e9f9c18d124e24da479c2"],
+      "handoff_sha256": "62f410f8e59cd066583b4e9a142b59bce6132434c278a420e50bf011ed4bd608",
+      "fragment_sha256": "dcea7a08048653285782e8f00c9326322c6d5fe5eeab36e32c16c19d79d9f622",
+      "status": "accepted"
     },
     "W1-EVAL-040-C-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -817,14 +856,18 @@
         ".codex/eval/handoffs/EVAL-040-C.json"
       ],
       "prompt_sha256": "85493b8429088cb897a3cf0fde46e5d7f46121f7cb291d79de37ce366c11be22",
-      "status": "active"
+      "head_sha": "bd3cc58f2937f1a05c5c3d08b47a3cb641a4f378",
+      "own_commits": ["5677fef23f8b9eebaa82a5d5eb79505526c611b1", "bd3cc58f2937f1a05c5c3d08b47a3cb641a4f378"],
+      "integration_commits": ["e3dae1c9442618cdb89d596dab20e86b16805264", "27e60ae60dce0b0437b7a73e7a4e662c1c7bef65"],
+      "handoff_sha256": "37df819fa4eee7ed5df4c8c71787609096586289bfb5fc9a3088194a00be7b78",
+      "fragment_sha256": "3e8d833b4b424b3d389705d51431b350142acc4367864ca1dcab870ed86fa382",
+      "status": "accepted"
     }
   },
   "wave_handoffs": {
     "W0": ".codex/eval/state/W0-wave-handoff.json"
   },
-  "ready_tickets": [
-  ],
+  "ready_tickets": [],
   "last_gate": {
     "wave": "W0",
     "status": "accepted",
@@ -837,5 +880,5 @@
     "discrepancies": [],
     "accepted_at": "2026-07-21T11:03:17.8274184+08:00"
   },
-  "updated_at": "2026-07-21T13:43:00+08:00"
+  "updated_at": "2026-07-21T13:50:00+08:00"
 }

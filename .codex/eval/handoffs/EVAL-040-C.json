@@ -1,0 +1,102 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "EVAL-040-C",
+  "instance_id": "W1-EVAL-040-C-01",
+  "wave": "W1",
+  "role": "fixture_builder",
+  "status": "complete",
+  "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+  "head_sha": "bd3cc58f2937f1a05c5c3d08b47a3cb641a4f378",
+  "dependency_commits": [],
+  "dependency_handoff_hashes": {
+    "EVAL-001": "cc8c951e0a0e0dac20e46c611b102bc538a6863099310a90690eb639f931a3be"
+  },
+  "own_commits": [
+    "5677fef23f8b9eebaa82a5d5eb79505526c611b1",
+    "bd3cc58f2937f1a05c5c3d08b47a3cb641a4f378"
+  ],
+  "files_changed": [
+    "benchmarks/v3/local-repos/repos/logslice/**",
+    "benchmarks/v3/local-repos/hidden_verifiers/logslice/**",
+    "benchmarks/v3/local-repos/reference_patches/logslice/**",
+    "benchmarks/v3/local-repos/task_docs/logslice/**",
+    "benchmarks/v3/local-repos/fragments/logslice.json"
+  ],
+  "commands_run": [
+    "uv run pytest <logslice fixture>/tests -q",
+    "uv run ruff check benchmarks/v3/local-repos/repos/logslice benchmarks/v3/local-repos/hidden_verifiers/logslice",
+    "isolated disposable-copy baseline/reference verifier checks for T07-T09",
+    "git apply --check for all three reference patches",
+    "git diff --check 67be0ecc161cd6060a8417d29b1e5bc40b10e080..HEAD"
+  ],
+  "tests": [
+    {
+      "command": "uv run pytest <logslice fixture>/tests -q",
+      "result": "passed",
+      "details": "18 passed in 0.10s during the independent recheck"
+    },
+    {
+      "command": "uv run ruff check benchmarks/v3/local-repos/repos/logslice benchmarks/v3/local-repos/hidden_verifiers/logslice",
+      "result": "passed",
+      "details": "All checks passed"
+    },
+    {
+      "command": "isolated disposable-copy verifier checks",
+      "result": "passed",
+      "details": "T07 baseline failed in 0.286s and reference passed in 0.419s; T08 baseline failed in 0.291s and reference passed in 0.475s; T09 baseline failed in 0.613s and reference passed in 1.215s. Each patch also passed git apply --check. Every verifier is below 5 seconds."
+    },
+    {
+      "command": "fixture source LOC count",
+      "result": "passed",
+      "details": "303 Python LOC, within the required 200-1500 range."
+    },
+    {
+      "command": "candidate isolation check",
+      "result": "passed",
+      "details": "Each verifier ran against a disposable copy of repos/logslice only; hidden_verifiers and reference_patches remained external to the candidate workspace."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "benchmarks/v3/local-repos/fragments/logslice.json",
+      "sha256": "3e8d833b4b424b3d389705d51431b350142acc4367864ca1dcab870ed86fa382",
+      "hash_basis": "workspace_file_bytes"
+    },
+    {
+      "path": "benchmarks/v3/local-repos/reference_patches/logslice/T07-message-delimiter.patch",
+      "sha256": "61eb5b0947f095a47299c2a195a345495ef762b2aa5961721496d831d6556c06",
+      "hash_basis": "workspace_file_bytes"
+    },
+    {
+      "path": "benchmarks/v3/local-repos/reference_patches/logslice/T08-minimum-level.patch",
+      "sha256": "e1cb1d103bc5be7c82f76e3c678f9d50830e3b25be47dfbec3b46f618d768ccc",
+      "hash_basis": "workspace_file_bytes"
+    },
+    {
+      "path": "benchmarks/v3/local-repos/reference_patches/logslice/T09-cli-invalid-timestamp.patch",
+      "sha256": "02c1bb7a3ee28d7139313b2e40b66cb915d7f2dc7bcc6981717590163b387198",
+      "hash_basis": "workspace_file_bytes"
+    }
+  ],
+  "frozen_hashes": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "native_contract": null,
+    "tool_schema": null,
+    "sdk_transport_decision": null,
+    "provider_selection": null,
+    "native_resume_gate": null
+  },
+  "native_protocol_observations": {
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0
+  },
+  "defects": [],
+  "risks": [],
+  "status_proposal": null,
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}
