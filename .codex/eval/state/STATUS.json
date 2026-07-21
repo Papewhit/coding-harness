@@ -9,15 +9,15 @@
   "local_config_path": "F:\\dev\\llm\\pico\\.pico.toml",
   "artifact_root": "F:\\dev\\llm\\pico-eval-artifacts",
   "program_supervisor_thread": "current plan-level Codex task",
-  "current_wave_integrator_thread": "019f8383-2ce3-72c1-808c-68c3b030ae99",
+  "current_wave_integrator_thread": "019f84a4-e3fa-7bb3-94dd-df62c7d60fed",
   "profiles": {
     "qwen_openai_responses": {"local_name": "dashscope-o", "configured": true},
     "qwen_anthropic_messages": {"local_name": "dashscope-a", "configured": true},
     "deepseek_anthropic_messages": {"local_name": "deepseek", "configured": true}
   },
   "bootstrap_sha": "9d6bfc4567b6c1dff45908a3ed00335b947a52f9",
-  "current_wave": "W2",
-  "wave_base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+  "current_wave": "W3",
+  "wave_base_sha": "807dc8f348c609bf885f4b65e69cebd781e8f1ba",
   "gates": {
     "native_eval_ready": "pending",
     "native_resume_ready": "pending"
@@ -390,7 +390,10 @@
       "stable_patch_id": "dafdec9bcdd2dfd5412aa74a2c8443f28502d83b"
     }
   },
-  "active_tickets": {},
+  "active_tickets": {
+    "TOOL-019-D": {"instance_id": "W3-TOOL-019-D-01", "status": "active"},
+    "TOOL-021-P": {"instance_id": "W3-TOOL-021-P-01", "status": "active"}
+  },
   "blocked_tickets": {},
   "ticket_instances": {
     "W0-EVAL-000-01": {
@@ -1298,81 +1301,83 @@
       "decision_sha256": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
       "stable_patch_id": "dafdec9bcdd2dfd5412aa74a2c8443f28502d83b",
       "status": "accepted"
+    },
+    "W3-TOOL-019-D-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "TOOL-019-D",
+      "instance_id": "W3-TOOL-019-D-01",
+      "wave": "W3",
+      "role": "implementer",
+      "thread_id": "/root/w3_tool_019_d",
+      "base_sha": "807dc8f348c609bf885f4b65e69cebd781e8f1ba",
+      "branch": "codex/eval-v3-w3-tool-019-d",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\w3-019d\\pico",
+      "dependency_handoff_hashes": {
+        "TOOL-013-S": "0eb6213eab7261daf535b9b30cce5787533c4070195f7a5e6b2c383ab40ee55a"
+      },
+      "dependency_commits": [],
+      "freeze_hashes": {
+        "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215"
+      },
+      "allowed_write_paths": [
+        "pyproject.toml",
+        "uv.lock",
+        "pico/providers/provider_transport.py",
+        "pico/providers/sdk_imports.py",
+        "tests/test_provider_transport.py",
+        ".codex/eval/handoffs/TOOL-019-D.json"
+      ],
+      "prompt_sha256": "ad0217ff38d2d0dcfb3f8872b27938b83331d901b3517a85931304d1f4473237",
+      "status": "active"
+    },
+    "W3-TOOL-021-P-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "TOOL-021-P",
+      "instance_id": "W3-TOOL-021-P-01",
+      "wave": "W3",
+      "role": "implementer",
+      "thread_id": "/root/w3_tool_021_p",
+      "base_sha": "807dc8f348c609bf885f4b65e69cebd781e8f1ba",
+      "branch": "codex/eval-v3-w3-tool-021-p",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\w3-021p\\pico",
+      "dependency_handoff_hashes": {
+        "TOOL-010": "300faf3f58f369248291ba72be3aefca9e3444dac9999cf45c5767c4eefbde0d",
+        "TOOL-013-S": "0eb6213eab7261daf535b9b30cce5787533c4070195f7a5e6b2c383ab40ee55a"
+      },
+      "dependency_commits": [],
+      "freeze_hashes": {
+        "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+        "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215"
+      },
+      "allowed_write_paths": [
+        ".pico.toml.example",
+        "pico/config/__init__.py",
+        "pico/providers/__init__.py",
+        "pico/cli.py",
+        "tests/test_provider_protocol.py",
+        "docs/configuration.md",
+        ".codex/eval/handoffs/TOOL-021-P.json"
+      ],
+      "prompt_sha256": "dea46b3f3ea2bdd5e2ecfd36d96139becb2f56f3b3e8004b003b47c149293db6",
+      "status": "active"
     }
   },
   "wave_handoffs": {
     "W0": ".codex/eval/state/W0-wave-handoff.json",
-    "W1": ".codex/eval/state/W1-wave-handoff.json"
+    "W1": ".codex/eval/state/W1-wave-handoff.json",
+    "W2": ".codex/eval/state/W2-wave-handoff.json"
   },
-  "ready_tickets": ["TOOL-019-D", "TOOL-021-P"],
+  "ready_tickets": [],
   "wave_open": {
-    "wave": "W2",
-    "status": "accepted",
-    "wave_base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
-    "control_overlay_sha256": "5954e177e3bd0f7585786a42654e868b017b167d52172df03c56da116628faaf",
-    "initial_ready_tickets": [
-      "TOOL-012-QO-R", "TOOL-012-QA-R", "TOOL-012-DA-R", "TOOL-015",
-      "EVAL-031-I", "EVAL-031-A", "EVAL-031-B", "EVAL-040-M", "EVAL-080"
-    ],
-    "provider_name_validation": {
-      "dashscope-o": true,
-      "dashscope-a": true,
-      "deepseek": true,
-      "values_or_secrets_read": false
-    },
-    "opened_at": "2026-07-21T15:24:56.6990056+08:00",
-    "closed_at": "2026-07-21T16:25:12.2097623+08:00"
+    "wave": "W3",
+    "status": "active",
+    "wave_base_sha": "807dc8f348c609bf885f4b65e69cebd781e8f1ba",
+    "control_overlay_sha256": "5a93b38406604431edf56dbb3f472b03881057e797777e0ed702308947895eaf",
+    "upstream_handoff_sha256": "d9a34c770b20ec9b81f80ef073fa77c1d09e8b7edff046d57f90d1430b633feb",
+    "initial_ready_tickets": ["TOOL-019-D", "TOOL-021-P"],
+    "opened_at": "2026-07-21T20:31:24.8635511+08:00"
   },
-  "batch_checkpoints": [
-    {
-      "wave": "W2",
-      "batch": 1,
-      "canonical_head": "0352cb98192b23976ce40bf0aa3b2a0ac6197f9f",
-      "accepted_tickets": ["TOOL-015", "EVAL-031-I", "EVAL-031-A"],
-      "dispatched_tickets": ["EVAL-031-B", "EVAL-040-M", "EVAL-080"],
-      "stable_patch_ids_verified": true,
-      "checkpointed_at": "2026-07-21T15:45:44.3327500+08:00"
-    },
-    {
-      "wave": "W2",
-      "batch": 2,
-      "canonical_head": "3dda76cb41677148ccafb13b8cd2cb3b27346b86",
-      "accepted_tickets": ["EVAL-031-B", "EVAL-040-M", "EVAL-080", "TOOL-012-QO-R", "TOOL-012-QA-R", "TOOL-012-DA-R"],
-      "dispatched_tickets": ["TOOL-013-S"],
-      "sdk_wire_viability_only": true,
-      "online_effectiveness_conclusions": false,
-      "stable_patch_ids_verified": true,
-      "checkpointed_at": "2026-07-21T16:01:35.8278997+08:00"
-    },
-    {
-      "wave": "W2",
-      "batch": 3,
-      "canonical_head": "b76d5332343a5273c676b707d9077087a9fbf6db",
-      "accepted_tickets": ["TOOL-013-S"],
-      "dispatched_tickets": [],
-      "stable_patch_ids_verified": true,
-      "checkpointed_at": "2026-07-21T16:25:12.2097623+08:00"
-    }
-  ],
-  "wave_close": {
-    "wave": "W2",
-    "status": "accepted",
-    "ticket_integration_head": "b76d5332343a5273c676b707d9077087a9fbf6db",
-    "accepted_ticket_count": 10,
-    "active_ticket_count": 0,
-    "blocked_ticket_count": 0,
-    "worker_bundle": {
-      "path": "F:\\dev\\llm\\pico-eval-artifacts\\wave-bundles\\W2-workers.bundle",
-      "sha256": "a3cbcba639217b054bc30494b8a3a092ee041670390a574dde226155dd18fc19",
-      "size_bytes": 16111628,
-      "ref_count": 10,
-      "verified": true
-    },
-    "next_wave": "W3",
-    "next_wave_ready_tickets": ["TOOL-019-D", "TOOL-021-P"],
-    "next_wave_started": false,
-    "closed_at": "2026-07-21T16:25:12.2097623+08:00"
-  },
+  "batch_checkpoints": [],
   "last_gate": {
     "wave": "W2",
     "status": "accepted",
@@ -1410,5 +1415,5 @@
     "discrepancies": [],
     "accepted_at": "2026-07-21T16:25:12.2097623+08:00"
   },
-  "updated_at": "2026-07-21T16:25:12.2097623+08:00"
+  "updated_at": "2026-07-21T20:31:24.8635511+08:00"
 }
