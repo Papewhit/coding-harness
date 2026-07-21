@@ -33,7 +33,62 @@
       "handoff_sha256": "c875c4ede3a0e4330a2ea45d6266ded2c9882ad2943e05432794ab3eeb4ba1bd",
       "stable_patch_id": "dc0505355b74b9a0474c6665dab3f5e8e2f5c709",
       "stable_patch_id_match": true
+    },
+    "EVAL-031-B": {
+      "worker_head": "d0f34d12cbbd13798665986ced61f6eda38bdb81",
+      "worker_commits": ["8fc836eb9237d029fb3287ce8e252d480063c55a", "ffcb5f0959d355eb8ea9a2ba4597685cc809d278", "d0a8a66bbb5827e438501f1549887e8630416c79", "d0f34d12cbbd13798665986ced61f6eda38bdb81"],
+      "dependency_commits": [],
+      "canonical_commit": "8e5f9d8864521214b1eb455c3faab96e61fae59a",
+      "handoff_sha256": "abda701d825119311a68795edfc89d145ded6e72dae454ecf78c134cd624a904",
+      "stable_patch_id": "12a7c1adc7ed74d04120d1321f1182753ddf3e26",
+      "stable_patch_id_match": true
+    },
+    "EVAL-040-M": {
+      "worker_head": "a357ea96a9d5a977f292a878fa2e8914fd6e8403",
+      "worker_commits": ["73855504de4a3de36ab425f1661c50abd5b94e6b", "a357ea96a9d5a977f292a878fa2e8914fd6e8403"],
+      "dependency_commits": [],
+      "canonical_commit": "059f176a31539b475573524bff640f1a34b9609c",
+      "handoff_sha256": "e7046cae4ee5d88e02a0b6eb9a74b2652c2d4419f1988cb72f7db70995b5b2ee",
+      "stable_patch_id": "2c4888389aeb3bf4e6ef743184956d52c2d22459",
+      "stable_patch_id_match": true
+    },
+    "EVAL-080": {
+      "worker_head": "d808f72561ba2be0f51518ed8fc94b26a1174fe8",
+      "worker_commits": ["968d21a013afc1828cf7d0861d33d53fb60c3a0a", "d808f72561ba2be0f51518ed8fc94b26a1174fe8"],
+      "dependency_commits": [],
+      "canonical_commit": "f1e8b5c880674d990bf48d66bc9e3cebaf1eea3e",
+      "handoff_sha256": "c4092e79cc02a84d8378b941219be729cdd133e80842306c2d010bea69e2f7a3",
+      "stable_patch_id": "18180c1ab213ccfde3008c1c873bd8abbdd9eaf8",
+      "stable_patch_id_match": true
+    },
+    "TOOL-012-QO-R": {
+      "worker_head": "7a38d3b28dcb15c7fa1d7c90c1bfca5e14d28b7b",
+      "worker_commits": ["7a38d3b28dcb15c7fa1d7c90c1bfca5e14d28b7b"],
+      "dependency_commits": [],
+      "canonical_commit": "3dda76cb41677148ccafb13b8cd2cb3b27346b86",
+      "handoff_sha256": "efd10f6c8e0400ebcbc18df4fbd05cc31ab693cce9f12b23b39ca2e01bedef3f",
+      "stable_patch_id": "8bf12b248acaa6a3c4d75fd818b15868e92ae79a",
+      "stable_patch_id_match": true
+    },
+    "TOOL-012-QA-R": {
+      "worker_head": "71958e79ecbdb9b82f17bfdc57f97925045d15b7",
+      "worker_commits": ["71958e79ecbdb9b82f17bfdc57f97925045d15b7"],
+      "dependency_commits": [],
+      "canonical_commit": "3dda76cb41677148ccafb13b8cd2cb3b27346b86",
+      "handoff_sha256": "f13c3cf6918e72af438237b551220ebec89bd7f81a162baddf01ea4b3268f151",
+      "stable_patch_id": "320acb27fbf095e81f50dac20f8cd960730eea0d",
+      "stable_patch_id_match": true
+    },
+    "TOOL-012-DA-R": {
+      "worker_head": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+      "worker_commits": [],
+      "dependency_commits": [],
+      "canonical_commit": "3dda76cb41677148ccafb13b8cd2cb3b27346b86",
+      "handoff_sha256": "8a22e252cdbfa1072ff6bd74dae1e30b8aa39b86cae235b1c6998043459b63fc",
+      "stable_patch_id": null,
+      "stable_patch_id_match": null,
+      "integration_note": "run-shard handoff copied by Wave Integrator; no worker Git commit"
     }
   },
-  "updated_at": "2026-07-21T15:45:44.3327500+08:00"
+  "updated_at": "2026-07-21T16:01:35.8278997+08:00"
 }

@@ -305,15 +305,81 @@
       "handoff_sha256": "c875c4ede3a0e4330a2ea45d6266ded2c9882ad2943e05432794ab3eeb4ba1bd",
       "fragment_sha256": "6bef856d9df68209d60d0ef7e9df1dc927fd861f64a6f646f0cc58fba9c808b8",
       "stable_patch_id": "dc0505355b74b9a0474c6665dab3f5e8e2f5c709"
+    },
+    "EVAL-031-B": {
+      "instance_id": "W2-EVAL-031-B-01",
+      "status": "accepted",
+      "base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+      "head_sha": "d0f34d12cbbd13798665986ced61f6eda38bdb81",
+      "own_commits": ["8fc836eb9237d029fb3287ce8e252d480063c55a", "ffcb5f0959d355eb8ea9a2ba4597685cc809d278", "d0a8a66bbb5827e438501f1549887e8630416c79", "d0f34d12cbbd13798665986ced61f6eda38bdb81"],
+      "integration_commits": ["8e5f9d8864521214b1eb455c3faab96e61fae59a"],
+      "handoff_path": ".codex/eval/handoffs/EVAL-031-B.json",
+      "handoff_sha256": "abda701d825119311a68795edfc89d145ded6e72dae454ecf78c134cd624a904",
+      "fragment_sha256": "1c2975e53696faed737a676e14faef7008cb4a2c4c5db27c804a903af3e1455c",
+      "stable_patch_id": "12a7c1adc7ed74d04120d1321f1182753ddf3e26"
+    },
+    "EVAL-040-M": {
+      "instance_id": "W2-EVAL-040-M-01",
+      "status": "accepted",
+      "base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+      "head_sha": "a357ea96a9d5a977f292a878fa2e8914fd6e8403",
+      "own_commits": ["73855504de4a3de36ab425f1661c50abd5b94e6b", "a357ea96a9d5a977f292a878fa2e8914fd6e8403"],
+      "integration_commits": ["059f176a31539b475573524bff640f1a34b9609c"],
+      "handoff_path": ".codex/eval/handoffs/EVAL-040-M.json",
+      "handoff_sha256": "e7046cae4ee5d88e02a0b6eb9a74b2652c2d4419f1988cb72f7db70995b5b2ee",
+      "taskset_sha256": "b6c1d16720583767b86cf8c8f535b0ff744a84216e0843a79660fea87389909a",
+      "taskset_lock_sha256": "f12b2171da87ca6602e8574cfcc6e9621f792c7453bd3c806ad70dbe716fa2e2",
+      "stable_patch_id": "2c4888389aeb3bf4e6ef743184956d52c2d22459"
+    },
+    "EVAL-080": {
+      "instance_id": "W2-EVAL-080-01",
+      "status": "accepted",
+      "base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+      "head_sha": "d808f72561ba2be0f51518ed8fc94b26a1174fe8",
+      "own_commits": ["968d21a013afc1828cf7d0861d33d53fb60c3a0a", "d808f72561ba2be0f51518ed8fc94b26a1174fe8"],
+      "integration_commits": ["f1e8b5c880674d990bf48d66bc9e3cebaf1eea3e"],
+      "handoff_path": ".codex/eval/handoffs/EVAL-080.json",
+      "handoff_sha256": "c4092e79cc02a84d8378b941219be729cdd133e80842306c2d010bea69e2f7a3",
+      "stable_patch_id": "18180c1ab213ccfde3008c1c873bd8abbdd9eaf8"
+    },
+    "TOOL-012-QO-R": {
+      "instance_id": "W2-TOOL-012-QO-R-01",
+      "status": "accepted",
+      "base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+      "head_sha": "7a38d3b28dcb15c7fa1d7c90c1bfca5e14d28b7b",
+      "own_commits": ["7a38d3b28dcb15c7fa1d7c90c1bfca5e14d28b7b"],
+      "integration_commits": ["3dda76cb41677148ccafb13b8cd2cb3b27346b86"],
+      "handoff_path": ".codex/eval/handoffs/TOOL-012-QO-R.json",
+      "handoff_sha256": "efd10f6c8e0400ebcbc18df4fbd05cc31ab693cce9f12b23b39ca2e01bedef3f",
+      "wire_outcome": "protocol_ineligible",
+      "stable_patch_id": "8bf12b248acaa6a3c4d75fd818b15868e92ae79a"
+    },
+    "TOOL-012-QA-R": {
+      "instance_id": "W2-TOOL-012-QA-R-01",
+      "status": "accepted",
+      "base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+      "head_sha": "71958e79ecbdb9b82f17bfdc57f97925045d15b7",
+      "own_commits": ["71958e79ecbdb9b82f17bfdc57f97925045d15b7"],
+      "integration_commits": ["3dda76cb41677148ccafb13b8cd2cb3b27346b86"],
+      "handoff_path": ".codex/eval/handoffs/TOOL-012-QA-R.json",
+      "handoff_sha256": "f13c3cf6918e72af438237b551220ebec89bd7f81a162baddf01ea4b3268f151",
+      "wire_outcome": "3_of_3_native_roundtrips",
+      "stable_patch_id": "320acb27fbf095e81f50dac20f8cd960730eea0d"
+    },
+    "TOOL-012-DA-R": {
+      "instance_id": "W2-TOOL-012-DA-R-01",
+      "status": "accepted",
+      "base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+      "head_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+      "own_commits": [],
+      "integration_commits": ["3dda76cb41677148ccafb13b8cd2cb3b27346b86"],
+      "handoff_path": ".codex/eval/handoffs/TOOL-012-DA-R.json",
+      "handoff_sha256": "8a22e252cdbfa1072ff6bd74dae1e30b8aa39b86cae235b1c6998043459b63fc",
+      "wire_outcome": "3_of_3_native_roundtrips"
     }
   },
   "active_tickets": {
-    "TOOL-012-QO-R": {"instance_id": "W2-TOOL-012-QO-R-01", "status": "active"},
-    "TOOL-012-QA-R": {"instance_id": "W2-TOOL-012-QA-R-01", "status": "active"},
-    "TOOL-012-DA-R": {"instance_id": "W2-TOOL-012-DA-R-01", "status": "active"},
-    "EVAL-031-B": {"instance_id": "W2-EVAL-031-B-01", "status": "active"},
-    "EVAL-040-M": {"instance_id": "W2-EVAL-040-M-01", "status": "active"},
-    "EVAL-080": {"instance_id": "W2-EVAL-080-01", "status": "active"}
+    "TOOL-013-S": {"instance_id": "W2-TOOL-013-S-01", "status": "active"}
   },
   "blocked_tickets": {},
   "ticket_instances": {
@@ -925,7 +991,12 @@
         ".codex/eval/handoffs/TOOL-012-QO-R.json"
       ],
       "prompt_sha256": "ccfd764201fd6384d28aa265cf7fc39b7a9d2e0ff458302e03c7b173663d84db",
-      "status": "active"
+      "head_sha": "7a38d3b28dcb15c7fa1d7c90c1bfca5e14d28b7b",
+      "own_commits": ["7a38d3b28dcb15c7fa1d7c90c1bfca5e14d28b7b"],
+      "integration_commits": ["3dda76cb41677148ccafb13b8cd2cb3b27346b86"],
+      "handoff_sha256": "efd10f6c8e0400ebcbc18df4fbd05cc31ab693cce9f12b23b39ca2e01bedef3f",
+      "stable_patch_id": "8bf12b248acaa6a3c4d75fd818b15868e92ae79a",
+      "status": "accepted"
     },
     "W2-TOOL-012-QA-R-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -948,7 +1019,12 @@
         ".codex/eval/handoffs/TOOL-012-QA-R.json"
       ],
       "prompt_sha256": "9bcc63a8be7d47cc54a5486b860cad101da4b165d076cdf4e1de48b6e379e4b6",
-      "status": "active"
+      "head_sha": "71958e79ecbdb9b82f17bfdc57f97925045d15b7",
+      "own_commits": ["71958e79ecbdb9b82f17bfdc57f97925045d15b7"],
+      "integration_commits": ["3dda76cb41677148ccafb13b8cd2cb3b27346b86"],
+      "handoff_sha256": "f13c3cf6918e72af438237b551220ebec89bd7f81a162baddf01ea4b3268f151",
+      "stable_patch_id": "320acb27fbf095e81f50dac20f8cd960730eea0d",
+      "status": "accepted"
     },
     "W2-TOOL-012-DA-R-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -971,7 +1047,11 @@
         ".codex/eval/handoffs/TOOL-012-DA-R.json"
       ],
       "prompt_sha256": "21b46306c73b071f1b26c7a38e6975f773f463a1b753a33e97eef5e28644a3ab",
-      "status": "active"
+      "head_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+      "own_commits": [],
+      "integration_commits": ["3dda76cb41677148ccafb13b8cd2cb3b27346b86"],
+      "handoff_sha256": "8a22e252cdbfa1072ff6bd74dae1e30b8aa39b86cae235b1c6998043459b63fc",
+      "status": "accepted"
     },
     "W2-TOOL-015-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -1101,7 +1181,13 @@
         ".codex/eval/handoffs/EVAL-031-B.json"
       ],
       "prompt_sha256": "bfc04f0fc44db9223da201f5db6af1fa79615e017e4ae7e35eb5546565005c0a",
-      "status": "active"
+      "head_sha": "d0f34d12cbbd13798665986ced61f6eda38bdb81",
+      "own_commits": ["8fc836eb9237d029fb3287ce8e252d480063c55a", "ffcb5f0959d355eb8ea9a2ba4597685cc809d278", "d0a8a66bbb5827e438501f1549887e8630416c79", "d0f34d12cbbd13798665986ced61f6eda38bdb81"],
+      "integration_commits": ["8e5f9d8864521214b1eb455c3faab96e61fae59a"],
+      "handoff_sha256": "abda701d825119311a68795edfc89d145ded6e72dae454ecf78c134cd624a904",
+      "fragment_sha256": "1c2975e53696faed737a676e14faef7008cb4a2c4c5db27c804a903af3e1455c",
+      "stable_patch_id": "12a7c1adc7ed74d04120d1321f1182753ddf3e26",
+      "status": "accepted"
     },
     "W2-EVAL-040-M-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -1129,7 +1215,14 @@
         ".codex/eval/handoffs/EVAL-040-M.json"
       ],
       "prompt_sha256": "23d0aa1f15019d46533b1797c68b3c1eb0698d2a99dc41f55f67ee1d4cba4d26",
-      "status": "active"
+      "head_sha": "a357ea96a9d5a977f292a878fa2e8914fd6e8403",
+      "own_commits": ["73855504de4a3de36ab425f1661c50abd5b94e6b", "a357ea96a9d5a977f292a878fa2e8914fd6e8403"],
+      "integration_commits": ["059f176a31539b475573524bff640f1a34b9609c"],
+      "handoff_sha256": "e7046cae4ee5d88e02a0b6eb9a74b2652c2d4419f1988cb72f7db70995b5b2ee",
+      "taskset_sha256": "b6c1d16720583767b86cf8c8f535b0ff744a84216e0843a79660fea87389909a",
+      "taskset_lock_sha256": "f12b2171da87ca6602e8574cfcc6e9621f792c7453bd3c806ad70dbe716fa2e2",
+      "stable_patch_id": "2c4888389aeb3bf4e6ef743184956d52c2d22459",
+      "status": "accepted"
     },
     "W2-EVAL-080-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -1154,6 +1247,40 @@
         ".codex/eval/handoffs/EVAL-080.json"
       ],
       "prompt_sha256": "fc93d0b27186db1d9da791c8280402485277ac4be979cb01c4a4cbfd5553621",
+      "head_sha": "d808f72561ba2be0f51518ed8fc94b26a1174fe8",
+      "own_commits": ["968d21a013afc1828cf7d0861d33d53fb60c3a0a", "d808f72561ba2be0f51518ed8fc94b26a1174fe8"],
+      "integration_commits": ["f1e8b5c880674d990bf48d66bc9e3cebaf1eea3e"],
+      "handoff_sha256": "c4092e79cc02a84d8378b941219be729cdd133e80842306c2d010bea69e2f7a3",
+      "stable_patch_id": "18180c1ab213ccfde3008c1c873bd8abbdd9eaf8",
+      "status": "accepted"
+    },
+    "W2-TOOL-013-S-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "TOOL-013-S",
+      "instance_id": "W2-TOOL-013-S-01",
+      "wave": "W2",
+      "role": "integrator_ticket/aggregator",
+      "thread_id": "019f83ae-df9d-70c1-b023-af0b2edb9fb2",
+      "base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+      "branch": "codex/eval-v3-w2-tool-013-s",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\4e17\\pico",
+      "dependency_handoff_hashes": {
+        "TOOL-012-QO-R": "efd10f6c8e0400ebcbc18df4fbd05cc31ab693cce9f12b23b39ca2e01bedef3f",
+        "TOOL-012-QA-R": "f13c3cf6918e72af438237b551220ebec89bd7f81a162baddf01ea4b3268f151",
+        "TOOL-012-DA-R": "8a22e252cdbfa1072ff6bd74dae1e30b8aa39b86cae235b1c6998043459b63fc"
+      },
+      "dependency_commits": [],
+      "freeze_hashes": {
+        "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+        "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb"
+      },
+      "allowed_write_paths": [
+        "F:\\dev\\llm\\pico-eval-artifacts\\native-sdk-spike\\decision.json",
+        "F:\\dev\\llm\\pico-eval-artifacts\\native-sdk-spike\\decision.md",
+        ".codex/eval/proposals/TOOL-013-S.freeze.json",
+        ".codex/eval/handoffs/TOOL-013-S.json"
+      ],
+      "dispatch_id": "client-new-thread:125613e2-8d69-4434-825f-1be83453ee22",
       "status": "active"
     }
   },
@@ -1188,6 +1315,17 @@
       "dispatched_tickets": ["EVAL-031-B", "EVAL-040-M", "EVAL-080"],
       "stable_patch_ids_verified": true,
       "checkpointed_at": "2026-07-21T15:45:44.3327500+08:00"
+    },
+    {
+      "wave": "W2",
+      "batch": 2,
+      "canonical_head": "3dda76cb41677148ccafb13b8cd2cb3b27346b86",
+      "accepted_tickets": ["EVAL-031-B", "EVAL-040-M", "EVAL-080", "TOOL-012-QO-R", "TOOL-012-QA-R", "TOOL-012-DA-R"],
+      "dispatched_tickets": ["TOOL-013-S"],
+      "sdk_wire_viability_only": true,
+      "online_effectiveness_conclusions": false,
+      "stable_patch_ids_verified": true,
+      "checkpointed_at": "2026-07-21T16:01:35.8278997+08:00"
     }
   ],
   "last_gate": {
@@ -1222,5 +1360,5 @@
     "discrepancies": [],
     "accepted_at": "2026-07-21T13:41:33.3334480+08:00"
   },
-  "updated_at": "2026-07-21T15:45:44.3327500+08:00"
+  "updated_at": "2026-07-21T16:01:35.8278997+08:00"
 }
