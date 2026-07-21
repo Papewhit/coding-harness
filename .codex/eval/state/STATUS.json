@@ -144,8 +144,19 @@
       "status": "accepted"
     }
   },
-  "wave_handoffs": {},
-  "ready_tickets": [],
+  "wave_handoffs": {
+    "W0": ".codex/eval/state/W0-wave-handoff.json"
+  },
+  "ready_tickets": [
+    "TOOL-010",
+    "TOOL-011",
+    "TOOL-012-I",
+    "EVAL-020",
+    "EVAL-022",
+    "EVAL-040-A",
+    "EVAL-040-B",
+    "EVAL-040-C"
+  ],
   "last_gate": null,
-  "updated_at": "2026-07-21T10:48:07.2218619+08:00"
+  "updated_at": "2026-07-21T10:56:05.8589053+08:00"
 }
