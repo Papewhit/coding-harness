@@ -181,7 +181,9 @@
       "instance_id": "W1-TOOL-012-I-01",
       "wave": "W1",
       "role": "implementer",
-      "thread_id": "019f82b6-8cea-7801-a9d5-b9b8126ab4af",
+      "thread_id": "019f82c5-782a-7cb1-84fb-f97c10691dee",
+      "replaces_thread_id": "019f82b6-8cea-7801-a9d5-b9b8126ab4af",
+      "replacement_reason": "background agent loop died after read-only preflight; no ticket files changed",
       "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
       "branch": "codex/eval-v3-w1-tool-012-i",
       "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\ea8d\\pico",
@@ -253,5 +255,5 @@
     "discrepancies": [],
     "accepted_at": "2026-07-21T11:03:17.8274184+08:00"
   },
-  "updated_at": "2026-07-21T11:30:56.7705032+08:00"
+  "updated_at": "2026-07-21T11:44:00+08:00"
 }
