@@ -2,7 +2,8 @@ diff --git a/logslice/formatter.py b/logslice/formatter.py
 --- a/logslice/formatter.py
 +++ b/logslice/formatter.py
 @@ -24,7 +24,7 @@
- 
+-
++
      logger = logging.getLogger(name)
      logger.propagate = False
 -    logger.setLevel(logging.INFO)
