@@ -5,7 +5,8 @@ index 66e7dd7..d35c4d9 100644
 @@ -27,6 +27,14 @@ def load_settings(values: Mapping[str, str]) -> Settings:
      mutating the process environment.
      """
- 
+-
++
 -    debug = bool(_read_value(values, "APP_DEBUG", "false"))
 +    debug_text = _read_value(values, "APP_DEBUG", "false").strip().lower()
 +    if debug_text in {"true", "1", "yes", "on"}:

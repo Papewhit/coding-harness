@@ -4,8 +4,10 @@ index 7f9f345..eee3846 100644
 +++ b/tinyconfig/config.py
 @@ -17,9 +17,21 @@ class Settings:
      database_port: int
- 
- 
+-
++
+-
++
 -def _read_value(values: Mapping[str, str], key: str, default: str) -> str:
 -    return values.get(key, default)
 -
