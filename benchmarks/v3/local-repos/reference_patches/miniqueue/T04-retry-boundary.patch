@@ -1,0 +1,12 @@
+diff --git a/miniqueue/queue.py b/miniqueue/queue.py
+--- a/miniqueue/queue.py
++++ b/miniqueue/queue.py
+@@ -118,7 +118,7 @@ class MiniQueue:
+         if retry_delay < 0:
+             raise ValueError("retry_delay must be non-negative")
+         job.lease_until = None
+-        if job.attempts >= job.retry_limit:
++        if job.attempts > job.retry_limit:
+             job.state = "failed"
+         else:
+             job.state = "pending"

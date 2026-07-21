@@ -1,0 +1,11 @@
+diff --git a/miniqueue/queue.py b/miniqueue/queue.py
+--- a/miniqueue/queue.py
++++ b/miniqueue/queue.py
+@@ -132,6 +132,6 @@ class MiniQueue:
+         reclaimed: list[Job] = []
+         for job in self._jobs.values():
+-            if job.state == "leased" and job.lease_until is not None and job.lease_until < now:
++            if job.state == "leased" and job.lease_until is not None and job.lease_until <= now:
+                 job.state = "pending"
+                 job.available_at = now
+                 job.lease_until = None
