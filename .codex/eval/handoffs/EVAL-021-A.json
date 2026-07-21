@@ -1,0 +1,71 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "EVAL-021-A",
+  "instance_id": "W1-EVAL-021-A-01",
+  "wave": "W1",
+  "role": "fixture_builder",
+  "status": "complete",
+  "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+  "head_sha": "c9199cbe20c7975b2d626c5c7b4efe4f6bd36327",
+  "dependency_commits": ["539904b31541f898c5da795bb690dce7c6d43701"],
+  "applied_dependency_commits": ["f8276080164af80fa61cbd7c225e888fdff337b3"],
+  "dependency_handoff_hashes": {"EVAL-020": "964e7eed10799462a645f4a3135ca409c5c49744b76010385749d77f6b099464"},
+  "own_commits": ["c9199cbe20c7975b2d626c5c7b4efe4f6bd36327"],
+  "files_changed": [
+    "benchmarks/v3/auto-dream/fixtures/D01/input/memory/MEMORY.md",
+    "benchmarks/v3/auto-dream/fixtures/D01/input/memory/topics/user-preferences.md",
+    "benchmarks/v3/auto-dream/fixtures/D01/input/sessions.json",
+    "benchmarks/v3/auto-dream/fixtures/D02/input/memory/MEMORY.md",
+    "benchmarks/v3/auto-dream/fixtures/D02/input/memory/topics/project-conventions.md",
+    "benchmarks/v3/auto-dream/fixtures/D02/input/sessions.json",
+    "benchmarks/v3/auto-dream/fixtures/D03/input/memory/MEMORY.md",
+    "benchmarks/v3/auto-dream/fixtures/D03/input/memory/topics/key-decisions.md",
+    "benchmarks/v3/auto-dream/fixtures/D03/input/sessions.json",
+    "benchmarks/v3/auto-dream/fixtures/D04/input/memory/MEMORY.md",
+    "benchmarks/v3/auto-dream/fixtures/D04/input/memory/topics/project-conventions.md",
+    "benchmarks/v3/auto-dream/fixtures/D04/input/sessions.json",
+    "benchmarks/v3/auto-dream/fragments/D01-D04.json"
+  ],
+  "commands_run": [
+    "task-scoped uv run python schema and fixture-path self-check",
+    "task-scoped uv run pytest tests/test_dream_evaluator.py -q",
+    "task-scoped uv run ruff check pico/evaluation/dream_eval.py tests/test_dream_evaluator.py",
+    "git diff --check"
+  ],
+  "tests": [
+    {"command": "task-scoped uv run python schema and fixture-path self-check", "result": "passed", "details": "Validated the fragment through load_cases; D01-D04 order, allowed write scope, and each fixture input path were confirmed."},
+    {"command": "task-scoped uv run pytest tests/test_dream_evaluator.py -q", "result": "passed", "details": "11 passed in 3.40s."},
+    {"command": "task-scoped uv run ruff check pico/evaluation/dream_eval.py tests/test_dream_evaluator.py", "result": "passed", "details": "All checks passed."},
+    {"command": "git diff --check", "result": "passed", "details": "No whitespace errors before the fixture commit."}
+  ],
+  "outputs": [
+    {"path": "benchmarks/v3/auto-dream/fragments/D01-D04.json", "sha256": "ba4219cb68966b99e70482f9bcdca875cfc9f91b3c6bef9db7cd67bb7d24d827", "hash_basis": "git_blob_bytes", "contract": "Frozen fragment manifest for D01 stable facts, D02 duplicate consolidation, D03 replacement, and D04 timestamp conflict resolution."},
+    {"path": "benchmarks/v3/auto-dream/fixtures/D01/**", "sessions_sha256": "6525eac31ce6b3eea43c1979b26351d3863595b45939f51d98f2c5ff77b2dcd9", "hash_basis": "git_blob_bytes"},
+    {"path": "benchmarks/v3/auto-dream/fixtures/D02/**", "sessions_sha256": "08b3dc14447169de33f271f27883df4f46841e5d8d2903c2c2d2915e370a6082", "hash_basis": "git_blob_bytes"},
+    {"path": "benchmarks/v3/auto-dream/fixtures/D03/**", "sessions_sha256": "a3e538a24a57e42b100d4f95ab7c27d4973116825e452c4e646707ca6e80552d", "hash_basis": "git_blob_bytes"},
+    {"path": "benchmarks/v3/auto-dream/fixtures/D04/**", "sessions_sha256": "55456882663055db5f22b0642cb38afd1ac45d046ad6f59da58ad960a0fd7a05", "hash_basis": "git_blob_bytes"}
+  ],
+  "frozen_hashes": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "auto_dream_fixture_schema": "ad72911f72985c94af2c3c003c00944b9e3b0b99cc6eb2519d3f70abe02a4539",
+    "native_contract": null,
+    "tool_schema": null,
+    "sdk_transport_decision": null,
+    "provider_selection": null,
+    "native_resume_gate": null
+  },
+  "native_protocol_observations": {
+    "observation_scope": "offline fixture schema and deterministic evaluator tests only; no provider request or online evaluation was issued",
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0
+  },
+  "defects": [],
+  "risks": ["D02 expresses duplicate consolidation through a single frozen atomic anchor; the frozen evaluator contract does not expose a duplicate-count assertion."],
+  "status_proposal": null,
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}

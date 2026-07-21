@@ -168,11 +168,35 @@
       "handoff_sha256": "964e7eed10799462a645f4a3135ca409c5c49744b76010385749d77f6b099464",
       "auto_dream_fixture_schema_sha256": "ad72911f72985c94af2c3c003c00944b9e3b0b99cc6eb2519d3f70abe02a4539",
       "dream_evaluator_core_sha256": "6a7b40bcc0dba05acf6849451969f81bf201ab95072e361e5fb83b52c2f78324"
+    },
+    "EVAL-021-A": {
+      "instance_id": "W1-EVAL-021-A-01",
+      "status": "accepted",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "head_sha": "c9199cbe20c7975b2d626c5c7b4efe4f6bd36327",
+      "dependency_commits": ["539904b31541f898c5da795bb690dce7c6d43701"],
+      "applied_dependency_commits": ["f8276080164af80fa61cbd7c225e888fdff337b3"],
+      "own_commits": ["c9199cbe20c7975b2d626c5c7b4efe4f6bd36327"],
+      "integration_commits": ["05ee4ad6191669a602af60b1ecf38835baabed67"],
+      "handoff_path": ".codex/eval/handoffs/EVAL-021-A.json",
+      "handoff_sha256": "fbe818bf475ec35e4a509e517203f22988aa3ae964496af923617c941904c1da",
+      "fragment_sha256": "ba4219cb68966b99e70482f9bcdca875cfc9f91b3c6bef9db7cd67bb7d24d827"
+    },
+    "EVAL-021-B": {
+      "instance_id": "W1-EVAL-021-B-01",
+      "status": "accepted",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "head_sha": "3211e1dd98fcabe20340d185f4020ca0124528fa",
+      "dependency_commits": ["539904b31541f898c5da795bb690dce7c6d43701"],
+      "applied_dependency_commits": ["b1b4324a336a57ffc3c4f56f884d960c3f5f5259"],
+      "own_commits": ["3211e1dd98fcabe20340d185f4020ca0124528fa"],
+      "integration_commits": ["034d65bd032c168d66d1c4c746b85ade574b09a8"],
+      "handoff_path": ".codex/eval/handoffs/EVAL-021-B.json",
+      "handoff_sha256": "cb5d65e964f9f669804d0a9385c98e99c77680bbbfd98f291d22537b78b3b558",
+      "fragment_sha256": "e772645d3d3d18482b9372b941ad990838d3290f780414642b7b46be527ae530"
     }
   },
   "active_tickets": {
-    "EVAL-021-A": "W1-EVAL-021-A-01",
-    "EVAL-021-B": "W1-EVAL-021-B-01",
     "EVAL-030": "W1-EVAL-030-01",
     "EVAL-022": "W1-EVAL-022-01",
     "EVAL-040-A": "W1-EVAL-040-A-01",
@@ -515,7 +539,13 @@
         ".codex/eval/handoffs/EVAL-021-A.json"
       ],
       "prompt_sha256": "67afa6ee487b63825fd0762a278e51f99ed9eddcd4d2ea23ec92970327ce728a",
-      "status": "active"
+      "head_sha": "c9199cbe20c7975b2d626c5c7b4efe4f6bd36327",
+      "applied_dependency_commits": ["f8276080164af80fa61cbd7c225e888fdff337b3"],
+      "own_commits": ["c9199cbe20c7975b2d626c5c7b4efe4f6bd36327"],
+      "integration_commits": ["05ee4ad6191669a602af60b1ecf38835baabed67"],
+      "handoff_sha256": "fbe818bf475ec35e4a509e517203f22988aa3ae964496af923617c941904c1da",
+      "fragment_sha256": "ba4219cb68966b99e70482f9bcdca875cfc9f91b3c6bef9db7cd67bb7d24d827",
+      "status": "accepted"
     },
     "W1-EVAL-021-B-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -546,7 +576,13 @@
         ".codex/eval/handoffs/EVAL-021-B.json"
       ],
       "prompt_sha256": "53932afc804147afbec1971632de0cb3c77acd407cbafc337a004036f4fc0561",
-      "status": "active"
+      "head_sha": "3211e1dd98fcabe20340d185f4020ca0124528fa",
+      "applied_dependency_commits": ["b1b4324a336a57ffc3c4f56f884d960c3f5f5259"],
+      "own_commits": ["3211e1dd98fcabe20340d185f4020ca0124528fa"],
+      "integration_commits": ["034d65bd032c168d66d1c4c746b85ade574b09a8"],
+      "handoff_sha256": "cb5d65e964f9f669804d0a9385c98e99c77680bbbfd98f291d22537b78b3b558",
+      "fragment_sha256": "e772645d3d3d18482b9372b941ad990838d3290f780414642b7b46be527ae530",
+      "status": "accepted"
     },
     "W1-EVAL-030-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -708,5 +744,5 @@
     "discrepancies": [],
     "accepted_at": "2026-07-21T11:03:17.8274184+08:00"
   },
-  "updated_at": "2026-07-21T13:15:00+08:00"
+  "updated_at": "2026-07-21T13:22:00+08:00"
 }
