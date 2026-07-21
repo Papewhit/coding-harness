@@ -52,9 +52,11 @@ _SECRET_KEYS = frozenset(
         "refresh_token",
         "auth_token",
         "token",
+        "secret",
+        "credentials",
     }
 )
-_SECRET_KEY_SUFFIXES = tuple(f"_{name}" for name in _SECRET_KEYS - {"authorization", "token"})
+_SECRET_KEY_SUFFIXES = tuple(f"_{name}" for name in _SECRET_KEYS)
 
 
 def ratio(numerator: int, denominator: int, excluded: int = 0) -> dict[str, int | float | None]:
@@ -201,7 +203,9 @@ def sanitize_public_artifact(value: Any, *, key: str | None = None) -> Any:
 
     if key and _is_secret_key(key):
         return REDACTED
-    if key and key.lower() in _OPAQUE_CONTINUATION_KEYS and isinstance(value, Mapping):
+    if key and key.lower() in _OPAQUE_CONTINUATION_KEYS:
+        if not isinstance(value, Mapping):
+            raise TypeError(f"opaque continuation field {key!r} must be a mapping")
         return sanitize_opaque_continuation(value)
     if isinstance(value, Mapping):
         sanitized: dict[str, Any] = {}

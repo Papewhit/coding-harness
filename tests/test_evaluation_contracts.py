@@ -119,6 +119,8 @@ def test_sanitization_preserves_public_token_usage_and_fails_closed_for_non_json
         {
             "token_usage": {"input_tokens": 5, "output_tokens": 3, "reasoning_tokens": 2, "cached_tokens": 1, "max_tokens": 10},
             "access_token": "secret",
+            "session_token": "plain credential",
+            "credentials": "plain credential",
         }
     )
 
@@ -130,7 +132,11 @@ def test_sanitization_preserves_public_token_usage_and_fails_closed_for_non_json
         "max_tokens": 10,
     }
     assert sanitized["access_token"] == "[redacted]"
+    assert sanitized["session_token"] == "[redacted]"
+    assert sanitized["credentials"] == "[redacted]"
     assert json.dumps(sanitized, allow_nan=False)
+    with pytest.raises(TypeError, match="opaque continuation field"):
+        sanitize_public_artifact({"reasoning": "private chain of thought"})
     with pytest.raises(TypeError, match="not JSON-safe"):
         sanitize_public_artifact({"opaque_sdk_object": object()})
     with pytest.raises(ValueError, match="finite"):
