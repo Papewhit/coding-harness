@@ -1,0 +1,16 @@
+diff --git a/tinyconfig/config.py b/tinyconfig/config.py
+index 66e7dd7..a4a2f5e 100644
+--- a/tinyconfig/config.py
++++ b/tinyconfig/config.py
+@@ -35,8 +35,8 @@ def load_settings(values: Mapping[str, str]) -> Settings:
+     try:
+         database_port = int(database_port_text)
+     except ValueError as error:
+-        raise ConfigError(f"DATABASE_PORT must be an integer; got {database_port_text!r}") from error
++        raise ConfigError("DATABASE_PORT must be an integer") from error
+ 
+     if not 1 <= database_port <= 65535:
+-        raise ConfigError(f"DATABASE_PORT must be between 1 and 65535; got {database_port}")
++        raise ConfigError("DATABASE_PORT must be between 1 and 65535")
+ 
+     return Settings(

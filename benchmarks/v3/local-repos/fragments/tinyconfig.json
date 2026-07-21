@@ -1,0 +1,28 @@
+{
+  "schema_version": "pico-local-repo-fragment-v1",
+  "repository": "tinyconfig",
+  "base_snapshot": "repos/tinyconfig",
+  "tasks": [
+    {
+      "id": "T01",
+      "title": "Parse a boolean environment value",
+      "task_doc": "task_docs/tinyconfig/T01-boolean-env.md",
+      "hidden_verifier": "hidden_verifiers/tinyconfig/verify_t01.py",
+      "reference_patch": "reference_patches/tinyconfig/T01-boolean-env.patch"
+    },
+    {
+      "id": "T02",
+      "title": "Support nested configuration keys",
+      "task_doc": "task_docs/tinyconfig/T02-nested-keys.md",
+      "hidden_verifier": "hidden_verifiers/tinyconfig/verify_t02.py",
+      "reference_patch": "reference_patches/tinyconfig/T02-nested-keys.patch"
+    },
+    {
+      "id": "T03",
+      "title": "Keep validation errors stable and secret-safe",
+      "task_doc": "task_docs/tinyconfig/T03-safe-validation-errors.md",
+      "hidden_verifier": "hidden_verifiers/tinyconfig/verify_t03.py",
+      "reference_patch": "reference_patches/tinyconfig/T03-safe-validation-errors.patch"
+    }
+  ]
+}

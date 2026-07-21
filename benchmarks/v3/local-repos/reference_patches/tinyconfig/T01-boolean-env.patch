@@ -1,0 +1,20 @@
+diff --git a/tinyconfig/config.py b/tinyconfig/config.py
+index 66e7dd7..d35c4d9 100644
+--- a/tinyconfig/config.py
++++ b/tinyconfig/config.py
+@@ -27,6 +27,14 @@ def load_settings(values: Mapping[str, str]) -> Settings:
+     mutating the process environment.
+     """
+ 
+-    debug = bool(_read_value(values, "APP_DEBUG", "false"))
++    debug_text = _read_value(values, "APP_DEBUG", "false").strip().lower()
++    if debug_text in {"true", "1", "yes", "on"}:
++        debug = True
++    elif debug_text in {"false", "0", "no", "off"}:
++        debug = False
++    else:
++        raise ConfigError(
++            "APP_DEBUG must be one of true, false, 1, 0, yes, no, on, or off"
++        )
+     database_host = _read_value(values, "DATABASE_HOST", "localhost")
+     database_port_text = _read_value(values, "DATABASE_PORT", "5432")
