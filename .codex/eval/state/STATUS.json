@@ -15,17 +15,32 @@
     "qwen_anthropic_messages": {"local_name": "dashscope-a", "configured": false},
     "deepseek_anthropic_messages": {"local_name": "deepseek", "configured": true}
   },
-  "bootstrap_sha": null,
+  "bootstrap_sha": "9d6bfc4567b6c1dff45908a3ed00335b947a52f9",
   "current_wave": "W0",
   "wave_base_sha": "8ff3a261aa246ddd2798c2f065cac188766ef99c",
   "gates": {
     "native_eval_ready": "pending",
     "native_resume_ready": "pending"
   },
-  "accepted_tickets": {},
-  "active_tickets": {
-    "EVAL-000": "W0-EVAL-000-01"
+  "accepted_tickets": {
+    "EVAL-000": {
+      "instance_id": "W0-EVAL-000-01",
+      "status": "accepted",
+      "base_sha": "8ff3a261aa246ddd2798c2f065cac188766ef99c",
+      "head_sha": "9d6bfc4567b6c1dff45908a3ed00335b947a52f9",
+      "own_commits": [
+        "31fded1559fed404cb26018a2a009a0f1fa727b0",
+        "9d6bfc4567b6c1dff45908a3ed00335b947a52f9"
+      ],
+      "integration_commits": [
+        "638acc44ca088b989cf79ce53257f092dc07136c",
+        "9322879f73efbfeb3611e1495325901ff06f3f14"
+      ],
+      "handoff_path": ".codex/eval/handoffs/EVAL-000.json",
+      "handoff_sha256": "2dc1741e0081e8724cb16a46c6a655847bdb0ce8539d7e15252a18d6fb2faf18"
+    }
   },
+  "active_tickets": {},
   "blocked_tickets": {},
   "ticket_instances": {
     "W0-EVAL-000-01": {
@@ -48,11 +63,23 @@
         ".codex/eval/handoffs/EVAL-000.json"
       ],
       "prompt_sha256": "ccd4e11b0771f814bc09ad1466bdfab26549b4c5b6dd4c99aadced4f71b52614",
-      "status": "active"
+      "head_sha": "9d6bfc4567b6c1dff45908a3ed00335b947a52f9",
+      "own_commits": [
+        "31fded1559fed404cb26018a2a009a0f1fa727b0",
+        "9d6bfc4567b6c1dff45908a3ed00335b947a52f9"
+      ],
+      "integration_commits": [
+        "638acc44ca088b989cf79ce53257f092dc07136c",
+        "9322879f73efbfeb3611e1495325901ff06f3f14"
+      ],
+      "handoff_sha256": "2dc1741e0081e8724cb16a46c6a655847bdb0ce8539d7e15252a18d6fb2faf18",
+      "status": "accepted"
     }
   },
   "wave_handoffs": {},
-  "ready_tickets": [],
+  "ready_tickets": [
+    "EVAL-001"
+  ],
   "last_gate": null,
-  "updated_at": "2026-07-20T21:34:16.2097554+08:00"
+  "updated_at": "2026-07-21T10:25:10.4800516+08:00"
 }
