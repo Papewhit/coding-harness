@@ -131,10 +131,30 @@
       "handoff_path": ".codex/eval/handoffs/TOOL-012-O.json",
       "handoff_sha256": "80ccbd69a07af49fe028155da9c9c7a19d29b6729d1a7667ab1b1357e7c58d63",
       "openai_probe_plugin_sha256": "9d5e903b87265525a8f69a1f3674512e5e7756f96d0f667cb9f221a3d135b97f"
+    },
+    "TOOL-012-A": {
+      "instance_id": "W1-TOOL-012-A-01",
+      "status": "accepted",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "head_sha": "690c84001c8477a8c33a7da2e96a0a2db09f930f",
+      "dependency_commits": [
+        "9a05404ec3a51821ca09a710bf8bfbfff84e4f90"
+      ],
+      "applied_dependency_commits": [
+        "11a5f5e53ae5fa1be20e63d36b090f0b74226ef1"
+      ],
+      "own_commits": [
+        "690c84001c8477a8c33a7da2e96a0a2db09f930f"
+      ],
+      "integration_commits": [
+        "83c0d68a959ddf260ffffb7c9e34bf8a56f8d8e4"
+      ],
+      "handoff_path": ".codex/eval/handoffs/TOOL-012-A.json",
+      "handoff_sha256": "f319f37fc9345e8de861d83da1e4df2fee4efec06cc834e8ab9d29c7464cee77",
+      "anthropic_probe_plugin_sha256": "e9d19ca680fc5ab5e2d0cbf1f35cafa9c158688677bb7f2a6098e8cd0c4692be"
     }
   },
   "active_tickets": {
-    "TOOL-012-A": "W1-TOOL-012-A-01",
     "EVAL-020": "W1-EVAL-020-01",
     "EVAL-022": "W1-EVAL-022-01",
     "EVAL-040-A": "W1-EVAL-040-A-01",
@@ -397,7 +417,19 @@
         ".codex/eval/handoffs/TOOL-012-A.json"
       ],
       "prompt_sha256": "82a89e5578fe2ba0bf730e00721eeb5f8e9074f711942cde9057f33f62511451",
-      "status": "active"
+      "head_sha": "690c84001c8477a8c33a7da2e96a0a2db09f930f",
+      "applied_dependency_commits": [
+        "11a5f5e53ae5fa1be20e63d36b090f0b74226ef1"
+      ],
+      "own_commits": [
+        "690c84001c8477a8c33a7da2e96a0a2db09f930f"
+      ],
+      "integration_commits": [
+        "83c0d68a959ddf260ffffb7c9e34bf8a56f8d8e4"
+      ],
+      "handoff_sha256": "f319f37fc9345e8de861d83da1e4df2fee4efec06cc834e8ab9d29c7464cee77",
+      "anthropic_probe_plugin_sha256": "e9d19ca680fc5ab5e2d0cbf1f35cafa9c158688677bb7f2a6098e8cd0c4692be",
+      "status": "accepted"
     },
     "W1-EVAL-020-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -556,5 +588,5 @@
     "discrepancies": [],
     "accepted_at": "2026-07-21T11:03:17.8274184+08:00"
   },
-  "updated_at": "2026-07-21T13:01:00+08:00"
+  "updated_at": "2026-07-21T13:04:00+08:00"
 }

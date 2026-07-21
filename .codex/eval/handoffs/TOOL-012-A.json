@@ -1,0 +1,129 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-012-A",
+  "instance_id": "W1-TOOL-012-A-01",
+  "wave": "W1",
+  "role": "implementer",
+  "status": "complete",
+  "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+  "head_sha": "690c84001c8477a8c33a7da2e96a0a2db09f930f",
+  "branch": "codex/eval-v3-w1-tool-012-a",
+  "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\7aef\\pico",
+  "prompt_sha256": "82a89e5578fe2ba0bf730e00721eeb5f8e9074f711942cde9057f33f62511451",
+  "dependency_commits": [
+    "9a05404ec3a51821ca09a710bf8bfbfff84e4f90"
+  ],
+  "applied_dependency_commits": [
+    {
+      "source_sha": "9a05404ec3a51821ca09a710bf8bfbfff84e4f90",
+      "applied_sha": "11a5f5e53ae5fa1be20e63d36b090f0b74226ef1"
+    }
+  ],
+  "own_commits": [
+    "690c84001c8477a8c33a7da2e96a0a2db09f930f"
+  ],
+  "files_changed": [
+    "pico/evaluation/sdk_probe_anthropic.py",
+    "tests/test_sdk_probe_anthropic.py"
+  ],
+  "commands_run": [
+    "$env:UV_CACHE_DIR=<task-temp>/uv-cache; uv run --with anthropic python -c <SDK signature introspection> (non-zero after reporting anthropic 0.117.0 and client/create signatures: class-level raw-response wrapper has no create attribute; ignored worktree .venv side effect was removed)",
+    "$env:UV_CACHE_DIR=<task-temp>/uv-cache; $env:UV_PROJECT_ENVIRONMENT=<task-temp>/venv; uv run --with anthropic python - <fake raw-response introspection>",
+    "$env:UV_CACHE_DIR=<task-temp>/uv-cache; $env:UV_PROJECT_ENVIRONMENT=<task-temp>/venv; uv run --with anthropic pytest tests/test_sdk_probe_anthropic.py -q",
+    "$env:UV_CACHE_DIR=<task-temp>/uv-cache; $env:UV_PROJECT_ENVIRONMENT=<task-temp>/venv; uv run --with anthropic pytest tests/test_sdk_probe.py tests/test_sdk_probe_anthropic.py -q",
+    "$env:UV_CACHE_DIR=<task-temp>/uv-cache; $env:UV_PROJECT_ENVIRONMENT=<task-temp>/venv; uv run --with anthropic ruff check pico/evaluation/sdk_probe_anthropic.py tests/test_sdk_probe_anthropic.py",
+    "git diff --check; git diff --cached --check; allowed-path scope audit"
+  ],
+  "tests": [
+    {
+      "command": "uv run --with anthropic pytest tests/test_sdk_probe_anthropic.py -q",
+      "result": "passed",
+      "details": "4 passed in 3.73s using task-specific temporary UV cache and project environment; fake HTTP only"
+    },
+    {
+      "command": "uv run --with anthropic pytest tests/test_sdk_probe.py tests/test_sdk_probe_anthropic.py -q",
+      "result": "passed",
+      "details": "8 passed in 3.01s; provider-neutral harness regression coverage included"
+    },
+    {
+      "command": "uv run --with anthropic ruff check pico/evaluation/sdk_probe_anthropic.py tests/test_sdk_probe_anthropic.py",
+      "result": "passed",
+      "details": "All checks passed"
+    },
+    {
+      "command": "git diff --check; git diff --cached --check; allowed-path scope audit",
+      "result": "passed",
+      "details": "No whitespace errors; content commit contains only the two ticket implementation paths"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "pico/evaluation/sdk_probe_anthropic.py",
+      "sha256": "e9d19ca680fc5ab5e2d0cbf1f35cafa9c158688677bb7f2a6098e8cd0c4692be",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "tests/test_sdk_probe_anthropic.py",
+      "sha256": "fe3ef54cb0a193c92d4a67484e039d500887f5b14eb02e6b5ef2b04b576ced8c",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": ".codex/eval/handoffs/TOOL-012-A.json",
+      "persistence": "generated after the content commit and intentionally not included in that commit"
+    }
+  ],
+  "dependency_handoff_hashes": {
+    "TOOL-012-I": "a401dbac5f1f93eb366a14b5ed9e129a489e4b2a802b734c8adf4be1792f05f9"
+  },
+  "contract_hashes": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "probe_harness": "d47cde8398bfe8142e712c6c7b2d461eadd249aa7f7a8867894e81c5e9f37491",
+    "anthropic_probe_plugin": "e9d19ca680fc5ab5e2d0cbf1f35cafa9c158688677bb7f2a6098e8cd0c4692be",
+    "sdk_transport_decision": null,
+    "provider_profile": null,
+    "native_gate": null
+  },
+  "sdk_observations": {
+    "package": "anthropic",
+    "resolved_version": "0.117.0",
+    "wire_dialect": "anthropic-messages",
+    "adapter_mode": "sdk-raw-response",
+    "custom_base_url_observed": "https://probe.invalid/custom/v1/messages",
+    "max_retries": 0,
+    "provider_request_issued": false,
+    "sdk_tool_runner_used": false,
+    "thinking_roundtrip": true,
+    "redacted_thinking_roundtrip": true,
+    "public_thinking_content_seen": false
+  },
+  "frozen_hashes": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "native_contract": null,
+    "tool_schema": null,
+    "sdk_transport_decision": null,
+    "provider_selection": null,
+    "native_resume_gate": null
+  },
+  "native_protocol_observations": {
+    "observation_scope": "Anthropic SDK with httpx.MockTransport only; no provider request or formal online evaluation was issued",
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0
+  },
+  "defects": [],
+  "risks": [
+    "The isolated uv --with run resolved Anthropic SDK 0.117.0 without pinning; TOOL-019-D remains the sole dependency lock owner.",
+    "Evidence is fake-HTTP SDK conformance only and does not establish live endpoint eligibility."
+  ],
+  "status_proposal": {
+    "ticket_id": "TOOL-012-A",
+    "status": "complete",
+    "head_sha": "690c84001c8477a8c33a7da2e96a0a2db09f930f",
+    "ready_for_integration": true
+  },
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}
