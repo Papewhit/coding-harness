@@ -1,0 +1,124 @@
+{
+  "schema_version": "pico-eval-wave-handoff-v1",
+  "wave": "W3",
+  "wave_base_sha": "807dc8f348c609bf885f4b65e69cebd781e8f1ba",
+  "control_overlay_sha256": "5a93b38406604431edf56dbb3f472b03881057e797777e0ed702308947895eaf",
+  "integration_sha": "85bd1eece7da388c4af2c5a622f0dc5a74fc051f",
+  "integration_sha_role": "canonical W3 code/state snapshot before the wave-handoff metadata commit",
+  "canonical_tag": {
+    "name": "eval-v3/w3-canonical",
+    "type": "annotated",
+    "object_sha": "a18592fd0fb02ed1615f0aff2806d6003e89ec44",
+    "target_sha": "85bd1eece7da388c4af2c5a622f0dc5a74fc051f",
+    "verified": true
+  },
+  "metadata_commit": {
+    "role": "commit adding this handoff after the canonical integration snapshot",
+    "parent_sha": "85bd1eece7da388c4af2c5a622f0dc5a74fc051f",
+    "sha_resolution": "git log -1 --format=%H -- .codex/eval/state/W3-wave-handoff.json"
+  },
+  "status_sha256": "eb49e1ee3ce8836ffd6f63486479b5433245aab2c4c5dee9efcf5c58f046a946",
+  "freeze_sha256": "0e985d4a46479c34f4bf4567191f487e5f3e530671129b6974c86316e03a400f",
+  "commit_map": {
+    "path": ".codex/eval/state/W3-commit-map.json",
+    "sha256": "ce291074bd3d1c13dbc4bef190ee10ae219e2d3e098dace2666e0d389e392246",
+    "entry_count": 4,
+    "stable_patch_ids_verified": true
+  },
+  "worker_bundle": {
+    "path": "F:/dev/llm/pico-eval-artifacts/wave-bundles/W3-workers.bundle",
+    "sha256": "a2d93faa5d3c6d6562bb2714d8e39c67439a062f0d35c73b68c4abb076a42801",
+    "size_bytes": 16211271,
+    "ref_count": 4,
+    "verification": "git bundle verify passed; complete history"
+  },
+  "accepted_tickets": [
+    "TOOL-019-D",
+    "TOOL-020-O",
+    "TOOL-020-A",
+    "TOOL-021-P"
+  ],
+  "blocked_tickets": [],
+  "ticket_handoffs": {
+    "TOOL-019-D": {
+      "path": ".codex/eval/handoffs/TOOL-019-D.json",
+      "sha256": "22c3072d90b258717ee1b20261b4f22d19c4f049a05d663bb8d40717b3b0ac64",
+      "branch_head": "9fe84c249ccab450504a7928c1ad8a3b2649b175",
+      "integration_commit": "74c05e74b99ff303287ea60525fc4d5e99ffdab7",
+      "outcome": "provider SDK versions locked in optional providers extra; lazy narrow transports accepted"
+    },
+    "TOOL-020-O": {
+      "path": ".codex/eval/handoffs/TOOL-020-O.json",
+      "sha256": "14b3d7350348e52c37cd6a91b0b6a7cadfba71d595dcb8fd01f15f4390e43435",
+      "branch_head": "8556a59f1a7ae9195b7a55ad90454ca6c726da91",
+      "integration_commit": "104b7ae9e3d5f78e489074a7c922fc6c93a0a053",
+      "outcome": "OpenAI Responses native adapter contract suite accepted"
+    },
+    "TOOL-020-A": {
+      "path": ".codex/eval/handoffs/TOOL-020-A.json",
+      "sha256": "90c8ed270c670109b57e63984e4e5f4288b35f8c1ec11a06321a834e950cd2a9",
+      "branch_head": "c76522d072d4ea45bfe03afb1ba88dde824c7c48",
+      "integration_commit": "79761cbd9b0c51575d68dc62aee0d6a24dd15b56",
+      "outcome": "Anthropic Messages native adapter contract suite accepted"
+    },
+    "TOOL-021-P": {
+      "path": ".codex/eval/handoffs/TOOL-021-P.json",
+      "sha256": "7fe89f8337b5b2873d2cc5616f66a8f3819433c86d796df9d4cb22ea91488551",
+      "branch_head": "2b446cbeae89942b1adf59bb32e8e3dac6811c03",
+      "integration_commit": "ad72d28347cb48ef928fd3fcec3eb2802a0dea6a",
+      "outcome": "explicit provider profile, wire dialect and capability validation accepted"
+    }
+  },
+  "frozen_artifacts": {
+    "sdk_transport_decision": {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-sdk-spike/decision.json",
+      "sha256": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215"
+    },
+    "sdk_dependency_lock": {
+      "path": "uv.lock",
+      "sha256": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+      "hash_basis": "git_blob_bytes",
+      "project_path": "pyproject.toml",
+      "project_sha256": "441af16eb3f3797fc541381ff296971ba7c6a45d4fcd1351df0aa4a6f123ca6e",
+      "provider_extra": "providers",
+      "openai": "2.46.0",
+      "anthropic": "0.117.0",
+      "sdk_max_retries": 0
+    }
+  },
+  "exit_gate": {
+    "status": "accepted",
+    "evidence": [
+      "PLAN validation passed: 63 ticket templates, 11 waves.",
+      "All 4 W3 tickets are accepted in PLAN integration order; active_tickets and blocked_tickets are empty.",
+      "W3 provider and adapter target suite passed: 60 tests.",
+      "Ruff passed for pico and tests.",
+      "Core has no W3 changed paths and no OpenAI/Anthropic SDK imports.",
+      "No SDK Tool/Agent Runner or executable text-protocol fallback was added.",
+      "Architecture/safety/tool-policy/permissions suite exactly matched the W2 canonical baseline: 16 passed, 11 known failures.",
+      "All four worker-to-canonical ticket patch IDs and handoff hashes were independently verified.",
+      "Worker bundle contains 4 refs and complete history; git bundle verify passed.",
+      "Annotated tag eval-v3/w3-canonical resolves to the canonical W3 snapshot.",
+      "No formal online effectiveness evaluation, Resume evaluation, or W4 work was started."
+    ]
+  },
+  "risks": [
+    "dashscope-o in the tested thinking configuration remains protocol-ineligible because it rejects tool_choice=required; no fallback was introduced.",
+    "The native adapters are not wired into Core/Runtime until later waves; the active legacy clients use the explicit temporary compatibility mapping documented by TOOL-021-P.",
+    "The immutable architecture baseline remains at pico/core/runtime.py 952 lines against the 950-line budget.",
+    "Ten Windows symlink/home/path/shell-command failures remain unchanged and exactly match the W2 canonical baseline.",
+    "native_eval_ready and native_resume_ready remain pending; formal online and Resume evaluation remain prohibited by their later gates."
+  ],
+  "cleanup_candidates": [
+    {"branch": "codex/eval-v3-w3-tool-019-d", "worktree": "C:/Users/Papewhit/.codex/worktrees/w3-019d/pico"},
+    {"branch": "codex/eval-v3-w3-tool-020-o", "worktree": "C:/Users/Papewhit/.codex/worktrees/w3-020o/pico"},
+    {"branch": "codex/eval-v3-w3-tool-020-a", "worktree": "C:/Users/Papewhit/.codex/worktrees/w3-020a/pico"},
+    {"branch": "codex/eval-v3-w3-tool-021-p", "worktree": "C:/Users/Papewhit/.codex/worktrees/w3-021p/pico"}
+  ],
+  "cleanup_action_taken": false,
+  "user_decisions_required": [],
+  "next_wave": "W4",
+  "next_wave_ready_tickets": ["TOOL-030-E", "TOOL-031-S", "TOOL-032-C"],
+  "next_wave_started": false,
+  "completed_at": "2026-07-21T21:00:57.7007899+08:00"
+}
