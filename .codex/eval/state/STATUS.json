@@ -9,15 +9,15 @@
   "local_config_path": "F:\\dev\\llm\\pico\\.pico.toml",
   "artifact_root": "F:\\dev\\llm\\pico-eval-artifacts",
   "program_supervisor_thread": "current plan-level Codex task",
-  "current_wave_integrator_thread": "019f7fb7-97a0-7c31-bcbc-76dbfe3f7274",
+  "current_wave_integrator_thread": "019f82b3-8b0e-7250-b850-54ec0d83999e",
   "profiles": {
     "qwen_openai_responses": {"local_name": "dashscope-o", "configured": true},
     "qwen_anthropic_messages": {"local_name": "dashscope-a", "configured": false},
     "deepseek_anthropic_messages": {"local_name": "deepseek", "configured": true}
   },
   "bootstrap_sha": "9d6bfc4567b6c1dff45908a3ed00335b947a52f9",
-  "current_wave": "W0",
-  "wave_base_sha": "8ff3a261aa246ddd2798c2f065cac188766ef99c",
+  "current_wave": "W1",
+  "wave_base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
   "gates": {
     "native_eval_ready": "pending",
     "native_resume_ready": "pending"
@@ -169,5 +169,5 @@
     "discrepancies": [],
     "accepted_at": "2026-07-21T11:03:17.8274184+08:00"
   },
-  "updated_at": "2026-07-21T11:03:17.8274184+08:00"
+  "updated_at": "2026-07-21T11:26:03.2365439+08:00"
 }
