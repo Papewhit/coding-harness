@@ -1,0 +1,12 @@
+diff --git a/logslice/formatter.py b/logslice/formatter.py
+--- a/logslice/formatter.py
++++ b/logslice/formatter.py
+@@ -16,7 +16,7 @@
+     """
+
+     timestamp = display_timestamp(record.timestamp)
+-    return f"{timestamp} [{record.level}] {record.message}"
++    return f"{timestamp} [{record.level}] | {record.message}"
+ 
+ 
+ def configure_logger(name: str, minimum_level: str = "INFO") -> logging.Logger:
