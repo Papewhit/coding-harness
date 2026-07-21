@@ -1,0 +1,119 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-015",
+  "instance_id": "W2-TOOL-015-01",
+  "wave": "W2",
+  "role": "implementer",
+  "status": "complete",
+  "source_thread_id": "019f8383-2ce3-72c1-808c-68c3b030ae99",
+  "base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+  "head_sha": "69369dfadb3165108d2cb11bc28076dce73e18f7",
+  "branch": "codex/eval-v3-w2-tool-015",
+  "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\c016\\pico",
+  "control_overlay": {
+    "path": ".codex/eval/state/W2-control-overlay.json",
+    "sha256": "5954e177e3bd0f7585786a42654e868b017b167d52172df03c56da116628faaf"
+  },
+  "dependency_commits": [],
+  "applied_dependency_commits": [],
+  "dependency_handoff_hashes": {
+    "TOOL-010": "300faf3f58f369248291ba72be3aefca9e3444dac9999cf45c5767c4eefbde0d"
+  },
+  "dependency_freeze_hashes": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb"
+  },
+  "own_commits": [
+    "69369dfadb3165108d2cb11bc28076dce73e18f7"
+  ],
+  "files_changed": [
+    "pico/testing.py",
+    "tests/test_native_model_fixtures.py"
+  ],
+  "commands_run": [
+    "uv run pytest tests/test_native_model_fixtures.py -q",
+    "uv run pytest tests/test_native_model_fixtures.py tests/test_provider_contracts.py -q",
+    "uv run ruff check pico/testing.py tests/test_native_model_fixtures.py",
+    "uv run pytest tests/test_architecture_boundaries.py -q",
+    "git diff --check",
+    "git diff --cached --check"
+  ],
+  "tests": [
+    {
+      "command": "uv run pytest tests/test_native_model_fixtures.py -q",
+      "result": "passed",
+      "details": "7 passed; covers structured final, single-call, multi-call, protocol-error, opaque continuation, deterministic request logging, scripted exception, and exhaustion behavior"
+    },
+    {
+      "command": "uv run pytest tests/test_native_model_fixtures.py tests/test_provider_contracts.py -q",
+      "result": "passed",
+      "details": "18 passed; validates the fixtures against the frozen provider-neutral native contracts"
+    },
+    {
+      "command": "uv run ruff check pico/testing.py tests/test_native_model_fixtures.py",
+      "result": "passed",
+      "details": "All checks passed"
+    },
+    {
+      "command": "uv run pytest tests/test_architecture_boundaries.py -q",
+      "result": "failed",
+      "details": "Known immutable-base failure: pico/core/runtime.py has 952 lines versus its 950-line budget. TOOL-015 did not modify pico/core or any architecture-budget path."
+    },
+    {
+      "command": "git diff --check && git diff --cached --check",
+      "result": "passed",
+      "details": "No whitespace errors"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "pico/testing.py",
+      "sha256": "d7ed321f0d2ba8f92ac6bbeabfc53444ffb4bb0e3636bc36871fad4944ed9ee8",
+      "hash_basis": "working_tree_file_bytes",
+      "source": "69369dfadb3165108d2cb11bc28076dce73e18f7:pico/testing.py",
+      "coverage": "ScriptedNativeModelClient, immutable request call-log snapshots, structured native fixture constructors, and deprecated legacy helper marker"
+    },
+    {
+      "path": "tests/test_native_model_fixtures.py",
+      "sha256": "86bc82039bafba271f634f709f712be6fde00df2789dc710e27bc5084199ad04",
+      "hash_basis": "working_tree_file_bytes",
+      "source": "69369dfadb3165108d2cb11bc28076dce73e18f7:tests/test_native_model_fixtures.py"
+    },
+    {
+      "path": ".codex/eval/handoffs/TOOL-015.json",
+      "persistence": "ticket output generated after the content commit so it can record the immutable worker head SHA"
+    }
+  ],
+  "contract_hashes": {
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "native_contract_hash_basis": "frozen_dependency_git_blob_bytes"
+  },
+  "frozen_hashes": {
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": null,
+    "sdk_transport_decision": null,
+    "provider_selection": null,
+    "native_resume_gate": null
+  },
+  "native_protocol_observations": {
+    "observation_scope": "offline deterministic fixture and provider-contract unit tests only; no provider request or online evaluation was issued",
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0
+  },
+  "defects": [],
+  "risks": [
+    "The immutable wave base retains the known architecture-budget failure in pico/core/runtime.py (952 lines versus 950); it is outside TOOL-015 ownership.",
+    "ScriptedNativeModelClient is intentionally a deterministic testing helper and is not wired into production Runtime or provider transports."
+  ],
+  "status_proposal": {
+    "ticket_id": "TOOL-015",
+    "status": "complete",
+    "head_sha": "69369dfadb3165108d2cb11bc28076dce73e18f7"
+  },
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}
