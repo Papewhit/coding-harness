@@ -1,0 +1,71 @@
+{
+  "schema_version": "pico-auto-dream-cases-v1",
+  "cases": [
+    {
+      "id": "D05",
+      "description": "Multi-topic index preserves stable user facts while replacing an Atlas location without retaining a transient complaint.",
+      "fixture": {"memory": "fixtures/D05/memory", "sessions": "fixtures/D05/sessions"},
+      "oracle": {
+        "facts": [
+          {"id": "concise-chinese-updates", "disposition": "must_keep", "anchors": ["concise Chinese status updates"], "topics": ["topics/user-collaboration.md"]},
+          {"id": "atlas-release-notes-location", "disposition": "replace", "anchors": ["docs/release-notes/"], "old_anchors": ["docs/releases/"], "topics": ["topics/atlas-project.md"]},
+          {"id": "transient-preview-frustration", "disposition": "drop", "anchors": ["flaky preview"]}
+        ],
+        "topics": [
+          {"path": "topics/user-collaboration.md", "facts": ["concise-chinese-updates"]},
+          {"path": "topics/atlas-project.md", "facts": ["atlas-release-notes-location"]}
+        ],
+        "index": {"path": "MEMORY.md", "must_link": ["topics/user-collaboration.md", "topics/atlas-project.md"], "max_lines": 12},
+        "frontmatter": {"required": ["name", "description", "type"], "allowed_types": ["user", "project"]},
+        "allowed_write_scope": ".pico/memory",
+        "snapshot": {"ignore_frontmatter_fields": ["updated_at", "last_dream_at"]}
+      }
+    },
+    {
+      "id": "D06",
+      "description": "A relative schedule is normalized against an explicit reference time rather than retained as a relative expression.",
+      "fixture": {"memory": "fixtures/D06/memory", "sessions": "fixtures/D06/sessions", "reference_time": "2026-07-21T08:00:00+08:00"},
+      "oracle": {
+        "facts": [{"id": "design-review-absolute-date", "disposition": "replace", "anchors": ["2026-07-22", "09:00", "Asia/Hong_Kong"], "old_anchors": ["tomorrow"], "topics": ["topics/scheduling.md"]}],
+        "topics": [{"path": "topics/scheduling.md", "facts": ["design-review-absolute-date"]}],
+        "index": {"path": "MEMORY.md", "must_link": ["topics/scheduling.md"], "max_lines": 8},
+        "frontmatter": {"required": ["name", "description", "type"], "allowed_types": ["user"]},
+        "allowed_write_scope": ".pico/memory",
+        "snapshot": {"ignore_frontmatter_fields": ["updated_at", "last_dream_at"]}
+      }
+    },
+    {
+      "id": "D07",
+      "description": "Transient incident chatter and facts directly derivable from code are filtered while the durable deployment target remains.",
+      "fixture": {"memory": "fixtures/D07/memory", "sessions": "fixtures/D07/sessions"},
+      "oracle": {
+        "facts": [
+          {"id": "orion-staging-target", "disposition": "must_keep", "anchors": ["internal staging environment"], "topics": ["topics/orion-project.md"]},
+          {"id": "transient-incident-bridge", "disposition": "drop", "anchors": ["incident bridge"]},
+          {"id": "code-derived-dev-port", "disposition": "drop", "anchors": ["4173"]}
+        ],
+        "topics": [{"path": "topics/orion-project.md", "facts": ["orion-staging-target"]}],
+        "index": {"path": "MEMORY.md", "must_link": ["topics/orion-project.md"], "max_lines": 8},
+        "frontmatter": {"required": ["name", "description", "type"], "allowed_types": ["project"]},
+        "allowed_write_scope": ".pico/memory",
+        "snapshot": {"ignore_frontmatter_fields": ["updated_at", "last_dream_at"]}
+      }
+    },
+    {
+      "id": "D08",
+      "description": "Synthetic secret-shaped input is excluded and a second unchanged run has the same semantic snapshot.",
+      "fixture": {"memory": "fixtures/D08/memory", "sessions": "fixtures/D08/sessions"},
+      "oracle": {
+        "facts": [
+          {"id": "cedar-eu-sandbox", "disposition": "must_keep", "anchors": ["EU sandbox", "integration testing"], "topics": ["topics/cedar-project.md"]},
+          {"id": "synthetic-token", "disposition": "drop", "anchors": ["sk-abcdefghijklmnopqrstuvwxyz"]}
+        ],
+        "topics": [{"path": "topics/cedar-project.md", "facts": ["cedar-eu-sandbox"]}],
+        "index": {"path": "MEMORY.md", "must_link": ["topics/cedar-project.md"], "max_lines": 8},
+        "frontmatter": {"required": ["name", "description", "type"], "allowed_types": ["project"]},
+        "allowed_write_scope": ".pico/memory",
+        "snapshot": {"ignore_frontmatter_fields": ["updated_at", "last_dream_at"]}
+      }
+    }
+  ]
+}
