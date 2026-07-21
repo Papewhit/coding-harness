@@ -152,10 +152,25 @@
       "handoff_path": ".codex/eval/handoffs/TOOL-012-A.json",
       "handoff_sha256": "f319f37fc9345e8de861d83da1e4df2fee4efec06cc834e8ab9d29c7464cee77",
       "anthropic_probe_plugin_sha256": "e9d19ca680fc5ab5e2d0cbf1f35cafa9c158688677bb7f2a6098e8cd0c4692be"
+    },
+    "EVAL-020": {
+      "instance_id": "W1-EVAL-020-01",
+      "status": "accepted",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "head_sha": "539904b31541f898c5da795bb690dce7c6d43701",
+      "own_commits": [
+        "539904b31541f898c5da795bb690dce7c6d43701"
+      ],
+      "integration_commits": [
+        "527d7bb07c198aacbfe5f2922c6057960e4ca0e6"
+      ],
+      "handoff_path": ".codex/eval/handoffs/EVAL-020.json",
+      "handoff_sha256": "964e7eed10799462a645f4a3135ca409c5c49744b76010385749d77f6b099464",
+      "auto_dream_fixture_schema_sha256": "ad72911f72985c94af2c3c003c00944b9e3b0b99cc6eb2519d3f70abe02a4539",
+      "dream_evaluator_core_sha256": "6a7b40bcc0dba05acf6849451969f81bf201ab95072e361e5fb83b52c2f78324"
     }
   },
   "active_tickets": {
-    "EVAL-020": "W1-EVAL-020-01",
     "EVAL-022": "W1-EVAL-022-01",
     "EVAL-040-A": "W1-EVAL-040-A-01",
     "EVAL-040-B": "W1-EVAL-040-B-01",
@@ -456,7 +471,17 @@
         ".codex/eval/handoffs/EVAL-020.json"
       ],
       "prompt_sha256": "e5ac5b957ea04c7c138c71e3f2da16c7fb867054c72458974676241c4717eca7",
-      "status": "active"
+      "head_sha": "539904b31541f898c5da795bb690dce7c6d43701",
+      "own_commits": [
+        "539904b31541f898c5da795bb690dce7c6d43701"
+      ],
+      "integration_commits": [
+        "527d7bb07c198aacbfe5f2922c6057960e4ca0e6"
+      ],
+      "handoff_sha256": "964e7eed10799462a645f4a3135ca409c5c49744b76010385749d77f6b099464",
+      "auto_dream_fixture_schema_sha256": "ad72911f72985c94af2c3c003c00944b9e3b0b99cc6eb2519d3f70abe02a4539",
+      "dream_evaluator_core_sha256": "6a7b40bcc0dba05acf6849451969f81bf201ab95072e361e5fb83b52c2f78324",
+      "status": "accepted"
     },
     "W1-EVAL-022-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -573,6 +598,8 @@
     "W0": ".codex/eval/state/W0-wave-handoff.json"
   },
   "ready_tickets": [
+    "EVAL-021-A",
+    "EVAL-021-B",
     "EVAL-030",
     "EVAL-041"
   ],
@@ -588,5 +615,5 @@
     "discrepancies": [],
     "accepted_at": "2026-07-21T11:03:17.8274184+08:00"
   },
-  "updated_at": "2026-07-21T13:04:00+08:00"
+  "updated_at": "2026-07-21T13:07:00+08:00"
 }
