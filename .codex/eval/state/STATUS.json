@@ -114,6 +114,7 @@
   },
   "active_tickets": {
     "EVAL-020": "W1-EVAL-020-01",
+    "EVAL-040-A": "W1-EVAL-040-A-01",
     "EVAL-040-B": "W1-EVAL-040-B-01"
   },
   "blocked_tickets": {},
@@ -335,6 +336,34 @@
       "prompt_sha256": "e5ac5b957ea04c7c138c71e3f2da16c7fb867054c72458974676241c4717eca7",
       "status": "active"
     },
+    "W1-EVAL-040-A-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "EVAL-040-A",
+      "instance_id": "W1-EVAL-040-A-01",
+      "wave": "W1",
+      "role": "fixture_builder",
+      "thread_id": "019f82d8-b343-7561-ae60-48709e4a0a80",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "branch": "codex/eval-v3-w1-eval-040-a",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\ab72\\pico",
+      "dependency_handoff_hashes": {
+        "EVAL-001": "cc8c951e0a0e0dac20e46c611b102bc538a6863099310a90690eb639f931a3be"
+      },
+      "dependency_commits": [],
+      "freeze_hashes": {
+        "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1"
+      },
+      "allowed_write_paths": [
+        "benchmarks/v3/local-repos/repos/tinyconfig/**",
+        "benchmarks/v3/local-repos/hidden_verifiers/tinyconfig/**",
+        "benchmarks/v3/local-repos/reference_patches/tinyconfig/**",
+        "benchmarks/v3/local-repos/task_docs/tinyconfig/**",
+        "benchmarks/v3/local-repos/fragments/tinyconfig.json",
+        ".codex/eval/handoffs/EVAL-040-A.json"
+      ],
+      "prompt_sha256": "abd573def06fef33c4a4f03d7b0d7028f7ebd27f5e75d1023927fffb76ffc399",
+      "status": "active"
+    },
     "W1-EVAL-040-B-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
       "ticket_id": "EVAL-040-B",
@@ -372,7 +401,6 @@
     "TOOL-012-A",
     "EVAL-022",
     "EVAL-030",
-    "EVAL-040-A",
     "EVAL-040-C",
     "EVAL-041"
   ],
@@ -388,5 +416,5 @@
     "discrepancies": [],
     "accepted_at": "2026-07-21T11:03:17.8274184+08:00"
   },
-  "updated_at": "2026-07-21T12:17:00+08:00"
+  "updated_at": "2026-07-21T12:21:00+08:00"
 }
