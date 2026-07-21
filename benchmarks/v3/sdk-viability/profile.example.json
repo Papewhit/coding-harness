@@ -1,0 +1,10 @@
+{
+  "provider": "example",
+  "model": "example-model",
+  "wire_dialect": "example-native",
+  "adapter_mode": "sdk",
+  "sdk": {"package": "example-sdk", "version": "0.0.0"},
+  "base_url_fingerprint": "sha256:replace-me",
+  "capabilities": {"native_tools": true, "opaque_continuation_support": true},
+  "retry": {"sdk_max_retries": 0, "pico_attempts": 1}
+}
