@@ -28,9 +28,53 @@
     "source_head_sha": "e08cb3e8c93e6eb63df4118ce0f065f4dd0bcc48",
     "integration_sha": "0c0182e945abacbc273395a4a0fdea5349f64a5b"
   },
-  "sdk_transport_decision": null,
+  "sdk_transport_decision": {
+    "version": "pico-sdk-transport-decision-v1",
+    "path": "F:/dev/llm/pico-eval-artifacts/native-sdk-spike/decision.json",
+    "sha256": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "hash_basis": "file_bytes",
+    "decision_markdown": {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-sdk-spike/decision.md",
+      "sha256": "e091e6c38095156ab06eb428dfdcabc5a481093b5fdc5dfab1b0c3cbdd06e155"
+    },
+    "dialects": {
+      "openai-responses": {
+        "transport": "typed_sdk",
+        "sdk_package": "openai",
+        "sdk_version": "2.46.0",
+        "tested_profile_status": "dashscope-o protocol-ineligible: thinking mode rejects tool_choice=required"
+      },
+      "anthropic-messages": {
+        "transport": "sdk_raw_response",
+        "sdk_package": "anthropic",
+        "sdk_version": "0.117.0",
+        "tested_profile_status": "dashscope-a and deepseek completed 3/3 native roundtrips"
+      }
+    },
+    "raw_http_selections": [],
+    "sdk_tool_or_agent_runner_allowed": false,
+    "sdk_managed_pico_tool_execution_allowed": false,
+    "final_evaluation_model_selected": false,
+    "effectiveness_conclusion": "not_evaluated",
+    "production_dependency_lock_owner": "TOOL-019-D",
+    "source_ticket": "TOOL-013-S",
+    "source_head_sha": "1347952a3d6af33714074b5d837a11685fde67a3",
+    "integration_sha": "b76d5332343a5273c676b707d9077087a9fbf6db"
+  },
   "sdk_dependency_lock": null,
   "native_deterministic_gate": null,
+  "native_scripted_fixtures": {
+    "version": "pico-scripted-native-model-client-v1",
+    "path": "pico/testing.py",
+    "sha256": "ff2a8febe36730b6c18d096312f9455dce0793c9d1f975ffb941c726706904cf",
+    "hash_basis": "git_blob_bytes",
+    "test_path": "tests/test_native_model_fixtures.py",
+    "test_sha256": "86bc82039bafba271f634f709f712be6fde00df2789dc710e27bc5084199ad04",
+    "coverage": ["structured_final", "single_call", "multi_call", "protocol_error", "opaque_continuation", "scripted_exception", "exhaustion"],
+    "source_ticket": "TOOL-015",
+    "source_head_sha": "69369dfadb3165108d2cb11bc28076dce73e18f7",
+    "integration_sha": "d6991e3d0a47ba86c7f0662c47f0166d026089a6"
+  },
   "provider_selection": null,
   "native_resume_contract": null,
   "native_resume_gate": null,
@@ -42,9 +86,62 @@
     "hash_basis": "git_blob_bytes",
     "source_ticket": "EVAL-030",
     "source_head_sha": "7b8badf1ad9aeb5111f5537438686a473191e176",
-    "integration_sha": "a6284ba08edde6cefd6a924edfd5305288dc6508"
+    "integration_sha": "a6284ba08edde6cefd6a924edfd5305288dc6508",
+    "case_fragments": [
+      {
+        "version": "pico-context-asset-cases-fragment-v1",
+        "path": "benchmarks/v3/context-assets/fragments/C01-C08.json",
+        "sha256": "6bef856d9df68209d60d0ef7e9df1dc927fd861f64a6f646f0cc58fba9c808b8",
+        "hash_basis": "git_blob_bytes",
+        "source_ticket": "EVAL-031-A",
+        "source_head_sha": "f745704edb63f22b2ef8da99a0636aa041000ec7",
+        "integration_sha": "0352cb98192b23976ce40bf0aa3b2a0ac6197f9f"
+      },
+      {
+        "version": "pico-context-asset-cases-fragment-v1",
+        "path": "benchmarks/v3/context-assets/fragments/C09-C15.json",
+        "sha256": "1c2975e53696faed737a676e14faef7008cb4a2c4c5db27c804a903af3e1455c",
+        "hash_basis": "git_blob_bytes",
+        "source_ticket": "EVAL-031-B",
+        "source_head_sha": "d0f34d12cbbd13798665986ced61f6eda38bdb81",
+        "integration_sha": "8e5f9d8864521214b1eb455c3faab96e61fae59a"
+      }
+    ]
   },
-  "local_taskset": null,
+  "local_taskset": {
+    "key": "pico_local_python_v1",
+    "taskset_id": "pico-local-python-v1",
+    "version": 1,
+    "taskset": {
+      "path": "benchmarks/v3/local-repos/taskset.json",
+      "sha256": "b6c1d16720583767b86cf8c8f535b0ff744a84216e0843a79660fea87389909a",
+      "hash_basis": "git_blob_bytes"
+    },
+    "lock": {
+      "path": "benchmarks/v3/local-repos/taskset.lock.json",
+      "sha256": "f12b2171da87ca6602e8574cfcc6e9621f792c7453bd3c806ad70dbe716fa2e2",
+      "hash_basis": "git_blob_bytes"
+    },
+    "fragment_hashes": {
+      "tinyconfig": "24d42d41038f8fa08d90d27fc0664b8fda75579896f9072d058eadc4dfc7b3ba",
+      "miniqueue": "dcea7a08048653285782e8f00c9326322c6d5fe5eeab36e32c16c19d79d9f622",
+      "logslice": "3e8d833b4b424b3d389705d51431b350142acc4367864ca1dcab870ed86fa382"
+    },
+    "self_check": {
+      "repositories": 3,
+      "tasks": 9,
+      "baseline_failed_as_expected": 9,
+      "reference_passed": 9,
+      "inverted_failed_as_expected": 9,
+      "anti_cheat": "passed",
+      "network_disabled": "passed",
+      "path_isolation": "passed",
+      "user_home_dependency_absent": "passed"
+    },
+    "source_ticket": "EVAL-040-M",
+    "source_head_sha": "a357ea96a9d5a977f292a878fa2e8914fd6e8403",
+    "integration_sha": "059f176a31539b475573524bff640f1a34b9609c"
+  },
   "resume_predicates": null,
   "context_ablation_selection": null
 }

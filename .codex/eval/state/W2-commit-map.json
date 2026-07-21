@@ -88,7 +88,23 @@
       "stable_patch_id": null,
       "stable_patch_id_match": null,
       "integration_note": "run-shard handoff copied by Wave Integrator; no worker Git commit"
+    },
+    "TOOL-013-S": {
+      "worker_head": "1347952a3d6af33714074b5d837a11685fde67a3",
+      "worker_commits": ["7aefd19cc18a1dd839154a8ff475d324a4f36435", "1347952a3d6af33714074b5d837a11685fde67a3"],
+      "dependency_commits": [],
+      "canonical_commit": "b76d5332343a5273c676b707d9077087a9fbf6db",
+      "handoff_sha256": "0eb6213eab7261daf535b9b30cce5787533c4070195f7a5e6b2c383ab40ee55a",
+      "stable_patch_id": "dafdec9bcdd2dfd5412aa74a2c8443f28502d83b",
+      "stable_patch_id_match": true
     }
   },
-  "updated_at": "2026-07-21T16:01:35.8278997+08:00"
+  "worker_bundle": {
+    "path": "F:\\dev\\llm\\pico-eval-artifacts\\wave-bundles\\W2-workers.bundle",
+    "sha256": "a3cbcba639217b054bc30494b8a3a092ee041670390a574dde226155dd18fc19",
+    "size_bytes": 16111628,
+    "ref_count": 10,
+    "verification": "complete history; git bundle verify passed"
+  },
+  "updated_at": "2026-07-21T16:25:12.2097623+08:00"
 }
