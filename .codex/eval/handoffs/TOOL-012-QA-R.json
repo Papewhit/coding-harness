@@ -1,0 +1,50 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-012-QA-R",
+  "instance_id": "W2-TOOL-012-QA-R-01",
+  "wave": "W2",
+  "role": "run_shard",
+  "status": "complete",
+  "base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+  "head_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+  "branch": "codex/eval-v3-w2-tool-012-qa-r",
+  "dependency_commits": [],
+  "own_commits": [],
+  "files_changed": [
+    "F:/dev/llm/pico-eval-artifacts/native-sdk-spike/65d7142cf3a5ed9a15fc0689f3022d521369252b/TOOL-012-QA-R/**",
+    ".codex/eval/handoffs/TOOL-012-QA-R.json"
+  ],
+  "commands_run": [
+    "uv run --with anthropic python scripts/run_sdk_viability_probe.py --profile dashscope-a --dialect anthropic-messages --repetitions 3 --output <artifact-dir> (attempt 0: CLI argument mismatch; no HTTP)",
+    "uv run --with anthropic python <artifact>/bootstrap_profile.py (profile metadata only)",
+    "uv run --with anthropic python <artifact>/run_real_probe.py (attempt 0: SOCKS dependency missing; no HTTP)",
+    "uv run --with anthropic --with httpx[socks] python <artifact>/run_real_probe.py (three result-roundtrip cases completed)"
+  ],
+  "tests": [
+    {"command": "artifact JSON/JSONL validation and git diff --check", "result": "passed", "details": "Artifacts are JSON-parseable; source tree has no tracked modifications."},
+    {"command": "Anthropic SDK live wire viability", "result": "passed", "details": "3/3 result roundtrips passed; 6 HTTP attempts, 3 call/result ID pairs, zero SDK retries and no unknown blocks."}
+  ],
+  "outputs": [
+    {"path": "F:/dev/llm/pico-eval-artifacts/native-sdk-spike/65d7142cf3a5ed9a15fc0689f3022d521369252b/TOOL-012-QA-R/live-probe-artifact.json", "sha256": "acae84ab71da064408bf00386c9e1f5f2f485036aae30769b5526b2c8ec8920f"},
+    {"path": "F:/dev/llm/pico-eval-artifacts/native-sdk-spike/65d7142cf3a5ed9a15fc0689f3022d521369252b/TOOL-012-QA-R/rows.jsonl", "sha256": "86c68e0d7da21a1ee74d429c045d3ba7f5260f9112e97c71cfc95889046b1a30"},
+    {"path": "F:/dev/llm/pico-eval-artifacts/native-sdk-spike/65d7142cf3a5ed9a15fc0689f3022d521369252b/TOOL-012-QA-R/live-runner-evidence.json", "sha256": "eacc4c0817d771cdba0eee80fa0dac021cf2de2127c3933ea0de3bfb26b07cd9"},
+    {"path": "F:/dev/llm/pico-eval-artifacts/native-sdk-spike/65d7142cf3a5ed9a15fc0689f3022d521369252b/TOOL-012-QA-R/sanitized-raw-response-evidence.json", "sha256": "d64c4502092f654dbfb9781ba59d2118db47178f0a400728c00f94ddc26d123f"},
+    {"path": "F:/dev/llm/pico-eval-artifacts/native-sdk-spike/65d7142cf3a5ed9a15fc0689f3022d521369252b/TOOL-012-QA-R/attempt-0-socks-dependency.json", "sha256": "49a8e8bb54dc77a48505cf7d9ae3c8e9b61a1cdd1aaa8111f6ef222ae1f33628"}
+  ],
+  "frozen_hashes": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": null,
+    "sdk_transport_decision": null,
+    "provider_selection": null,
+    "native_resume_gate": null
+  },
+  "sdk_observations": {"package": "anthropic", "version": "0.117.0", "wire_dialect": "anthropic-messages", "adapter_mode": "sdk-raw-response", "stream": false, "max_retries": 0, "sdk_tool_runner_used": false},
+  "native_protocol_observations": {"text_envelope_seen_count": 0, "implicit_sdk_retry_seen": false, "call_id_result_mismatch_count": 0, "unknown_block_loss_count": 0, "safety_chain_bypass_count": 0, "http_attempt_count": 6, "native_tool_call_observed": true, "effectiveness_conclusion": "not_evaluated"},
+  "defects": ["Ticket shorthand CLI does not match the frozen runner's required input interface; artifact-local inputs/wrapper supplied the compatible invocation."],
+  "risks": ["This is an SDK/native wire viability probe only, not a model capability ranking or formal effectiveness result.", "Attempt-0 exclusions are retained separately and did not contribute provider HTTP calls."],
+  "status_proposal": {"ticket_id": "TOOL-012-QA-R", "status": "complete", "reason": "live wire viability observed"},
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}
