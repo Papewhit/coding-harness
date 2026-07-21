@@ -198,6 +198,7 @@
   },
   "active_tickets": {
     "EVAL-030": "W1-EVAL-030-01",
+    "EVAL-041": "W1-EVAL-041-01",
     "EVAL-022": "W1-EVAL-022-01",
     "EVAL-040-A": "W1-EVAL-040-A-01",
     "EVAL-040-B": "W1-EVAL-040-B-01",
@@ -615,6 +616,37 @@
       "prompt_sha256": "3ead142fe01cf703bffbe57557bae691b389d336c316d3c8ee3952417f9cb56e",
       "status": "active"
     },
+    "W1-EVAL-041-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "EVAL-041",
+      "instance_id": "W1-EVAL-041-01",
+      "wave": "W1",
+      "role": "implementer",
+      "thread_id": "019f8317-b897-7903-83f5-813d985932a1",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "branch": "codex/eval-v3-w1-eval-041",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\1296\\pico",
+      "dependency_handoff_hashes": {
+        "EVAL-001": "cc8c951e0a0e0dac20e46c611b102bc538a6863099310a90690eb639f931a3be",
+        "TOOL-010": "300faf3f58f369248291ba72be3aefca9e3444dac9999cf45c5767c4eefbde0d"
+      },
+      "dependency_commits": [
+        "387216cf4393edc34bce30e7facfa2dbc35cc524"
+      ],
+      "freeze_hashes": {
+        "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+        "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb"
+      },
+      "allowed_write_paths": [
+        "pico/evaluation/live_tasks.py",
+        "scripts/run_local_coding_tasks.py",
+        "tests/test_live_task_evaluator.py",
+        "tests/fixtures/live_task_runner/**",
+        ".codex/eval/handoffs/EVAL-041.json"
+      ],
+      "prompt_sha256": "6ba88b4c19734a725992114a958d0327ec8a39c1f22cff3e248499971623a473",
+      "status": "active"
+    },
     "W1-EVAL-022-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
       "ticket_id": "EVAL-022",
@@ -730,7 +762,6 @@
     "W0": ".codex/eval/state/W0-wave-handoff.json"
   },
   "ready_tickets": [
-    "EVAL-041"
   ],
   "last_gate": {
     "wave": "W0",
@@ -744,5 +775,5 @@
     "discrepancies": [],
     "accepted_at": "2026-07-21T11:03:17.8274184+08:00"
   },
-  "updated_at": "2026-07-21T13:22:00+08:00"
+  "updated_at": "2026-07-21T13:26:00+08:00"
 }
