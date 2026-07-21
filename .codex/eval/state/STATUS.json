@@ -173,6 +173,7 @@
   "active_tickets": {
     "EVAL-021-A": "W1-EVAL-021-A-01",
     "EVAL-021-B": "W1-EVAL-021-B-01",
+    "EVAL-030": "W1-EVAL-030-01",
     "EVAL-022": "W1-EVAL-022-01",
     "EVAL-040-A": "W1-EVAL-040-A-01",
     "EVAL-040-B": "W1-EVAL-040-B-01",
@@ -547,6 +548,37 @@
       "prompt_sha256": "53932afc804147afbec1971632de0cb3c77acd407cbafc337a004036f4fc0561",
       "status": "active"
     },
+    "W1-EVAL-030-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "EVAL-030",
+      "instance_id": "W1-EVAL-030-01",
+      "wave": "W1",
+      "role": "implementer",
+      "thread_id": "019f830e-777f-7aa1-a295-b6669a53c9ca",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "branch": "codex/eval-v3-w1-eval-030",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\03bb\\pico",
+      "dependency_handoff_hashes": {
+        "TOOL-010": "300faf3f58f369248291ba72be3aefca9e3444dac9999cf45c5767c4eefbde0d",
+        "TOOL-011": "825e0d3a64abd065e3a9c67a3ce3d1bb9c06d2bbe1b5b00b8b24423cfa3d4dfa"
+      },
+      "dependency_commits": [
+        "387216cf4393edc34bce30e7facfa2dbc35cc524",
+        "e08cb3e8c93e6eb63df4118ce0f065f4dd0bcc48"
+      ],
+      "freeze_hashes": {
+        "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+        "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+        "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f"
+      },
+      "allowed_write_paths": [
+        "benchmarks/v3/context-assets/assets.json",
+        "docs/metrics/pico-v3-context-asset-contract.md",
+        ".codex/eval/handoffs/EVAL-030.json"
+      ],
+      "prompt_sha256": "3ead142fe01cf703bffbe57557bae691b389d336c316d3c8ee3952417f9cb56e",
+      "status": "active"
+    },
     "W1-EVAL-022-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
       "ticket_id": "EVAL-022",
@@ -662,7 +694,6 @@
     "W0": ".codex/eval/state/W0-wave-handoff.json"
   },
   "ready_tickets": [
-    "EVAL-030",
     "EVAL-041"
   ],
   "last_gate": {
@@ -677,5 +708,5 @@
     "discrepancies": [],
     "accepted_at": "2026-07-21T11:03:17.8274184+08:00"
   },
-  "updated_at": "2026-07-21T13:11:00+08:00"
+  "updated_at": "2026-07-21T13:15:00+08:00"
 }
