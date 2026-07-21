@@ -8,16 +8,25 @@ live in validate_tool() since they require access to the agent.
 
 from __future__ import annotations
 
-from typing import List, Optional, Union
+import json
+import types
+from hashlib import sha256
+from typing import Any, List, Optional, Union, get_args, get_origin
 
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator, model_validator
 
 
-class ListFilesArgs(BaseModel):
+class ToolArgs(BaseModel):
+    """Strict base model for arguments crossing the tool execution boundary."""
+
+    model_config = ConfigDict(extra="forbid", strict=True)
+
+
+class ListFilesArgs(ToolArgs):
     path: str = "."
 
 
-class ReadFileArgs(BaseModel):
+class ReadFileArgs(ToolArgs):
     path: str
     start: int = 1
     end: int = 200
@@ -36,7 +45,7 @@ class ReadFileArgs(BaseModel):
         return self
 
 
-class SearchArgs(BaseModel):
+class SearchArgs(ToolArgs):
     pattern: str
     path: str = "."
 
@@ -48,7 +57,7 @@ class SearchArgs(BaseModel):
         return v
 
 
-class RunShellArgs(BaseModel):
+class RunShellArgs(ToolArgs):
     command: str
     timeout: int = 20
 
@@ -67,12 +76,12 @@ class RunShellArgs(BaseModel):
         return v
 
 
-class WriteFileArgs(BaseModel):
+class WriteFileArgs(ToolArgs):
     path: str
     content: str
 
 
-class PatchFileArgs(BaseModel):
+class PatchFileArgs(ToolArgs):
     path: str
     old_text: str
     new_text: str
@@ -85,7 +94,7 @@ class PatchFileArgs(BaseModel):
         return v
 
 
-class TodoAddArgs(BaseModel):
+class TodoAddArgs(ToolArgs):
     content: str
     status: str = "pending"
     priority: str = "normal"
@@ -99,8 +108,7 @@ class TodoAddArgs(BaseModel):
         return v
 
 
-class TodoUpdateArgs(BaseModel):
-    model_config = ConfigDict(extra="allow")
+class TodoUpdateArgs(ToolArgs):
     todo_id: str
     status: Optional[str] = None
     content: Optional[str] = None
@@ -115,11 +123,11 @@ class TodoUpdateArgs(BaseModel):
         return v
 
 
-class TodoListArgs(BaseModel):
+class TodoListArgs(ToolArgs):
     pass
 
 
-class AgentArgs(BaseModel):
+class AgentArgs(ToolArgs):
     description: str
     prompt: str
     subagent_type: str = "worker"
@@ -154,7 +162,7 @@ class AgentArgs(BaseModel):
         return v
 
 
-class SendMessageArgs(BaseModel):
+class SendMessageArgs(ToolArgs):
     to: str
     message: str
 
@@ -173,7 +181,7 @@ class SendMessageArgs(BaseModel):
         return v
 
 
-class TaskStopArgs(BaseModel):
+class TaskStopArgs(ToolArgs):
     task_id: str
 
     @field_validator("task_id")
@@ -184,7 +192,7 @@ class TaskStopArgs(BaseModel):
         return v
 
 
-class EnterPlanModeArgs(BaseModel):
+class EnterPlanModeArgs(ToolArgs):
     topic: str
     path: Optional[str] = None
 
@@ -196,11 +204,11 @@ class EnterPlanModeArgs(BaseModel):
         return v
 
 
-class ExitPlanModeArgs(BaseModel):
+class ExitPlanModeArgs(ToolArgs):
     pass
 
 
-class AskUserArgs(BaseModel):
+class AskUserArgs(ToolArgs):
     question: str
     choices: Optional[List[str]] = None
 
@@ -234,3 +242,84 @@ def first_error_message(exc: "ValidationError") -> str:  # type: ignore[name-def
         if field:
             return f"'{field}'"
     return msg
+
+
+def normalized_json_schema(args_model: type[BaseModel]) -> dict[str, Any]:
+    """Return a deterministic, provider-neutral schema for a tool model.
+
+    Pydantic remains the local validation authority.  The exported schema is
+    deliberately explicit about object boundaries and omits generated titles,
+    which otherwise make equivalent schemas depend on Python class names.
+    """
+
+    schema = _normalize_schema_node(args_model.model_json_schema(mode="validation"))
+    if not isinstance(schema, dict) or schema.get("type") != "object":
+        raise TypeError("tool argument models must export an object JSON Schema")
+    return schema
+
+
+def human_readable_schema(args_model: type[BaseModel]) -> dict[str, str]:
+    """Render the compact field notation consumed by the legacy prompt path."""
+
+    rendered: dict[str, str] = {}
+    for name, field in args_model.model_fields.items():
+        annotation = _format_annotation(field.annotation)
+        if field.is_required():
+            rendered[name] = annotation
+        elif field.default is None and _annotation_allows_none(field.annotation):
+            rendered[name] = f"{annotation}?"
+        else:
+            rendered[name] = f"{annotation}={field.default!r}"
+    return rendered
+
+
+def schema_fingerprint(args_model: type[BaseModel]) -> str:
+    """Hash the canonical provider-neutral schema for checkpoint signatures."""
+
+    payload = json.dumps(
+        normalized_json_schema(args_model),
+        ensure_ascii=True,
+        separators=(",", ":"),
+        sort_keys=True,
+    ).encode("utf-8")
+    return sha256(payload).hexdigest()
+
+
+def _normalize_schema_node(value: Any) -> Any:
+    if isinstance(value, dict):
+        normalized = {
+            key: _normalize_schema_node(item)
+            for key, item in sorted(value.items())
+            if key != "title"
+        }
+        if normalized.get("type") == "object" or "properties" in normalized:
+            normalized.setdefault("properties", {})
+            normalized.setdefault("required", [])
+            normalized.setdefault("additionalProperties", False)
+            normalized["required"] = sorted(normalized["required"])
+        return normalized
+    if isinstance(value, list):
+        return [_normalize_schema_node(item) for item in value]
+    return value
+
+
+def _format_annotation(annotation: Any) -> str:
+    origin = get_origin(annotation)
+    args = tuple(arg for arg in get_args(annotation) if arg is not type(None))
+    if origin in (Union, types.UnionType):
+        rendered = " | ".join(_format_annotation(arg) for arg in args)
+        return f"({rendered})" if len(args) > 1 else rendered
+    if origin is list:
+        item = _format_annotation(args[0]) if args else "any"
+        return f"list[{item}]"
+    if origin is dict:
+        key = _format_annotation(args[0]) if args else "any"
+        item = _format_annotation(args[1]) if len(args) > 1 else "any"
+        return f"dict[{key}, {item}]"
+    if annotation is Any:
+        return "any"
+    return getattr(annotation, "__name__", str(annotation).replace("typing.", ""))
+
+
+def _annotation_allows_none(annotation: Any) -> bool:
+    return type(None) in get_args(annotation)
