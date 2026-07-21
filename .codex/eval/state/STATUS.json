@@ -38,11 +38,33 @@
       ],
       "handoff_path": ".codex/eval/handoffs/EVAL-000.json",
       "handoff_sha256": "2dc1741e0081e8724cb16a46c6a655847bdb0ce8539d7e15252a18d6fb2faf18"
+    },
+    "EVAL-001": {
+      "instance_id": "W0-EVAL-001-01",
+      "status": "accepted",
+      "base_sha": "8ff3a261aa246ddd2798c2f065cac188766ef99c",
+      "head_sha": "96add601b99cb347b7a4aa509a57e25ad4a8d073",
+      "dependency_commits": [
+        "31fded1559fed404cb26018a2a009a0f1fa727b0",
+        "9d6bfc4567b6c1dff45908a3ed00335b947a52f9"
+      ],
+      "own_commits": [
+        "f964d6bd9accf8137679acda044b62ff52c8a154",
+        "34620f5672d2ad7ccdb3481feded9892d3a62b6f",
+        "96add601b99cb347b7a4aa509a57e25ad4a8d073"
+      ],
+      "integration_commits": [
+        "7fe1217994abaa32e91df84e43d32c740263db07",
+        "fe551fedc6f775fa1b02c706d1dbcbf8be6fa2f0",
+        "3923a71b64d2ac9f4a4304a4e7dc88a35b94ad0d"
+      ],
+      "handoff_path": ".codex/eval/handoffs/EVAL-001.json",
+      "handoff_sha256": "cc8c951e0a0e0dac20e46c611b102bc538a6863099310a90690eb639f931a3be",
+      "artifact_contract_sha256": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+      "artifact_contract_hash_basis": "git_blob_bytes"
     }
   },
-  "active_tickets": {
-    "EVAL-001": "W0-EVAL-001-01"
-  },
+  "active_tickets": {},
   "blocked_tickets": {},
   "ticket_instances": {
     "W0-EVAL-000-01": {
@@ -101,11 +123,29 @@
         ".codex/eval/handoffs/EVAL-001.json"
       ],
       "prompt_sha256": "d3dbdf2e6f52f509c9c4315385256a5daaca71366d9902ec3a63ef1b01741166",
-      "status": "active"
+      "head_sha": "96add601b99cb347b7a4aa509a57e25ad4a8d073",
+      "applied_dependency_commits": [
+        "4c820b32015c716c3169bd97b22a0aa9ba6b8138",
+        "dc0fe5684ebcaa9793731f7740317196cdcc6bb6"
+      ],
+      "own_commits": [
+        "f964d6bd9accf8137679acda044b62ff52c8a154",
+        "34620f5672d2ad7ccdb3481feded9892d3a62b6f",
+        "96add601b99cb347b7a4aa509a57e25ad4a8d073"
+      ],
+      "integration_commits": [
+        "7fe1217994abaa32e91df84e43d32c740263db07",
+        "fe551fedc6f775fa1b02c706d1dbcbf8be6fa2f0",
+        "3923a71b64d2ac9f4a4304a4e7dc88a35b94ad0d"
+      ],
+      "handoff_sha256": "cc8c951e0a0e0dac20e46c611b102bc538a6863099310a90690eb639f931a3be",
+      "artifact_contract_sha256": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+      "artifact_contract_hash_basis": "git_blob_bytes",
+      "status": "accepted"
     }
   },
   "wave_handoffs": {},
   "ready_tickets": [],
   "last_gate": null,
-  "updated_at": "2026-07-21T10:27:49.9453748+08:00"
+  "updated_at": "2026-07-21T10:48:07.2218619+08:00"
 }

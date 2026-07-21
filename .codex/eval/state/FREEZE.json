@@ -1,6 +1,14 @@
 {
   "schema_version": "pico-eval-freeze-v2",
-  "artifact_contract": null,
+  "artifact_contract": {
+    "version": "pico-evaluation-artifact-v1",
+    "path": "pico/evaluation/contracts.py",
+    "sha256": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "hash_basis": "git_blob_bytes",
+    "source_ticket": "EVAL-001",
+    "source_head_sha": "96add601b99cb347b7a4aa509a57e25ad4a8d073",
+    "integration_sha": "3923a71b64d2ac9f4a4304a4e7dc88a35b94ad0d"
+  },
   "native_contract": null,
   "tool_schema": null,
   "sdk_transport_decision": null,
