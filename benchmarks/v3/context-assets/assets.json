@@ -1,0 +1,488 @@
+{
+  "schema_version": "pico-context-asset-contract-v1",
+  "contract_status": "evaluation_target",
+  "surfaces": {
+    "system_text": "Stable instructions and activated control context supplied as system content.",
+    "messages": "Ordered public conversation, tool-call, tool-result, notification, summary, and pointer messages.",
+    "tools": "Provider-neutral native tool definitions supplied through the provider tools field.",
+    "continuation": "JSON-safe opaque provider continuation required to resume a native exchange; never public prompt text."
+  },
+  "policy_levels": {
+    "guaranteed": "Normative evaluation requirement. A violation fails the contract.",
+    "observed": "Behavior visible in the current Runtime but not promised by this ticket.",
+    "target": "Desired routing or governance that requires a later Runtime owner to implement."
+  },
+  "global_invariants": {
+    "current_request": {
+      "surface": "messages",
+      "drop": "never",
+      "compactable": false,
+      "verbatim": true,
+      "policy_level": "guaranteed",
+      "evidence": [
+        "request_content_hash",
+        "request_rendered_hash",
+        "drop_action"
+      ]
+    },
+    "native_tool_definitions": {
+      "surface": "tools",
+      "forbidden_surfaces": [
+        "system_text"
+      ],
+      "duplication": "forbid_schema_or_signature_copy_in_system_text",
+      "policy_level": "guaranteed",
+      "schema_hash": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+      "evidence": [
+        "tool_catalog_hash",
+        "tool_count",
+        "system_text_tool_definition_match_count"
+      ]
+    },
+    "unfinished_native_turn": {
+      "surfaces": [
+        "messages",
+        "continuation"
+      ],
+      "compactable": false,
+      "drop": "never_until_terminal_result",
+      "pairing": "each_provider_call_id_has_exactly_one_result",
+      "public_private_boundary": "messages retain public call/result blocks; opaque continuation retains private provider state and is represented in evidence only by type, count, hash, and token usage",
+      "policy_level": "guaranteed",
+      "evidence": [
+        "native_turn_status",
+        "call_ids",
+        "result_call_ids",
+        "continuation_hash",
+        "compaction_action"
+      ]
+    },
+    "duplication": {
+      "default": "single_canonical_surface",
+      "cross_surface_copy": "forbidden_unless_asset_duplication_policy_explicitly_allows_reference_only",
+      "comparison_basis": "canonical_content_hash_and_source_identity",
+      "policy_level": "guaranteed"
+    }
+  },
+  "priority_order": [
+    "critical",
+    "high",
+    "medium",
+    "low"
+  ],
+  "assets": [
+    {
+      "id": "skills",
+      "display_name": "Skills",
+      "producer": "skill registry and selected SKILL.md renderer",
+      "activation": "catalog when skills are enabled; full instructions only when explicitly selected or otherwise activated",
+      "lifetime": "workspace_catalog_and_turn_activation",
+      "priority": "medium",
+      "floor": {
+        "mode": "catalog_metadata",
+        "minimum": "name, description, activation state, and source identity for available skills"
+      },
+      "drop": {
+        "inactive": "drop_full_body_before_catalog",
+        "active": "clip_only_with_explicit_evidence",
+        "policy_level": "target"
+      },
+      "routing": {
+        "primary_surface": "system_text",
+        "allowed_surfaces": [
+          "system_text"
+        ],
+        "forbidden_surfaces": [
+          "tools",
+          "continuation"
+        ]
+      },
+      "metadata": [
+        "skill_id",
+        "source",
+        "version_or_hash",
+        "user_invocable",
+        "activation_reason"
+      ],
+      "duplication": "one catalog entry per skill; activated body must not also appear in messages",
+      "evidence": [
+        "selected_skill_ids",
+        "catalog_count",
+        "raw_chars",
+        "rendered_chars",
+        "content_hash",
+        "drop_action"
+      ],
+      "current_behavior": {
+        "policy_level": "observed",
+        "summary": "ContextManager renders the available-skill section into the monolithic prompt and may tail-clip the section to a character floor."
+      }
+    },
+    {
+      "id": "todo",
+      "display_name": "Todo",
+      "producer": "TodoLedger",
+      "activation": "when the ledger has entries or the active mode requires todo guidance",
+      "lifetime": "session_until_items_are_completed_or_removed",
+      "priority": "high",
+      "floor": {
+        "mode": "active_items",
+        "minimum": "identifier, status, priority, and content for every non-terminal item"
+      },
+      "drop": {
+        "terminal_items": "summarize_or_drop_before_active_items",
+        "active_items": "never_silently_drop",
+        "policy_level": "target"
+      },
+      "routing": {
+        "primary_surface": "system_text",
+        "allowed_surfaces": [
+          "system_text"
+        ],
+        "forbidden_surfaces": [
+          "tools",
+          "continuation"
+        ]
+      },
+      "metadata": [
+        "ledger_version",
+        "active_count",
+        "terminal_count",
+        "item_ids",
+        "updated_at"
+      ],
+      "duplication": "single rendered ledger; history may reference changes but must not copy the current ledger as a second authority",
+      "evidence": [
+        "active_item_ids",
+        "raw_chars",
+        "rendered_chars",
+        "content_hash",
+        "drop_action"
+      ],
+      "current_behavior": {
+        "policy_level": "observed",
+        "summary": "TodoLedger text is appended to the generic memory section and inherits that section's clipping and floor behavior."
+      }
+    },
+    {
+      "id": "plan",
+      "display_name": "Plan",
+      "producer": "PlanModeManager and active plan artifact",
+      "activation": "runtime mode equals plan",
+      "lifetime": "active_plan_mode",
+      "priority": "critical",
+      "floor": {
+        "mode": "control_header",
+        "minimum": "mode, active artifact pointer, write constraint, completion gate, and current plan progress pointer"
+      },
+      "drop": {
+        "active": "never",
+        "inactive": "drop",
+        "policy_level": "guaranteed"
+      },
+      "routing": {
+        "primary_surface": "system_text",
+        "allowed_surfaces": [
+          "system_text"
+        ],
+        "forbidden_surfaces": [
+          "tools",
+          "continuation"
+        ]
+      },
+      "metadata": [
+        "mode",
+        "plan_path",
+        "plan_content_hash",
+        "plan_exists",
+        "plan_complete"
+      ],
+      "duplication": "system text carries policy and a pointer; the full plan body has one canonical carrier",
+      "evidence": [
+        "activation_state",
+        "plan_path",
+        "plan_content_hash",
+        "rendered_chars",
+        "drop_action"
+      ],
+      "current_behavior": {
+        "policy_level": "observed",
+        "summary": "Plan mode refreshes the prompt prefix with the active plan path and policy; the Runtime does not yet expose this as a separately measured asset."
+      }
+    },
+    {
+      "id": "checkpoint",
+      "display_name": "Checkpoint",
+      "producer": "RuntimeCheckpointsMixin",
+      "activation": "a compatible current checkpoint exists and resume context is relevant",
+      "lifetime": "until_superseded_invalidated_or_task_completed",
+      "priority": "high",
+      "floor": {
+        "mode": "resume_core",
+        "minimum": "checkpoint id, goal, blocker, next step, key-file freshness, and runtime identity"
+      },
+      "drop": {
+        "fresh": "never_silently_drop",
+        "stale": "replace_with_stale_status_and_pointer",
+        "policy_level": "target"
+      },
+      "routing": {
+        "primary_surface": "system_text",
+        "allowed_surfaces": [
+          "system_text"
+        ],
+        "forbidden_surfaces": [
+          "tools",
+          "continuation"
+        ]
+      },
+      "metadata": [
+        "checkpoint_id",
+        "parent_checkpoint_id",
+        "schema_version",
+        "freshness",
+        "runtime_identity",
+        "activation_reason"
+      ],
+      "duplication": "one active checkpoint rendering; older checkpoints remain artifacts referenced by id",
+      "evidence": [
+        "checkpoint_id",
+        "freshness_status",
+        "content_hash",
+        "rendered_chars",
+        "drop_action"
+      ],
+      "current_behavior": {
+        "policy_level": "observed",
+        "summary": "Rendered checkpoint text is appended to the generic memory section and can inherit memory-section clipping."
+      }
+    },
+    {
+      "id": "worker",
+      "display_name": "Worker",
+      "producer": "WorkerManager and worker notification renderer",
+      "activation": "worker starts, changes state, completes, fails, or has an undrained coordinator notification",
+      "lifetime": "session_state_plus_notification_until_drained",
+      "priority": "high",
+      "floor": {
+        "mode": "state_transition",
+        "minimum": "worker id, status, action, summary or result pointer, and notification-drained state"
+      },
+      "drop": {
+        "undrained": "never",
+        "drained_terminal_detail": "replace_with_summary_or_artifact_pointer",
+        "policy_level": "target"
+      },
+      "routing": {
+        "primary_surface": "messages",
+        "allowed_surfaces": [
+          "messages"
+        ],
+        "forbidden_surfaces": [
+          "tools",
+          "continuation"
+        ]
+      },
+      "metadata": [
+        "worker_id",
+        "status",
+        "action",
+        "subagent_type",
+        "notification_drained",
+        "result_hash",
+        "artifact_pointer"
+      ],
+      "duplication": "one coordinator notification per state transition; large result content is replaced by a pointer, not copied",
+      "evidence": [
+        "worker_id",
+        "notification_count",
+        "message_index",
+        "result_hash",
+        "drop_action"
+      ],
+      "current_behavior": {
+        "policy_level": "observed",
+        "summary": "Worker completion is rendered as a task-notification and drained into the coordinator turn; stable structured message placement is not yet guaranteed."
+      }
+    },
+    {
+      "id": "durable",
+      "display_name": "Durable",
+      "producer": "durable memory index and retrieval layer",
+      "activation": "memory is enabled and the index policy or a relevant durable note is selected",
+      "lifetime": "workspace_until_updated_removed_or_superseded",
+      "priority": "medium",
+      "floor": {
+        "mode": "index_and_selected_note_metadata",
+        "minimum": "memory policy, selected source identity, freshness, and content pointer"
+      },
+      "drop": {
+        "unselected_body": "drop_before_selected_notes",
+        "selected": "clip_with_hash_and_pointer_evidence",
+        "policy_level": "target"
+      },
+      "routing": {
+        "primary_surface": "system_text",
+        "allowed_surfaces": [
+          "system_text"
+        ],
+        "forbidden_surfaces": [
+          "tools",
+          "continuation"
+        ]
+      },
+      "metadata": [
+        "memory_id",
+        "source_path",
+        "kind",
+        "tags",
+        "updated_at",
+        "content_hash",
+        "selection_score"
+      ],
+      "duplication": "index stores pointers and brief descriptions; selected body has one rendered carrier",
+      "evidence": [
+        "selected_memory_ids",
+        "selected_count",
+        "content_hashes",
+        "raw_chars",
+        "rendered_chars",
+        "drop_action"
+      ],
+      "current_behavior": {
+        "policy_level": "observed",
+        "summary": "Durable policy is appended to memory and selected durable notes are mixed into relevant memory, each subject to character budgets."
+      }
+    },
+    {
+      "id": "compact",
+      "display_name": "Compact",
+      "producer": "CompactManager",
+      "activation": "manual or automatic compaction has summarized older terminal turns",
+      "lifetime": "session_until_superseded_by_a_newer_compaction",
+      "priority": "high",
+      "floor": {
+        "mode": "summary_core",
+        "minimum": "trigger, covered turn boundary, goal or progress, critical context, and source hash"
+      },
+      "drop": {
+        "latest": "never_without_replacement",
+        "superseded": "replace_with_newer_summary",
+        "policy_level": "target"
+      },
+      "routing": {
+        "primary_surface": "messages",
+        "allowed_surfaces": [
+          "messages"
+        ],
+        "forbidden_surfaces": [
+          "tools",
+          "continuation"
+        ]
+      },
+      "metadata": [
+        "compaction_id",
+        "trigger",
+        "covered_turn_ids",
+        "source_hash",
+        "pre_tokens",
+        "post_tokens"
+      ],
+      "duplication": "compacted source turns are replaced, not retained beside the summary in the active message window",
+      "evidence": [
+        "compaction_id",
+        "covered_turn_ids",
+        "message_index",
+        "content_hash",
+        "drop_action"
+      ],
+      "current_behavior": {
+        "policy_level": "observed",
+        "summary": "CompactManager replaces older terminal turn groups with a compact_summary history item while keeping recent turns."
+      }
+    },
+    {
+      "id": "pointer",
+      "display_name": "Pointer",
+      "producer": "artifact, memory, checkpoint, worker, and plan producers",
+      "activation": "full content is externalized, clipped, stale, too large, or intentionally represented by reference",
+      "lifetime": "while_target_identity_and_freshness_remain_valid",
+      "priority": "high",
+      "floor": {
+        "mode": "resolvable_identity",
+        "minimum": "pointer kind, target id or path, content hash, freshness, and producer"
+      },
+      "drop": {
+        "valid": "never_when_it_is_the_only_reference_to_required_content",
+        "invalid": "emit_invalid_or_stale_evidence_before_drop",
+        "policy_level": "guaranteed"
+      },
+      "routing": {
+        "primary_surface": "messages",
+        "content_mode": "artifact_pointer_metadata",
+        "allowed_surfaces": [
+          "messages",
+          "system_text"
+        ],
+        "forbidden_surfaces": [
+          "tools",
+          "continuation"
+        ]
+      },
+      "metadata": [
+        "pointer_kind",
+        "target_id",
+        "target_path",
+        "content_hash",
+        "freshness",
+        "producer",
+        "resolvable"
+      ],
+      "duplication": "reference metadata may accompany a short label; referenced body must not be copied into another surface",
+      "evidence": [
+        "pointer_kind",
+        "target_id_or_path",
+        "content_hash",
+        "freshness",
+        "resolvable",
+        "carrier_surface",
+        "drop_action"
+      ],
+      "current_behavior": {
+        "policy_level": "observed",
+        "summary": "Pico uses paths and identifiers in several prompt fragments, but does not yet emit a uniform pointer metadata envelope or resolvability evidence."
+      }
+    }
+  ],
+  "evidence_contract": {
+    "required_per_request": [
+      "contract_version",
+      "request_id",
+      "surface_hashes",
+      "activated_asset_ids",
+      "asset_records",
+      "duplication_findings",
+      "native_turn_status"
+    ],
+    "required_per_asset_record": [
+      "asset_id",
+      "producer",
+      "activation_state",
+      "surface",
+      "priority",
+      "floor_satisfied",
+      "raw_size",
+      "rendered_size",
+      "content_hash",
+      "drop_action",
+      "metadata"
+    ],
+    "privacy": "Do not record opaque reasoning or thinking content; continuation evidence is limited to type, count, hash, and token usage.",
+    "size_unit": "provider_tokens_when_available_else_utf8_bytes_with_method_recorded"
+  },
+  "frozen_dependencies": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f"
+  }
+}
