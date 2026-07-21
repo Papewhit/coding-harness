@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import json
 
 import pytest
 
@@ -63,6 +64,19 @@ def test_ratios_reject_unauditable_values() -> None:
         ratio(2, 1)
     with pytest.raises(ValueError, match="non-negative"):
         ratio(0, 1, -1)
+    for value in (True, 1.9, "1"):
+        with pytest.raises(ValueError, match="integer"):
+            ratio(value, 2)  # type: ignore[arg-type]
+
+
+def test_native_protocol_metadata_rejects_non_boolean_flags_and_non_integer_attempts() -> None:
+    with pytest.raises(ValueError, match="eligible must be a boolean"):
+        native_protocol_metadata(eligible="false", native_tool_call_observed=False)  # type: ignore[arg-type]
+    with pytest.raises(ValueError, match="native_tool_call_observed must be a boolean"):
+        native_protocol_metadata(eligible=False, native_tool_call_observed=0)  # type: ignore[arg-type]
+    for field in ("http_attempts", "sdk_retry_count", "pico_retry_count", "duplicate_call_after_result"):
+        with pytest.raises(ValueError, match="integer"):
+            native_protocol_metadata(eligible=False, native_tool_call_observed=False, **{field: "1"})  # type: ignore[arg-type]
 
 
 def test_profile_identity_and_public_artifacts_redact_secrets_and_opaque_content() -> None:
@@ -98,3 +112,26 @@ def test_profile_identity_and_public_artifacts_redact_secrets_and_opaque_content
         "count": 1,
     }
     assert sanitize_public_artifact({"authorization": "Bearer top-secret"}) == {"authorization": "[redacted]"}
+
+
+def test_sanitization_preserves_public_token_usage_and_fails_closed_for_non_json_values() -> None:
+    sanitized = sanitize_public_artifact(
+        {
+            "token_usage": {"input_tokens": 5, "output_tokens": 3, "reasoning_tokens": 2, "cached_tokens": 1, "max_tokens": 10},
+            "access_token": "secret",
+        }
+    )
+
+    assert sanitized["token_usage"] == {
+        "input_tokens": 5,
+        "output_tokens": 3,
+        "reasoning_tokens": 2,
+        "cached_tokens": 1,
+        "max_tokens": 10,
+    }
+    assert sanitized["access_token"] == "[redacted]"
+    assert json.dumps(sanitized, allow_nan=False)
+    with pytest.raises(TypeError, match="not JSON-safe"):
+        sanitize_public_artifact({"opaque_sdk_object": object()})
+    with pytest.raises(ValueError, match="finite"):
+        sanitize_public_artifact({"latency": float("nan")})

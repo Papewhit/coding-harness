@@ -8,6 +8,7 @@ of every native-protocol ratio auditable.
 from __future__ import annotations
 
 from copy import deepcopy
+import math
 import re
 from typing import Any, Mapping
 from urllib.parse import urlsplit, urlunsplit
@@ -38,9 +39,22 @@ NATIVE_PROTOCOL_METADATA_SCHEMA: dict[str, Any] = {
     "opaque_continuation_fields": ("hash", "type", "count"),
 }
 
-_SECRET_KEY = re.compile(r"(?:api[._-]?key|authorization|credential|password|secret|token)", re.IGNORECASE)
 _SECRET_VALUE = re.compile(r"(?:^|\s)(?:sk|pk|rk|xox[baprs])-?[A-Za-z0-9_-]{12,}")
 _OPAQUE_CONTINUATION_KEYS = frozenset({"opaque_continuation", "continuation", "thinking", "reasoning"})
+_SECRET_KEYS = frozenset(
+    {
+        "api_key",
+        "authorization",
+        "password",
+        "credential",
+        "client_secret",
+        "access_token",
+        "refresh_token",
+        "auth_token",
+        "token",
+    }
+)
+_SECRET_KEY_SUFFIXES = tuple(f"_{name}" for name in _SECRET_KEYS - {"authorization", "token"})
 
 
 def ratio(numerator: int, denominator: int, excluded: int = 0) -> dict[str, int | float | None]:
@@ -75,8 +89,8 @@ def native_protocol_metadata(
     """Create JSON-safe native protocol evidence for one evaluation row."""
 
     payload: dict[str, Any] = {
-        "eligible": bool(eligible),
-        "native_tool_call_observed": bool(native_tool_call_observed),
+        "eligible": _strict_bool("eligible", eligible),
+        "native_tool_call_observed": _strict_bool("native_tool_call_observed", native_tool_call_observed),
         "call_id_result_match": _normalize_ratio(call_id_result_match),
         "batch_completeness": _normalize_ratio(batch_completeness),
         "duplicate_call_after_result": _non_negative_int(
@@ -98,13 +112,19 @@ def profile_identity(profile: Mapping[str, Any]) -> dict[str, Any]:
 
     sdk = profile.get("sdk", {})
     retry = profile.get("retry", {})
-    if not isinstance(sdk, Mapping):
+    if sdk is None:
         sdk = {}
-    if not isinstance(retry, Mapping):
+    if retry is None:
         retry = {}
+    if not isinstance(sdk, Mapping):
+        raise TypeError("profile sdk must be a mapping")
+    if not isinstance(retry, Mapping):
+        raise TypeError("profile retry must be a mapping")
     capabilities = profile.get("capabilities", {})
-    if not isinstance(capabilities, Mapping):
+    if capabilities is None:
         capabilities = {}
+    if not isinstance(capabilities, Mapping):
+        raise TypeError("profile capabilities must be a mapping")
     return {
         "provider": _safe_scalar(profile.get("provider")),
         "model": _safe_scalar(profile.get("model")),
@@ -149,6 +169,8 @@ def validate_native_protocol_metadata(metadata: Mapping[str, Any]) -> None:
     missing = [field for field in NATIVE_PROTOCOL_METADATA_SCHEMA["required"] if field not in metadata]
     if missing:
         raise ValueError(f"native protocol metadata missing required fields: {', '.join(missing)}")
+    _strict_bool("eligible", metadata["eligible"])
+    _strict_bool("native_tool_call_observed", metadata["native_tool_call_observed"])
     for field in NATIVE_PROTOCOL_METADATA_SCHEMA["ratio_fields"]:
         _normalize_ratio(metadata[field])
     for field in ("duplicate_call_after_result", "http_attempts", "sdk_retry_count", "pico_retry_count"):
@@ -165,6 +187,8 @@ def validate_native_protocol_metadata(metadata: Mapping[str, Any]) -> None:
 def sanitize_opaque_continuation(value: Mapping[str, Any]) -> dict[str, Any]:
     """Represent opaque provider state by its shape only, never its contents."""
 
+    if not isinstance(value, Mapping):
+        raise TypeError("opaque continuation must be a mapping")
     return {
         "hash": _safe_scalar(value.get("hash")),
         "type": _safe_scalar(value.get("type")),
@@ -175,17 +199,28 @@ def sanitize_opaque_continuation(value: Mapping[str, Any]) -> dict[str, Any]:
 def sanitize_public_artifact(value: Any, *, key: str | None = None) -> Any:
     """Redact secret-bearing fields before public evaluation evidence is written."""
 
-    if key and _SECRET_KEY.search(key):
+    if key and _is_secret_key(key):
         return REDACTED
     if key and key.lower() in _OPAQUE_CONTINUATION_KEYS and isinstance(value, Mapping):
         return sanitize_opaque_continuation(value)
     if isinstance(value, Mapping):
-        return {str(item_key): sanitize_public_artifact(item_value, key=str(item_key)) for item_key, item_value in value.items()}
+        sanitized: dict[str, Any] = {}
+        for item_key, item_value in value.items():
+            if not isinstance(item_key, str):
+                raise TypeError("public artifact mapping keys must be strings")
+            sanitized[item_key] = sanitize_public_artifact(item_value, key=item_key)
+        return sanitized
     if isinstance(value, (list, tuple)):
         return [sanitize_public_artifact(item, key=key) for item in value]
     if isinstance(value, str):
         return _sanitize_text(value)
-    return value
+    if value is None or isinstance(value, (bool, int)):
+        return value
+    if isinstance(value, float):
+        if not math.isfinite(value):
+            raise ValueError("public artifact floats must be finite")
+        return value
+    raise TypeError(f"public artifact value is not JSON-safe: {type(value).__name__}")
 
 
 def _normalize_ratio(value: Mapping[str, Any] | None) -> dict[str, int | float | None]:
@@ -196,19 +231,30 @@ def _normalize_ratio(value: Mapping[str, Any] | None) -> dict[str, int | float |
 
 
 def _non_negative_int(name: str, value: Any) -> int:
-    if isinstance(value, bool):
+    if type(value) is not int:
         raise ValueError(f"{name} must be an integer")
-    try:
-        result = int(value)
-    except (TypeError, ValueError) as exc:
-        raise ValueError(f"{name} must be an integer") from exc
-    if result < 0:
+    if value < 0:
         raise ValueError(f"{name} must be non-negative")
-    return result
+    return value
+
+
+def _strict_bool(name: str, value: Any) -> bool:
+    if type(value) is not bool:
+        raise ValueError(f"{name} must be a boolean")
+    return value
 
 
 def _safe_scalar(value: Any) -> str:
-    return _sanitize_text(str(value or ""))
+    if value is None:
+        return ""
+    if not isinstance(value, str):
+        raise TypeError("public artifact scalar must be a string")
+    return _sanitize_text(value)
+
+
+def _is_secret_key(key: str) -> bool:
+    normalized = key.lower().replace("-", "_").replace(".", "_")
+    return normalized in _SECRET_KEYS or normalized.endswith(_SECRET_KEY_SUFFIXES)
 
 
 def _sanitize_text(value: str) -> str:
