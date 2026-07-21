@@ -1,0 +1,47 @@
+{
+  "schema_version": "pico-eval-freeze-proposal-v1",
+  "ticket_id": "EVAL-040-M",
+  "instance_id": "W2-EVAL-040-M-01",
+  "wave": "W2",
+  "role": "integrator_ticket/aggregator",
+  "base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+  "control_overlay_sha256": "5954e177e3bd0f7585786a42654e868b017b167d52172df03c56da116628faaf",
+  "dependency_handoff_hashes": {
+    "EVAL-040-A": "f23fb48cc4f4d2cee342b0ad4a18ce05c2296b6e2599c783f86f7e73940748ef",
+    "EVAL-040-B": "62f410f8e59cd066583b4e9a142b59bce6132434c278a420e50bf011ed4bd608",
+    "EVAL-040-C": "37df819fa4eee7ed5df4c8c71787609096586289bfb5fc9a3088194a00be7b78"
+  },
+  "freeze_proposal": {
+    "key": "pico_local_python_v1",
+    "taskset_id": "pico-local-python-v1",
+    "version": 1,
+    "taskset": {
+      "path": "benchmarks/v3/local-repos/taskset.json",
+      "sha256": "b6c1d16720583767b86cf8c8f535b0ff744a84216e0843a79660fea87389909a",
+      "hash_basis": "UTF-8 file bytes with CRLF normalized to LF"
+    },
+    "lock": {
+      "path": "benchmarks/v3/local-repos/taskset.lock.json",
+      "sha256": "f12b2171da87ca6602e8574cfcc6e9621f792c7453bd3c806ad70dbe716fa2e2",
+      "hash_basis": "UTF-8 file bytes with CRLF normalized to LF"
+    },
+    "fragment_hashes": {
+      "tinyconfig": "24d42d41038f8fa08d90d27fc0664b8fda75579896f9072d058eadc4dfc7b3ba",
+      "miniqueue": "dcea7a08048653285782e8f00c9326322c6d5fe5eeab36e32c16c19d79d9f622",
+      "logslice": "3e8d833b4b424b3d389705d51431b350142acc4367864ca1dcab870ed86fa382"
+    },
+    "self_check": {
+      "repositories": 3,
+      "tasks": 9,
+      "baseline_failed_as_expected": 9,
+      "reference_passed": 9,
+      "inverted_failed_as_expected": 9,
+      "anti_cheat": "passed",
+      "network_disabled": "passed",
+      "path_isolation": "passed",
+      "user_home_dependency_absent": "passed"
+    }
+  },
+  "canonical_state_write_required": true,
+  "canonical_state_written": false
+}

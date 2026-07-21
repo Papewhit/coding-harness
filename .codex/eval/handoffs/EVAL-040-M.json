@@ -1,0 +1,147 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "EVAL-040-M",
+  "instance_id": "W2-EVAL-040-M-01",
+  "wave": "W2",
+  "role": "integrator_ticket/aggregator",
+  "status": "complete",
+  "base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+  "head_sha": "73855504de4a3de36ab425f1661c50abd5b94e6b",
+  "head_sha_scope": "content commit validated before the post-content handoff metadata commit",
+  "branch": "codex/eval-v3-w2-eval-040-m",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/7529/pico",
+  "control_overlay_sha256": "5954e177e3bd0f7585786a42654e868b017b167d52172df03c56da116628faaf",
+  "dependency_commits": [],
+  "dependency_handoff_hashes": {
+    "EVAL-040-A": "f23fb48cc4f4d2cee342b0ad4a18ce05c2296b6e2599c783f86f7e73940748ef",
+    "EVAL-040-B": "62f410f8e59cd066583b4e9a142b59bce6132434c278a420e50bf011ed4bd608",
+    "EVAL-040-C": "37df819fa4eee7ed5df4c8c71787609096586289bfb5fc9a3088194a00be7b78"
+  },
+  "fragment_hashes": {
+    "tinyconfig": "24d42d41038f8fa08d90d27fc0664b8fda75579896f9072d058eadc4dfc7b3ba",
+    "miniqueue": "dcea7a08048653285782e8f00c9326322c6d5fe5eeab36e32c16c19d79d9f622",
+    "logslice": "3e8d833b4b424b3d389705d51431b350142acc4367864ca1dcab870ed86fa382"
+  },
+  "own_commits": [
+    "73855504de4a3de36ab425f1661c50abd5b94e6b"
+  ],
+  "own_commits_scope": "content commits only; excludes the handoff metadata commit to avoid recursive self-reference",
+  "handoff_persistence": {
+    "mode": "post-content metadata commit",
+    "integration_range": "65d7142cf3a5ed9a15fc0689f3022d521369252b..codex/eval-v3-w2-eval-040-m",
+    "metadata_commit": "reported externally after commit; intentionally not embedded in this handoff"
+  },
+  "allowed_write_paths": [
+    "benchmarks/v3/local-repos/taskset.json",
+    "benchmarks/v3/local-repos/taskset.lock.json",
+    ".codex/eval/proposals/EVAL-040-M.freeze.json",
+    ".codex/eval/handoffs/EVAL-040-M.json"
+  ],
+  "files_changed": [
+    "benchmarks/v3/local-repos/taskset.json",
+    "benchmarks/v3/local-repos/taskset.lock.json",
+    ".codex/eval/proposals/EVAL-040-M.freeze.json",
+    ".codex/eval/handoffs/EVAL-040-M.json"
+  ],
+  "commands_run": [
+    "SHA-256 verification of CONTROL, dependency handoffs, and fragment Git blob bytes",
+    "isolated temporary-copy T01-T09 baseline/reference/inverted verifier matrix with socket guard",
+    "taskset/lock/proposal hash and path-confinement recomputation",
+    "uv run ruff check .",
+    "uv run ruff check benchmarks/v3/local-repos/repos benchmarks/v3/local-repos/hidden_verifiers",
+    "uv run pytest tests -q",
+    "uv run --with httpx pytest tests/test_agent_workers_acceptance.py -q",
+    "git diff --check"
+  ],
+  "tests": [
+    {
+      "command": "T01-T09 isolated baseline/reference/inverted matrix",
+      "result": "passed",
+      "details": "All 9 baselines failed as expected, all 9 matching reference patches applied cleanly and passed, and all 9 reverse-applied/inverted cases failed as expected. Verifiers ran against disposable copies with a socket-blocking sitecustomize guard."
+    },
+    {
+      "command": "anti-cheat/no-network/path-isolation self-check",
+      "result": "passed",
+      "details": "Exactly 3 repositories and 9 unique tasks were present; all paths were relative and confined below benchmarks/v3/local-repos; candidate workspaces exposed only symlink-free base snapshots; hidden verifiers/reference patches were absent; candidate/verifier Python sources imported no network library; no user-home dependency was declared."
+    },
+    {
+      "command": "taskset/lock/proposal hash recomputation",
+      "result": "passed",
+      "details": "Fragment, repository-tree, task-document, hidden-verifier, reference-patch, taskset, and lock hashes all recomputed to the frozen values."
+    },
+    {
+      "command": "uv run ruff check benchmarks/v3/local-repos/repos benchmarks/v3/local-repos/hidden_verifiers",
+      "result": "passed",
+      "details": "All checks passed."
+    },
+    {
+      "command": "uv run ruff check .",
+      "result": "failed",
+      "details": "Blocked by 14 pre-existing F401/F541 findings in scripts/readable_session.py, outside this ticket's allowed write paths."
+    },
+    {
+      "command": "uv run pytest tests -q",
+      "result": "failed",
+      "details": "Collection stopped because the default environment lacks optional httpx required by test_sdk_probe_anthropic.py and test_sdk_probe_openai.py. No dependency files were changed."
+    },
+    {
+      "command": "uv run --with httpx pytest tests/test_agent_workers_acceptance.py -q",
+      "result": "failed",
+      "details": "Isolated dependency rerun produced 10 passed and 1 unrelated timing failure: asynchronous worker startup took 0.781s against a 0.5s threshold. An earlier attempt produced 9 passed and 2 timing failures under concurrent machine load."
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed",
+      "details": "No whitespace errors."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "benchmarks/v3/local-repos/taskset.json",
+      "sha256": "b6c1d16720583767b86cf8c8f535b0ff744a84216e0843a79660fea87389909a",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "benchmarks/v3/local-repos/taskset.lock.json",
+      "sha256": "f12b2171da87ca6602e8574cfcc6e9621f792c7453bd3c806ad70dbe716fa2e2",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": ".codex/eval/proposals/EVAL-040-M.freeze.json",
+      "sha256": "670ede2f15d961fd92b549c2f1903480eba0ca85134a37d22b7f364e4feb3556",
+      "hash_basis": "git_blob_bytes"
+    }
+  ],
+  "frozen_hashes": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "pico_local_python_v1_taskset": "b6c1d16720583767b86cf8c8f535b0ff744a84216e0843a79660fea87389909a",
+    "pico_local_python_v1_lock": "f12b2171da87ca6602e8574cfcc6e9621f792c7453bd3c806ad70dbe716fa2e2",
+    "native_contract": null,
+    "tool_schema": null,
+    "sdk_transport_decision": null,
+    "provider_selection": null,
+    "native_resume_gate": null
+  },
+  "native_protocol_observations": {
+    "observation_scope": "offline local-repository taskset aggregation; no provider request was issued",
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0
+  },
+  "defects": [],
+  "risks": [
+    "Full-repository ruff is red on 14 pre-existing findings in scripts/readable_session.py, outside ticket scope.",
+    "The full default pytest environment lacks optional httpx; an isolated httpx run exposed an unrelated background-worker timing threshold failure under concurrent machine load.",
+    "uv created an ignored workspace .venv while running checks; it is untracked and outside the ticket commit."
+  ],
+  "status_proposal": null,
+  "freeze_proposal": {
+    "path": ".codex/eval/proposals/EVAL-040-M.freeze.json",
+    "sha256": "670ede2f15d961fd92b549c2f1903480eba0ca85134a37d22b7f364e4feb3556",
+    "key": "pico_local_python_v1"
+  },
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}

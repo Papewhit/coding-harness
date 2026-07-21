@@ -1,0 +1,113 @@
+{
+  "schema_version": "pico-local-repo-taskset-lock-v1",
+  "taskset_id": "pico-local-python-v1",
+  "version": 1,
+  "hash_algorithm": "sha256",
+  "hash_basis": {
+    "taskset": "UTF-8 file bytes with CRLF normalized to LF",
+    "frozen_inputs": "Git blob bytes at wave_base_sha",
+    "repository_tree": "SHA-256 of sorted UTF-8 records '<relative-posix-path>\\0<blob-sha256>\\n'"
+  },
+  "taskset": {
+    "path": "taskset.json",
+    "sha256": "b6c1d16720583767b86cf8c8f535b0ff744a84216e0843a79660fea87389909a"
+  },
+  "source_fragments": {
+    "tinyconfig": {
+      "path": "fragments/tinyconfig.json",
+      "sha256": "24d42d41038f8fa08d90d27fc0664b8fda75579896f9072d058eadc4dfc7b3ba"
+    },
+    "miniqueue": {
+      "path": "fragments/miniqueue.json",
+      "sha256": "dcea7a08048653285782e8f00c9326322c6d5fe5eeab36e32c16c19d79d9f622"
+    },
+    "logslice": {
+      "path": "fragments/logslice.json",
+      "sha256": "3e8d833b4b424b3d389705d51431b350142acc4367864ca1dcab870ed86fa382"
+    }
+  },
+  "repositories": {
+    "tinyconfig": {
+      "path": "repos/tinyconfig",
+      "file_count": 4,
+      "tree_sha256": "af112f65e35d4ae760f28845d8a9826b2353a817e76caa164948b69f8ce895a1"
+    },
+    "miniqueue": {
+      "path": "repos/miniqueue",
+      "file_count": 5,
+      "tree_sha256": "24cf6d7fd17a7bc64e893a87bb02e1aa296ac3ac10ed7a56add082e62c65ebdd"
+    },
+    "logslice": {
+      "path": "repos/logslice",
+      "file_count": 9,
+      "tree_sha256": "9e4f59569da20a502cdc6951dbe9989054c2992a87d4e0fd9d4e23fec649c4f0"
+    }
+  },
+  "tasks": {
+    "T01": {
+      "task_doc_sha256": "0e22ab0c084fcb067fca7a1b08a74fd1492904e6786085fd82f7221cb5ea8732",
+      "hidden_verifier_sha256": "e23e29c7210a60316f417323bd9a8c7c70b340f347c901b56a39f7d9b78711e8",
+      "reference_patch_sha256": "8924c30d7ed6a24dd7247273a54e693485dd7f0029f5f8b7e5f6f983f9f82ffb"
+    },
+    "T02": {
+      "task_doc_sha256": "3038330c2a514bea4e712663bdf1a36002f6d559e27435e7af861a8f017d7c85",
+      "hidden_verifier_sha256": "b79c2a3cfe014258a06483fcbf2ff46996156c32d159b54940236212f17b8eb7",
+      "reference_patch_sha256": "7750237f021aa830fcf77b98f08b93d1a370b2b6e2fbd38bf579b34d5c0b4c1d"
+    },
+    "T03": {
+      "task_doc_sha256": "c428ffd3fa6f0186c02056d13c98019e544ec8fde0bfb346496eb5adf0a87482",
+      "hidden_verifier_sha256": "cecb11c3b4ce846c8ebab67fea056edb8acf37f4062a3ade13c47f9b378196eb",
+      "reference_patch_sha256": "7d4a6c98b448c5bc4be4af87a7102f48e4da5995041bc2e189bce53967611d76"
+    },
+    "T04": {
+      "task_doc_sha256": "956ff37bb27e6b330062c3635609974820cf741b6e3b21778231e2b553c5238a",
+      "hidden_verifier_sha256": "af7b4f48213010740df16c4dc30b63447874eb93320ebcccc1495764d9fd5ade",
+      "reference_patch_sha256": "72d6add92031b8ae73fed3b74ea62e5d6b9d576dbc3a6dd6e8aafc097589059c"
+    },
+    "T05": {
+      "task_doc_sha256": "85808dc0139c48ce006b59cbf1bf0ffd5573deb9e4766f1a892705b2d0464731",
+      "hidden_verifier_sha256": "7cda892c519b3572d3d1575817435d65ff25d29a80fec669e1346a8d1baad5d5",
+      "reference_patch_sha256": "9e2a79bd4a156d7cc4ef9954148b58fdc8da94c041a41029a57cefbff3d90ddb"
+    },
+    "T06": {
+      "task_doc_sha256": "792a4a0605ea0f36afedbaab140f8f9b0fc4484c7529b020f7603503601c53a0",
+      "hidden_verifier_sha256": "b658c67fc3324a79b9445e9b06248f5112dcba45e618cecc3c1a100da2e3ee08",
+      "reference_patch_sha256": "8c8f55b592a2710a5ec5e04dc1d4bb65e472d76cfbb19a21b212565d5d837c89"
+    },
+    "T07": {
+      "task_doc_sha256": "5f2f8a787c170e0da896938c198cd45837fb26a57e5f688127198bcd140741b7",
+      "hidden_verifier_sha256": "b241843c05470798b567f4ee0335969d85f1f27708edee14f15567b713dd7bfa",
+      "reference_patch_sha256": "61eb5b0947f095a47299c2a195a345495ef762b2aa5961721496d831d6556c06"
+    },
+    "T08": {
+      "task_doc_sha256": "e3065ac0eb19602daab942dba8ffac4d4af6b1e63fb474d597586041d0c95987",
+      "hidden_verifier_sha256": "f292eaafd132991ff8eef7d2f47726df8d3b8746c6f2574e0fc12b8f71a68f55",
+      "reference_patch_sha256": "e1cb1d103bc5be7c82f76e3c678f9d50830e3b25be47dfbec3b46f618d768ccc"
+    },
+    "T09": {
+      "task_doc_sha256": "5bac8939ca6230ae2e068e14b007b600a666a6a21adf93d5c26311e329a6ca39",
+      "hidden_verifier_sha256": "ce775925bd6d9aa05f4d3d55ea52b79e7b30e18ef681a538add4b9643e78b8aa",
+      "reference_patch_sha256": "02c1bb7a3ee28d7139313b2e40b66cb915d7f2dc7bcc6981717590163b387198"
+    }
+  },
+  "self_check": {
+    "definition": {
+      "baseline": "run each hidden verifier against an unmodified disposable base snapshot and require failure",
+      "reference": "git apply --check and apply the matching reference patch, then require verifier success",
+      "inverted": "reverse-check and reverse the matching patch after reference success, then require verifier failure",
+      "network": "run under a sitecustomize socket guard and reject network-library imports in candidate/verifier Python sources",
+      "path_isolation": "resolve every declared path below path_root; expose only a symlink-free base snapshot in each disposable candidate workspace"
+    },
+    "counts": {
+      "repositories": 3,
+      "tasks": 9,
+      "baseline_failed_as_expected": 9,
+      "reference_passed": 9,
+      "inverted_failed_as_expected": 9
+    },
+    "anti_cheat": "passed",
+    "network_disabled": "passed",
+    "path_isolation": "passed",
+    "user_home_dependency_absent": "passed"
+  }
+}
