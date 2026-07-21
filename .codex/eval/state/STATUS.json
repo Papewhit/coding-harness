@@ -64,7 +64,11 @@
       "artifact_contract_hash_basis": "git_blob_bytes"
     }
   },
-  "active_tickets": {},
+  "active_tickets": {
+    "TOOL-011": "W1-TOOL-011-01",
+    "TOOL-012-I": "W1-TOOL-012-I-01",
+    "EVAL-040-B": "W1-EVAL-040-B-01"
+  },
   "blocked_tickets": {},
   "ticket_instances": {
     "W0-EVAL-000-01": {
@@ -142,6 +146,89 @@
       "artifact_contract_sha256": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
       "artifact_contract_hash_basis": "git_blob_bytes",
       "status": "accepted"
+    },
+    "W1-TOOL-011-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "TOOL-011",
+      "instance_id": "W1-TOOL-011-01",
+      "wave": "W1",
+      "role": "implementer",
+      "thread_id": "019f82b6-8cea-7801-a9d5-b9d8c90c260c",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "branch": "codex/eval-v3-w1-tool-011",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\28a5\\pico",
+      "dependency_handoff_hashes": {
+        "EVAL-001": "cc8c951e0a0e0dac20e46c611b102bc538a6863099310a90690eb639f931a3be"
+      },
+      "dependency_commits": [],
+      "freeze_hashes": {
+        "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1"
+      },
+      "allowed_write_paths": [
+        "pico/tools/definitions.py",
+        "pico/tools/base.py",
+        "pico/tools/registry.py",
+        "pico/tools/schemas.py",
+        "tests/test_tool_schema_export.py",
+        ".codex/eval/handoffs/TOOL-011.json"
+      ],
+      "prompt_sha256": "7b8b4e0461ec2828a2b1db8e0c38b2923ab3bff32eaaffea80fb45d69da7e93b",
+      "status": "active"
+    },
+    "W1-TOOL-012-I-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "TOOL-012-I",
+      "instance_id": "W1-TOOL-012-I-01",
+      "wave": "W1",
+      "role": "implementer",
+      "thread_id": "019f82b6-8cea-7801-a9d5-b9b8126ab4af",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "branch": "codex/eval-v3-w1-tool-012-i",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\ea8d\\pico",
+      "dependency_handoff_hashes": {
+        "EVAL-001": "cc8c951e0a0e0dac20e46c611b102bc538a6863099310a90690eb639f931a3be"
+      },
+      "dependency_commits": [],
+      "freeze_hashes": {
+        "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1"
+      },
+      "allowed_write_paths": [
+        "pico/evaluation/sdk_probe.py",
+        "scripts/run_sdk_viability_probe.py",
+        "tests/test_sdk_probe.py",
+        "benchmarks/v3/sdk-viability/**",
+        ".codex/eval/handoffs/TOOL-012-I.json"
+      ],
+      "prompt_sha256": "df0f212510be0d86486ced98839c05e8fcca923b2fab014fc3b0cf851e412604",
+      "status": "active"
+    },
+    "W1-EVAL-040-B-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "EVAL-040-B",
+      "instance_id": "W1-EVAL-040-B-01",
+      "wave": "W1",
+      "role": "fixture_builder",
+      "thread_id": "019f82b6-97af-7010-b181-cc07a58c1c98",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "branch": "codex/eval-v3-w1-eval-040-b",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\f52d\\pico",
+      "dependency_handoff_hashes": {
+        "EVAL-001": "cc8c951e0a0e0dac20e46c611b102bc538a6863099310a90690eb639f931a3be"
+      },
+      "dependency_commits": [],
+      "freeze_hashes": {
+        "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1"
+      },
+      "allowed_write_paths": [
+        "benchmarks/v3/local-repos/repos/miniqueue/**",
+        "benchmarks/v3/local-repos/hidden_verifiers/miniqueue/**",
+        "benchmarks/v3/local-repos/reference_patches/miniqueue/**",
+        "benchmarks/v3/local-repos/task_docs/miniqueue/**",
+        "benchmarks/v3/local-repos/fragments/miniqueue.json",
+        ".codex/eval/handoffs/EVAL-040-B.json"
+      ],
+      "prompt_sha256": "9cc4eaa30ce84f324b16c92f5439851e2042e4f07a63cbd6d4ad9ffde57b36ce",
+      "status": "active"
     }
   },
   "wave_handoffs": {
@@ -149,12 +236,9 @@
   },
   "ready_tickets": [
     "TOOL-010",
-    "TOOL-011",
-    "TOOL-012-I",
     "EVAL-020",
     "EVAL-022",
     "EVAL-040-A",
-    "EVAL-040-B",
     "EVAL-040-C"
   ],
   "last_gate": {
@@ -169,5 +253,5 @@
     "discrepancies": [],
     "accepted_at": "2026-07-21T11:03:17.8274184+08:00"
   },
-  "updated_at": "2026-07-21T11:26:03.2365439+08:00"
+  "updated_at": "2026-07-21T11:30:56.7705032+08:00"
 }
