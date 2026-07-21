@@ -9,7 +9,15 @@
     "source_head_sha": "96add601b99cb347b7a4aa509a57e25ad4a8d073",
     "integration_sha": "3923a71b64d2ac9f4a4304a4e7dc88a35b94ad0d"
   },
-  "native_contract": null,
+  "native_contract": {
+    "version": "pico-provider-native-contract-v1",
+    "path": "pico/providers/contracts.py",
+    "sha256": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "hash_basis": "git_blob_bytes",
+    "source_ticket": "TOOL-010",
+    "source_head_sha": "387216cf4393edc34bce30e7facfa2dbc35cc524",
+    "integration_sha": "87b943a81febbecc15b40ab1d81e002208383abd"
+  },
   "tool_schema": null,
   "sdk_transport_decision": null,
   "sdk_dependency_lock": null,

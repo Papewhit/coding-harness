@@ -62,10 +62,25 @@
       "handoff_sha256": "cc8c951e0a0e0dac20e46c611b102bc538a6863099310a90690eb639f931a3be",
       "artifact_contract_sha256": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
       "artifact_contract_hash_basis": "git_blob_bytes"
+    },
+    "TOOL-010": {
+      "instance_id": "W1-TOOL-010-01",
+      "status": "accepted",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "head_sha": "387216cf4393edc34bce30e7facfa2dbc35cc524",
+      "own_commits": [
+        "387216cf4393edc34bce30e7facfa2dbc35cc524"
+      ],
+      "integration_commits": [
+        "87b943a81febbecc15b40ab1d81e002208383abd"
+      ],
+      "handoff_path": ".codex/eval/handoffs/TOOL-010.json",
+      "handoff_sha256": "300faf3f58f369248291ba72be3aefca9e3444dac9999cf45c5767c4eefbde0d",
+      "native_contract_sha256": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+      "native_contract_hash_basis": "git_blob_bytes"
     }
   },
   "active_tickets": {
-    "TOOL-010": "W1-TOOL-010-01",
     "TOOL-011": "W1-TOOL-011-01",
     "TOOL-012-I": "W1-TOOL-012-I-01",
     "EVAL-020": "W1-EVAL-020-01",
@@ -174,7 +189,17 @@
         ".codex/eval/handoffs/TOOL-010.json"
       ],
       "prompt_sha256": "bd2f2566aa2e31a25fbeba4019170f3db591f9dd64fff981a12990efbecc8c42",
-      "status": "active"
+      "head_sha": "387216cf4393edc34bce30e7facfa2dbc35cc524",
+      "own_commits": [
+        "387216cf4393edc34bce30e7facfa2dbc35cc524"
+      ],
+      "integration_commits": [
+        "87b943a81febbecc15b40ab1d81e002208383abd"
+      ],
+      "handoff_sha256": "300faf3f58f369248291ba72be3aefca9e3444dac9999cf45c5767c4eefbde0d",
+      "native_contract_sha256": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+      "native_contract_hash_basis": "git_blob_bytes",
+      "status": "accepted"
     },
     "W1-TOOL-011-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -295,7 +320,8 @@
   "ready_tickets": [
     "EVAL-022",
     "EVAL-040-A",
-    "EVAL-040-C"
+    "EVAL-040-C",
+    "EVAL-041"
   ],
   "last_gate": {
     "wave": "W0",
@@ -309,5 +335,5 @@
     "discrepancies": [],
     "accepted_at": "2026-07-21T11:03:17.8274184+08:00"
   },
-  "updated_at": "2026-07-21T12:04:00+08:00"
+  "updated_at": "2026-07-21T12:10:00+08:00"
 }
