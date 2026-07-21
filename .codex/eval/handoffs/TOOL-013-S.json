@@ -1,0 +1,156 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-013-S",
+  "instance_id": "W2-TOOL-013-S-01",
+  "wave": "W2",
+  "role": "integrator_ticket/aggregator",
+  "status": "complete",
+  "base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+  "head_sha": "7aefd19cc18a1dd839154a8ff475d324a4f36435",
+  "head_sha_semantics": "Worker decision-content head before the metadata-only commit that contains this handoff; the containing commit is the final branch HEAD reported to the Wave Integrator.",
+  "branch": "codex/eval-v3-w2-tool-013-s",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/4e17/pico",
+  "control_overlay": {
+    "path": ".codex/eval/state/W2-control-overlay.json",
+    "sha256": "5954e177e3bd0f7585786a42654e868b017b167d52172df03c56da116628faaf"
+  },
+  "dependency_commits": [],
+  "own_commits": [
+    "7aefd19cc18a1dd839154a8ff475d324a4f36435"
+  ],
+  "files_changed": [
+    "F:/dev/llm/pico-eval-artifacts/native-sdk-spike/decision.json",
+    "F:/dev/llm/pico-eval-artifacts/native-sdk-spike/decision.md",
+    ".codex/eval/proposals/TOOL-013-S.freeze.json",
+    ".codex/eval/handoffs/TOOL-013-S.json"
+  ],
+  "commands_run": [
+    "SHA-256 verification of W2 control overlay, three dependency handoffs, and exactly the three authorized sanitized artifacts",
+    "PowerShell JSON semantic validation and credential/opaque-content value scan",
+    "uv run ruff check .",
+    "uv run ruff check pico tests",
+    "uv run pytest tests/test_architecture_boundaries.py tests/test_safety_invariants.py -q",
+    "git diff --check"
+  ],
+  "tests": [
+    {
+      "command": "dependency and artifact SHA-256 verification",
+      "result": "passed",
+      "details": "Control overlay, all three dependency handoffs, QO manifest, QA live artifact, and DA manifest matched the supplied hashes before their content was used."
+    },
+    {
+      "command": "decision/proposal JSON semantic validation and sensitive-value scan",
+      "result": "passed",
+      "details": "Both JSON files parse; dialect choices, runner prohibitions, no-effectiveness/no-model-selection flags, and linked hashes agree. A first broad scan produced a false positive on policy prose; the corrected value-oriented scan passed with no secret or opaque thinking content found."
+    },
+    {
+      "command": "uv run ruff check pico tests",
+      "result": "passed",
+      "details": "All scoped source and test lint checks passed."
+    },
+    {
+      "command": "uv run ruff check .",
+      "result": "failed",
+      "details": "Fourteen pre-existing lint errors are confined to scripts/readable_session.py (unused import and placeholder-free f-strings), outside this ticket's allowed write paths."
+    },
+    {
+      "command": "uv run pytest tests/test_architecture_boundaries.py tests/test_safety_invariants.py -q",
+      "result": "failed",
+      "details": "3 passed and 8 failed on the unchanged base: runtime.py is 952 lines against a 950-line budget; Windows symlink privilege is unavailable; several tests clear environment variables and then cannot resolve Path.home(); and one POSIX-style shell quoting assertion fails on Windows. This ticket changed no product or test source."
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed",
+      "details": "Tracked ticket output has no whitespace errors."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-sdk-spike/decision.json",
+      "sha256": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-sdk-spike/decision.md",
+      "sha256": "e091e6c38095156ab06eb428dfdcabc5a481093b5fdc5dfab1b0c3cbdd06e155"
+    },
+    {
+      "path": ".codex/eval/proposals/TOOL-013-S.freeze.json",
+      "sha256": "edfb1864c784b7dced5399db5e28724f0cec0fc25c5566c51cf89b1fc09d314e"
+    }
+  ],
+  "dependency_handoff_hashes": {
+    "TOOL-012-QO-R": "efd10f6c8e0400ebcbc18df4fbd05cc31ab693cce9f12b23b39ca2e01bedef3f",
+    "TOOL-012-QA-R": "f13c3cf6918e72af438237b551220ebec89bd7f81a162baddf01ea4b3268f151",
+    "TOOL-012-DA-R": "8a22e252cdbfa1072ff6bd74dae1e30b8aa39b86cae235b1c6998043459b63fc"
+  },
+  "evidence_artifact_hashes": {
+    "TOOL-012-QO-R/manifest.json": "c372dec926860e2cb5715ec93ed96e42bf923848679102369c16c6b0dd6219ff",
+    "TOOL-012-QA-R/live-probe-artifact.json": "acae84ab71da064408bf00386c9e1f5f2f485036aae30769b5526b2c8ec8920f",
+    "TOOL-012-DA-R/manifest.json": "42ffa4b096356d9ce53afcbc83193a52dd8809769a469a065aaf2925e305ae5a"
+  },
+  "frozen_hashes": {
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": null,
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "sdk_profile": null,
+    "provider_selection": null,
+    "native_resume_gate": null
+  },
+  "sdk_transport_decision": {
+    "openai-responses": {
+      "transport": "typed_sdk",
+      "sdk_package": "openai",
+      "sdk_version": "2.46.0",
+      "tested_profile_eligible": false,
+      "known_limit": "dashscope-o thinking mode rejects tool_choice=required with HTTP 400; no fallback is permitted"
+    },
+    "anthropic-messages": {
+      "transport": "sdk_raw_response",
+      "sdk_package": "anthropic",
+      "sdk_version": "0.117.0",
+      "tested_profiles_eligible": true,
+      "known_limit": "Future unknown blocks were not observed and must be preserved losslessly as private JSON-safe continuation"
+    },
+    "raw_http_selections": [],
+    "production_dependency_lock_owner": "TOOL-019-D",
+    "sdk_tool_runner_allowed": false,
+    "sdk_agent_runner_allowed": false,
+    "sdk_managed_pico_tool_execution_allowed": false,
+    "effectiveness_conclusion": "not_evaluated",
+    "final_evaluation_model_selected": false
+  },
+  "native_protocol_observations": {
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0,
+    "wire_viability_probe_only": true,
+    "effectiveness_conclusion": "not_evaluated"
+  },
+  "defects": [
+    {
+      "code": "provider_rejected_tool_choice_required",
+      "scope": "dashscope-o tested profile only",
+      "detail": "Three provider HTTP 400 responses make the tested thinking configuration protocol-ineligible; this is not a capability or effectiveness ranking."
+    }
+  ],
+  "risks": [
+    "OpenAI typed mode reached the provider but did not complete a native call/result roundtrip for the excluded profile.",
+    "No future unknown block type was observed; Anthropic raw-response mode is frozen to preserve such blocks when they appear.",
+    "Production SDK dependency and proxy-extra expression remains owned by TOOL-019-D.",
+    "Unrelated baseline lint and Windows-specific invariant test failures remain outside this ticket's ownership."
+  ],
+  "status_proposal": {
+    "ticket_id": "TOOL-013-S",
+    "status": "complete",
+    "reason": "Per-dialect SDK transport decision and dependency policy frozen from the three authorized W2 wire viability shards."
+  },
+  "freeze_proposal": {
+    "path": ".codex/eval/proposals/TOOL-013-S.freeze.json",
+    "sha256": "edfb1864c784b7dced5399db5e28724f0cec0fc25c5566c51cf89b1fc09d314e",
+    "canonical_freeze_written": false
+  },
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}

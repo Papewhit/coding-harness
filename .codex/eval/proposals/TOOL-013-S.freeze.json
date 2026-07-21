@@ -1,0 +1,53 @@
+{
+  "schema_version": "pico-eval-freeze-proposal-v1",
+  "ticket_id": "TOOL-013-S",
+  "instance_id": "W2-TOOL-013-S-01",
+  "wave": "W2",
+  "role": "integrator_ticket/aggregator",
+  "base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+  "control_overlay": {
+    "path": ".codex/eval/state/W2-control-overlay.json",
+    "sha256": "5954e177e3bd0f7585786a42654e868b017b167d52172df03c56da116628faaf"
+  },
+  "freeze_proposal": {
+    "field": "sdk_transport_decision",
+    "artifact_path": "F:/dev/llm/pico-eval-artifacts/native-sdk-spike/decision.json",
+    "sha256": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "dialects": {
+      "openai-responses": {
+        "transport": "typed_sdk",
+        "sdk_package": "openai",
+        "sdk_version": "2.46.0",
+        "tested_profile_status": "dashscope-o excluded: provider rejects tool_choice=required in thinking mode"
+      },
+      "anthropic-messages": {
+        "transport": "sdk_raw_response",
+        "sdk_package": "anthropic",
+        "sdk_version": "0.117.0",
+        "tested_profile_status": "dashscope-a and deepseek native roundtrip viable"
+      }
+    },
+    "raw_http_selections": [],
+    "production_dependency_lock_owner": "TOOL-019-D",
+    "sdk_tool_or_agent_runner_allowed": false,
+    "sdk_managed_pico_tool_execution_allowed": false,
+    "final_evaluation_model_selected": false,
+    "effectiveness_conclusion": "not_evaluated"
+  },
+  "dependency_handoff_hashes": {
+    "TOOL-012-QO-R": "efd10f6c8e0400ebcbc18df4fbd05cc31ab693cce9f12b23b39ca2e01bedef3f",
+    "TOOL-012-QA-R": "f13c3cf6918e72af438237b551220ebec89bd7f81a162baddf01ea4b3268f151",
+    "TOOL-012-DA-R": "8a22e252cdbfa1072ff6bd74dae1e30b8aa39b86cae235b1c6998043459b63fc"
+  },
+  "evidence_artifact_hashes": {
+    "TOOL-012-QO-R/manifest.json": "c372dec926860e2cb5715ec93ed96e42bf923848679102369c16c6b0dd6219ff",
+    "TOOL-012-QA-R/live-probe-artifact.json": "acae84ab71da064408bf00386c9e1f5f2f485036aae30769b5526b2c8ec8920f",
+    "TOOL-012-DA-R/manifest.json": "42ffa4b096356d9ce53afcbc83193a52dd8809769a469a065aaf2925e305ae5a"
+  },
+  "decision_markdown": {
+    "path": "F:/dev/llm/pico-eval-artifacts/native-sdk-spike/decision.md",
+    "sha256": "e091e6c38095156ab06eb428dfdcabc5a481093b5fdc5dfab1b0c3cbdd06e155"
+  },
+  "canonical_freeze_written": false,
+  "canonical_freeze_owner": "W2 Wave Integrator"
+}
