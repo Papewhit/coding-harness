@@ -18,7 +18,16 @@
     "source_head_sha": "387216cf4393edc34bce30e7facfa2dbc35cc524",
     "integration_sha": "87b943a81febbecc15b40ab1d81e002208383abd"
   },
-  "tool_schema": null,
+  "tool_schema": {
+    "version": "pico-tool-schema-catalog-v1",
+    "sha256": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "hash_basis": "canonical_json_sort_keys_compact_ascii",
+    "entry_count": 15,
+    "legacy_runtime_tool_signature": "e55a7c4d9bb3988c0d1a2701c15f8d95735ea0de077e0c6489e4b068ec916328",
+    "source_ticket": "TOOL-011",
+    "source_head_sha": "e08cb3e8c93e6eb63df4118ce0f065f4dd0bcc48",
+    "integration_sha": "0c0182e945abacbc273395a4a0fdea5349f64a5b"
+  },
   "sdk_transport_decision": null,
   "sdk_dependency_lock": null,
   "native_deterministic_gate": null,

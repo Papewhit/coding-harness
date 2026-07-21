@@ -1,0 +1,134 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-011",
+  "instance_id": "W1-TOOL-011-01",
+  "wave": "W1",
+  "role": "implementer",
+  "status": "complete",
+  "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+  "head_sha": "e08cb3e8c93e6eb63df4118ce0f065f4dd0bcc48",
+  "dependency_commits": [],
+  "applied_dependency_commits": [],
+  "dependency_handoff_hashes": {
+    "EVAL-001": "cc8c951e0a0e0dac20e46c611b102bc538a6863099310a90690eb639f931a3be"
+  },
+  "dependency_freeze_hashes": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1"
+  },
+  "own_commits": [
+    "e08cb3e8c93e6eb63df4118ce0f065f4dd0bcc48"
+  ],
+  "files_changed": [
+    "pico/tools/definitions.py",
+    "pico/tools/base.py",
+    "pico/tools/registry.py",
+    "pico/tools/schemas.py",
+    "tests/test_tool_schema_export.py"
+  ],
+  "commands_run": [
+    "uv run pytest tests/test_tool_schema_export.py tests/test_tool_validation.py -q",
+    "uv run ruff check pico/tools/definitions.py pico/tools/base.py pico/tools/registry.py pico/tools/schemas.py tests/test_tool_schema_export.py",
+    "uv run pytest tests/test_architecture_boundaries.py tests/test_safety_invariants.py tests/test_tool_policy_acceptance.py tests/test_permissions_acceptance.py tests/test_todo_ledger_acceptance.py -q",
+    "uv run pytest tests/test_pico.py tests/test_context_manager.py tests/test_context_governance_acceptance.py tests/test_v3_runtime.py tests/test_runtime_evidence_acceptance.py -q",
+    "git diff --check",
+    "git diff --cached --check",
+    "SHA-256 Git blob bytes for all committed output files",
+    "SHA-256 canonical JSON for the 15-entry provider-neutral tool schema catalog"
+  ],
+  "tests": [
+    {
+      "command": "uv run pytest tests/test_tool_schema_export.py tests/test_tool_validation.py -q",
+      "result": "passed",
+      "details": "68 passed; covers required/default/nullable golden schemas, explicit additionalProperties=false, model-derived human signatures, stable fingerprints, strict extra-field rejection, and existing workspace-aware validation."
+    },
+    {
+      "command": "uv run ruff check pico/tools/definitions.py pico/tools/base.py pico/tools/registry.py pico/tools/schemas.py tests/test_tool_schema_export.py",
+      "result": "passed",
+      "details": "All checks passed."
+    },
+    {
+      "command": "uv run pytest tests/test_architecture_boundaries.py tests/test_safety_invariants.py tests/test_tool_policy_acceptance.py tests/test_permissions_acceptance.py tests/test_todo_ledger_acceptance.py -q",
+      "result": "failed",
+      "details": "19 passed, 11 failed outside this ticket's diff: the immutable base already has pico/core/runtime.py at 952 lines against a 950-line budget; Windows lacks symlink privilege and POSIX shell/path behavior; tests that clear the environment make Path.home() unavailable."
+    },
+    {
+      "command": "uv run pytest tests/test_pico.py tests/test_context_manager.py tests/test_context_governance_acceptance.py tests/test_v3_runtime.py tests/test_runtime_evidence_acceptance.py -q",
+      "result": "failed",
+      "details": "84 passed, 5 failed when provider/secret tests clear the Windows environment and Path.home() cannot resolve; no failure references a changed file or tool schema assertion."
+    },
+    {
+      "command": "git diff --check && git diff --cached --check",
+      "result": "passed",
+      "details": "No whitespace errors before commit."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "pico/tools/definitions.py",
+      "sha256": "634778e1c584b1f13411058a81c197a690213825504b1ba623023d2a9c29a1f3",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "pico/tools/base.py",
+      "sha256": "ead242b1bcd372d4b9351684322faa167cd9fa17c8e2f56d2b267f317c3bf53a",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "pico/tools/registry.py",
+      "sha256": "bd023b32bba3399c39da9e91fc9b374d58c58e0b186c555536745503a829f05a",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "pico/tools/schemas.py",
+      "sha256": "83de7733bc302d674924fd422166e8b591879cb4e36cf495bba34a08b267dcac",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "tests/test_tool_schema_export.py",
+      "sha256": "cb2adbe6fdec69183db182986217d22b8494e66f9bfd3e9b25a71a76b03f2979",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "name": "provider_neutral_tool_schema_catalog",
+      "entry_count": 15,
+      "sha256": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+      "hash_basis": "canonical_json_sort_keys_compact_ascii",
+      "hash_source": "mapping of sorted registered tool names to normalized input_schema"
+    },
+    {
+      "path": ".codex/eval/handoffs/TOOL-011.json",
+      "persistence": "ticket output generated after the implementation commit; intentionally not amended into that commit"
+    }
+  ],
+  "contract_hashes": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "tool_schema_catalog": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "tool_schema_hash_basis": "canonical_json_sort_keys_compact_ascii",
+    "legacy_runtime_tool_signature": "e55a7c4d9bb3988c0d1a2701c15f8d95735ea0de077e0c6489e4b068ec916328"
+  },
+  "frozen_hashes": {
+    "native_contract": null,
+    "tool_schema": null,
+    "sdk_transport_decision": null,
+    "provider_selection": null,
+    "native_resume_gate": null
+  },
+  "native_protocol_observations": {
+    "observation_scope": "schema and local validation tests only; no provider request or online evaluation was issued",
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0
+  },
+  "defects": [],
+  "risks": [
+    "Strict extra=forbid is an intentional validation tightening; callers that previously sent undeclared keys will now receive a local validation error.",
+    "The broader Windows regression groups are not fully green because of immutable-base architecture budget and platform/environment failures recorded in tests; the ticket-specific suite is green.",
+    "Provider adapter wiring and formal schema freeze remain owned by downstream tickets."
+  ],
+  "status_proposal": null,
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}

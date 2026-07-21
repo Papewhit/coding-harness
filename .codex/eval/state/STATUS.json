@@ -78,10 +78,25 @@
       "handoff_sha256": "300faf3f58f369248291ba72be3aefca9e3444dac9999cf45c5767c4eefbde0d",
       "native_contract_sha256": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
       "native_contract_hash_basis": "git_blob_bytes"
+    },
+    "TOOL-011": {
+      "instance_id": "W1-TOOL-011-01",
+      "status": "accepted",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "head_sha": "e08cb3e8c93e6eb63df4118ce0f065f4dd0bcc48",
+      "own_commits": [
+        "e08cb3e8c93e6eb63df4118ce0f065f4dd0bcc48"
+      ],
+      "integration_commits": [
+        "0c0182e945abacbc273395a4a0fdea5349f64a5b"
+      ],
+      "handoff_path": ".codex/eval/handoffs/TOOL-011.json",
+      "handoff_sha256": "825e0d3a64abd065e3a9c67a3ce3d1bb9c06d2bbe1b5b00b8b24423cfa3d4dfa",
+      "tool_schema_sha256": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+      "tool_schema_hash_basis": "canonical_json_sort_keys_compact_ascii"
     }
   },
   "active_tickets": {
-    "TOOL-011": "W1-TOOL-011-01",
     "TOOL-012-I": "W1-TOOL-012-I-01",
     "EVAL-020": "W1-EVAL-020-01",
     "EVAL-040-B": "W1-EVAL-040-B-01"
@@ -227,7 +242,17 @@
         ".codex/eval/handoffs/TOOL-011.json"
       ],
       "prompt_sha256": "7b8b4e0461ec2828a2b1db8e0c38b2923ab3bff32eaaffea80fb45d69da7e93b",
-      "status": "active"
+      "head_sha": "e08cb3e8c93e6eb63df4118ce0f065f4dd0bcc48",
+      "own_commits": [
+        "e08cb3e8c93e6eb63df4118ce0f065f4dd0bcc48"
+      ],
+      "integration_commits": [
+        "0c0182e945abacbc273395a4a0fdea5349f64a5b"
+      ],
+      "handoff_sha256": "825e0d3a64abd065e3a9c67a3ce3d1bb9c06d2bbe1b5b00b8b24423cfa3d4dfa",
+      "tool_schema_sha256": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+      "tool_schema_hash_basis": "canonical_json_sort_keys_compact_ascii",
+      "status": "accepted"
     },
     "W1-TOOL-012-I-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -319,6 +344,7 @@
   },
   "ready_tickets": [
     "EVAL-022",
+    "EVAL-030",
     "EVAL-040-A",
     "EVAL-040-C",
     "EVAL-041"
@@ -335,5 +361,5 @@
     "discrepancies": [],
     "accepted_at": "2026-07-21T11:03:17.8274184+08:00"
   },
-  "updated_at": "2026-07-21T12:10:00+08:00"
+  "updated_at": "2026-07-21T12:14:00+08:00"
 }
