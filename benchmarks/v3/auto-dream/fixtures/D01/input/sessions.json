@@ -1,0 +1,7 @@
+{
+  "schema_version": "pico-auto-dream-fixture-sessions-v1",
+  "sessions": [
+    {"id": "d01-001", "recorded_at": "2026-01-11T09:00:00Z", "observations": ["The user collaborates asynchronously and wants concise change summaries.", "Use uv for project commands."]},
+    {"id": "d01-002", "recorded_at": "2026-01-12T09:00:00Z", "observations": ["The user collaborates asynchronously and wants concise change summaries.", "Use uv for project commands."]}
+  ]
+}
