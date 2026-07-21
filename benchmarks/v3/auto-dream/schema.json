@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pico.local/schemas/auto-dream-cases-v1.json",
+  "title": "Pico auto-dream frozen cases",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "cases"],
+  "properties": {
+    "schema_version": {"const": "pico-auto-dream-cases-v1"},
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/case"}
+    }
+  },
+  "$defs": {
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?![A-Za-z]:)(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"
+    },
+    "stringList": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "fixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["memory"],
+      "properties": {
+        "memory": {"$ref": "#/$defs/relativePath"},
+        "sessions": {"$ref": "#/$defs/relativePath"},
+        "reference_time": {"type": "string", "format": "date-time"}
+      }
+    },
+    "fact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "disposition", "anchors"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "disposition": {"enum": ["must_keep", "replace", "drop"]},
+        "anchors": {"$ref": "#/$defs/stringList"},
+        "old_anchors": {"$ref": "#/$defs/stringList"},
+        "match": {"enum": ["all", "any"], "default": "all"},
+        "topics": {"type": "array", "items": {"$ref": "#/$defs/relativePath"}}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"disposition": {"const": "replace"}}},
+          "then": {"required": ["old_anchors"]}
+        }
+      ]
+    },
+    "topic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path"],
+      "properties": {
+        "path": {"$ref": "#/$defs/relativePath"},
+        "facts": {"type": "array", "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "oracle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["facts", "topics", "index"],
+      "properties": {
+        "facts": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/fact"}},
+        "topics": {"type": "array", "items": {"$ref": "#/$defs/topic"}},
+        "index": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path"],
+          "properties": {
+            "path": {"$ref": "#/$defs/relativePath"},
+            "must_link": {"type": "array", "items": {"$ref": "#/$defs/relativePath"}},
+            "must_not_link": {"type": "array", "items": {"$ref": "#/$defs/relativePath"}},
+            "max_lines": {"type": "integer", "minimum": 1}
+          }
+        },
+        "frontmatter": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "required": {"type": "array", "items": {"type": "string", "minLength": 1}},
+            "allowed_types": {"type": "array", "items": {"enum": ["user", "feedback", "project", "reference"]}}
+          }
+        },
+        "allowed_write_scope": {"$ref": "#/$defs/relativePath"},
+        "snapshot": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "ignore_frontmatter_fields": {"type": "array", "items": {"type": "string", "minLength": 1}}
+          }
+        }
+      }
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "fixture", "oracle"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^D[0-9]{2}$"},
+        "description": {"type": "string"},
+        "fixture": {"$ref": "#/$defs/fixture"},
+        "oracle": {"$ref": "#/$defs/oracle"}
+      }
+    }
+  }
+}
