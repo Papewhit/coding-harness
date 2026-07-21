@@ -1,0 +1,7 @@
+{
+  "rows": [
+    {"row_id": "native-pass", "status": "passed", "eligible": true},
+    {"row_id": "native-fail", "status": "failed", "eligible": true},
+    {"row_id": "native-excluded", "status": "excluded", "eligible": false, "exclusion_reason": "profile not configured"}
+  ]
+}

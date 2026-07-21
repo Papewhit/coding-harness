@@ -1,0 +1,6 @@
+{
+  "rows": [
+    {"row_id": "resume-pass", "status": "passed"},
+    {"row_id": "resume-fail", "status": "failed"}
+  ]
+}
