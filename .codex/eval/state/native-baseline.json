@@ -34,8 +34,8 @@
       "scripts": 52,
       "benchmarks": 0
     },
-    "normalized_search_output_sha256": "a72476979133fbbbee5376ca9fb51cc99db405e00fe53eede384ca2de233d99e",
-    "normalization": "ripgrep Windows output order and path separators, joined with LF and terminated by LF",
+    "normalized_search_output_sha256": "21cef7d0bddb0a2a54efcf6ce9256a2e87bf50acdf88adc92b5ba5c744704d4f",
+    "normalization": "Replace path separators with '/', sort complete matching lines by Unicode ordinal order, encode as UTF-8 without BOM, join with LF, and retain one trailing LF",
     "references": [
       {"file": "pico/core/engine_helpers.py", "role": "runtime step-limit prompt", "count": 1, "lines": [226]},
       {"file": "pico/core/model_output.py", "role": "active text protocol parser", "count": 4, "lines": [13, 21, 26, 33]},
