@@ -1,0 +1,145 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-021-P",
+  "instance_id": "W3-TOOL-021-P-01",
+  "wave": "W3",
+  "role": "implementer",
+  "status": "complete",
+  "base_sha": "807dc8f348c609bf885f4b65e69cebd781e8f1ba",
+  "head_sha": "aa34b73dc920540489771715131b43cec4691f30",
+  "head_sha_semantics": "Ticket content head before the metadata-only commit that contains this handoff; the containing commit is the final branch HEAD reported to the Wave Integrator.",
+  "branch": "codex/eval-v3-w3-tool-021-p",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/w3-021p/pico",
+  "dependency_commits": [],
+  "applied_dependency_commits": [],
+  "dependency_handoff_hashes": {
+    "TOOL-010": "300faf3f58f369248291ba72be3aefca9e3444dac9999cf45c5767c4eefbde0d",
+    "TOOL-013-S": "0eb6213eab7261daf535b9b30cce5787533c4070195f7a5e6b2c383ab40ee55a"
+  },
+  "dependency_freeze_hashes": {
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215"
+  },
+  "own_commits": [
+    "aa34b73dc920540489771715131b43cec4691f30"
+  ],
+  "files_changed": [
+    ".pico.toml.example",
+    "docs/configuration.md",
+    "pico/cli.py",
+    "pico/config/__init__.py",
+    "tests/test_provider_protocol.py",
+    ".codex/eval/handoffs/TOOL-021-P.json"
+  ],
+  "commands_run": [
+    "SHA-256 verification of TOOL-010.json and TOOL-013-S.json plus canonical FREEZE native_contract/sdk_transport_decision values",
+    "uv run pytest tests/test_provider_protocol.py -q",
+    "uv run ruff check pico/config/__init__.py pico/cli.py tests/test_provider_protocol.py",
+    "uv run pytest tests/test_provider_contracts.py -q",
+    "uv run pytest tests/test_pico.py -k \"provider or build_agent or build_arg_parser\" -q",
+    "uv run pytest tests/test_architecture_boundaries.py tests/test_safety_invariants.py -q",
+    "uv run pico --config .pico.toml.example --inspect-provider",
+    "git diff --check",
+    "allowed write path verification"
+  ],
+  "tests": [
+    {
+      "command": "uv run pytest tests/test_provider_protocol.py -q",
+      "result": "passed",
+      "details": "8 passed; covers explicit wire dialects, independent capability flags, native_tools startup rejection, no endpoint inference, deterministic legacy migration, credential-free identity/inspect output, and session profile/schema locking."
+    },
+    {
+      "command": "uv run ruff check pico/config/__init__.py pico/cli.py tests/test_provider_protocol.py",
+      "result": "passed",
+      "details": "All checks passed."
+    },
+    {
+      "command": "uv run pytest tests/test_provider_contracts.py -q",
+      "result": "passed",
+      "details": "11 passed; the frozen provider-neutral native contract behavior remains intact."
+    },
+    {
+      "command": "uv run pytest tests/test_pico.py -k \"provider or build_agent or build_arg_parser\" -q",
+      "result": "failed",
+      "details": "10 passed and 4 failed. All failures occur in unchanged Windows tests that clear the environment and then cannot resolve Path.home() during skill discovery; none reference ticket logic or files other than the shared CLI call site. This baseline/environment issue is already recorded by dependency handoffs."
+    },
+    {
+      "command": "uv run pytest tests/test_architecture_boundaries.py tests/test_safety_invariants.py -q",
+      "result": "failed",
+      "details": "3 passed and 8 failed on the unchanged base: runtime.py is 952 lines versus a 950-line budget, Windows lacks symlink privilege, environment-clearing tests cannot resolve Path.home(), and an existing POSIX shell-quoting assertion fails on Windows."
+    },
+    {
+      "command": "uv run pico --config .pico.toml.example --inspect-provider",
+      "result": "passed",
+      "details": "Returned the selected local profile, model, explicit dialect, six independent capability flags, endpoint fingerprint and stable profile ID without API key or raw URL."
+    },
+    {
+      "command": "git diff --check and allowed write path verification",
+      "result": "passed",
+      "details": "No whitespace errors; every changed path is owned by TOOL-021-P."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "pico/config/__init__.py",
+      "sha256": "0ab902538e6985aef1232058188a08d92c036a11253f336450f039044d962634",
+      "hash_basis": "working_tree_file_bytes_at_content_head",
+      "coverage": "ProviderCapabilities schema, explicit wire dialect validation, legacy protocol mapping, secret-free endpoint/profile identity."
+    },
+    {
+      "path": "pico/cli.py",
+      "sha256": "17ccb72cfd67dc4199930a70ba4e4f68aa6221c6b176dc7c9c6eb920483f514a",
+      "hash_basis": "working_tree_file_bytes_at_content_head",
+      "coverage": "Single-resolution startup wiring, credential-free --inspect-provider output, and session identity/schema lock."
+    },
+    {
+      "path": ".pico.toml.example",
+      "sha256": "3561fdaa8b49429bce76571c96a946c8272bb8cd82a85042f3e0409b81cbf3ed",
+      "hash_basis": "working_tree_file_bytes_at_content_head"
+    },
+    {
+      "path": "docs/configuration.md",
+      "sha256": "5b7178eba43c137ff368d99c6affb76716a559ff7cdff059b094c6a30793f993",
+      "hash_basis": "working_tree_file_bytes_at_content_head"
+    },
+    {
+      "path": "tests/test_provider_protocol.py",
+      "sha256": "eb30a5a5ef722e627ddee06fbf0ec4aa07542cb396050bcc173eeff649dad210",
+      "hash_basis": "working_tree_file_bytes_at_content_head"
+    }
+  ],
+  "contract_hashes": {
+    "provider_profile_content_head": "aa34b73dc920540489771715131b43cec4691f30",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215"
+  },
+  "frozen_hashes": {
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "provider_selection": null,
+    "native_resume_gate": null
+  },
+  "native_protocol_observations": {
+    "observation_scope": "Local configuration/startup/inspection tests only; no provider request or online evaluation was issued.",
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0
+  },
+  "defects": [],
+  "risks": [
+    "The active legacy clients are selected through a temporary deterministic wire-dialect compatibility property; native adapter/runtime wiring remains owned by downstream tickets.",
+    "Existing sessions created before provider profile locking are deliberately rejected with a migration error instead of being assigned a guessed identity.",
+    "Unrelated baseline line-budget and Windows-specific test failures remain outside TOOL-021-P ownership."
+  ],
+  "status_proposal": {
+    "ticket_id": "TOOL-021-P",
+    "status": "complete",
+    "head_sha": "aa34b73dc920540489771715131b43cec4691f30"
+  },
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}
