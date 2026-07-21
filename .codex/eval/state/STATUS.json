@@ -194,12 +194,23 @@
       "handoff_path": ".codex/eval/handoffs/EVAL-021-B.json",
       "handoff_sha256": "cb5d65e964f9f669804d0a9385c98e99c77680bbbfd98f291d22537b78b3b558",
       "fragment_sha256": "e772645d3d3d18482b9372b941ad990838d3290f780414642b7b46be527ae530"
+    },
+    "EVAL-022": {
+      "instance_id": "W1-EVAL-022-01",
+      "status": "accepted",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "head_sha": "f6a31e6740a83d31e75e0eec2a2fad0069a341fc",
+      "own_commits": ["f6a31e6740a83d31e75e0eec2a2fad0069a341fc"],
+      "integration_commits": ["2aa56f9198d81578fa8215b20bebe5759c40b879"],
+      "handoff_path": ".codex/eval/handoffs/EVAL-022.json",
+      "handoff_sha256": "37ebed360b54cc525d648e41cdd4899b5551598cd0f702aba72a8df365ad56d2",
+      "lifecycle_evaluator_sha256": "d3192977ba2a6a0018bb0a0deb69571add368aac74c9b7027c0d9a1cdf4d2dcd",
+      "lifecycle_cases_sha256": "8ab1dad0af155d8f9e634ae105443943cf378b7fd2fa47bd0b3970c72de7f45a"
     }
   },
   "active_tickets": {
     "EVAL-030": "W1-EVAL-030-01",
     "EVAL-041": "W1-EVAL-041-01",
-    "EVAL-022": "W1-EVAL-022-01",
     "EVAL-040-A": "W1-EVAL-040-A-01",
     "EVAL-040-B": "W1-EVAL-040-B-01",
     "EVAL-040-C": "W1-EVAL-040-C-01"
@@ -671,7 +682,13 @@
         ".codex/eval/handoffs/EVAL-022.json"
       ],
       "prompt_sha256": "bb90730adf9f96d488470054ac1251bee5e312daaeae74e186ce134a1d663cf6",
-      "status": "active"
+      "head_sha": "f6a31e6740a83d31e75e0eec2a2fad0069a341fc",
+      "own_commits": ["f6a31e6740a83d31e75e0eec2a2fad0069a341fc"],
+      "integration_commits": ["2aa56f9198d81578fa8215b20bebe5759c40b879"],
+      "handoff_sha256": "37ebed360b54cc525d648e41cdd4899b5551598cd0f702aba72a8df365ad56d2",
+      "lifecycle_evaluator_sha256": "d3192977ba2a6a0018bb0a0deb69571add368aac74c9b7027c0d9a1cdf4d2dcd",
+      "lifecycle_cases_sha256": "8ab1dad0af155d8f9e634ae105443943cf378b7fd2fa47bd0b3970c72de7f45a",
+      "status": "accepted"
     },
     "W1-EVAL-040-A-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -775,5 +792,5 @@
     "discrepancies": [],
     "accepted_at": "2026-07-21T11:03:17.8274184+08:00"
   },
-  "updated_at": "2026-07-21T13:26:00+08:00"
+  "updated_at": "2026-07-21T13:31:00+08:00"
 }

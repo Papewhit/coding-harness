@@ -1,0 +1,104 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "EVAL-022",
+  "instance_id": "W1-EVAL-022-01",
+  "wave": "W1",
+  "role": "implementer",
+  "status": "complete",
+  "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+  "head_sha": "f6a31e6740a83d31e75e0eec2a2fad0069a341fc",
+  "dependency_commits": [],
+  "applied_dependency_commits": [],
+  "dependency_handoff_hashes": {
+    "EVAL-001": "cc8c951e0a0e0dac20e46c611b102bc538a6863099310a90690eb639f931a3be"
+  },
+  "own_commits": [
+    "f6a31e6740a83d31e75e0eec2a2fad0069a341fc"
+  ],
+  "files_changed": [
+    "benchmarks/v3/auto-dream/lifecycle.json",
+    "pico/evaluation/dream_lifecycle_eval.py",
+    "tests/test_dream_lifecycle_evaluator.py"
+  ],
+  "commands_run": [
+    "uv run pytest tests/test_dream_lifecycle_evaluator.py tests/test_memory.py -q -p no:cacheprovider",
+    "uv run pytest tests/test_dream_lifecycle_evaluator.py tests/test_memory.py tests/test_evaluation_contracts.py -q -p no:cacheprovider",
+    "uv run ruff check pico/evaluation/dream_lifecycle_eval.py tests/test_dream_lifecycle_evaluator.py",
+    "git diff --check",
+    "git diff --cached --check"
+  ],
+  "tests": [
+    {
+      "command": "uv run pytest tests/test_dream_lifecycle_evaluator.py tests/test_memory.py -q -p no:cacheprovider",
+      "result": "passed",
+      "details": "21 passed in 1.57s; includes the ticket-required tests/test_memory.py regression suite"
+    },
+    {
+      "command": "uv run pytest tests/test_dream_lifecycle_evaluator.py tests/test_memory.py tests/test_evaluation_contracts.py -q -p no:cacheprovider",
+      "result": "passed",
+      "details": "27 passed in 1.73s; final verification includes frozen artifact-contract regressions"
+    },
+    {
+      "command": "uv run ruff check pico/evaluation/dream_lifecycle_eval.py tests/test_dream_lifecycle_evaluator.py",
+      "result": "passed",
+      "details": "All checks passed"
+    },
+    {
+      "command": "git diff --check and git diff --cached --check",
+      "result": "passed",
+      "details": "No whitespace errors"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "pico/evaluation/dream_lifecycle_eval.py",
+      "sha256": "d3192977ba2a6a0018bb0a0deb69571add368aac74c9b7027c0d9a1cdf4d2dcd",
+      "hash_basis": "git_blob_bytes",
+      "coverage": "offline interval/session gates, active/stale locks, failure isolation, fail-closed write-scope evaluation, unified artifact rows"
+    },
+    {
+      "path": "tests/test_dream_lifecycle_evaluator.py",
+      "sha256": "13c4f4583824d3c85bdcb886030faa47f7e4a31dc232c15f46a8370f74fb858e",
+      "hash_basis": "git_blob_bytes",
+      "coverage": "eight-case artifact, actual gate/lock observations, primary-result preservation, denied writes, traversal and out-of-scope hard failures"
+    },
+    {
+      "path": "benchmarks/v3/auto-dream/lifecycle.json",
+      "sha256": "8ab1dad0af155d8f9e634ae105443943cf378b7fd2fa47bd0b3970c72de7f45a",
+      "hash_basis": "git_blob_bytes",
+      "coverage": "eight deterministic offline lifecycle cases with existing source/test evidence anchors"
+    },
+    {
+      "path": ".codex/eval/handoffs/EVAL-022.json",
+      "persistence": "ticket output generated after the content commit; intentionally not included in own_commits"
+    }
+  ],
+  "contract_hashes": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "artifact_contract_hash_basis": "git_blob_bytes"
+  },
+  "frozen_hashes": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "native_contract": null,
+    "tool_schema": null,
+    "sdk_transport_decision": null,
+    "provider_selection": null,
+    "native_resume_gate": null
+  },
+  "native_protocol_observations": {
+    "observation_scope": "offline Dream lifecycle evaluation only; no provider request or model invocation occurred",
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0
+  },
+  "defects": [],
+  "risks": [
+    "Failure-isolation and permission-denial rows are fixed evidence anchored to named existing regression tests; product behavior changes require an explicit case-version update rather than silently rewriting observations."
+  ],
+  "status_proposal": null,
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}
