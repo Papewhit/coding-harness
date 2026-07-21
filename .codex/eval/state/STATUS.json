@@ -865,20 +865,51 @@
     }
   },
   "wave_handoffs": {
-    "W0": ".codex/eval/state/W0-wave-handoff.json"
+    "W0": ".codex/eval/state/W0-wave-handoff.json",
+    "W1": ".codex/eval/state/W1-wave-handoff.json"
   },
-  "ready_tickets": [],
+  "ready_tickets": [
+    "TOOL-012-QO-R",
+    "TOOL-012-QA-R",
+    "TOOL-012-DA-R",
+    "TOOL-015",
+    "EVAL-031-I",
+    "EVAL-031-A",
+    "EVAL-031-B",
+    "EVAL-040-M",
+    "EVAL-080"
+  ],
   "last_gate": {
-    "wave": "W0",
+    "wave": "W1",
     "status": "accepted",
-    "fresh_controller_thread": "019f829b-5118-7921-b7e8-1947f6f5b1d0",
-    "reconstruction_integration_sha": "0979627829abbf9f966f0931b674eeb5f79ba6d5",
-    "reconstruction_status_sha256": "8c8d711f362b6d15b3ef07ffba16b7abf87a9cde34a2ed4c021a02438e5960f7",
-    "reconstruction_freeze_sha256": "c0f9cbb2c2c9c22dd9e78ab8651be739576fe90e1b385a929ecb9b92e69bf9ff",
-    "ready_set_match": true,
+    "wave_integrator_thread": "019f82b3-8b0e-7250-b850-54ec0d83999e",
+    "wave_base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+    "accepted_ticket_count": 14,
+    "plan_validation": "VALID: 63 ticket templates, 11 waves",
+    "w2_ready_set_match": true,
+    "allowed_path_ownership_conflicts": [],
+    "native_contract_ready": true,
+    "sdk_probe_harnesses_ready": true,
+    "independent_fixture_scope_complete": true,
+    "formal_online_evaluation_run": false,
+    "online_effectiveness_conclusions": false,
     "runtime_checkpoints_preserved": true,
+    "runtime_wiring_preserved": true,
+    "targeted_test_evidence": {
+      "native_tool_sdk": "32 passed",
+      "dream_core": "11 passed",
+      "dream_lifecycle_memory_contract": "27 passed",
+      "context_assets": "30 passed",
+      "live_task_runner": "29 passed",
+      "local_repo_baselines": "T01-T09 baseline failed and matching reference passed; miniqueue 8 passed; logslice 18 passed",
+      "ruff_changed_python_files": "47 files passed"
+    },
+    "known_baseline_failures": {
+      "architecture": "pico/core/runtime.py remains 952 lines against the unchanged 950-line budget",
+      "windows_safety_environment": "7 unchanged platform/environment failures: symlink privilege, cleared-home lookup, and POSIX shell quoting"
+    },
     "discrepancies": [],
-    "accepted_at": "2026-07-21T11:03:17.8274184+08:00"
+    "accepted_at": "2026-07-21T13:41:33.3334480+08:00"
   },
-  "updated_at": "2026-07-21T13:50:00+08:00"
+  "updated_at": "2026-07-21T13:41:33.3334480+08:00"
 }
