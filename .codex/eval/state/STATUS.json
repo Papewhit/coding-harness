@@ -157,6 +157,17 @@
     "EVAL-040-B",
     "EVAL-040-C"
   ],
-  "last_gate": null,
-  "updated_at": "2026-07-21T10:56:05.8589053+08:00"
+  "last_gate": {
+    "wave": "W0",
+    "status": "accepted",
+    "fresh_controller_thread": "019f829b-5118-7921-b7e8-1947f6f5b1d0",
+    "reconstruction_integration_sha": "0979627829abbf9f966f0931b674eeb5f79ba6d5",
+    "reconstruction_status_sha256": "8c8d711f362b6d15b3ef07ffba16b7abf87a9cde34a2ed4c021a02438e5960f7",
+    "reconstruction_freeze_sha256": "c0f9cbb2c2c9c22dd9e78ab8651be739576fe90e1b385a929ecb9b92e69bf9ff",
+    "ready_set_match": true,
+    "runtime_checkpoints_preserved": true,
+    "discrepancies": [],
+    "accepted_at": "2026-07-21T11:03:17.8274184+08:00"
+  },
+  "updated_at": "2026-07-21T11:03:17.8274184+08:00"
 }
