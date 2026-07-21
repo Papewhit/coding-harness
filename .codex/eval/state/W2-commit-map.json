@@ -1,0 +1,39 @@
+{
+  "schema_version": "pico-eval-commit-map-v1",
+  "wave": "W2",
+  "wave_base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+  "control_overlay_sha256": "5954e177e3bd0f7585786a42654e868b017b167d52172df03c56da116628faaf",
+  "entries": {
+    "TOOL-015": {
+      "worker_head": "69369dfadb3165108d2cb11bc28076dce73e18f7",
+      "worker_commits": ["69369dfadb3165108d2cb11bc28076dce73e18f7"],
+      "dependency_commits": [],
+      "canonical_commit": "d6991e3d0a47ba86c7f0662c47f0166d026089a6",
+      "handoff_sha256": "e3e37d00beba52addbea070666f932b71593a131dfa67778b42f7216ec6bc413",
+      "stable_patch_id": "37dbd54349ecda4060704cede03f133d0b3e4a51",
+      "stable_patch_id_match": true
+    },
+    "EVAL-031-I": {
+      "worker_head": "cbd077c2246212e37224c1a9f6f38564f92490a5",
+      "worker_commits": ["cbd077c2246212e37224c1a9f6f38564f92490a5"],
+      "dependency_commits": [],
+      "canonical_commit": "363e8fa1219181ff11e638db583705f7ba8c5ef2",
+      "handoff_sha256": "3ae1145487d17faca6a5443a4e229eddc2e6eed9aff18242a1cada8ce644ead4",
+      "stable_patch_id": "9100aadadf27bc399b7c9252d09e086e249ea1c8",
+      "stable_patch_id_match": true
+    },
+    "EVAL-031-A": {
+      "worker_head": "f745704edb63f22b2ef8da99a0636aa041000ec7",
+      "worker_commits": [
+        "279d3ecb95ee9d9974c9cfb58b96ad8865acb80a",
+        "f745704edb63f22b2ef8da99a0636aa041000ec7"
+      ],
+      "dependency_commits": [],
+      "canonical_commit": "0352cb98192b23976ce40bf0aa3b2a0ac6197f9f",
+      "handoff_sha256": "c875c4ede3a0e4330a2ea45d6266ded2c9882ad2943e05432794ab3eeb4ba1bd",
+      "stable_patch_id": "dc0505355b74b9a0474c6665dab3f5e8e2f5c709",
+      "stable_patch_id_match": true
+    }
+  },
+  "updated_at": "2026-07-21T15:45:44.3327500+08:00"
+}

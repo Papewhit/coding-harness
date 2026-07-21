@@ -271,15 +271,49 @@
       "handoff_path": ".codex/eval/handoffs/EVAL-040-C.json",
       "handoff_sha256": "37df819fa4eee7ed5df4c8c71787609096586289bfb5fc9a3088194a00be7b78",
       "fragment_sha256": "3e8d833b4b424b3d389705d51431b350142acc4367864ca1dcab870ed86fa382"
+    },
+    "TOOL-015": {
+      "instance_id": "W2-TOOL-015-01",
+      "status": "accepted",
+      "base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+      "head_sha": "69369dfadb3165108d2cb11bc28076dce73e18f7",
+      "own_commits": ["69369dfadb3165108d2cb11bc28076dce73e18f7"],
+      "integration_commits": ["d6991e3d0a47ba86c7f0662c47f0166d026089a6"],
+      "handoff_path": ".codex/eval/handoffs/TOOL-015.json",
+      "handoff_sha256": "e3e37d00beba52addbea070666f932b71593a131dfa67778b42f7216ec6bc413",
+      "stable_patch_id": "37dbd54349ecda4060704cede03f133d0b3e4a51"
+    },
+    "EVAL-031-I": {
+      "instance_id": "W2-EVAL-031-I-01",
+      "status": "accepted",
+      "base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+      "head_sha": "cbd077c2246212e37224c1a9f6f38564f92490a5",
+      "own_commits": ["cbd077c2246212e37224c1a9f6f38564f92490a5"],
+      "integration_commits": ["363e8fa1219181ff11e638db583705f7ba8c5ef2"],
+      "handoff_path": ".codex/eval/handoffs/EVAL-031-I.json",
+      "handoff_sha256": "3ae1145487d17faca6a5443a4e229eddc2e6eed9aff18242a1cada8ce644ead4",
+      "stable_patch_id": "9100aadadf27bc399b7c9252d09e086e249ea1c8"
+    },
+    "EVAL-031-A": {
+      "instance_id": "W2-EVAL-031-A-01",
+      "status": "accepted",
+      "base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+      "head_sha": "f745704edb63f22b2ef8da99a0636aa041000ec7",
+      "own_commits": ["279d3ecb95ee9d9974c9cfb58b96ad8865acb80a", "f745704edb63f22b2ef8da99a0636aa041000ec7"],
+      "integration_commits": ["0352cb98192b23976ce40bf0aa3b2a0ac6197f9f"],
+      "handoff_path": ".codex/eval/handoffs/EVAL-031-A.json",
+      "handoff_sha256": "c875c4ede3a0e4330a2ea45d6266ded2c9882ad2943e05432794ab3eeb4ba1bd",
+      "fragment_sha256": "6bef856d9df68209d60d0ef7e9df1dc927fd861f64a6f646f0cc58fba9c808b8",
+      "stable_patch_id": "dc0505355b74b9a0474c6665dab3f5e8e2f5c709"
     }
   },
   "active_tickets": {
     "TOOL-012-QO-R": {"instance_id": "W2-TOOL-012-QO-R-01", "status": "active"},
     "TOOL-012-QA-R": {"instance_id": "W2-TOOL-012-QA-R-01", "status": "active"},
     "TOOL-012-DA-R": {"instance_id": "W2-TOOL-012-DA-R-01", "status": "active"},
-    "TOOL-015": {"instance_id": "W2-TOOL-015-01", "status": "active"},
-    "EVAL-031-I": {"instance_id": "W2-EVAL-031-I-01", "status": "active"},
-    "EVAL-031-A": {"instance_id": "W2-EVAL-031-A-01", "status": "active"}
+    "EVAL-031-B": {"instance_id": "W2-EVAL-031-B-01", "status": "active"},
+    "EVAL-040-M": {"instance_id": "W2-EVAL-040-M-01", "status": "active"},
+    "EVAL-080": {"instance_id": "W2-EVAL-080-01", "status": "active"}
   },
   "blocked_tickets": {},
   "ticket_instances": {
@@ -957,7 +991,12 @@
       },
       "allowed_write_paths": ["pico/testing.py", "tests/test_native_model_fixtures.py", ".codex/eval/handoffs/TOOL-015.json"],
       "prompt_sha256": "5f822e399674a87b03922a464cdb2076618f290fa9521c4f2cfe7cc576d5860a",
-      "status": "active"
+      "head_sha": "69369dfadb3165108d2cb11bc28076dce73e18f7",
+      "own_commits": ["69369dfadb3165108d2cb11bc28076dce73e18f7"],
+      "integration_commits": ["d6991e3d0a47ba86c7f0662c47f0166d026089a6"],
+      "handoff_sha256": "e3e37d00beba52addbea070666f932b71593a131dfa67778b42f7216ec6bc413",
+      "stable_patch_id": "37dbd54349ecda4060704cede03f133d0b3e4a51",
+      "status": "accepted"
     },
     "W2-EVAL-031-I-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -986,7 +1025,12 @@
         ".codex/eval/handoffs/EVAL-031-I.json"
       ],
       "prompt_sha256": "2f22288e1d7babc48cd797d84b03c70616b42c659390226c1a1aec3442547863",
-      "status": "active"
+      "head_sha": "cbd077c2246212e37224c1a9f6f38564f92490a5",
+      "own_commits": ["cbd077c2246212e37224c1a9f6f38564f92490a5"],
+      "integration_commits": ["363e8fa1219181ff11e638db583705f7ba8c5ef2"],
+      "handoff_sha256": "3ae1145487d17faca6a5443a4e229eddc2e6eed9aff18242a1cada8ce644ead4",
+      "stable_patch_id": "9100aadadf27bc399b7c9252d09e086e249ea1c8",
+      "status": "accepted"
     },
     "W2-EVAL-031-A-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -1019,6 +1063,97 @@
         ".codex/eval/handoffs/EVAL-031-A.json"
       ],
       "prompt_sha256": "7db0d13006cc82d97017569c62bca13940dd75419aa6ce19fdc976dcfd73478c",
+      "head_sha": "f745704edb63f22b2ef8da99a0636aa041000ec7",
+      "own_commits": ["279d3ecb95ee9d9974c9cfb58b96ad8865acb80a", "f745704edb63f22b2ef8da99a0636aa041000ec7"],
+      "integration_commits": ["0352cb98192b23976ce40bf0aa3b2a0ac6197f9f"],
+      "handoff_sha256": "c875c4ede3a0e4330a2ea45d6266ded2c9882ad2943e05432794ab3eeb4ba1bd",
+      "fragment_sha256": "6bef856d9df68209d60d0ef7e9df1dc927fd861f64a6f646f0cc58fba9c808b8",
+      "stable_patch_id": "dc0505355b74b9a0474c6665dab3f5e8e2f5c709",
+      "status": "accepted"
+    },
+    "W2-EVAL-031-B-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "EVAL-031-B",
+      "instance_id": "W2-EVAL-031-B-01",
+      "wave": "W2",
+      "role": "fixture_builder",
+      "thread_id": "019f8393-9539-7591-8920-2a8ab1da407e",
+      "base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+      "branch": "codex/eval-v3-w2-eval-031-b",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\fd6e\\pico",
+      "dependency_handoff_hashes": {"EVAL-030": "40834e95152f29485dcaa6f94d63ce5e28fb4791ad3f33a2bb09d2e03564df84"},
+      "dependency_commits": [],
+      "freeze_hashes": {
+        "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+        "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+        "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+        "context_assets": "d8349c034524cc488958a1f3b460a7b6080915eed0b03b64c635810c21bf8e15"
+      },
+      "allowed_write_paths": [
+        "benchmarks/v3/context-assets/fixtures/C09/**",
+        "benchmarks/v3/context-assets/fixtures/C10/**",
+        "benchmarks/v3/context-assets/fixtures/C11/**",
+        "benchmarks/v3/context-assets/fixtures/C12/**",
+        "benchmarks/v3/context-assets/fixtures/C13/**",
+        "benchmarks/v3/context-assets/fixtures/C14/**",
+        "benchmarks/v3/context-assets/fixtures/C15/**",
+        "benchmarks/v3/context-assets/fragments/C09-C15.json",
+        ".codex/eval/handoffs/EVAL-031-B.json"
+      ],
+      "prompt_sha256": "bfc04f0fc44db9223da201f5db6af1fa79615e017e4ae7e35eb5546565005c0a",
+      "status": "active"
+    },
+    "W2-EVAL-040-M-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "EVAL-040-M",
+      "instance_id": "W2-EVAL-040-M-01",
+      "wave": "W2",
+      "role": "integrator",
+      "thread_id": "019f8397-415d-7181-8efd-0a669b257d10",
+      "base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+      "branch": "codex/eval-v3-w2-eval-040-m",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\7529\\pico",
+      "dependency_handoff_hashes": {
+        "EVAL-040-A": "f23fb48cc4f4d2cee342b0ad4a18ce05c2296b6e2599c783f86f7e73940748ef",
+        "EVAL-040-B": "62f410f8e59cd066583b4e9a142b59bce6132434c278a420e50bf011ed4bd608",
+        "EVAL-040-C": "37df819fa4eee7ed5df4c8c71787609096586289bfb5fc9a3088194a00be7b78"
+      },
+      "dependency_commits": [],
+      "freeze_hashes": {
+        "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1"
+      },
+      "allowed_write_paths": [
+        "benchmarks/v3/local-repos/taskset.json",
+        "benchmarks/v3/local-repos/taskset.lock.json",
+        ".codex/eval/proposals/EVAL-040-M.freeze.json",
+        ".codex/eval/handoffs/EVAL-040-M.json"
+      ],
+      "prompt_sha256": "23d0aa1f15019d46533b1797c68b3c1eb0698d2a99dc41f55f67ee1d4cba4d26",
+      "status": "active"
+    },
+    "W2-EVAL-080-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "EVAL-080",
+      "instance_id": "W2-EVAL-080-01",
+      "wave": "W2",
+      "role": "implementer",
+      "thread_id": "019f8397-34a2-7370-b1f0-a3928df16ac8",
+      "base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+      "branch": "codex/eval-v3-w2-eval-080",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\4c6a\\pico",
+      "dependency_handoff_hashes": {"EVAL-001": "cc8c951e0a0e0dac20e46c611b102bc538a6863099310a90690eb639f931a3be"},
+      "dependency_commits": [],
+      "freeze_hashes": {
+        "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1"
+      },
+      "allowed_write_paths": [
+        "pico/evaluation/evidence_bundle.py",
+        "scripts/build_v3_evidence_bundle.py",
+        "tests/test_evidence_bundle.py",
+        "tests/fixtures/evidence_bundle/**",
+        ".codex/eval/handoffs/EVAL-080.json"
+      ],
+      "prompt_sha256": "fc93d0b27186db1d9da791c8280402485277ac4be979cb01c4a4cbfd5553621",
       "status": "active"
     }
   },
@@ -1026,11 +1161,7 @@
     "W0": ".codex/eval/state/W0-wave-handoff.json",
     "W1": ".codex/eval/state/W1-wave-handoff.json"
   },
-  "ready_tickets": [
-    "EVAL-031-B",
-    "EVAL-040-M",
-    "EVAL-080"
-  ],
+  "ready_tickets": [],
   "wave_open": {
     "wave": "W2",
     "status": "active",
@@ -1048,6 +1179,17 @@
     },
     "opened_at": "2026-07-21T15:24:56.6990056+08:00"
   },
+  "batch_checkpoints": [
+    {
+      "wave": "W2",
+      "batch": 1,
+      "canonical_head": "0352cb98192b23976ce40bf0aa3b2a0ac6197f9f",
+      "accepted_tickets": ["TOOL-015", "EVAL-031-I", "EVAL-031-A"],
+      "dispatched_tickets": ["EVAL-031-B", "EVAL-040-M", "EVAL-080"],
+      "stable_patch_ids_verified": true,
+      "checkpointed_at": "2026-07-21T15:45:44.3327500+08:00"
+    }
+  ],
   "last_gate": {
     "wave": "W1",
     "status": "accepted",
@@ -1080,5 +1222,5 @@
     "discrepancies": [],
     "accepted_at": "2026-07-21T13:41:33.3334480+08:00"
   },
-  "updated_at": "2026-07-21T15:24:56.6990056+08:00"
+  "updated_at": "2026-07-21T15:45:44.3327500+08:00"
 }
