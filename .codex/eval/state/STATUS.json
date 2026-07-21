@@ -9,15 +9,15 @@
   "local_config_path": "F:\\dev\\llm\\pico\\.pico.toml",
   "artifact_root": "F:\\dev\\llm\\pico-eval-artifacts",
   "program_supervisor_thread": "current plan-level Codex task",
-  "current_wave_integrator_thread": "019f82b3-8b0e-7250-b850-54ec0d83999e",
+  "current_wave_integrator_thread": "019f8383-2ce3-72c1-808c-68c3b030ae99",
   "profiles": {
     "qwen_openai_responses": {"local_name": "dashscope-o", "configured": true},
-    "qwen_anthropic_messages": {"local_name": "dashscope-a", "configured": false},
+    "qwen_anthropic_messages": {"local_name": "dashscope-a", "configured": true},
     "deepseek_anthropic_messages": {"local_name": "deepseek", "configured": true}
   },
   "bootstrap_sha": "9d6bfc4567b6c1dff45908a3ed00335b947a52f9",
-  "current_wave": "W1",
-  "wave_base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+  "current_wave": "W2",
+  "wave_base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
   "gates": {
     "native_eval_ready": "pending",
     "native_resume_ready": "pending"
@@ -273,7 +273,14 @@
       "fragment_sha256": "3e8d833b4b424b3d389705d51431b350142acc4367864ca1dcab870ed86fa382"
     }
   },
-  "active_tickets": {},
+  "active_tickets": {
+    "TOOL-012-QO-R": {"instance_id": "W2-TOOL-012-QO-R-01", "status": "active"},
+    "TOOL-012-QA-R": {"instance_id": "W2-TOOL-012-QA-R-01", "status": "active"},
+    "TOOL-012-DA-R": {"instance_id": "W2-TOOL-012-DA-R-01", "status": "active"},
+    "TOOL-015": {"instance_id": "W2-TOOL-015-01", "status": "active"},
+    "EVAL-031-I": {"instance_id": "W2-EVAL-031-I-01", "status": "active"},
+    "EVAL-031-A": {"instance_id": "W2-EVAL-031-A-01", "status": "active"}
+  },
   "blocked_tickets": {},
   "ticket_instances": {
     "W0-EVAL-000-01": {
@@ -862,6 +869,157 @@
       "handoff_sha256": "37df819fa4eee7ed5df4c8c71787609096586289bfb5fc9a3088194a00be7b78",
       "fragment_sha256": "3e8d833b4b424b3d389705d51431b350142acc4367864ca1dcab870ed86fa382",
       "status": "accepted"
+    },
+    "W2-TOOL-012-QO-R-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "TOOL-012-QO-R",
+      "instance_id": "W2-TOOL-012-QO-R-01",
+      "wave": "W2",
+      "role": "run_shard",
+      "thread_id": "019f838d-2947-75a3-8745-e6c1c036181e",
+      "base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+      "branch": "codex/eval-v3-w2-tool-012-qo-r",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\29cb\\pico",
+      "dependency_handoff_hashes": {"TOOL-012-O": "80ccbd69a07af49fe028155da9c9c7a19d29b6729d1a7667ab1b1357e7c58d63"},
+      "dependency_commits": [],
+      "freeze_hashes": {
+        "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+        "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb"
+      },
+      "allowed_write_paths": [
+        "F:\\dev\\llm\\pico-eval-artifacts\\native-sdk-spike\\65d7142cf3a5ed9a15fc0689f3022d521369252b\\TOOL-012-QO-R\\**",
+        ".codex/eval/handoffs/TOOL-012-QO-R.json"
+      ],
+      "prompt_sha256": "ccfd764201fd6384d28aa265cf7fc39b7a9d2e0ff458302e03c7b173663d84db",
+      "status": "active"
+    },
+    "W2-TOOL-012-QA-R-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "TOOL-012-QA-R",
+      "instance_id": "W2-TOOL-012-QA-R-01",
+      "wave": "W2",
+      "role": "run_shard",
+      "thread_id": "019f838d-2903-7d40-8575-52204444dc13",
+      "base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+      "branch": "codex/eval-v3-w2-tool-012-qa-r",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\8ebc\\pico",
+      "dependency_handoff_hashes": {"TOOL-012-A": "f319f37fc9345e8de861d83da1e4df2fee4efec06cc834e8ab9d29c7464cee77"},
+      "dependency_commits": [],
+      "freeze_hashes": {
+        "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+        "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb"
+      },
+      "allowed_write_paths": [
+        "F:\\dev\\llm\\pico-eval-artifacts\\native-sdk-spike\\65d7142cf3a5ed9a15fc0689f3022d521369252b\\TOOL-012-QA-R\\**",
+        ".codex/eval/handoffs/TOOL-012-QA-R.json"
+      ],
+      "prompt_sha256": "9bcc63a8be7d47cc54a5486b860cad101da4b165d076cdf4e1de48b6e379e4b6",
+      "status": "active"
+    },
+    "W2-TOOL-012-DA-R-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "TOOL-012-DA-R",
+      "instance_id": "W2-TOOL-012-DA-R-01",
+      "wave": "W2",
+      "role": "run_shard",
+      "thread_id": "019f838d-2918-7e91-9e2f-69e0a7b30cd6",
+      "base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+      "branch": "codex/eval-v3-w2-tool-012-da-r",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\2b0f\\pico",
+      "dependency_handoff_hashes": {"TOOL-012-A": "f319f37fc9345e8de861d83da1e4df2fee4efec06cc834e8ab9d29c7464cee77"},
+      "dependency_commits": [],
+      "freeze_hashes": {
+        "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+        "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb"
+      },
+      "allowed_write_paths": [
+        "F:\\dev\\llm\\pico-eval-artifacts\\native-sdk-spike\\65d7142cf3a5ed9a15fc0689f3022d521369252b\\TOOL-012-DA-R\\**",
+        ".codex/eval/handoffs/TOOL-012-DA-R.json"
+      ],
+      "prompt_sha256": "21b46306c73b071f1b26c7a38e6975f773f463a1b753a33e97eef5e28644a3ab",
+      "status": "active"
+    },
+    "W2-TOOL-015-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "TOOL-015",
+      "instance_id": "W2-TOOL-015-01",
+      "wave": "W2",
+      "role": "implementer",
+      "thread_id": "019f838d-a37b-7562-b2c1-64fb5472e386",
+      "base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+      "branch": "codex/eval-v3-w2-tool-015",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\c016\\pico",
+      "dependency_handoff_hashes": {"TOOL-010": "300faf3f58f369248291ba72be3aefca9e3444dac9999cf45c5767c4eefbde0d"},
+      "dependency_commits": [],
+      "freeze_hashes": {
+        "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+        "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb"
+      },
+      "allowed_write_paths": ["pico/testing.py", "tests/test_native_model_fixtures.py", ".codex/eval/handoffs/TOOL-015.json"],
+      "prompt_sha256": "5f822e399674a87b03922a464cdb2076618f290fa9521c4f2cfe7cc576d5860a",
+      "status": "active"
+    },
+    "W2-EVAL-031-I-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "EVAL-031-I",
+      "instance_id": "W2-EVAL-031-I-01",
+      "wave": "W2",
+      "role": "implementer",
+      "thread_id": "019f838d-a361-7401-8c30-d3fa0ba903a9",
+      "base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+      "branch": "codex/eval-v3-w2-eval-031-i",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\4afc\\pico",
+      "dependency_handoff_hashes": {
+        "EVAL-030": "40834e95152f29485dcaa6f94d63ce5e28fb4791ad3f33a2bb09d2e03564df84",
+        "TOOL-010": "300faf3f58f369248291ba72be3aefca9e3444dac9999cf45c5767c4eefbde0d"
+      },
+      "dependency_commits": [],
+      "freeze_hashes": {
+        "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+        "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+        "context_assets": "d8349c034524cc488958a1f3b460a7b6080915eed0b03b64c635810c21bf8e15"
+      },
+      "allowed_write_paths": [
+        "pico/evaluation/context_eval.py",
+        "scripts/run_context_asset_evaluation.py",
+        "tests/test_context_asset_evaluator.py",
+        ".codex/eval/handoffs/EVAL-031-I.json"
+      ],
+      "prompt_sha256": "2f22288e1d7babc48cd797d84b03c70616b42c659390226c1a1aec3442547863",
+      "status": "active"
+    },
+    "W2-EVAL-031-A-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "EVAL-031-A",
+      "instance_id": "W2-EVAL-031-A-01",
+      "wave": "W2",
+      "role": "fixture_builder",
+      "thread_id": "019f838d-a375-7111-9674-f0cae5e1cca1",
+      "base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+      "branch": "codex/eval-v3-w2-eval-031-a",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\de94\\pico",
+      "dependency_handoff_hashes": {"EVAL-030": "40834e95152f29485dcaa6f94d63ce5e28fb4791ad3f33a2bb09d2e03564df84"},
+      "dependency_commits": [],
+      "freeze_hashes": {
+        "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+        "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+        "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+        "context_assets": "d8349c034524cc488958a1f3b460a7b6080915eed0b03b64c635810c21bf8e15"
+      },
+      "allowed_write_paths": [
+        "benchmarks/v3/context-assets/fixtures/C01/**",
+        "benchmarks/v3/context-assets/fixtures/C02/**",
+        "benchmarks/v3/context-assets/fixtures/C03/**",
+        "benchmarks/v3/context-assets/fixtures/C04/**",
+        "benchmarks/v3/context-assets/fixtures/C05/**",
+        "benchmarks/v3/context-assets/fixtures/C06/**",
+        "benchmarks/v3/context-assets/fixtures/C07/**",
+        "benchmarks/v3/context-assets/fixtures/C08/**",
+        "benchmarks/v3/context-assets/fragments/C01-C08.json",
+        ".codex/eval/handoffs/EVAL-031-A.json"
+      ],
+      "prompt_sha256": "7db0d13006cc82d97017569c62bca13940dd75419aa6ce19fdc976dcfd73478c",
+      "status": "active"
     }
   },
   "wave_handoffs": {
@@ -869,16 +1027,27 @@
     "W1": ".codex/eval/state/W1-wave-handoff.json"
   },
   "ready_tickets": [
-    "TOOL-012-QO-R",
-    "TOOL-012-QA-R",
-    "TOOL-012-DA-R",
-    "TOOL-015",
-    "EVAL-031-I",
-    "EVAL-031-A",
     "EVAL-031-B",
     "EVAL-040-M",
     "EVAL-080"
   ],
+  "wave_open": {
+    "wave": "W2",
+    "status": "active",
+    "wave_base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+    "control_overlay_sha256": "5954e177e3bd0f7585786a42654e868b017b167d52172df03c56da116628faaf",
+    "initial_ready_tickets": [
+      "TOOL-012-QO-R", "TOOL-012-QA-R", "TOOL-012-DA-R", "TOOL-015",
+      "EVAL-031-I", "EVAL-031-A", "EVAL-031-B", "EVAL-040-M", "EVAL-080"
+    ],
+    "provider_name_validation": {
+      "dashscope-o": true,
+      "dashscope-a": true,
+      "deepseek": true,
+      "values_or_secrets_read": false
+    },
+    "opened_at": "2026-07-21T15:24:56.6990056+08:00"
+  },
   "last_gate": {
     "wave": "W1",
     "status": "accepted",
@@ -911,5 +1080,5 @@
     "discrepancies": [],
     "accepted_at": "2026-07-21T13:41:33.3334480+08:00"
   },
-  "updated_at": "2026-07-21T13:41:33.3334480+08:00"
+  "updated_at": "2026-07-21T15:24:56.6990056+08:00"
 }
