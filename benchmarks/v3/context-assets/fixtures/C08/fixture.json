@@ -1,0 +1,18 @@
+{
+  "schema_version": "pico-context-asset-fixture-v1",
+  "case_id": "C08",
+  "budget": {"kind": "normal", "max_utf8_bytes": 8192},
+  "assets": {
+    "pointer": {
+      "activation_state": "active",
+      "pointer_kind": "artifact",
+      "target_id": "artifact-qz-6158",
+      "target_path": "artifacts/qz-6158-report.json",
+      "content_hash": "sha256:1e54a907c62d",
+      "freshness": "fresh",
+      "producer": "fixture_builder",
+      "resolvable": true,
+      "label": "QZ-6158 verifier report"
+    }
+  }
+}

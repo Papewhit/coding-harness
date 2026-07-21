@@ -1,0 +1,146 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "EVAL-031-A",
+  "instance_id": "W2-EVAL-031-A-01",
+  "wave": "W2",
+  "role": "fixture_builder",
+  "status": "complete",
+  "base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+  "head_sha": "f745704edb63f22b2ef8da99a0636aa041000ec7",
+  "branch": "codex/eval-v3-w2-eval-031-a",
+  "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\de94\\pico",
+  "dependency_commits": [],
+  "dependency_handoff_hashes": {
+    "EVAL-030": "40834e95152f29485dcaa6f94d63ce5e28fb4791ad3f33a2bb09d2e03564df84"
+  },
+  "own_commits": [
+    "279d3ecb95ee9d9974c9cfb58b96ad8865acb80a",
+    "f745704edb63f22b2ef8da99a0636aa041000ec7"
+  ],
+  "files_changed": [
+    "benchmarks/v3/context-assets/fixtures/C01/fixture.json",
+    "benchmarks/v3/context-assets/fixtures/C02/fixture.json",
+    "benchmarks/v3/context-assets/fixtures/C03/fixture.json",
+    "benchmarks/v3/context-assets/fixtures/C04/fixture.json",
+    "benchmarks/v3/context-assets/fixtures/C05/fixture.json",
+    "benchmarks/v3/context-assets/fixtures/C06/fixture.json",
+    "benchmarks/v3/context-assets/fixtures/C07/fixture.json",
+    "benchmarks/v3/context-assets/fixtures/C08/fixture.json",
+    "benchmarks/v3/context-assets/fragments/C01-C08.json",
+    ".codex/eval/handoffs/EVAL-031-A.json"
+  ],
+  "commands_run": [
+    "uv run python - <context-asset fixture self-check with per-case sentinel occurrence == 1>",
+    "uv run ruff check benchmarks/v3/context-assets",
+    "uv run ruff check .",
+    "git diff --check",
+    "git diff --cached --check",
+    "git diff 65d7142cf3a5ed9a15fc0689f3022d521369252b..HEAD --check"
+  ],
+  "tests": [
+    {
+      "command": "uv run python - <context-asset fixture self-check with per-case sentinel occurrence == 1>",
+      "result": "passed",
+      "details": "Parsed every fixture and the fragment; asserted C01-C08 order, a normal 8192-byte budget, exactly one fixture asset and activation target, contract-surface and metadata alignment, tools exclusion, C08 pointer metadata rules, globally unique sentinels, and exactly one occurrence of each case sentinel in its fixture."
+    },
+    {
+      "command": "uv run ruff check benchmarks/v3/context-assets",
+      "result": "passed",
+      "details": "No Python files are present beneath the fixture directory; Ruff completed successfully."
+    },
+    {
+      "command": "uv run ruff check .",
+      "result": "failed",
+      "details": "14 pre-existing findings in scripts/readable_session.py (one F401 and thirteen F541); that file is outside this ticket and unchanged."
+    },
+    {
+      "command": "git diff --check; git diff --cached --check; git diff <base>..HEAD --check",
+      "result": "passed",
+      "details": "No whitespace errors in the ticket patch."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "benchmarks/v3/context-assets/fixtures/C01/fixture.json",
+      "sha256": "e444cf015413cd869233eec68c59b97a344fbbb17ea943219c6ca7869e1bbc2f",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "benchmarks/v3/context-assets/fixtures/C02/fixture.json",
+      "sha256": "f0e8ce7df86477453ef8917349a0fd2c4c7467e2afdf59002f15d239c75ed752",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "benchmarks/v3/context-assets/fixtures/C03/fixture.json",
+      "sha256": "08e733d567e2ca7397855f569a368e7344ae7b57edf6dbc4f7542adfa65b1505",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "benchmarks/v3/context-assets/fixtures/C04/fixture.json",
+      "sha256": "9e449c0d991676f53630a12f24c6bc47804a8c5d20538f399ab092928b6530bc",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "benchmarks/v3/context-assets/fixtures/C05/fixture.json",
+      "sha256": "13711269aeb4e7f200d2ff689bd11aa031dcf6bf3662de661b793eada80606c9",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "benchmarks/v3/context-assets/fixtures/C06/fixture.json",
+      "sha256": "8a4324e413b8a3fd5197fcf01a6fdf57932f536adb547a6fce05ab7fa4024d81",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "benchmarks/v3/context-assets/fixtures/C07/fixture.json",
+      "sha256": "76dcfa23e2cb3161d8e5208d59cbf5ec5a201413374f00771572ec2f681fdd0f",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "benchmarks/v3/context-assets/fixtures/C08/fixture.json",
+      "sha256": "b09307ab2e2fb24213865d8e1fa81dfda30358697f5e598df38e7dd7c25cae15",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "benchmarks/v3/context-assets/fragments/C01-C08.json",
+      "sha256": "6bef856d9df68209d60d0ef7e9df1dc927fd861f64a6f646f0cc58fba9c808b8",
+      "hash_basis": "git_blob_bytes",
+      "coverage": "C01-C08 one-active-asset expectations, routing, metadata, sentinels, and pointer-only body protection."
+    }
+  ],
+  "frozen_hashes": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "context_assets": "d8349c034524cc488958a1f3b460a7b6080915eed0b03b64c635810c21bf8e15",
+    "sdk_transport_decision": null,
+    "provider_selection": null,
+    "native_resume_gate": null
+  },
+  "native_protocol_observations": {
+    "observation_scope": "Fixture construction and deterministic JSON validation only; no provider request or online evaluation was issued.",
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0
+  },
+  "defects": [
+    {
+      "id": "pre-existing-repository-ruff-findings",
+      "scope": "scripts/readable_session.py",
+      "details": "Repository-wide Ruff reports 14 existing findings outside the allowed paths."
+    }
+  ],
+  "risks": [
+    "These fixtures freeze evaluation expectations only; the designated Context Runtime owner must implement the required surface attribution and evidence generation.",
+    "The fragment is intentionally not merged into shared cases.json; the designated assembler owns that integration."
+  ],
+  "status_proposal": {
+    "ticket_id": "EVAL-031-A",
+    "status": "complete",
+    "head_sha": "f745704edb63f22b2ef8da99a0636aa041000ec7"
+  },
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}

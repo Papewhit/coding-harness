@@ -1,0 +1,12 @@
+{
+  "schema_version": "pico-context-asset-fixture-v1",
+  "case_id": "C02",
+  "budget": {"kind": "normal", "max_utf8_bytes": 8192},
+  "assets": {
+    "todo": {
+      "activation_state": "active",
+      "ledger_version": "todo-fixture-v1",
+      "items": [{"id": "todo-qz-1842", "status": "in_progress", "priority": "high", "content": "Verify QZ-1842 migration sentinel."}]
+    }
+  }
+}

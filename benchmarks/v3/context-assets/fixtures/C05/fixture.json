@@ -1,0 +1,18 @@
+{
+  "schema_version": "pico-context-asset-fixture-v1",
+  "case_id": "C05",
+  "budget": {"kind": "normal", "max_utf8_bytes": 8192},
+  "assets": {
+    "worker": {
+      "activation_state": "active",
+      "worker_id": "worker-qz-4481",
+      "status": "completed",
+      "action": "verify_fixture",
+      "subagent_type": "fixture_builder",
+      "notification_drained": false,
+      "result_hash": "sha256:7c3d1b9a40e2",
+      "artifact_pointer": "artifacts/qz-4481-result.json",
+      "notification": "Worker QZ-4481 completed fixture verification."
+    }
+  }
+}

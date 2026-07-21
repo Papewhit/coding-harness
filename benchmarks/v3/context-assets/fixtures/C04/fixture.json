@@ -1,0 +1,17 @@
+{
+  "schema_version": "pico-context-asset-fixture-v1",
+  "case_id": "C04",
+  "budget": {"kind": "normal", "max_utf8_bytes": 8192},
+  "assets": {
+    "checkpoint": {
+      "activation_state": "active",
+      "checkpoint_id": "ckpt-qz-7604",
+      "parent_checkpoint_id": null,
+      "schema_version": "pico-checkpoint-v1",
+      "freshness": "fresh",
+      "runtime_identity": "runtime-qz-7604",
+      "activation_reason": "resume_context_relevant",
+      "resume_core": "Resume QZ-7604: verify the migration report, then publish the next step."
+    }
+  }
+}
