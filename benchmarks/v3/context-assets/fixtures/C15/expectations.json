@@ -1,0 +1,1 @@
+{"id":"C15","must_keep":["REQUEST-C15-EXTREME-KEEP-VERBATIM-0123456789"],"must_surface":{"REQUEST-C15-EXTREME-KEEP-VERBATIM-0123456789":"messages"},"must_not_surface":{"REQUEST-C15-EXTREME-KEEP-VERBATIM-0123456789":["system_text","tools"]},"verbatim":true,"must_remove_before":["HISTORY-C15-","SKILL-C15-","DURABLE-C15-"],"drop_evidence_required":true}
