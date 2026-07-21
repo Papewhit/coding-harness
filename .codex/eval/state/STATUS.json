@@ -94,10 +94,25 @@
       "handoff_sha256": "825e0d3a64abd065e3a9c67a3ce3d1bb9c06d2bbe1b5b00b8b24423cfa3d4dfa",
       "tool_schema_sha256": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
       "tool_schema_hash_basis": "canonical_json_sort_keys_compact_ascii"
+    },
+    "TOOL-012-I": {
+      "instance_id": "W1-TOOL-012-I-01",
+      "status": "accepted",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "head_sha": "9a05404ec3a51821ca09a710bf8bfbfff84e4f90",
+      "own_commits": [
+        "9a05404ec3a51821ca09a710bf8bfbfff84e4f90"
+      ],
+      "integration_commits": [
+        "886962d339221a7214c9be8a988a6978b1d42d44"
+      ],
+      "handoff_path": ".codex/eval/handoffs/TOOL-012-I.json",
+      "handoff_sha256": "a401dbac5f1f93eb366a14b5ed9e129a489e4b2a802b734c8adf4be1792f05f9",
+      "probe_harness_sha256": "d47cde8398bfe8142e712c6c7b2d461eadd249aa7f7a8867894e81c5e9f37491",
+      "probe_case_set_sha256": "4e642ef9d70af7a3959a09dd875efac84150a3b2f4095d2c5c1852e93d1c2110"
     }
   },
   "active_tickets": {
-    "TOOL-012-I": "W1-TOOL-012-I-01",
     "EVAL-020": "W1-EVAL-020-01",
     "EVAL-040-B": "W1-EVAL-040-B-01"
   },
@@ -281,7 +296,17 @@
         ".codex/eval/handoffs/TOOL-012-I.json"
       ],
       "prompt_sha256": "df0f212510be0d86486ced98839c05e8fcca923b2fab014fc3b0cf851e412604",
-      "status": "active"
+      "head_sha": "9a05404ec3a51821ca09a710bf8bfbfff84e4f90",
+      "own_commits": [
+        "9a05404ec3a51821ca09a710bf8bfbfff84e4f90"
+      ],
+      "integration_commits": [
+        "886962d339221a7214c9be8a988a6978b1d42d44"
+      ],
+      "handoff_sha256": "a401dbac5f1f93eb366a14b5ed9e129a489e4b2a802b734c8adf4be1792f05f9",
+      "probe_harness_sha256": "d47cde8398bfe8142e712c6c7b2d461eadd249aa7f7a8867894e81c5e9f37491",
+      "probe_case_set_sha256": "4e642ef9d70af7a3959a09dd875efac84150a3b2f4095d2c5c1852e93d1c2110",
+      "status": "accepted"
     },
     "W1-EVAL-020-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -343,6 +368,8 @@
     "W0": ".codex/eval/state/W0-wave-handoff.json"
   },
   "ready_tickets": [
+    "TOOL-012-O",
+    "TOOL-012-A",
     "EVAL-022",
     "EVAL-030",
     "EVAL-040-A",
@@ -361,5 +388,5 @@
     "discrepancies": [],
     "accepted_at": "2026-07-21T11:03:17.8274184+08:00"
   },
-  "updated_at": "2026-07-21T12:14:00+08:00"
+  "updated_at": "2026-07-21T12:17:00+08:00"
 }
