@@ -1,0 +1,134 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TEST-046-P",
+  "instance_id": "W5R2-TEST-046-P-01",
+  "wave": "W5R2",
+  "role": "implementer/scripted-native fixture migration",
+  "status": "complete",
+  "source_thread_id": "019f8967-207e-7461-82aa-dcc2239049ab",
+  "base_sha": "aab051fbf30c50df3af6ed2df5954717e104eac0",
+  "head_sha": "a2002c2739d26d1d2bd1c76761f038c85e5f2efe",
+  "head_sha_semantics": "Implementation head before the metadata-only commit that adds this handoff.",
+  "branch": "codex/eval-v3-w5r2-test-046-p",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/ae84/pico",
+  "dependency_commits": [],
+  "dependency_handoff_hashes": {
+    "TOOL-044-F": "3f9c248922cd8bc7c89789c255e89ca77df9e0293dd2ca05f9a4c40f4e1f472f",
+    "TOOL-042-G-R1": "f44e7f3764ad4c834c6fc9bb12651647aa71c5094c5836f4e5d647bd3be9d679",
+    "W5R-wave-handoff": "bcc4432477409529a46085441c4717188b77ab3aea5943565f3a7dd552da2665"
+  },
+  "own_commits": [
+    "a2002c2739d26d1d2bd1c76761f038c85e5f2efe"
+  ],
+  "files_changed": [
+    "tests/native_fixtures.py",
+    "tests/test_pico.py",
+    "tests/test_engine_acceptance.py",
+    "tests/test_context_governance_acceptance.py",
+    "tests/test_release_smoke.py",
+    "tests/test_v3_runtime.py",
+    "tests/test_skills_acceptance.py",
+    "tests/test_runtime_evidence_acceptance.py",
+    "tests/test_usage.py",
+    "tests/test_todo_ledger_acceptance.py",
+    "tests/test_provider_profile_fixture_integrity.py",
+    ".codex/eval/handoffs/TEST-046-P.json"
+  ],
+  "tests": [
+    {
+      "environment": "Ubuntu WSL2 with a Python 3.12 UV_PROJECT_ENVIRONMENT",
+      "command": "uv run pytest tests/test_provider_profile_fixture_integrity.py tests/test_pico.py tests/test_engine_acceptance.py tests/test_context_governance_acceptance.py tests/test_release_smoke.py tests/test_v3_runtime.py tests/test_skills_acceptance.py tests/test_runtime_evidence_acceptance.py tests/test_usage.py tests/test_todo_ledger_acceptance.py -q",
+      "result": "passed",
+      "details": "119 passed, 1 pre-existing live-provider opt-in skip. No locked-provider-profile failure remained."
+    },
+    {
+      "environment": "Windows",
+      "command": "uv run pytest tests/test_provider_profile_fixture_integrity.py tests/test_pico.py tests/test_engine_acceptance.py tests/test_context_governance_acceptance.py tests/test_release_smoke.py tests/test_v3_runtime.py tests/test_skills_acceptance.py tests/test_runtime_evidence_acceptance.py tests/test_usage.py tests/test_todo_ledger_acceptance.py -q",
+      "result": "failed_known_platform_baseline",
+      "details": "114 passed, 5 failed, 1 pre-existing live-provider opt-in skip. All five failures use patch.dict(os.environ, ..., clear=True) and fail while resolving Path.home() on Windows; zero failures mention a locked provider profile."
+    },
+    {
+      "environment": "Windows",
+      "command": "uv run pytest tests/test_provider_profile_fixture_integrity.py tests/test_pico.py::test_auto_dream_runs_in_background_after_session_gate tests/test_skills_acceptance.py::test_dream_slash_command_consolidates_daily_log_into_memory_files tests/test_skills_acceptance.py::test_dream_cannot_write_outside_memory_directory tests/test_skills_acceptance.py::test_fork_skill_runs_in_isolated_session_and_records_completion -q",
+      "result": "passed",
+      "details": "8 passed; child dream/fork Runtime profile propagation and negative control are covered."
+    },
+    {
+      "environment": "Windows",
+      "command": "uv run ruff check tests/native_fixtures.py tests/test_provider_profile_fixture_integrity.py",
+      "result": "passed"
+    },
+    {
+      "environment": "Windows",
+      "command": "rg -n \"monkeypatch.*NativeSessionRecorder|testing\\.ScriptedModelClient|pytest_collection\" tests",
+      "result": "passed_no_matches",
+      "details": "rg exit 1 is the expected no-match result."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/w5r2-provider-profile-migration/W5R2-TEST-046-P-01/migration-report.json",
+      "sha256": "f8b564b44c62d29481b20a30f17ac09fcb0afa2e269cbf04b364576f1cf48bec",
+      "role": "fixture contract, assertion-AST comparison, and validation report"
+    }
+  ],
+  "hashes": {
+    "formal_freeze": "dbedbc07dcc042546ec37392fb17214b2947bdbfe757d872bb438b9f7cca6f8e",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "sdk_dependency_lock": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+    "native_scripted_fixtures": "ff2a8febe36730b6c18d096312f9455dce0793c9d1f975ffb941c726706904cf",
+    "scripted_provider_profile_fixture_source": "6fec517d2c29795096d1d4227e26b14b35310b7b1120c5c9b77d46ae07155390",
+    "provider_profile_integrity_test_source": "ba2072a0dcf6f24335618a305bea5123d359901cdef827f8aac901f40dd72034",
+    "provider_profile_migration_report": "f8b564b44c62d29481b20a30f17ac09fcb0afa2e269cbf04b364576f1cf48bec",
+    "native_deterministic_gate_report_from_blocked_W5R_dependency": "fab078c630df496a65a4835f4a0ed601240a039caca684b04e3dd8cbb315a5c4"
+  },
+  "acceptance_checklist": {
+    "tests_conftest_absent": true,
+    "global_or_autouse_patch_absent": true,
+    "existing_test_names_preserved": true,
+    "existing_assertion_asts_preserved": true,
+    "explicit_builder_profiles_locked": true,
+    "named_native_fake_carries_json_safe_profile_identity": true,
+    "child_dream_and_fork_runtimes_profiled": true,
+    "missing_profile_negative_control_rejected": true,
+    "profile_tool_schema_identity_verified": true,
+    "sdk_objects_absent": true,
+    "runtime_fallback_added": false,
+    "skip_or_xfail_added": false,
+    "production_source_modified": false,
+    "canonical_status_or_freeze_written": false,
+    "target_modules_have_zero_locked_profile_failures": true
+  },
+  "native_protocol_observations": {
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0,
+    "sdk_tool_runner_used": false,
+    "sdk_agent_runner_used": false,
+    "sdk_managed_pico_tool_execution_used": false
+  },
+  "defects": [
+    {
+      "id": "TEST-046-P-WINDOWS-HOME-BASELINE",
+      "classification": "pre_existing_out_of_scope_platform_baseline",
+      "details": "Five test_pico provider/config/redaction tests clear the entire environment and Windows pathlib cannot resolve a home directory. The identical selected suite passes on Ubuntu WSL2; this ticket intentionally did not alter those test environments or production skill discovery."
+    }
+  ],
+  "risks": [
+    "The Windows-only cleared-HOME baseline remains visible in the literal local command; Ubuntu WSL2 provides the passing acceptance result.",
+    "The one observed skip is the pre-existing live-provider opt-in smoke test; no skip or xfail was added."
+  ],
+  "status_proposal": {
+    "ticket_id": "TEST-046-P",
+    "status": "complete",
+    "head_sha": "a2002c2739d26d1d2bd1c76761f038c85e5f2efe",
+    "reason": "All ordinary and child scripted-native Runtime fixtures have explicit or identity-carried provider profiles, frozen assertion semantics match, and the WSL2 acceptance suite passes."
+  },
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}
