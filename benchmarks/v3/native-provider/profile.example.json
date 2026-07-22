@@ -1,0 +1,10 @@
+{
+  "provider": "example",
+  "model": "replace-with-model",
+  "wire_dialect": "native",
+  "adapter_mode": "official-sdk-transport",
+  "sdk": {"package": "replace-with-package", "version": "replace-with-version"},
+  "base_url_fingerprint": "sha256:replace-with-non-secret-fingerprint",
+  "capabilities": {"native_tools": true, "opaque_blocks": true},
+  "retry": {"sdk_max_retries": 0, "pico_provider_attempts": 1}
+}

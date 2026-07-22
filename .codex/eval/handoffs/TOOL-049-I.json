@@ -1,0 +1,143 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-049-I",
+  "instance_id": "W5-TOOL-049-I-01",
+  "wave": "W5",
+  "role": "implementer",
+  "status": "complete",
+  "base_sha": "a834e78098487888264b5ffdea37f52a8d635fbf",
+  "head_sha": "f1623c8dcb6dd54a08cc68be1b6578d579bbdb60",
+  "head_sha_semantics": "Implementation-content head before the metadata-only commit containing this handoff; the containing commit is the final branch HEAD reported to the Wave Integrator.",
+  "branch": "codex/eval-v3-w5-tool-049-i",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/w5-049i/pico",
+  "dependency_commits": [
+    "68d1829babe6d2908bc22ee52488098962aa94c5"
+  ],
+  "applied_dependency_commits": [
+    "0239f661beece60124473d72db4f4e43a4ad75bd"
+  ],
+  "dependency_handoff_hashes": {
+    "TOOL-040-I": "3ea08ab84d4bcdc632280bb8e65e572aa1a448b04781394f242880790faf0922",
+    "EVAL-001": "cc8c951e0a0e0dac20e46c611b102bc538a6863099310a90690eb639f931a3be"
+  },
+  "own_commits": [
+    "f1623c8dcb6dd54a08cc68be1b6578d579bbdb60"
+  ],
+  "files_changed": [
+    "pico/evaluation/native_provider.py",
+    "scripts/run_native_provider_conformance.py",
+    "tests/test_native_provider_evaluator.py",
+    "benchmarks/v3/native-provider/cases.json",
+    "benchmarks/v3/native-provider/profile.example.json",
+    ".codex/eval/handoffs/TOOL-049-I.json"
+  ],
+  "commands_run": [
+    "Verified initial HEAD/base, branch, clean worktree, dependency handoff SHA-256 values, and the exact dependency commit before application",
+    "git cherry-pick 68d1829babe6d2908bc22ee52488098962aa94c5 (applied as 0239f661beece60124473d72db4f4e43a4ad75bd)",
+    "uv run pytest tests/test_native_provider_evaluator.py -q",
+    "uv run pytest tests/test_evaluation_contracts.py -q",
+    "uv run ruff check pico/evaluation/native_provider.py scripts/run_native_provider_conformance.py tests/test_native_provider_evaluator.py",
+    "Offline CLI smoke through test_native_provider_evaluator:synthetic_case_runner for NP01-final",
+    "git diff --check and git diff --cached --check",
+    "Allowed-write-path and forbidden-path verification against applied dependency head"
+  ],
+  "tests": [
+    {
+      "command": "uv run pytest tests/test_native_provider_evaluator.py -q",
+      "result": "passed",
+      "details": "7 passed; covers the exact eight-case manifest, full synthetic pass, Unicode trace evidence, invalid-argument repair, permission denial, multi-round and unexpected multi-call batches, opaque continuation roundtrip, mismatch/duplicate/protocol/text-envelope/retry evidence, infrastructure-failure retention, exclusion denominators, redaction, and restart rejection. An earlier development run exposed two fixture/expectation issues, both corrected before this final pass."
+    },
+    {
+      "command": "uv run pytest tests/test_evaluation_contracts.py -q",
+      "result": "passed",
+      "details": "6 passed; EVAL-001 artifact/native metadata contract regression remains green."
+    },
+    {
+      "command": "uv run ruff check pico/evaluation/native_provider.py scripts/run_native_provider_conformance.py tests/test_native_provider_evaluator.py",
+      "result": "passed",
+      "details": "All checks passed."
+    },
+    {
+      "command": "Offline CLI smoke for NP01-final using the synthetic test runner",
+      "result": "passed",
+      "details": "One passed row, one explicit HTTP attempt, no live endpoint, and the temporary artifact was removed."
+    },
+    {
+      "command": "git diff --check; git diff --cached --check; allowed-path verification",
+      "result": "passed",
+      "details": "No whitespace errors; ticket-owned changes are limited to the five deliverable files and this handoff. No adapter, Core Runtime, secret configuration, STATUS, or FREEZE path changed by this ticket."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "pico/evaluation/native_provider.py",
+      "sha256": "45127f000712763c7016034e317f4247a03199b6d182ce317762644785f52f6d",
+      "hash_basis": "working_tree_file_bytes_at_implementation_head",
+      "coverage": "Provider-neutral trace evaluator, row evidence, aggregate inputs and metrics, infrastructure-failure preservation, and frozen input bindings."
+    },
+    {
+      "path": "scripts/run_native_provider_conformance.py",
+      "sha256": "530d6553161daa753117f7b2dd451d0e663f02c3f7ce74c65ef1c5cf97c974ba",
+      "hash_basis": "working_tree_file_bytes_at_implementation_head",
+      "coverage": "External runner-plugin CLI with selected-case support and sanitized artifact output."
+    },
+    {
+      "path": "tests/test_native_provider_evaluator.py",
+      "sha256": "10ed50cf17b82056d8e7f376d797e3d7843aecd4454e33eddaf56e5af1931dac",
+      "hash_basis": "working_tree_file_bytes_at_implementation_head"
+    },
+    {
+      "path": "benchmarks/v3/native-provider/cases.json",
+      "sha256": "b20cdf446a21e20db035213c9308b47daa252cb9b0aadbebf7ec5747750e9f4d",
+      "hash_basis": "file_bytes",
+      "coverage": "Ordered final, single call, Unicode, invalid-argument repair, permission denial, multi-round patch/verify, unexpected multi-call, and opaque-block roundtrip cases; excludes process restart."
+    },
+    {
+      "path": "benchmarks/v3/native-provider/profile.example.json",
+      "sha256": "00df2fc9d0b54658b87d7650f38399ac33dd953253201a260a25dbcbbff35250",
+      "hash_basis": "file_bytes"
+    },
+    {
+      "path": ".codex/eval/handoffs/TOOL-049-I.json",
+      "persistence": "Metadata-only commit generated after the implementation content commit."
+    }
+  ],
+  "frozen_hashes": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "provider_selection": null,
+    "native_deterministic_gate": null,
+    "native_resume_gate": null
+  },
+  "native_protocol_observations": {
+    "observation_scope": "Offline synthetic evaluator and runner tests only; no live provider, formal effectiveness evaluation, or process-restart evaluation was run.",
+    "text_envelope_seen_count": 1,
+    "implicit_sdk_retry_seen": true,
+    "call_id_result_mismatch_count": 1,
+    "duplicate_call_after_result_count": 1,
+    "infrastructure_failure_rows_preserved": 2,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0,
+    "sdk_tool_runner_used": false,
+    "sdk_agent_runner_used": false,
+    "sdk_managed_pico_tool_execution_used": false,
+    "note": "Non-zero envelope/retry/mismatch counts are intentional adverse synthetic fixtures proving explicit evidence capture; the eight-case passing synthetic suite observed none."
+  },
+  "defects": [],
+  "risks": [
+    "No live endpoint was contacted, so provider eligibility and production conformance remain unmeasured until an authorized conformance run uses a frozen provider profile.",
+    "Transport plugins must translate provider events into the documented provider-neutral event mapping and must not use SDK-managed Pico tool execution.",
+    "Process interruption and restart behavior is intentionally absent and remains owned by Gate N2."
+  ],
+  "status_proposal": {
+    "ticket_id": "TOOL-049-I",
+    "status": "complete",
+    "head_sha": "f1623c8dcb6dd54a08cc68be1b6578d579bbdb60",
+    "reason": "The frozen eight-case suite, provider-neutral runner, per-row native protocol evidence, aggregate inputs, and adverse synthetic tests satisfy the ticket acceptance checklist without live provider or restart execution."
+  },
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}

@@ -1,0 +1,542 @@
+"""Provider-neutral native tool-calling conformance evaluation.
+
+The evaluator consumes normalized event traces rather than provider SDK
+objects.  A transport-specific runner may produce these events, but it must
+not execute Pico tools itself.  Every input case produces a row, including
+infrastructure failures, so later aggregates cannot silently improve their
+denominator.
+"""
+
+from __future__ import annotations
+
+from collections.abc import Callable, Mapping, Sequence
+from copy import deepcopy
+import json
+from pathlib import Path
+from typing import Any
+
+from pico.evaluation.contracts import (
+    ARTIFACT_CONTRACT_VERSION,
+    native_protocol_metadata,
+    profile_identity,
+    ratio,
+    sanitize_public_artifact,
+)
+
+
+CASESET_SCHEMA_VERSION = "pico-native-provider-cases-v1"
+ARTIFACT_SCHEMA_VERSION = "pico-native-provider-conformance-v1"
+REQUIRED_SCENARIOS = (
+    "final",
+    "single_call",
+    "unicode",
+    "invalid_args_repair",
+    "permission_denial",
+    "multi_round_patch_verify",
+    "unexpected_multi_call",
+    "opaque_block_roundtrip",
+)
+TEXT_ENVELOPE_MARKERS = ("<tool>", "</tool>", "<final>", "</final>")
+FROZEN_INPUT_HASHES = {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+}
+
+CaseRunner = Callable[[Mapping[str, Any], Mapping[str, Any]], Mapping[str, Any]]
+
+
+def load_case_set(path: str | Path) -> dict[str, Any]:
+    """Load and validate the frozen eight-case conformance manifest."""
+
+    payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    if not isinstance(payload, Mapping):
+        raise ValueError("native provider case set must be an object")
+    normalized = deepcopy(dict(payload))
+    _validate_case_set(normalized)
+    return normalized
+
+
+def run_native_provider_conformance(
+    *,
+    case_set: Mapping[str, Any],
+    profile: Mapping[str, Any],
+    runner: CaseRunner,
+    case_ids: Sequence[str] | None = None,
+) -> dict[str, Any]:
+    """Run selected cases and return rows plus auditable aggregate inputs."""
+
+    _validate_case_set(case_set)
+    if not isinstance(profile, Mapping):
+        raise TypeError("profile must be an object")
+    selected = _select_cases(case_set["cases"], case_ids)
+    rows: list[dict[str, Any]] = []
+    for case in selected:
+        try:
+            observation = runner(deepcopy(case), deepcopy(dict(profile)))
+            if not isinstance(observation, Mapping):
+                raise TypeError("case runner must return an observation object")
+            rows.append(evaluate_native_provider_case(case, observation))
+        except Exception as exc:  # A failed transport must remain in the denominator.
+            rows.append(
+                evaluate_native_provider_case(
+                    case,
+                    {
+                        "eligible": True,
+                        "events": [],
+                        "infrastructure_failure": {
+                            "type": type(exc).__name__,
+                            "message": str(exc),
+                        },
+                    },
+                )
+            )
+    aggregate_input = [_aggregate_input(row) for row in rows]
+    return {
+        "schema_version": ARTIFACT_SCHEMA_VERSION,
+        "artifact_contract_version": ARTIFACT_CONTRACT_VERSION,
+        "case_set": {
+            "schema_version": case_set["schema_version"],
+            "id": case_set["id"],
+            "case_ids": [case["id"] for case in selected],
+        },
+        "frozen_hashes": deepcopy(case_set["frozen_hashes"]),
+        "profile": profile_identity(profile),
+        "rows": rows,
+        "aggregate_input": aggregate_input,
+        "summary": aggregate_native_provider_rows(rows),
+    }
+
+
+def evaluate_native_provider_case(
+    case: Mapping[str, Any], observation: Mapping[str, Any]
+) -> dict[str, Any]:
+    """Evaluate a single normalized event trace without provider-specific code."""
+
+    case = deepcopy(dict(case))
+    _validate_case(case)
+    eligible = _strict_bool("eligible", observation.get("eligible", True))
+    events = observation.get("events", [])
+    if not isinstance(events, list) or not all(isinstance(event, Mapping) for event in events):
+        raise ValueError("observation events must be a list of objects")
+
+    calls: list[dict[str, Any]] = []
+    results: list[dict[str, Any]] = []
+    batches: list[dict[str, Any]] = []
+    protocol_errors: list[dict[str, Any]] = []
+    http_attempts: list[dict[str, Any]] = []
+    completed_ids: set[str] = set()
+    duplicate_after_result = 0
+    text_envelope_seen = False
+    final_text_seen = False
+    continuation_received: list[dict[str, Any]] = []
+    continuation_sent: list[dict[str, Any]] = []
+
+    for event_index, event_value in enumerate(events):
+        event = dict(event_value)
+        event_type = event.get("type")
+        if event_type == "http_attempt":
+            http_attempts.append(
+                sanitize_public_artifact(
+                    {
+                        "event_index": event_index,
+                        "attempt": event.get("attempt", len(http_attempts) + 1),
+                        "outcome": event.get("outcome", "observed"),
+                    }
+                )
+            )
+            continue
+        if event_type == "protocol_error":
+            protocol_errors.append(
+                sanitize_public_artifact(
+                    {
+                        "event_index": event_index,
+                        "code": event.get("code", "provider_protocol_error"),
+                        "message": event.get("message", ""),
+                    }
+                )
+            )
+            continue
+        if event_type == "request":
+            descriptor = event.get("opaque_continuation")
+            if descriptor is not None:
+                continuation_sent.append(_continuation_descriptor(descriptor, event_index))
+            continue
+        if event_type == "assistant":
+            text = event.get("text", "")
+            if not isinstance(text, str):
+                protocol_errors.append(_error(event_index, "non_string_text"))
+                text = ""
+            text_envelope_seen |= any(marker in text.lower() for marker in TEXT_ENVELOPE_MARKERS)
+            raw_calls = event.get("tool_calls", [])
+            if not isinstance(raw_calls, list):
+                protocol_errors.append(_error(event_index, "invalid_tool_call_batch"))
+                raw_calls = []
+            batch_call_ids: list[str] = []
+            batch_index = len(batches)
+            for item in raw_calls:
+                if not isinstance(item, Mapping):
+                    protocol_errors.append(_error(event_index, "invalid_tool_call"))
+                    continue
+                call_id = item.get("call_id")
+                name = item.get("name")
+                if not isinstance(call_id, str) or not call_id:
+                    protocol_errors.append(_error(event_index, "missing_call_id"))
+                    continue
+                if call_id in completed_ids:
+                    duplicate_after_result += 1
+                calls.append(
+                    {
+                        "call_id": call_id,
+                        "name": name if isinstance(name, str) else "",
+                        "batch_index": batch_index,
+                        "event_index": event_index,
+                    }
+                )
+                batch_call_ids.append(call_id)
+            if raw_calls:
+                batches.append({"batch_index": batch_index, "call_ids": batch_call_ids})
+            else:
+                final_text_seen |= bool(text)
+            descriptor = event.get("opaque_continuation")
+            if descriptor is not None:
+                continuation_received.append(_continuation_descriptor(descriptor, event_index))
+            continue
+        if event_type == "tool_results":
+            raw_results = event.get("results", [])
+            if not isinstance(raw_results, list):
+                protocol_errors.append(_error(event_index, "invalid_tool_results"))
+                continue
+            for item in raw_results:
+                if not isinstance(item, Mapping):
+                    protocol_errors.append(_error(event_index, "invalid_tool_result"))
+                    continue
+                call_id = item.get("call_id")
+                if not isinstance(call_id, str) or not call_id:
+                    protocol_errors.append(_error(event_index, "missing_result_call_id"))
+                    continue
+                result = {
+                    "call_id": call_id,
+                    "is_error": _strict_bool("tool result is_error", item.get("is_error", False)),
+                    "error_code": _error_code(item),
+                    "event_index": event_index,
+                }
+                results.append(result)
+                completed_ids.add(call_id)
+            continue
+        if event_type == "infrastructure_failure":
+            continue
+        protocol_errors.append(_error(event_index, "unknown_event_type", str(event_type)))
+
+    infrastructure_failure = observation.get("infrastructure_failure")
+    event_failures = [event for event in events if event.get("type") == "infrastructure_failure"]
+    if infrastructure_failure is None and event_failures:
+        infrastructure_failure = dict(event_failures[-1])
+        infrastructure_failure.pop("type", None)
+    if infrastructure_failure is not None and not isinstance(infrastructure_failure, Mapping):
+        raise ValueError("infrastructure_failure must be an object")
+
+    call_counts = _counts(item["call_id"] for item in calls)
+    result_counts = _counts(item["call_id"] for item in results)
+    matched = sum(min(count, result_counts.get(call_id, 0)) for call_id, count in call_counts.items())
+    match_denominator = max(len(calls), len(results))
+    for call_id, count in call_counts.items():
+        if count != 1:
+            protocol_errors.append(_error(None, "duplicate_call_id", call_id))
+        result_count = result_counts.get(call_id, 0)
+        if result_count != 1:
+            protocol_errors.append(_error(None, "call_result_cardinality", f"{call_id}:{result_count}"))
+    for call_id in result_counts.keys() - call_counts.keys():
+        protocol_errors.append(_error(None, "orphan_tool_result", call_id))
+
+    complete_batches = 0
+    batch_evidence: list[dict[str, Any]] = []
+    for batch in batches:
+        ids = batch["call_ids"]
+        complete = bool(ids) and all(call_counts[item] == 1 and result_counts.get(item) == 1 for item in ids)
+        complete_batches += int(complete)
+        batch_evidence.append({**batch, "complete": complete})
+
+    case_errors = _case_expectation_errors(
+        case,
+        calls=calls,
+        results=results,
+        batches=batch_evidence,
+        final_text_seen=final_text_seen,
+        continuation_received=continuation_received,
+        continuation_sent=continuation_sent,
+        trace_text=json.dumps(events, ensure_ascii=False, sort_keys=True),
+    )
+    sdk_retry_count = _non_negative_int("sdk_retry_count", observation.get("sdk_retry_count", 0))
+    pico_retry_count = _non_negative_int(
+        "pico_retry_count", observation.get("pico_retry_count", 0)
+    )
+    if duplicate_after_result:
+        protocol_errors.append(_error(None, "duplicate_call_after_result"))
+    if text_envelope_seen:
+        protocol_errors.append(_error(None, "text_protocol_envelope"))
+    if sdk_retry_count:
+        protocol_errors.append(_error(None, "implicit_sdk_retry"))
+    if eligible and infrastructure_failure is None and not http_attempts:
+        protocol_errors.append(_error(None, "missing_http_attempt_evidence"))
+    protocol = native_protocol_metadata(
+        eligible=eligible,
+        native_tool_call_observed=bool(calls),
+        call_id_result_match=ratio(matched, match_denominator),
+        batch_completeness=ratio(complete_batches, len(batches)),
+        duplicate_call_after_result=duplicate_after_result,
+        protocol_errors=protocol_errors,
+        http_attempts=len(http_attempts),
+        sdk_retry_count=sdk_retry_count,
+        pico_retry_count=pico_retry_count,
+        opaque_continuation=_roundtrip_summary(continuation_received, continuation_sent),
+    )
+    if not eligible:
+        status = "excluded"
+    elif infrastructure_failure is not None:
+        status = "infrastructure_failure"
+    elif protocol_errors or case_errors:
+        status = "failed"
+    else:
+        status = "passed"
+    return sanitize_public_artifact(
+        {
+            "row_id": case["id"],
+            "scenario": case["scenario"],
+            "status": status,
+            "eligible": eligible,
+            "native_protocol": protocol,
+            "call_evidence": calls,
+            "result_evidence": results,
+            "batch_evidence": batch_evidence,
+            "http_attempt_evidence": http_attempts,
+            "text_envelope_seen": text_envelope_seen,
+            "implicit_sdk_retry_seen": sdk_retry_count > 0,
+            "continuation_received": continuation_received,
+            "continuation_sent": continuation_sent,
+            "case_errors": case_errors,
+            "infrastructure_failure": dict(infrastructure_failure)
+            if infrastructure_failure is not None
+            else None,
+        }
+    )
+
+
+def aggregate_native_provider_rows(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    """Aggregate conformance rows while preserving every status denominator."""
+
+    statuses = ("passed", "failed", "infrastructure_failure", "excluded")
+    counts = {status: sum(row.get("status") == status for row in rows) for status in statuses}
+    eligible = [row for row in rows if row.get("eligible") is True]
+    call_num = sum(row["native_protocol"]["call_id_result_match"]["numerator"] for row in eligible)
+    call_den = sum(
+        row["native_protocol"]["call_id_result_match"]["denominator"] for row in eligible
+    )
+    batch_num = sum(row["native_protocol"]["batch_completeness"]["numerator"] for row in eligible)
+    batch_den = sum(
+        row["native_protocol"]["batch_completeness"]["denominator"] for row in eligible
+    )
+    return {
+        "total": len(rows),
+        **counts,
+        "eligible": len(eligible),
+        "conformance": ratio(counts["passed"], len(eligible)),
+        "call_id_result_match": ratio(call_num, call_den),
+        "batch_completeness": ratio(batch_num, batch_den),
+        "duplicate_call_after_result": sum(
+            row["native_protocol"]["duplicate_call_after_result"] for row in rows
+        ),
+        "protocol_error_count": sum(len(row["native_protocol"]["protocol_errors"]) for row in rows),
+        "http_attempts": sum(row["native_protocol"]["http_attempts"] for row in rows),
+        "text_envelope_seen_count": sum(bool(row["text_envelope_seen"]) for row in rows),
+        "implicit_sdk_retry_seen": any(bool(row["implicit_sdk_retry_seen"]) for row in rows),
+    }
+
+
+def write_native_provider_artifact(path: str | Path, artifact: Mapping[str, Any]) -> None:
+    destination = Path(path)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    destination.write_text(
+        json.dumps(sanitize_public_artifact(artifact), indent=2, sort_keys=True, ensure_ascii=False)
+        + "\n",
+        encoding="utf-8",
+    )
+
+
+def _validate_case_set(case_set: Mapping[str, Any]) -> None:
+    if case_set.get("schema_version") != CASESET_SCHEMA_VERSION:
+        raise ValueError("unsupported native provider case-set schema")
+    if not isinstance(case_set.get("id"), str) or not case_set["id"]:
+        raise ValueError("case set id must be a non-empty string")
+    cases = case_set.get("cases")
+    if not isinstance(cases, list) or len(cases) != 8:
+        raise ValueError("native provider conformance requires exactly eight cases")
+    for case in cases:
+        if not isinstance(case, Mapping):
+            raise ValueError("each native provider case must be an object")
+        _validate_case(case)
+    ids = [case["id"] for case in cases]
+    if len(ids) != len(set(ids)):
+        raise ValueError("native provider case ids must be unique")
+    scenarios = tuple(case["scenario"] for case in cases)
+    if scenarios != REQUIRED_SCENARIOS:
+        raise ValueError("native provider cases must contain the frozen ordered scenario set")
+    if case_set.get("frozen_hashes") != FROZEN_INPUT_HASHES:
+        raise ValueError("native provider case set has incompatible frozen input hashes")
+
+
+def _validate_case(case: Mapping[str, Any]) -> None:
+    if not isinstance(case.get("id"), str) or not case["id"]:
+        raise ValueError("case id must be a non-empty string")
+    if case.get("scenario") not in REQUIRED_SCENARIOS:
+        raise ValueError(f"unsupported native provider scenario: {case.get('scenario')}")
+    if not isinstance(case.get("prompt"), str):
+        raise ValueError("case prompt must be a string")
+    expectations = case.get("expectations")
+    if not isinstance(expectations, Mapping):
+        raise ValueError("case expectations must be an object")
+    if case.get("process_restart") is not None or expectations.get("process_restart") is not None:
+        raise ValueError("process restart belongs to Gate N2, not native provider conformance")
+
+
+def _select_cases(cases: list[Mapping[str, Any]], case_ids: Sequence[str] | None) -> list[dict[str, Any]]:
+    indexed = {case["id"]: dict(case) for case in cases}
+    if case_ids is None:
+        return list(indexed.values())
+    unknown = [case_id for case_id in case_ids if case_id not in indexed]
+    if unknown:
+        raise ValueError(f"unknown native provider cases: {', '.join(unknown)}")
+    if len(case_ids) != len(set(case_ids)):
+        raise ValueError("selected case ids must be unique")
+    return [indexed[case_id] for case_id in case_ids]
+
+
+def _case_expectation_errors(
+    case: Mapping[str, Any],
+    *,
+    calls: list[dict[str, Any]],
+    results: list[dict[str, Any]],
+    batches: list[dict[str, Any]],
+    final_text_seen: bool,
+    continuation_received: list[dict[str, Any]],
+    continuation_sent: list[dict[str, Any]],
+    trace_text: str,
+) -> list[dict[str, Any]]:
+    expected = case["expectations"]
+    errors: list[dict[str, Any]] = []
+    if expected.get("final_text") is True and not final_text_seen:
+        errors.append({"code": "missing_final_text"})
+    if len(calls) < expected.get("min_calls", 0):
+        errors.append({"code": "too_few_calls"})
+    if len(batches) < expected.get("min_batches", 0):
+        errors.append({"code": "too_few_batches"})
+    if batches and max(len(batch["call_ids"]) for batch in batches) < expected.get("min_batch_size", 0):
+        errors.append({"code": "batch_too_small"})
+    error_codes = {result["error_code"] for result in results if result["error_code"]}
+    required_error = expected.get("required_error_code")
+    if required_error is not None and required_error not in error_codes:
+        errors.append({"code": "missing_expected_error", "expected": required_error})
+    if expected.get("successful_result_after_error") is True:
+        error_positions = [index for index, result in enumerate(results) if result["is_error"]]
+        if not error_positions or not any(
+            not result["is_error"] for result in results[error_positions[0] + 1 :]
+        ):
+            errors.append({"code": "missing_successful_repair"})
+    if expected.get("opaque_roundtrip") is True:
+        received_hashes = {item["hash"] for item in continuation_received}
+        sent_hashes = {item["hash"] for item in continuation_sent}
+        if not received_hashes or not received_hashes <= sent_hashes:
+            errors.append({"code": "opaque_continuation_not_roundtripped"})
+    required_fragments = expected.get("required_trace_fragments", [])
+    if not isinstance(required_fragments, list) or not all(
+        isinstance(fragment, str) for fragment in required_fragments
+    ):
+        raise ValueError("required_trace_fragments must be a list of strings")
+    for fragment in required_fragments:
+        if fragment not in trace_text:
+            errors.append({"code": "missing_trace_fragment", "expected": fragment})
+    return errors
+
+
+def _aggregate_input(row: Mapping[str, Any]) -> dict[str, Any]:
+    return {
+        "row_id": row["row_id"],
+        "status": row["status"],
+        "eligible": row["eligible"],
+        "native_protocol": deepcopy(row["native_protocol"]),
+        "text_envelope_seen": row["text_envelope_seen"],
+        "implicit_sdk_retry_seen": row["implicit_sdk_retry_seen"],
+        "infrastructure_failure": deepcopy(row["infrastructure_failure"]),
+    }
+
+
+def _counts(values: Any) -> dict[str, int]:
+    counts: dict[str, int] = {}
+    for value in values:
+        counts[value] = counts.get(value, 0) + 1
+    return counts
+
+
+def _error(event_index: int | None, code: str, detail: str = "") -> dict[str, Any]:
+    payload: dict[str, Any] = {"code": code}
+    if event_index is not None:
+        payload["event_index"] = event_index
+    if detail:
+        payload["detail"] = detail
+    return payload
+
+
+def _error_code(item: Mapping[str, Any]) -> str:
+    value = item.get("error_code")
+    if value is None and isinstance(item.get("output"), Mapping):
+        error = item["output"].get("error")
+        if isinstance(error, Mapping):
+            value = error.get("code")
+    return value if isinstance(value, str) else ""
+
+
+def _continuation_descriptor(value: Any, event_index: int) -> dict[str, Any]:
+    if not isinstance(value, Mapping):
+        raise ValueError("opaque continuation descriptor must be an object")
+    return {
+        "hash": value.get("hash", ""),
+        "type": value.get("type", ""),
+        "count": _non_negative_int("opaque continuation count", value.get("count", 0)),
+        "event_index": event_index,
+    }
+
+
+def _roundtrip_summary(received: list[dict[str, Any]], sent: list[dict[str, Any]]) -> dict[str, Any]:
+    hashes = {item["hash"] for item in received} & {item["hash"] for item in sent}
+    types = {item["type"] for item in received if item["hash"] in hashes}
+    return {
+        "hash": sorted(hashes)[0] if len(hashes) == 1 else "",
+        "type": sorted(types)[0] if len(types) == 1 else "multiple" if types else "",
+        "count": len(hashes),
+    }
+
+
+def _strict_bool(name: str, value: Any) -> bool:
+    if type(value) is not bool:
+        raise ValueError(f"{name} must be a boolean")
+    return value
+
+
+def _non_negative_int(name: str, value: Any) -> int:
+    if type(value) is not int or value < 0:
+        raise ValueError(f"{name} must be a non-negative integer")
+    return value
+
+
+__all__ = [
+    "ARTIFACT_SCHEMA_VERSION",
+    "CASESET_SCHEMA_VERSION",
+    "FROZEN_INPUT_HASHES",
+    "REQUIRED_SCENARIOS",
+    "aggregate_native_provider_rows",
+    "evaluate_native_provider_case",
+    "load_case_set",
+    "run_native_provider_conformance",
+    "write_native_provider_artifact",
+]
