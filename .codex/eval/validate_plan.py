@@ -87,6 +87,20 @@ for resume in ("EVAL-061-P", "EVAL-061-R"):
     if resume in tickets and not depends_transitively(resume, "TOOL-062-G"):
         errors.append(f"resume ticket lacks Gate N2 dependency: {resume}")
 
+for recovered_gate_consumer in (
+    "TOOL-050-QO-R",
+    "TOOL-050-QA-R",
+    "TOOL-050-DA-R",
+    "TOOL-060-R",
+):
+    if recovered_gate_consumer in tickets and not depends_transitively(
+        recovered_gate_consumer, "TOOL-042-G-R1"
+    ):
+        errors.append(
+            f"post-W5 consumer lacks recovered deterministic Gate dependency: "
+            f"{recovered_gate_consumer}"
+        )
+
 if errors:
     print("INVALID")
     for error in errors:

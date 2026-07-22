@@ -176,6 +176,34 @@
       "gate": "deterministic native loop complete; Runtime has no text fallback; Context structured gate frozen"
     },
     {
+      "id": "W5R",
+      "name": "Blocked W5 remediation and deterministic gate recovery",
+      "serial": false,
+      "tickets": [
+        "TOOL-043-R",
+        "TOOL-044-F",
+        "ARCH-045-B",
+        "CHORE-045-L",
+        "EVAL-032-F",
+        "TOOL-042-G-R1"
+      ],
+      "dynamic_dependencies": [
+        "TOOL-043-R, TOOL-044-F, ARCH-045-B and CHORE-045-L start from the same W5R base with disjoint ownership",
+        "TOOL-044-F must prove the blocked retry regression remains observable before TOOL-043-R is applied",
+        "EVAL-032-F waits for all source, fixture, budget and lint remediation",
+        "TOOL-042-G-R1 waits for EVAL-032-F and every remediation ticket"
+      ],
+      "integration_order": [
+        "TOOL-044-F",
+        "ARCH-045-B",
+        "CHORE-045-L",
+        "TOOL-043-R",
+        "EVAL-032-F",
+        "TOOL-042-G-R1"
+      ],
+      "gate": "protected tests exercise native fixtures without global monkey patches; retry-after-read and repository gates pass; Context Git-blob binding is reproducible; WSL deterministic run snapshot frozen"
+    },
+    {
       "id": "W6",
       "name": "Live native conformance and provider selection",
       "serial": false,
@@ -1486,12 +1514,149 @@
         "frozen evaluator/fixtures"
       ]
     },
+    "TOOL-043-R": {
+      "title": "Structured Retry-after-read Policy Remediation",
+      "thread_type": "implementer",
+      "wave": "W5R",
+      "depends_on": [
+        "TOOL-040-I",
+        "TOOL-041-M"
+      ],
+      "ticket_file": "tickets/TOOL-043-R.md",
+      "allowed_write_paths": [
+        "pico/core/tool_repetition.py",
+        "pico/core/session_lifecycle.py",
+        "tests/test_native_tool_repetition.py",
+        ".codex/eval/handoffs/TOOL-043-R.json"
+      ],
+      "forbidden_write_paths": [
+        "protected tests",
+        "权限、validation、approval 或 ToolPolicy 执行顺序",
+        "provider adapters",
+        "文本结果解析 fallback"
+      ]
+    },
+    "TOOL-044-F": {
+      "title": "Protected Native Fixture Migration Without Global Patches",
+      "thread_type": "implementer",
+      "wave": "W5R",
+      "depends_on": [
+        "TOOL-041-M"
+      ],
+      "ticket_file": "tickets/TOOL-044-F.md",
+      "allowed_write_paths": [
+        "tests/conftest.py",
+        "tests/native_fixtures.py",
+        "tests/test_tool_policy_acceptance.py",
+        "tests/test_safety_invariants.py",
+        "tests/test_permissions_acceptance.py",
+        "tests/test_fixture_migration_integrity.py",
+        "<ARTIFACT_ROOT>/w5r-fixture-migration/**",
+        ".codex/eval/handoffs/TOOL-044-F.json"
+      ],
+      "forbidden_write_paths": [
+        "production source",
+        "protected test names, assertions or safety semantics",
+        "skip/xfail/conditional bypass",
+        "autouse monkey patches or hidden legacy protocol adapters"
+      ]
+    },
+    "ARCH-045-B": {
+      "title": "Worker Manager Architecture Budget Decision",
+      "thread_type": "implementer",
+      "wave": "W5R",
+      "depends_on": [
+        "TOOL-041-M"
+      ],
+      "ticket_file": "tickets/ARCH-045-B.md",
+      "allowed_write_paths": [
+        "tests/test_architecture_boundaries.py",
+        "docs/architecture/core-module-budgets.md",
+        ".codex/eval/handoffs/ARCH-045-B.json"
+      ],
+      "forbidden_write_paths": [
+        "pico/core/worker_manager.py",
+        "其他模块的架构预算",
+        "其他架构断言"
+      ]
+    },
+    "CHORE-045-L": {
+      "title": "Readable Session Repository Ruff Baseline Repair",
+      "thread_type": "implementer",
+      "wave": "W5R",
+      "depends_on": [
+        "TOOL-041-M"
+      ],
+      "ticket_file": "tickets/CHORE-045-L.md",
+      "allowed_write_paths": [
+        "scripts/readable_session.py",
+        ".codex/eval/handoffs/CHORE-045-L.json"
+      ],
+      "forbidden_write_paths": [
+        "脚本行为或输出格式变化",
+        "Ruff 配置",
+        "noqa 或规则禁用"
+      ]
+    },
+    "EVAL-032-F": {
+      "title": "Versioned Structured Context Freeze Binding Repair",
+      "thread_type": "integrator",
+      "wave": "W5R",
+      "depends_on": [
+        "TOOL-043-R",
+        "TOOL-044-F",
+        "ARCH-045-B",
+        "CHORE-045-L",
+        "EVAL-031-G"
+      ],
+      "ticket_file": "tickets/EVAL-032-F.md",
+      "allowed_write_paths": [
+        "benchmarks/v3/context-assets/cases-v2.binding.json",
+        "scripts/verify_context_freeze.py",
+        "tests/test_context_freeze_integrity.py",
+        "<ARTIFACT_ROOT>/phase-2-context-assets-w5r/**",
+        ".codex/eval/proposals/EVAL-032-F.freeze.json",
+        ".codex/eval/handoffs/EVAL-032-F.json"
+      ],
+      "forbidden_write_paths": [
+        "benchmarks/v3/context-assets/cases.json",
+        "frozen fragments",
+        "产品 Runtime",
+        "覆盖或静默删除旧 d69dfc 声明"
+      ]
+    },
+    "TOOL-042-G-R1": {
+      "title": "Deterministic Native Eval-ready Gate Recovery R1",
+      "thread_type": "integrator",
+      "wave": "W5R",
+      "depends_on": [
+        "TOOL-043-R",
+        "TOOL-044-F",
+        "ARCH-045-B",
+        "CHORE-045-L",
+        "EVAL-032-F",
+        "TOOL-049-I"
+      ],
+      "ticket_file": "tickets/TOOL-042-G-R1.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-deterministic-gate-w5r/**",
+        ".codex/eval/proposals/TOOL-042-G-R1.freeze.json",
+        ".codex/eval/proposals/TOOL-042-G-R1.status.json",
+        ".codex/eval/handoffs/TOOL-042-G-R1.json"
+      ],
+      "forbidden_write_paths": [
+        "产品源码、tests、fixtures",
+        "skip/xfail/失败重分类",
+        "sudo 或系统级包安装",
+        "正式在线 provider evaluation"
+      ]
+    },
     "TOOL-050-QO-R": {
       "title": "Native Conformance：Qwen / OpenAI Responses",
       "thread_type": "run_shard",
       "wave": "W6",
       "depends_on": [
-        "TOOL-042-G",
+        "TOOL-042-G-R1",
         "TOOL-049-I",
         "TOOL-020-O"
       ],
@@ -1509,7 +1674,7 @@
       "thread_type": "run_shard",
       "wave": "W6",
       "depends_on": [
-        "TOOL-042-G",
+        "TOOL-042-G-R1",
         "TOOL-049-I",
         "TOOL-020-A"
       ],
@@ -1527,7 +1692,7 @@
       "thread_type": "run_shard",
       "wave": "W6",
       "depends_on": [
-        "TOOL-042-G",
+        "TOOL-042-G-R1",
         "TOOL-049-I",
         "TOOL-020-A"
       ],
@@ -1569,7 +1734,7 @@
       "thread_type": "implementer",
       "wave": "W7",
       "depends_on": [
-        "TOOL-042-G",
+        "TOOL-042-G-R1",
         "TOOL-031-S"
       ],
       "ticket_file": "tickets/TOOL-060-R.md",
