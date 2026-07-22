@@ -94,7 +94,7 @@ for recovered_gate_consumer in (
     "TOOL-060-R",
 ):
     if recovered_gate_consumer in tickets and not depends_transitively(
-        recovered_gate_consumer, "TOOL-042-G-R1"
+        recovered_gate_consumer, "TOOL-042-G-R2"
     ):
         errors.append(
             f"post-W5 consumer lacks recovered deterministic Gate dependency: "

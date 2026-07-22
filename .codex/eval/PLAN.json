@@ -204,6 +204,31 @@
       "gate": "protected tests exercise native fixtures without global monkey patches; retry-after-read and repository gates pass; Context Git-blob binding is reproducible; WSL deterministic run snapshot frozen"
     },
     {
+      "id": "W5R2",
+      "name": "Architecture tripwire recalibration and explicit provider-profile recovery",
+      "serial": false,
+      "tickets": [
+        "ARCH-046-T",
+        "TEST-046-P",
+        "TOOL-046-W",
+        "TEST-046-T",
+        "TOOL-042-G-R2"
+      ],
+      "dynamic_dependencies": [
+        "ARCH-046-T and TEST-046-P start from the same W5R2 base with disjoint ownership",
+        "TOOL-046-W and TEST-046-T wait for TEST-046-P explicit profile fixtures",
+        "TOOL-042-G-R2 waits for every W5R2 remediation ticket"
+      ],
+      "integration_order": [
+        "ARCH-046-T",
+        "TEST-046-P",
+        "TOOL-046-W",
+        "TEST-046-T",
+        "TOOL-042-G-R2"
+      ],
+      "gate": "all architecture growth-tripwire violations are reported together; explicit provider profiles cover ordinary, worker and TUI tests; fresh WSL deterministic and full repository suites exit zero"
+    },
+    {
       "id": "W6",
       "name": "Live native conformance and provider selection",
       "serial": false,
@@ -1651,12 +1676,135 @@
         "正式在线 provider evaluation"
       ]
     },
+    "ARCH-046-T": {
+      "title": "Core Module Growth Tripwire Recalibration",
+      "thread_type": "implementer",
+      "wave": "W5R2",
+      "depends_on": [
+        "ARCH-045-B",
+        "TOOL-042-G-R1"
+      ],
+      "ticket_file": "tickets/ARCH-046-T.md",
+      "allowed_write_paths": [
+        "tests/test_architecture_boundaries.py",
+        "docs/architecture/core-module-budgets.md",
+        "<ARTIFACT_ROOT>/w5r2-architecture-tripwire/**",
+        ".codex/eval/handoffs/ARCH-046-T.json"
+      ],
+      "forbidden_write_paths": [
+        "产品源码",
+        "其他测试",
+        "通过删除 tracked modules 绕过审计"
+      ]
+    },
+    "TEST-046-P": {
+      "title": "Explicit Scripted Provider Profile Migration",
+      "thread_type": "implementer",
+      "wave": "W5R2",
+      "depends_on": [
+        "TOOL-044-F",
+        "TOOL-042-G-R1"
+      ],
+      "ticket_file": "tickets/TEST-046-P.md",
+      "allowed_write_paths": [
+        "tests/native_fixtures.py",
+        "tests/test_pico.py",
+        "tests/test_engine_acceptance.py",
+        "tests/test_context_governance_acceptance.py",
+        "tests/test_release_smoke.py",
+        "tests/test_v3_runtime.py",
+        "tests/test_skills_acceptance.py",
+        "tests/test_runtime_evidence_acceptance.py",
+        "tests/test_usage.py",
+        "tests/test_todo_ledger_acceptance.py",
+        "tests/test_provider_profile_fixture_integrity.py",
+        "<ARTIFACT_ROOT>/w5r2-provider-profile-migration/**",
+        ".codex/eval/handoffs/TEST-046-P.json"
+      ],
+      "forbidden_write_paths": [
+        "production source",
+        "tests/conftest.py",
+        "既有测试名称、断言或安全语义",
+        "autouse/global monkey patch",
+        "Runtime provider_profile fallback"
+      ]
+    },
+    "TOOL-046-W": {
+      "title": "Worker Child Provider Profile Contract",
+      "thread_type": "implementer",
+      "wave": "W5R2",
+      "depends_on": [
+        "TEST-046-P",
+        "TOOL-049-I"
+      ],
+      "ticket_file": "tickets/TOOL-046-W.md",
+      "allowed_write_paths": [
+        "pico/core/worker_runtime.py",
+        "tests/test_agent_workers_acceptance.py",
+        "tests/test_native_worker_profile.py",
+        "<ARTIFACT_ROOT>/w5r2-worker-profile/**",
+        ".codex/eval/handoffs/TOOL-046-W.json"
+      ],
+      "forbidden_write_paths": [
+        "provider adapters",
+        "session_lifecycle provider_profile requirement",
+        "worker event assertions、timeouts 或 safety semantics 的弱化",
+        "SDK objects persisted into Core/Session"
+      ]
+    },
+    "TEST-046-T": {
+      "title": "Explicit TUI Native Profile Fixture Recovery",
+      "thread_type": "implementer",
+      "wave": "W5R2",
+      "depends_on": [
+        "TEST-046-P"
+      ],
+      "ticket_file": "tickets/TEST-046-T.md",
+      "allowed_write_paths": [
+        "tests/test_tui.py",
+        "<ARTIFACT_ROOT>/w5r2-tui-profile/**",
+        ".codex/eval/handoffs/TEST-046-T.json"
+      ],
+      "forbidden_write_paths": [
+        "production TUI source",
+        "timeout 放大",
+        "既有测试名称、断言或交互语义",
+        "autouse/global monkey patch"
+      ]
+    },
+    "TOOL-042-G-R2": {
+      "title": "Deterministic Native Eval-ready Gate Recovery R2",
+      "thread_type": "integrator",
+      "wave": "W5R2",
+      "depends_on": [
+        "TOOL-042-G-R1",
+        "ARCH-046-T",
+        "TEST-046-P",
+        "TOOL-046-W",
+        "TEST-046-T",
+        "EVAL-032-F",
+        "TOOL-049-I"
+      ],
+      "ticket_file": "tickets/TOOL-042-G-R2.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-deterministic-gate-w5r2/**",
+        ".codex/eval/proposals/TOOL-042-G-R2.freeze.json",
+        ".codex/eval/proposals/TOOL-042-G-R2.status.json",
+        ".codex/eval/handoffs/TOOL-042-G-R2.json"
+      ],
+      "forbidden_write_paths": [
+        "产品源码、tests、fixtures、bindings",
+        "skip/xfail/失败重分类",
+        "sudo 或系统级包安装",
+        "live provider 或正式效果评测"
+      ]
+    },
     "TOOL-050-QO-R": {
       "title": "Native Conformance：Qwen / OpenAI Responses",
       "thread_type": "run_shard",
       "wave": "W6",
       "depends_on": [
-        "TOOL-042-G-R1",
+        "TOOL-042-G-R2",
         "TOOL-049-I",
         "TOOL-020-O"
       ],
@@ -1674,7 +1822,7 @@
       "thread_type": "run_shard",
       "wave": "W6",
       "depends_on": [
-        "TOOL-042-G-R1",
+        "TOOL-042-G-R2",
         "TOOL-049-I",
         "TOOL-020-A"
       ],
@@ -1692,7 +1840,7 @@
       "thread_type": "run_shard",
       "wave": "W6",
       "depends_on": [
-        "TOOL-042-G-R1",
+        "TOOL-042-G-R2",
         "TOOL-049-I",
         "TOOL-020-A"
       ],
@@ -1734,7 +1882,7 @@
       "thread_type": "implementer",
       "wave": "W7",
       "depends_on": [
-        "TOOL-042-G-R1",
+        "TOOL-042-G-R2",
         "TOOL-031-S"
       ],
       "ticket_file": "tickets/TOOL-060-R.md",
