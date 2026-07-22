@@ -18,7 +18,7 @@ from typing import Any, Callable, Sequence
 
 from ..features import memory as memorylib, skills as skillslib
 from ..features.sandbox import SandboxConfig, SandboxRunner
-from ..providers.base import ModelClient
+from ..providers.base import ModelClient, NativeModelClient
 from ..tools.base import RegisteredTool
 from .compact import CompactManager
 from .context_manager import ContextManager
@@ -87,7 +87,7 @@ class PromptPrefix:
 class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
     def __init__(
         self,
-        model_client: ModelClient,
+        model_client: NativeModelClient | ModelClient,
         workspace: WorkspaceContext,
         session_store: SessionStore,
         session: dict[str, Any] | None = None,
@@ -106,7 +106,7 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         auto_dream: bool = True,
         dream_interval_hours: float = 24.0,
         dream_min_sessions: int = 5,
-        model_client_factory: Callable[[], ModelClient] | None = None,
+        model_client_factory: Callable[[], NativeModelClient | ModelClient] | None = None,
         sandbox_config: SandboxConfig | None = None,
         ask_user_callback: Callable | None = None,
         allowed_tools: Sequence[str] | None = None,
@@ -228,7 +228,7 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
     @classmethod
     def from_session(
         cls,
-        model_client: ModelClient,
+        model_client: NativeModelClient | ModelClient,
         workspace: WorkspaceContext,
         session_store: SessionStore,
         session_id: str,

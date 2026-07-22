@@ -1,9 +1,4 @@
-"""Provider client boundaries.
-
-The active Runtime still uses the legacy prompt-to-text ``ModelClient``. New
-native adapters implement ``NativeModelClient`` beside it until Runtime wiring
-is switched by its owning ticket.
-"""
+"""Provider client boundaries for native requests and legacy migration tests."""
 
 from __future__ import annotations
 
@@ -15,7 +10,7 @@ if TYPE_CHECKING:
 
 
 class ModelClient(Protocol):
-    """Temporary legacy prompt-to-text client used by the active Runtime."""
+    """Deprecated prompt-to-text client retained for migration-only callers."""
 
     def complete(
         self,
@@ -28,7 +23,7 @@ class ModelClient(Protocol):
 
 
 class NativeModelClient(Protocol):
-    """Provider-neutral native request/response client for future wiring."""
+    """Provider-neutral native request/response client used by Runtime."""
 
     def request(self, request: ModelRequest) -> ModelResponse:
         ...
@@ -41,6 +36,7 @@ class ModelResult:
 
 
 def complete_model(model_client: ModelClient, prompt: str, max_new_tokens: int, **kwargs: Any) -> ModelResult:
+    """Invoke the migration-only prompt-to-text contract."""
     ## 历史兼容分支，函数定义在 pico.testing.ScriptedModelClient
     ## 现版本 runtime 使用统一的 complete() + last_completion_data
     # if hasattr(model_client, "complete_result"):

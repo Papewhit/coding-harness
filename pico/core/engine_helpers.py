@@ -6,13 +6,174 @@ import time
 from typing import TYPE_CHECKING, Any, Generator
 
 from ..providers.base import complete_model
+from ..providers.contracts import ModelRequest
 from ..providers.errors import ProviderError
+from .session_lifecycle import NativeSessionRecorder
+from .task_state import TaskState
 from .workspace import clip, now
 
 if TYPE_CHECKING:
     from .engine import Engine
     from .runtime import Pico
-    from .task_state import TaskState
+
+
+def run_native_turn(
+    engine: Engine, user_message: str
+) -> Generator[dict[str, Any], None, None]:
+    """Run the active structured Runtime path with no text-envelope parser."""
+
+    agent = engine.runtime
+    run_started_at = time.monotonic()
+    task_state = TaskState.create(
+        run_id=agent.new_run_id(),
+        task_id=agent.new_task_id(),
+        user_request=user_message,
+    )
+    task_state.resume_status = agent.resume_state.get("status", "no-checkpoint")
+    agent.current_task_state = task_state
+    agent.current_turn_id = task_state.task_id
+    agent.current_run_id = task_state.run_id
+    agent.current_run_dir = agent.run_store.start_run(task_state)
+    agent.session_event_bus.emit(
+        "turn_started",
+        {
+            "run_id": task_state.run_id,
+            "task_id": task_state.task_id,
+            "runtime_mode": agent.runtime_mode,
+        },
+    )
+    yield {"type": "turn_started", "run_id": task_state.run_id, "task_id": task_state.task_id}
+    agent.memory.set_task_summary(user_message)
+    agent.record({"role": "user", "content": user_message, "created_at": now()})
+    agent.session_event_bus.emit(
+        "user_message", {"run_id": task_state.run_id, "content": clip(user_message, 300)}
+    )
+    recorder = NativeSessionRecorder(agent, task_state)
+    continuation = recorder.latest_continuation()
+    context = agent.request_context(user_message, continuation=continuation)
+    prompt_metadata = dict(context.metadata)
+    prompt_metadata["provider_profile"] = dict(recorder.profile)
+    agent.last_prompt_metadata = prompt_metadata
+    request = ModelRequest(
+        prompt=context.legacy_prompt(),
+        max_output_tokens=agent.max_new_tokens,
+        tools=context.tools,
+        continuation=context.continuation,
+    )
+    task_state.record_attempt()
+    agent.run_store.write_task_state(task_state)
+    agent.emit_trace(
+        task_state,
+        "model_requested",
+        {
+            "attempts": task_state.attempts,
+            "tool_steps": task_state.tool_steps,
+            "native_tools": len(request.tools),
+            "sdk_max_retries": recorder.profile.get("sdk_max_retries"),
+        },
+    )
+    yield {
+        "type": "model_requested",
+        "run_id": task_state.run_id,
+        "attempts": task_state.attempts,
+        "tool_steps": task_state.tool_steps,
+    }
+    model_started_at = time.monotonic()
+    try:
+        result = engine.run_native_tool_loop(request, persist_hook=recorder.persist)
+    except Exception as exc:
+        from .model_errors import finish_model_error
+
+        yield from finish_model_error(
+            engine,
+            task_state,
+            user_message,
+            prompt_metadata,
+            exc,
+            int((time.monotonic() - model_started_at) * 1000),
+            int((time.monotonic() - run_started_at) * 1000),
+        )
+        return
+    task_state.attempts = len(result.responses)
+    recorder.finish(result.responses[-1])
+    yield from recorder.events
+    final = result.final_text
+    completion_metadata = dict(result.responses[-1].metadata)
+    completion_metadata.update(
+        {
+            "provider_attempts": len(result.responses),
+            "provider_retry_count": sum(
+                int(response.metadata.get("sdk_retry_count", 0))
+                for response in result.responses
+            ),
+            "sdk_max_retries": recorder.profile.get("sdk_max_retries", 0),
+        }
+    )
+    agent.last_completion_metadata = completion_metadata
+    yield from finish_successful_run(
+        engine, task_state, user_message, final, run_started_at
+    )
+
+
+def finish_successful_run(
+    engine: Engine,
+    task_state: TaskState,
+    user_message: str,
+    final: str,
+    run_started_at: float,
+) -> Generator[dict[str, Any], None, None]:
+    """Finalize the shared native and migration control-loop success path."""
+
+    agent = engine.runtime
+    agent.record({"role": "assistant", "content": final, "created_at": now()})
+    if agent.runtime_mode == "plan":
+        agent.exit_plan_mode()
+    agent.session_event_bus.emit(
+        "assistant_message",
+        {"run_id": task_state.run_id, "kind": "final", "content": clip(final, 500)},
+    )
+    task_state.finish_success(final)
+    agent.promote_durable_memory(user_message, final)
+    maintain_memory_safely(agent, task_state, final)
+    checkpoint = agent.create_checkpoint(task_state, user_message, trigger="run_finished")
+    agent.run_store.write_task_state(task_state)
+    agent.emit_trace(
+        task_state,
+        "checkpoint_created",
+        {"checkpoint_id": checkpoint["checkpoint_id"], "trigger": "run_finished"},
+    )
+    agent.emit_trace(
+        task_state,
+        "run_finished",
+        {
+            "status": task_state.status,
+            "stop_reason": task_state.stop_reason,
+            "final_answer": final,
+            "run_duration_ms": int((time.monotonic() - run_started_at) * 1000),
+        },
+    )
+    agent.session_event_bus.emit(
+        "turn_finished",
+        {
+            "run_id": task_state.run_id,
+            "status": task_state.status,
+            "stop_reason": task_state.stop_reason,
+            "duration_ms": int((time.monotonic() - run_started_at) * 1000),
+        },
+    )
+    agent.run_store.write_report(
+        task_state, agent.redact_artifact(agent.build_report(task_state))
+    )
+    yield from engine._drain_worker_notification_events()
+    agent.current_turn_id = ""
+    agent.current_run_id = ""
+    yield {"type": "final", "run_id": task_state.run_id, "content": final}
+    yield {
+        "type": "turn_finished",
+        "run_id": task_state.run_id,
+        "status": task_state.status,
+        "stop_reason": task_state.stop_reason,
+    }
 
 
 def execute_tool_payload(

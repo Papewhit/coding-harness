@@ -12,9 +12,9 @@ from ..providers.base import complete_model
 from .model_errors import finish_model_error
 from .engine_helpers import (
     execute_tool_payload,
+    finish_successful_run,
     finish_limited_run,
     finish_stopped_run,
-    maintain_memory_safely,
     request_step_limit_summary,
     should_retry_model_error,
 )
@@ -71,6 +71,11 @@ class Engine:
 
     def run_turn(self, user_message: str) -> Iterator[dict[str, Any]]:
         agent = self.runtime
+        if callable(getattr(agent.model_client, "request", None)):
+            from .engine_helpers import run_native_turn
+
+            yield from run_native_turn(self, user_message)
+            return
         run_started_at = time.monotonic()
         task_state = TaskState.create(
             run_id=agent.new_run_id(),
@@ -383,64 +388,9 @@ class Engine:
                 }
                 continue
 
-            agent.record({"role": "assistant", "content": final, "created_at": now()})
-            if agent.runtime_mode == "plan":
-                agent.exit_plan_mode()
-            agent.session_event_bus.emit(
-                "assistant_message",
-                {
-                    "run_id": task_state.run_id,
-                    "kind": "final",
-                    "content": clip(final, 500),
-                },
+            yield from finish_successful_run(
+                self, task_state, user_message, final, run_started_at
             )
-            task_state.finish_success(final)
-            agent.promote_durable_memory(user_message, final)
-            maintain_memory_safely(agent, task_state, final)
-            checkpoint = agent.create_checkpoint(
-                task_state, user_message, trigger="run_finished"
-            )
-            agent.run_store.write_task_state(task_state)
-            agent.emit_trace(
-                task_state,
-                "checkpoint_created",
-                {
-                    "checkpoint_id": checkpoint["checkpoint_id"],
-                    "trigger": "run_finished",
-                },
-            )
-            agent.emit_trace(
-                task_state,
-                "run_finished",
-                {
-                    "status": task_state.status,
-                    "stop_reason": task_state.stop_reason,
-                    "final_answer": final,
-                    "run_duration_ms": int((time.monotonic() - run_started_at) * 1000),
-                },
-            )
-            agent.session_event_bus.emit(
-                "turn_finished",
-                {
-                    "run_id": task_state.run_id,
-                    "status": task_state.status,
-                    "stop_reason": task_state.stop_reason,
-                    "duration_ms": int((time.monotonic() - run_started_at) * 1000),
-                },
-            )
-            agent.run_store.write_report(
-                task_state, agent.redact_artifact(agent.build_report(task_state))
-            )
-            yield from self._drain_worker_notification_events()
-            agent.current_turn_id = ""
-            agent.current_run_id = ""
-            yield {"type": "final", "run_id": task_state.run_id, "content": final}
-            yield {
-                "type": "turn_finished",
-                "run_id": task_state.run_id,
-                "status": task_state.status,
-                "stop_reason": task_state.stop_reason,
-            }
             return
 
         if attempts >= max_attempts and tool_steps < agent.max_steps:

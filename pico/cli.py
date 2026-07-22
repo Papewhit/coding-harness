@@ -28,7 +28,14 @@ from .config import (
 )
 from .features import skills as skillslib
 from .features.skills_runtime import invoke_skill
-from .providers import ModelClient, AnthropicCompatibleModelClient, OpenAICompatibleModelClient
+from .providers import (
+    ModelClient,
+    NativeModelClient,
+    AnthropicCompatibleModelClient,
+    OpenAICompatibleModelClient,
+    build_native_model_client,
+    native_provider_profile,
+)
 from .core.runtime import Pico, SessionStore
 from .core.workspace import WorkspaceContext, middle
 
@@ -72,6 +79,8 @@ HELP_DETAILS = (
 DEFAULT_OPENAI_MODEL = PROVIDER_DEFAULTS["openai"]["model"]
 DEFAULT_OPENAI_BASE_URL = PROVIDER_DEFAULTS["openai"]["base_url"]
 SECRET_ENV_NAMES_VAR = "PICO_SECRET_ENV_NAMES"
+_LEGACY_OPENAI_CLIENT = OpenAICompatibleModelClient
+_LEGACY_ANTHROPIC_CLIENT = AnthropicCompatibleModelClient
 
 
 def _configured_secret_names(args: argparse.Namespace) -> list[str]:
@@ -87,28 +96,42 @@ def _configured_secret_names(args: argparse.Namespace) -> list[str]:
 
 def _build_model_client(
     args: argparse.Namespace, config: ProviderConfig | None = None
-) -> ModelClient:
+) -> NativeModelClient | ModelClient:
     config = config or _resolve_cli_provider_config(args)
-    # CLI 只负责把 provider profile 翻译成具体协议 client。
-    # 例如 deepseek 是 profile，protocol=anthropic 才决定走 Messages API。
-    if config.protocol == "openai":
-        return OpenAICompatibleModelClient(
+    if not config.capabilities.native_tools:
+        raise ValueError(
+            f"provider profile {config.name!r} cannot start a coding session: "
+            "capabilities.native_tools must be true"
+        )
+    # Preserve explicit embedding/test injection while the legacy classes await
+    # removal; unmodified CLI startup always constructs the native adapter path.
+    legacy_override = (
+        OpenAICompatibleModelClient
+        if config.protocol == "openai"
+        else AnthropicCompatibleModelClient
+    )
+    original = (
+        _LEGACY_OPENAI_CLIENT
+        if config.protocol == "openai"
+        else _LEGACY_ANTHROPIC_CLIENT
+    )
+    if legacy_override is not original:
+        return legacy_override(
             model=config.model,
             base_url=config.base_url,
             api_key=config.api_key,
             temperature=args.temperature,
             timeout=getattr(args, "openai_timeout", 300),
         )
-    if config.protocol == "anthropic":
-        return AnthropicCompatibleModelClient(
-            model=config.model,
-            base_url=config.base_url,
-            api_key=config.api_key,
-            temperature=args.temperature,
-            timeout=getattr(args, "openai_timeout", 300),
-        )
-
-    raise ValueError(f"unknown provider protocol: {config.protocol}")
+    return build_native_model_client(
+        wire_dialect=config.wire_dialect,
+        model=config.model,
+        base_url=config.base_url,
+        api_key=config.api_key,
+        profile_id=config.public_identity()["profile_id"],
+        timeout=getattr(args, "openai_timeout", 300),
+        max_retries=0,
+    )
 
 
 def _resolve_cli_provider_config(args: argparse.Namespace) -> ProviderConfig:
@@ -125,13 +148,16 @@ def _resolve_cli_provider_config(args: argparse.Namespace) -> ProviderConfig:
 def inspect_provider_config(config: ProviderConfig) -> dict[str, Any]:
     """Render a credential-free startup profile for humans and automation."""
 
-    return config.public_identity()
+    return {**config.public_identity(), **native_provider_profile(config.wire_dialect)}
 
 
 def _lock_provider_session(
     agent: Pico, config: ProviderConfig, *, resumed: bool
 ) -> None:
-    identity = config.public_identity(tool_schema=agent.tool_signature())
+    identity = {
+        **config.public_identity(tool_schema=agent.tool_signature()),
+        **native_provider_profile(config.wire_dialect),
+    }
     existing = agent.session.get("provider_profile")
     if existing is None and resumed:
         raise ValueError(

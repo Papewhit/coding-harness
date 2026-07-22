@@ -1,8 +1,7 @@
 """模型后端适配层。
 
-runtime 只关心一件事：给我一个 prompt，我拿回一段文本。
-不同 provider 在 HTTP 接口、响应结构、是否支持 prompt cache 上都有差异，
-这些差异都在这里被抹平成统一的 complete() 接口。
+生产 Runtime 使用 provider-native adapter；本文件尾部的 compatible clients
+只为迁移测试保留，正式 provider profile 不会选择它们。
 """
 
 from __future__ import annotations
@@ -15,10 +14,108 @@ from http.client import RemoteDisconnected
 import urllib.error
 import urllib.request
 
+from .contracts import ModelRequest, ModelResponse
 from .errors import ProviderError, sanitize_url
 
 OPENAI_COMPATIBLE_USER_AGENT = "pico/0.1"
 RETRYABLE_HTTP_STATUS = {408, 409, 425, 429, 500, 502, 503, 504}
+
+NATIVE_PROVIDER_PROFILES = {
+    "openai-responses": {
+        "adapter_mode": "official-sdk-transport",
+        "sdk_package": "openai",
+        "sdk_version": "2.46.0",
+        "sdk_max_retries": 0,
+        "provider_attempts": 1,
+    },
+    "anthropic-messages": {
+        "adapter_mode": "official-sdk-raw-response",
+        "sdk_package": "anthropic",
+        "sdk_version": "0.117.0",
+        "sdk_max_retries": 0,
+        "provider_attempts": 1,
+    },
+}
+
+
+def native_provider_profile(wire_dialect: str) -> dict[str, Any]:
+    """Return visible, credential-free transport settings for one dialect."""
+
+    try:
+        return dict(NATIVE_PROVIDER_PROFILES[wire_dialect])
+    except KeyError as exc:
+        raise ValueError(f"unsupported native provider dialect: {wire_dialect}") from exc
+
+
+class NativeProviderModelClient:
+    """Own one official-SDK transport and its provider-neutral native adapter."""
+
+    def __init__(
+        self,
+        *,
+        wire_dialect: str,
+        model: str,
+        base_url: str,
+        api_key: str,
+        profile_id: str,
+        timeout: float = 300.0,
+        max_retries: int = 0,
+    ) -> None:
+        if max_retries != 0:
+            raise ValueError("native provider client requires max_retries=0")
+        profile = native_provider_profile(wire_dialect)
+        self.model = model
+        self.base_url = base_url
+        self.wire_dialect = wire_dialect
+        self.protocol = wire_dialect
+        self.provider = profile["sdk_package"]
+        self.sdk_max_retries = max_retries
+        self.provider_attempts = 1
+        self.supports_prompt_cache = False
+        if wire_dialect == "openai-responses":
+            from .openai_responses import OpenAIResponsesAdapter
+            from .provider_transport import OpenAIResponsesTransport
+
+            self._transport = OpenAIResponsesTransport(
+                base_url=base_url,
+                api_key=api_key,
+                timeout=timeout,
+                max_retries=max_retries,
+            )
+            self._adapter = OpenAIResponsesAdapter(
+                transport=self._transport,
+                model=model,
+                profile_id=profile_id,
+            )
+        elif wire_dialect == "anthropic-messages":
+            from .anthropic_messages import AnthropicMessagesAdapter
+            from .provider_transport import AnthropicMessagesTransport
+
+            self._transport = AnthropicMessagesTransport(
+                base_url=base_url,
+                api_key=api_key,
+                timeout=timeout,
+                max_retries=max_retries,
+            )
+            self._adapter = AnthropicMessagesAdapter(
+                self._transport,
+                model=model,
+                profile_id=profile_id,
+            )
+        else:  # native_provider_profile already rejects this; keep narrowing explicit.
+            raise ValueError(f"unsupported native provider dialect: {wire_dialect}")
+
+    def request(self, request: ModelRequest) -> ModelResponse:
+        return self._adapter.request(request)
+
+    def close(self) -> None:
+        self._transport.close()
+
+
+def build_native_model_client(**kwargs: Any) -> NativeProviderModelClient:
+    """Construct the sole production provider path without an SDK tool runner."""
+
+    return NativeProviderModelClient(**kwargs)
 
 
 def _normalize_versioned_base_url(base_url: str) -> str:
