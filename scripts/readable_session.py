@@ -10,7 +10,6 @@
 
 import argparse
 import json
-import os
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -41,11 +40,11 @@ def convert_session(session_path: Path, output_path: Path):
     workspace = session.get("workspace_root", "")
 
     lines.append(f"# Session: {sid}")
-    lines.append(f"")
+    lines.append("")
     lines.append(f"- **创建时间**: {created}")
     lines.append(f"- **工作目录**: `{workspace}`")
     lines.append(f"- **对话轮数**: {len(session.get('history', []))}")
-    lines.append(f"")
+    lines.append("")
 
     history = session.get("history", [])
     for i, item in enumerate(history):
@@ -54,26 +53,26 @@ def convert_session(session_path: Path, output_path: Path):
         created_at = format_timestamp(item.get("created_at", ""))
         args = item.get("args")
 
-        lines.append(f"---")
+        lines.append("---")
         lines.append(f"### [{i}] {role}" + (f" `{name}`" if name else ""))
         lines.append(f"*{created_at}*")
-        lines.append(f"")
+        lines.append("")
 
         if args:
             lines.append(f"**参数**: `{json.dumps(args, ensure_ascii=False)}`")
-            lines.append(f"")
+            lines.append("")
 
         content = item.get("content")
         if content:
             lines.append(format_content(content))
-            lines.append(f"")
+            lines.append("")
 
     # Memory section
     memory = session.get("memory", {})
     if memory:
-        lines.append(f"---")
-        lines.append(f"## Memory")
-        lines.append(f"")
+        lines.append("---")
+        lines.append("## Memory")
+        lines.append("")
 
         durable_topics = memory.get("durable_topics", [])
         if durable_topics:
@@ -81,16 +80,16 @@ def convert_session(session_path: Path, output_path: Path):
                 name = topic.get("name", "unknown")
                 summary = topic.get("summary", "")
                 lines.append(f"- **{name}**: {summary}")
-            lines.append(f"")
+            lines.append("")
 
         notes = memory.get("episodic_notes") or memory.get("notes") or []
         if notes:
-            lines.append(f"### Episodic Notes")
+            lines.append("### Episodic Notes")
             for note in notes:
                 lines.append(f"- {note}")
-            lines.append(f"")
+            lines.append("")
 
-    lines.append(f"---")
+    lines.append("---")
     lines.append(f"*Generated from `{session_path}`*")
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
