@@ -1,0 +1,199 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "EVAL-032-F",
+  "instance_id": "W5R-EVAL-032-F-01",
+  "wave": "W5R",
+  "role": "integrator_ticket/aggregator",
+  "status": "complete",
+  "thread_uuid": "019f88c0-24a0-7b41-8919-7426e83231dd",
+  "source_thread_id": "019f8899-40f8-7231-9458-dcc8084aa44e",
+  "prompt_sha256": "0057b3fb99a7a79941dd1e0860e67c8848f1598b187bcf9701c26bce8ff49840",
+  "base_sha": "fd17e64b45f58558d84a200b5498db463998a239",
+  "wave_base_sha": "fd17e64b45f58558d84a200b5498db463998a239",
+  "head_sha": "b3ec3e226de82d87c30fa8e4f1bc681a6c42a5b4",
+  "head_sha_semantics": "Immutable content and artifact run snapshot before the metadata-only commit containing this handoff and freeze proposal.",
+  "branch": "codex/eval-v3-w5r-eval-032-f",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/7343/pico",
+  "dependency_commits": [
+    "5b68bb8c1e9a23f9fb9b7828a4aee5c6657718c3",
+    "89203e262674d6d4a695712f739c14e110e66d12",
+    "892fb5afd471f99d3cddcb1ba3797dee3ba94a75",
+    "ae6f6bc219a543a13f9fb7a3528118362d726490"
+  ],
+  "applied_dependency_commits": [
+    "22e41ea629cc012db52cd22472659ce136aa757a",
+    "7a7fb75e819a9b9d4d35c903885257ec1acf15b4",
+    "d3a798f66e39722c3474ba8a9a1405c82052ecce",
+    "54b4170c4726e01564dfdb155b2a2dd90e129992"
+  ],
+  "own_commits": [
+    "b3ec3e226de82d87c30fa8e4f1bc681a6c42a5b4"
+  ],
+  "dependency_handoff_hashes": {
+    "TOOL-044-F": "3f9c248922cd8bc7c89789c255e89ca77df9e0293dd2ca05f9a4c40f4e1f472f",
+    "ARCH-045-B": "31fbde29d32f0f6a0ea219ded1fe7460c80772659b134b248d2e4f252d6c02e9",
+    "CHORE-045-L": "8c62702b626d2be6c27ccf70d1db32cf84ecb61a281a9b590ccc65b19e34635c",
+    "TOOL-043-R": "c96f81c9dd4c62d0eeb387a5d86ed36e252fd33d557f737ec0b9ea7c395606c3",
+    "EVAL-031-G": "c317b79cd19afdcac2df3de5e71cf08748647fac8fcb9e4244e5b669826fb31c",
+    "TOOL-042-G": "437d9c24c7cc38c68f8f3f6f2bdfe322e55408ada19c01f61d1474d3a0b55b2d"
+  },
+  "dependency_freeze_hashes": {
+    "EVAL-031-G": "6f8ef9f2725da04b6283bf37b7900df86120a7bde89700f505f852626d5f1f48",
+    "TOOL-042-G": "f90bc12f5588d565da4f3a5f2cc83e36eec91ec91dac10edead1ac0f91d05e35"
+  },
+  "allowed_write_paths": [
+    "benchmarks/v3/context-assets/cases-v2.binding.json",
+    "scripts/verify_context_freeze.py",
+    "tests/test_context_freeze_integrity.py",
+    "F:/dev/llm/pico-eval-artifacts/phase-2-context-assets-w5r/**",
+    ".codex/eval/proposals/EVAL-032-F.freeze.json",
+    ".codex/eval/handoffs/EVAL-032-F.json"
+  ],
+  "files_changed": [
+    "benchmarks/v3/context-assets/cases-v2.binding.json",
+    "scripts/verify_context_freeze.py",
+    "tests/test_context_freeze_integrity.py",
+    ".codex/eval/proposals/EVAL-032-F.freeze.json",
+    ".codex/eval/handoffs/EVAL-032-F.json"
+  ],
+  "commands_run": [
+    "uv run pytest tests/test_context_freeze_integrity.py tests/test_context_asset_evaluator.py tests/test_native_request_context.py -q",
+    "uv run python scripts/verify_context_freeze.py --binding benchmarks/v3/context-assets/cases-v2.binding.json",
+    "uv run python scripts/run_context_asset_evaluation.py --cases benchmarks/v3/context-assets/cases.json --workspace-root F:/dev/llm/pico-eval-artifacts/phase-2-context-assets-w5r --artifact F:/dev/llm/pico-eval-artifacts/phase-2-context-assets-w5r/structured-context-evaluation.json --shard-id W5R-EVAL-032-F --repetition 1",
+    "uv run python scripts/run_context_asset_evaluation.py --cases F:/dev/llm/pico-eval-artifacts/phase-2-context-assets-w5r/inputs/cases.json --workspace-root F:/dev/llm/pico-eval-artifacts/phase-2-context-assets-w5r --artifact F:/dev/llm/pico-eval-artifacts/phase-2-context-assets-w5r/structured-context-evaluation.json --shard-id W5R-EVAL-032-F --repetition 1",
+    "fresh clone with core.autocrlf=true at content run snapshot; python scripts/verify_context_freeze.py",
+    "uv run ruff check scripts/verify_context_freeze.py tests/test_context_freeze_integrity.py",
+    "git diff --check and allowed/forbidden path audit"
+  ],
+  "tests": [
+    {
+      "command": "uv run pytest tests/test_context_freeze_integrity.py tests/test_context_asset_evaluator.py tests/test_native_request_context.py -q",
+      "result": "passed",
+      "details": "21 passed."
+    },
+    {
+      "command": "uv run python scripts/verify_context_freeze.py --binding benchmarks/v3/context-assets/cases-v2.binding.json",
+      "result": "passed",
+      "details": "Reconstructed OID 5e9bdf06e75f6661660947e880f07edfe7480880 and Git-blob SHA-256 e08066749520a52af5bb14a9435e359f4a85d3f3ae6e8dd0e962001f99c2df17; checkout CRLF hash was diagnostic only."
+    },
+    {
+      "command": "structured Context evaluation from ticket source path and materialized bound input",
+      "result": "passed",
+      "details": "Both executions passed 15/15 and produced identical artifact SHA-256 ee39ac9eb1e22633a23f0858fadc29802b252a6fb0ada15184b5bfad75d12b24."
+    },
+    {
+      "command": "fresh clone with core.autocrlf=true and verifier at b3ec3e226de82d87c30fa8e4f1bc681a6c42a5b4",
+      "result": "passed",
+      "details": "Fresh clone reconstructed the canonical Git blob while checkout bytes had SHA-256 00846e33ef32b6885d21001ae57df18760036709226e49031d8afcd6305a19fc."
+    },
+    {
+      "command": "uv run ruff check scripts/verify_context_freeze.py tests/test_context_freeze_integrity.py",
+      "result": "passed",
+      "details": "All checks passed."
+    }
+  ],
+  "test_coverage": [
+    {
+      "test": "test_repository_binding_reconstructs_canonical_git_blob",
+      "purpose": "Verifies canonical OID, Git-blob SHA-256, content schema, case count, and hash basis."
+    },
+    {
+      "test": "test_binding_preserves_and_invalidates_the_historical_declaration",
+      "purpose": "Proves the d69dfc declaration remains visible and is explicitly invalidated and superseded."
+    },
+    {
+      "test": "test_crlf_checkout_does_not_change_canonical_binding",
+      "purpose": "Proves CRLF checkout bytes cannot change verification from canonical Git object bytes."
+    },
+    {
+      "test": "test_materialized_evaluator_input_is_exact_bound_blob",
+      "purpose": "Proves evaluator input can be materialized byte-for-byte from the bound Git blob."
+    },
+    {
+      "test": "test_verifier_rejects_a_digest_that_does_not_match_the_git_blob",
+      "purpose": "Proves digest tampering fails closed."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "benchmarks/v3/context-assets/cases-v2.binding.json",
+      "git_blob_oid": "3426371758b7bb9569680e271d3d782a486d2bd1",
+      "sha256": "4fa2a43d0733621280c19323ade951f8dcca6328efa8d9d46b53777388c962c5",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/phase-2-context-assets-w5r/structured-context-evaluation.json",
+      "sha256": "ee39ac9eb1e22633a23f0858fadc29802b252a6fb0ada15184b5bfad75d12b24"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/phase-2-context-assets-w5r/artifact-manifest.json",
+      "sha256": "6c74b0f920fd2acd528e648e49917750d9438e945be6864f95d53ee149ff1355"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/phase-2-context-assets-w5r/binding-verification.json",
+      "sha256": "96b6203af0ae5a705d177a9d4ae468f854bc3dbf161d436b839387d84dbd0dbf"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/phase-2-context-assets-w5r/fresh-clone-verification.json",
+      "sha256": "fca9064e7f6f47d9250a0f272e8af6ac8fd23f735724e1c80f073237caaa9b72"
+    },
+    {
+      "path": ".codex/eval/proposals/EVAL-032-F.freeze.json",
+      "sha256": "bffb87a6b0b886899a704660435fc3673a5a06fbf5d92cbeb1556549e1b8d199"
+    },
+    {
+      "path": ".codex/eval/handoffs/EVAL-032-F.json",
+      "persistence": "Metadata-only commit generated after the immutable content/artifact run snapshot."
+    }
+  ],
+  "hashes": {
+    "cases_git_blob_oid": "5e9bdf06e75f6661660947e880f07edfe7480880",
+    "cases_git_blob_sha256": "e08066749520a52af5bb14a9435e359f4a85d3f3ae6e8dd0e962001f99c2df17",
+    "cases_checkout_sha256": "00846e33ef32b6885d21001ae57df18760036709226e49031d8afcd6305a19fc",
+    "binding_git_blob_sha256": "4fa2a43d0733621280c19323ade951f8dcca6328efa8d9d46b53777388c962c5",
+    "evaluator_input_file_sha256": "e08066749520a52af5bb14a9435e359f4a85d3f3ae6e8dd0e962001f99c2df17",
+    "evaluation_artifact_sha256": "ee39ac9eb1e22633a23f0858fadc29802b252a6fb0ada15184b5bfad75d12b24",
+    "artifact_manifest_sha256": "6c74b0f920fd2acd528e648e49917750d9438e945be6864f95d53ee149ff1355",
+    "freeze_proposal_sha256": "bffb87a6b0b886899a704660435fc3673a5a06fbf5d92cbeb1556549e1b8d199"
+  },
+  "acceptance_checklist": {
+    "canonical_cases_blob_oid_verified": true,
+    "git_blob_sha256_reconstructed_from_fresh_clone": true,
+    "lf_crlf_checkout_independent": true,
+    "historical_declaration_retained_invalidated_superseded": true,
+    "evaluator_input_matches_bound_git_blob": true,
+    "artifact_records_source_file_artifact_and_run_snapshot": true,
+    "cases_json_modified": false,
+    "frozen_fragments_modified": false,
+    "runtime_modified_by_ticket": false,
+    "canonical_status_or_freeze_written": false,
+    "final_gate_run": false
+  },
+  "native_protocol_observations": {
+    "observation_scope": "Offline deterministic structured Context evaluation only; no live provider, formal effectiveness, Resume evaluation, final Gate, TOOL-042-G-R1, or W6 work.",
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0,
+    "sdk_tool_runner_used": false,
+    "sdk_agent_runner_used": false,
+    "sdk_managed_pico_tool_execution_used": false
+  },
+  "defects": [],
+  "risks": [
+    "Fresh-clone verification left two uniquely named temporary clones under C:/Users/Papewhit/AppData/Local/Temp (pico-eval-032-f-ef92157d0f9d47e58fd3df44e2dc83cf and pico-eval-032-f-b394efe40fb8490a9ddb362120e7ebb2) because recursive cleanup was rejected by local safety policy; both are read-only verification residue outside the artifact root."
+  ],
+  "status_proposal": {
+    "ticket_id": "EVAL-032-F",
+    "status": "complete",
+    "head_sha": "b3ec3e226de82d87c30fa8e4f1bc681a6c42a5b4",
+    "reason": "The v2 binding is reproducible from canonical Git blob bytes in a CRLF fresh clone, retains the invalidated d69dfc declaration, and the bound structured Context artifact passes 15/15."
+  },
+  "freeze_proposal": {
+    "path": ".codex/eval/proposals/EVAL-032-F.freeze.json",
+    "sha256": "bffb87a6b0b886899a704660435fc3673a5a06fbf5d92cbeb1556549e1b8d199"
+  },
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}
