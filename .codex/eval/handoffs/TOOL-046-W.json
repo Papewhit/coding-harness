@@ -1,0 +1,143 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-046-W",
+  "instance_id": "W5R2-TOOL-046-W-01",
+  "wave": "W5R2",
+  "role": "Core implementer / worker profile contract",
+  "status": "complete",
+  "source_thread_id": "019f8967-207e-7461-82aa-dcc2239049ab",
+  "base_sha": "aab051fbf30c50df3af6ed2df5954717e104eac0",
+  "head_sha": "5430725c8d13ddc284c08da64390055578fc727c",
+  "head_sha_semantics": "Implementation-content head before the metadata-only commit containing this handoff.",
+  "final_head_resolution": "Resolve the containing metadata commit with: git log -1 --format=%H -- .codex/eval/handoffs/TOOL-046-W.json",
+  "branch": "codex/eval-v3-w5r2-tool-046-w",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/4b54/pico",
+  "dependency_commits": [
+    "3f95f6ae5bdec56e75367cfcad1aadb9526332dd",
+    "7dd7a08440848b01cc3863dd286610e3cc7ce7b2"
+  ],
+  "applied_dependency_commits": [
+    "25ceef2d8e3287d286490689f5975087da956d79",
+    "f603789f54ac34e432232a0e556f1a44ac3af452"
+  ],
+  "dependency_handoff_hashes": {
+    "W5R-wave-handoff": "bcc4432477409529a46085441c4717188b77ab3aea5943565f3a7dd552da2665",
+    "TEST-046-P": "f061aa3e8bfc28c93616f57eb63416afe9b774c3038dc0aa5361186c257eab75",
+    "TEST-046-P-artifact": "f8b564b44c62d29481b20a30f17ac09fcb0afa2e269cbf04b364576f1cf48bec",
+    "TOOL-049-I": "5eef3b00058eb07ec33527ff6e33ba628dea5ec27967a0ae0caf6b60e1cb2936"
+  },
+  "own_commits": [
+    "5430725c8d13ddc284c08da64390055578fc727c"
+  ],
+  "files_changed": [
+    "pico/core/worker_runtime.py",
+    "tests/test_native_worker_profile.py",
+    "tests/test_agent_workers_acceptance.py",
+    ".codex/eval/handoffs/TOOL-046-W.json"
+  ],
+  "tests": [
+    {
+      "command": "uv run pytest tests/test_agent_workers_acceptance.py -q",
+      "result": "baseline_failed_as_expected",
+      "details": "4 failed, 7 passed before the fix; the four unchanged started.wait(timeout=1) assertions did not observe BlockingModelClient.request because child native sessions exited on the missing profile."
+    },
+    {
+      "command": "uv run pytest tests/test_native_worker_profile.py tests/test_agent_workers_acceptance.py -q",
+      "result": "passed",
+      "details": "15 passed in 40.63s. Parent/child profile lifecycle, client identity, final readonly/worker tool schema, JSON-safe persistence, and the four unchanged worker event assertions passed."
+    },
+    {
+      "command": "uv run ruff check pico/core/worker_runtime.py tests/test_native_worker_profile.py tests/test_agent_workers_acceptance.py",
+      "result": "passed",
+      "details": "All checks passed."
+    },
+    {
+      "command": "uv run pytest tests/test_architecture_boundaries.py tests/test_safety_invariants.py -q",
+      "result": "failed_known_out_of_scope_baselines",
+      "details": "3 passed, 8 failed: model_errors.py remains at the W5R-recorded 109/100 budget; Windows lacks symlink privilege; clear=True removes HOME needed by Path.home; and one shell assertion uses POSIX quoting on Windows. None references worker_runtime or provider-profile behavior."
+    },
+    {
+      "command": "git diff --check and allowed-write-path audit",
+      "result": "passed",
+      "details": "Implementation changes are limited to the three ticket-owned source/test paths; the only subsequent repository write is this handoff."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/w5r2-worker-profile/W5R2-TOOL-046-W-01/worker-profile-report.json",
+      "sha256": "ef4307744eb96552ac4f838c01ae615c08e2c38305c6a663867d361cd1600ffa",
+      "size_bytes": 3637,
+      "role": "Baseline/final worker event evidence, parent-child profile contract, client identity validation, final tool-schema binding, and protocol observations."
+    },
+    {
+      "path": "pico/core/worker_runtime.py",
+      "sha256": "c5713873d6d5ed0b91a6f33bc9ab352bd3988ad50b980b0112ebf5897624515e"
+    },
+    {
+      "path": "tests/test_native_worker_profile.py",
+      "sha256": "19e495e425c9cff77fdcc99c3bc3d4e027c585a3180dcbc5b5e3647a5578a1e5"
+    },
+    {
+      "path": "tests/test_agent_workers_acceptance.py",
+      "sha256": "4218ac4a3a3c0ceeda16b3a135c5f21c14add8052683b8dd36d81e7cce32caa9"
+    }
+  ],
+  "hashes": {
+    "formal_freeze": "dbedbc07dcc042546ec37392fb17214b2947bdbfe757d872bb438b9f7cca6f8e",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "sdk_dependency_lock": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+    "scripted_provider_profile_fixture_source": "6fec517d2c29795096d1d4227e26b14b35310b7b1120c5c9b77d46ae07155390",
+    "native_scripted_fixtures": "ff2a8febe36730b6c18d096312f9455dce0793c9d1f975ffb941c726706904cf",
+    "native_deterministic_gate_report_from_blocked_W5R_dependency": "fab078c630df496a65a4835f4a0ed601240a039caca684b04e3dd8cbb315a5c4",
+    "worker_profile_report": "ef4307744eb96552ac4f838c01ae615c08e2c38305c6a663867d361cd1600ffa"
+  },
+  "acceptance_checklist": {
+    "existing_worker_test_names_preserved": true,
+    "existing_worker_assertions_preserved": true,
+    "existing_worker_timeouts_preserved": true,
+    "existing_worker_safety_semantics_preserved": true,
+    "parent_profile_required": true,
+    "child_profile_locked_before_native_recorder": true,
+    "child_client_identity_verified": true,
+    "child_final_tool_schema_directly_asserted": true,
+    "original_four_blocking_requests_observed": true,
+    "worker_notification_send_stop_clear_semantics_passed": true,
+    "session_profile_requirement_relaxed": false,
+    "sdk_objects_persisted": false,
+    "adapter_modified": false,
+    "canonical_status_or_freeze_written": false
+  },
+  "native_protocol_observations": {
+    "observation_scope": "Offline scripted-native worker lifecycle tests only; no live provider or formal effectiveness evaluation was run.",
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0,
+    "sdk_tool_runner_used": false,
+    "sdk_agent_runner_used": false,
+    "sdk_managed_pico_tool_execution_used": false
+  },
+  "defects": [
+    {
+      "id": "TOOL-046-W-INTERMITTENT-START-TIMING",
+      "classification": "independent_intermittent_worker_start_timing_after_profile_fix",
+      "details": "The first combined post-fix run had 13 passes and one unchanged notification started.wait timeout. Immediate direct diagnostics proved the child profile was locked, the worker was running, and BlockingModelClient.request could start within one second; the next full run passed 14/14 and the final expanded run passed 15/15. The failure is no longer a profile pre-exit and was not reproducible enough for a scoped product change without weakening the frozen timeout."
+    }
+  ],
+  "risks": [
+    "The independently observed one-off worker-start timing failure may recur under Windows scheduling pressure even though final required commands pass; no timeout, assertion, or worker scheduling semantics were changed.",
+    "The W5R model_errors.py architecture budget and Windows-only safety-test environment failures remain outside this ticket and unchanged."
+  ],
+  "status_proposal": {
+    "ticket_id": "TOOL-046-W",
+    "status": "complete",
+    "head_sha": "5430725c8d13ddc284c08da64390055578fc727c",
+    "reason": "The parent-child native profile lifecycle is explicit, child transport identity and final readonly/worker schema are verified, and the required worker/profile suite passes with original event semantics unchanged; one non-reproducible post-fix timing observation is preserved as an independent risk."
+  },
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}
