@@ -622,7 +622,15 @@
       "stable_patch_id": "a3e8b1cbb0a9ac433c94d94a24c292dddfe4c30c"
     }
   },
-  "active_tickets": {},
+  "active_tickets": {
+    "TOOL-042-G-R2": {
+      "instance_id": "W5R2-TOOL-042-G-R2-01",
+      "status": "active",
+      "thread_id": "019f898f-7b9a-7231-870e-aa5a834200ba",
+      "branch": "codex/eval-v3-w5r2-tool-042-g-r2",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\5e0d\\pico"
+    }
+  },
   "blocked_tickets": {},
   "prior_wave_blocked_tickets": {
     "TOOL-042-G-R1": {
@@ -2410,6 +2418,40 @@
       "handoff_sha256": "673eaa4fc31939ae2299edd8bf9e894844e27472b4ca1d2ee3dd6c16226464dc",
       "stable_patch_id": "a3e8b1cbb0a9ac433c94d94a24c292dddfe4c30c",
       "status": "accepted"
+    },
+    "W5R2-TOOL-042-G-R2-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "TOOL-042-G-R2",
+      "instance_id": "W5R2-TOOL-042-G-R2-01",
+      "wave": "W5R2",
+      "role": "gate_integrator/deterministic_native_eval_ready",
+      "thread_id": "019f898f-7b9a-7231-870e-aa5a834200ba",
+      "base_sha": "aab051fbf30c50df3af6ed2df5954717e104eac0",
+      "branch": "codex/eval-v3-w5r2-tool-042-g-r2",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\5e0d\\pico",
+      "dependency_commits": [
+        "cbf71d4fdbf7c9971b8af3dfc7d76ef5a0765efb",
+        "6dad1263f57196e9e9b41402306bd920636c4cca",
+        "3f95f6ae5bdec56e75367cfcad1aadb9526332dd",
+        "7dd7a08440848b01cc3863dd286610e3cc7ce7b2",
+        "0f1dc6b706ab8f86bd1f0e1d6b047fefce2d16de",
+        "6207efe389bd92f1388330e656f297b64f8d676a",
+        "7cc5933a570ec98f4479dd00b71223d6f3d5d9e6",
+        "bb9a4b40b9eb6266a17abd537781d632a6a82c79"
+      ],
+      "freeze_hashes": {
+        "formal_freeze": "dbedbc07dcc042546ec37392fb17214b2947bdbfe757d872bb438b9f7cca6f8e"
+      },
+      "allowed_write_paths": [
+        "F:\\dev\\llm\\pico-eval-artifacts\\native-deterministic-gate-w5r2\\**",
+        ".codex/eval/proposals/TOOL-042-G-R2.freeze.json",
+        ".codex/eval/proposals/TOOL-042-G-R2.status.json",
+        ".codex/eval/handoffs/TOOL-042-G-R2.json"
+      ],
+      "prompt_sha256": "d82144b6fee9e2c70754fd740ab01bd6259c7f58009c65e7f6534e37322b19fa",
+      "model": "gpt-5.6-sol",
+      "reasoning_effort": "xhigh",
+      "status": "active"
     }
   },
   "wave_handoffs": {
@@ -2572,5 +2614,5 @@
     "w6_started": false,
     "blocked_at": "2026-07-22T16:14:00+08:00"
   },
-  "updated_at": "2026-07-22T19:18:07.6574170+08:00"
+  "updated_at": "2026-07-22T19:23:07.9893983+08:00"
 }
