@@ -1,0 +1,140 @@
+{
+  "schema_version": "pico-eval-wave-handoff-v1",
+  "wave": "W5",
+  "status": "blocked",
+  "wave_base_sha": "a834e78098487888264b5ffdea37f52a8d635fbf",
+  "control_overlay_sha256": "68e66b17aff7c348c223402a0093cb76ab2bd14565547e8b8aa06a94b7aad279",
+  "integration_sha": "a885581bb39b46f7f856b40cffdbbfbc3da0918a",
+  "integration_sha_role": "canonical W5 code/state blocked snapshot before the wave-handoff metadata commit",
+  "canonical_tag": {
+    "name": "eval-v3/w5-canonical",
+    "type": "annotated",
+    "object_sha": "884824528ea2dd226ca64662d6da85a89a4ab410",
+    "target_sha": "a885581bb39b46f7f856b40cffdbbfbc3da0918a",
+    "verified": true
+  },
+  "metadata_commit": {
+    "role": "commit adding this handoff after the canonical integration snapshot",
+    "parent_sha": "a885581bb39b46f7f856b40cffdbbfbc3da0918a",
+    "sha_resolution": "git log -1 --format=%H -- .codex/eval/state/W5-wave-handoff.json"
+  },
+  "status_sha256": "4011314f02969b1d415c3d8fbd8b7f44eb57872bf6cd88d7f9deaf8472f05d87",
+  "freeze_sha256": "dbedbc07dcc042546ec37392fb17214b2947bdbfe757d872bb438b9f7cca6f8e",
+  "freeze_changed": true,
+  "native_deterministic_gate_promoted": false,
+  "commit_map": {
+    "path": ".codex/eval/state/W5-commit-map.json",
+    "sha256": "abb11306e2c201cbcca76b7f193564ef1f2e36fded4e5ee2adf884e999070819",
+    "entry_count": 5,
+    "stable_patch_ids_verified": true
+  },
+  "worker_bundle": {
+    "path": "F:/dev/llm/pico-eval-artifacts/wave-bundles/W5-workers.bundle",
+    "sha256": "5b89f26e4a587da8ced5ed24b5466bb1898f97017d0b47fab6713d8029b07d16",
+    "size_bytes": 16348944,
+    "ref_count": 5,
+    "verification": "git bundle verify passed; complete history"
+  },
+  "accepted_tickets": [
+    "TOOL-040-I",
+    "TOOL-041-M",
+    "TOOL-049-I",
+    "EVAL-031-G"
+  ],
+  "blocked_tickets": ["TOOL-042-G"],
+  "ticket_handoffs": {
+    "TOOL-040-I": {
+      "path": ".codex/eval/handoffs/TOOL-040-I.json",
+      "sha256": "3ea08ab84d4bcdc632280bb8e65e572aa1a448b04781394f242880790faf0922",
+      "branch_head": "5de57fd3988e9b4fbfc5753d179f2d69a87dce29",
+      "integration_commit": "68d1829babe6d2908bc22ee52488098962aa94c5",
+      "outcome": "native provider-to-Runtime wiring accepted"
+    },
+    "TOOL-041-M": {
+      "path": ".codex/eval/handoffs/TOOL-041-M.json",
+      "sha256": "7b3b413cc1f41f8db5f5d218936013e32ea41059dfe0505b74a5eefc7fbd64d5",
+      "branch_head": "9cf136fed19f2ae1224eed88840de76d44539dd3",
+      "integration_commit": "3dd42df4981febb00f221f8c3471640eeb5efb8d",
+      "outcome": "executable text protocol removed from production Runtime; native structured fixtures migrated"
+    },
+    "TOOL-049-I": {
+      "path": ".codex/eval/handoffs/TOOL-049-I.json",
+      "sha256": "5eef3b00058eb07ec33527ff6e33ba628dea5ec27967a0ae0caf6b60e1cb2936",
+      "branch_head": "dd03ed6dbf2a03a384f73d3111f3f8a00d591ab3",
+      "integration_commit": "6a12fa8a05aa1a7cbac36496fce2c930a230e72b",
+      "outcome": "offline native provider conformance suite accepted"
+    },
+    "EVAL-031-G": {
+      "path": ".codex/eval/handoffs/EVAL-031-G.json",
+      "sha256": "c317b79cd19afdcac2df3de5e71cf08748647fac8fcb9e4244e5b669826fb31c",
+      "branch_head": "8888b0b77f712ac8a2edda3afbcb5fcdfed36ca4",
+      "integration_commit": "f1fc030271a6c4fd3d793e40b7e9f42227391890",
+      "outcome": "structured-context deterministic evaluation reported 15/15, but its cases binding later failed Gate hash reproduction"
+    },
+    "TOOL-042-G": {
+      "path": ".codex/eval/handoffs/TOOL-042-G.json",
+      "sha256": "437d9c24c7cc38c68f8f3f6f2bdfe322e55408ada19c01f61d1474d3a0b55b2d",
+      "branch_head": "1c95e7a9c2d1728675175188a3325f59e294e99b",
+      "integration_commit": "e17396dda5f871ec83de7c845e60182587e32b14",
+      "outcome": "blocked: new retry-after-read policy regression and unreproducible structured-context cases hash"
+    }
+  },
+  "subagent_identity": {
+    "durable_thread_uuid_available": false,
+    "unavailability_reason": "the collaboration interface returned canonical agent paths but no durable thread UUID",
+    "recorded_basis": "agent_path_and_prompt_sha256",
+    "instances": {
+      "TOOL-040-I": {"agent_path": "/root/w5_tool_040_i", "prompt_sha256": "b4fedf757bba53fdf0876e4f2820914d9c52399bbf25ae94255da0de527d616a"},
+      "TOOL-041-M": {"agent_path": "/root/w5_tool_041_m", "prompt_sha256": "2faf566f20517b572ab16991089690731337e1e2f2985e437b84286d8a6e7a3c"},
+      "TOOL-049-I": {"agent_path": "/root/w5_tool_049_i", "prompt_sha256": "3eb8674d2e7f3d6bfd20c4b1fa46d2bd1bb8ac08c4d71ac08baec9d1012b3873"},
+      "EVAL-031-G": {"agent_path": "/root/w5_eval_031_g", "prompt_sha256": "b74a5ed238d23b409a9b608c89eb3039f8e6a003e2d1de90b85b7bb8d17d51ed"},
+      "TOOL-042-G": {"agent_path": "/root/w5_tool_042_g", "prompt_sha256": "72dd396261ed1c2c38d08dc83b93785c99fdf442c97d772bd4b2af68bcd6ee82"}
+    }
+  },
+  "audit_artifacts": {
+    "gate_root": "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate/W5-TOOL-042-G-01",
+    "gate_report_sha256": "ee42ddaabd4ea35c859154f5b2e4056a8c786e0f421ec8ecfa0304082072503e",
+    "manifest_sha256": "3a6bbfc396e20256940624163d2dfc6103a21f89596344be59437e9363f5e2ad",
+    "freeze_proposal_sha256": "f90bc12f5588d565da4f3a5f2cc83e36eec91ec91dac10edead1ac0f91d05e35",
+    "protected_gate_junit_sha256": "425b0a60a6cfd1494701dfb0aa9337ca41b2cfc09f166ae4cf33e7ad32315ca1"
+  },
+  "exit_gate": {
+    "status": "blocked",
+    "satisfied": false,
+    "positive_evidence": [
+      "PLAN validation passed: 63 ticket templates, 11 waves.",
+      "Dispatch order matched W5 dependencies: TOOL-040-I, then TOOL-041-M, then TOOL-049-I and EVAL-031-G in parallel, then TOOL-042-G.",
+      "Deterministic native Runtime loop group passed 79/79 with one-to-one call IDs/results, complete batches, zero positive-case text envelopes, zero unknown-block loss and zero safety-chain bypass.",
+      "Structured Context regression group passed 27/27 and the evaluation reported 15/15 cases.",
+      "Production Runtime retains no executable <tool>/<final> fallback; Core has no provider SDK imports and no SDK Tool/Agent Runner is used.",
+      "Protected architecture, safety, permission and policy tests were not weakened.",
+      "All five worker-to-canonical ticket patch IDs and handoff hashes were verified; the five-ref worker bundle has complete history."
+    ],
+    "blocking_evidence": [
+      "The protected architecture/safety/permission/policy command produced 15 passes and 12 failures; eleven are W4-known failures and test_rejected_patch_can_be_retried_after_informing_read is a new W5 regression.",
+      "The declared structured_context_cases SHA-256 d69dfc... is not reproducible from the canonical Git bytes e080667... or checkout bytes 00846e3..., so the structured Context gate cannot be treated as integrity-frozen.",
+      "TOOL-042-G requires all checklist items to pass; known failures were not rewritten as passes. native_eval_ready remains blocked and no live conformance was run."
+    ]
+  },
+  "risks": [
+    "The W5 snapshot must not be used as a live-conformance base until TOOL-042-G is rerun successfully from a new immutable snapshot.",
+    "The structured-context 15/15 result lacks a reproducible frozen cases binding.",
+    "pico/core/worker_manager.py remains 232 lines against the unchanged 220-line architecture budget, ten Windows platform failures remain, and fourteen unchanged readable_session.py Ruff findings remain.",
+    "native_eval_ready is blocked; native_resume_ready remains pending."
+  ],
+  "cleanup_candidates": [
+    {"branch": "codex/eval-v3-w5-tool-040-i", "worktree": "C:/Users/Papewhit/.codex/worktrees/w5-040i/pico"},
+    {"branch": "codex/eval-v3-w5-tool-041-m", "worktree": "C:/Users/Papewhit/.codex/worktrees/w5-041m/pico"},
+    {"branch": "codex/eval-v3-w5-tool-049-i", "worktree": "C:/Users/Papewhit/.codex/worktrees/w5-049i/pico"},
+    {"branch": "codex/eval-v3-w5-eval-031-g", "worktree": "C:/Users/Papewhit/.codex/worktrees/w5-031g/pico"},
+    {"branch": "codex/eval-v3-w5-tool-042-g", "worktree": "C:/Users/Papewhit/.codex/worktrees/w5-042g/pico"}
+  ],
+  "cleanup_action_taken": false,
+  "user_decisions_required": [
+    "Authorize and schedule separate remediation for the new tool-policy regression and the frozen-cases integrity defect before retrying W5 Exit Gate."
+  ],
+  "next_wave": "W6",
+  "next_wave_ready_tickets": [],
+  "next_wave_started": false,
+  "completed_at": "2026-07-22T12:59:52.4670464+08:00"
+}
