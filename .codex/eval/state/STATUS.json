@@ -562,12 +562,32 @@
       "handoff_path": ".codex/eval/handoffs/TOOL-043-R.json",
       "handoff_sha256": "c96f81c9dd4c62d0eeb387a5d86ed36e252fd33d557f737ec0b9ea7c395606c3",
       "stable_patch_id": "b74b7d1f2ea81756ed5b62d3bc4cee15b1622207"
+    },
+    "EVAL-032-F": {
+      "instance_id": "W5R-EVAL-032-F-01",
+      "status": "accepted",
+      "base_sha": "fd17e64b45f58558d84a200b5498db463998a239",
+      "head_sha": "b6f3a610a0ebf136903b76baff2435bb28ac51e6",
+      "run_snapshot_sha": "b3ec3e226de82d87c30fa8e4f1bc681a6c42a5b4",
+      "own_commits": ["b3ec3e226de82d87c30fa8e4f1bc681a6c42a5b4", "b6f3a610a0ebf136903b76baff2435bb28ac51e6"],
+      "integration_commits": ["c283b7ccb20794d9f9bd361a476be045eee42833"],
+      "handoff_path": ".codex/eval/handoffs/EVAL-032-F.json",
+      "handoff_sha256": "e051f284b03fedb266e145144c246ffa025c55b19bca045417fb5f7e62d0c0b1",
+      "stable_patch_id": "4f2dec0a12485d031af1cac2562dd214dd4da5ce"
     }
   },
-  "active_tickets": {
-    "EVAL-032-F": {"instance_id": "W5R-EVAL-032-F-01", "status": "active"}
+  "active_tickets": {},
+  "blocked_tickets": {
+    "TOOL-042-G-R1": {
+      "instance_id": "W5R-TOOL-042-G-R1-01",
+      "status": "blocked",
+      "head_sha": "71d4a3f40635f4d94e99caf510c9decf83a76f11",
+      "run_snapshot_sha": "d5464bf08ed50405301d474b7e64f7a4dc3d4918",
+      "integration_commit": "4938bf258b8ffe3f955857cd9243d7867477ee80",
+      "handoff_sha256": "f44e7f3764ad4c834c6fc9bb12651647aa71c5094c5836f4e5d647bd3be9d679",
+      "reason": "W5R Exit Gate failed: protected architecture budget 26/27 and full repository suite 400 passed, 79 failed, 2 pre-existing live-opt-in skipped."
+    }
   },
-  "blocked_tickets": {},
   "prior_wave_blocked_tickets": {
     "TOOL-042-G": {
       "instance_id": "W5-TOOL-042-G-01",
@@ -2156,7 +2176,46 @@
       "prompt_sha256": "0057b3fb99a7a79941dd1e0860e67c8848f1598b187bcf9701c26bce8ff49840",
       "model": "gpt-5.6-sol",
       "reasoning_effort": "high",
-      "status": "active"
+      "head_sha": "b6f3a610a0ebf136903b76baff2435bb28ac51e6",
+      "run_snapshot_sha": "b3ec3e226de82d87c30fa8e4f1bc681a6c42a5b4",
+      "own_commits": ["b3ec3e226de82d87c30fa8e4f1bc681a6c42a5b4", "b6f3a610a0ebf136903b76baff2435bb28ac51e6"],
+      "integration_commits": ["c283b7ccb20794d9f9bd361a476be045eee42833"],
+      "handoff_sha256": "e051f284b03fedb266e145144c246ffa025c55b19bca045417fb5f7e62d0c0b1",
+      "stable_patch_id": "4f2dec0a12485d031af1cac2562dd214dd4da5ce",
+      "status": "accepted"
+    },
+    "W5R-TOOL-042-G-R1-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "TOOL-042-G-R1",
+      "instance_id": "W5R-TOOL-042-G-R1-01",
+      "wave": "W5R",
+      "role": "integrator_ticket/gate",
+      "thread_id": "019f88cf-45c6-74a3-b211-525d3e526ebc",
+      "base_sha": "fd17e64b45f58558d84a200b5498db463998a239",
+      "branch": "codex/eval-v3-w5r-tool-042-g-r1",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\10cc\\pico",
+      "dependency_commits": [
+        "5b68bb8c1e9a23f9fb9b7828a4aee5c6657718c3",
+        "89203e262674d6d4a695712f739c14e110e66d12",
+        "892fb5afd471f99d3cddcb1ba3797dee3ba94a75",
+        "ae6f6bc219a543a13f9fb7a3528118362d726490",
+        "c283b7ccb20794d9f9bd361a476be045eee42833"
+      ],
+      "allowed_write_paths": [
+        "F:\\dev\\llm\\pico-eval-artifacts\\native-deterministic-gate-w5r\\**",
+        ".codex/eval/proposals/TOOL-042-G-R1.freeze.json",
+        ".codex/eval/proposals/TOOL-042-G-R1.status.json",
+        ".codex/eval/handoffs/TOOL-042-G-R1.json"
+      ],
+      "prompt_sha256": "f2b3a43e2e571a8879ab465132067cc5fa4b7d80eeb3f6456f12ab6052fc6a14",
+      "model": "gpt-5.6-sol",
+      "reasoning_effort": "xhigh",
+      "run_snapshot_sha": "d5464bf08ed50405301d474b7e64f7a4dc3d4918",
+      "head_sha": "71d4a3f40635f4d94e99caf510c9decf83a76f11",
+      "integration_commits": ["4938bf258b8ffe3f955857cd9243d7867477ee80"],
+      "handoff_sha256": "f44e7f3764ad4c834c6fc9bb12651647aa71c5094c5836f4e5d647bd3be9d679",
+      "stable_patch_id": "0001dde7adb895914774f44403f27ef45bebddc1",
+      "status": "blocked"
     }
   },
   "wave_handoffs": {
@@ -2165,12 +2224,13 @@
     "W2": ".codex/eval/state/W2-wave-handoff.json",
     "W3": ".codex/eval/state/W3-wave-handoff.json",
     "W4": ".codex/eval/state/W4-wave-handoff.json",
-    "W5": ".codex/eval/state/W5-wave-handoff.json"
+    "W5": ".codex/eval/state/W5-wave-handoff.json",
+    "W5R": ".codex/eval/state/W5R-wave-handoff.json"
   },
   "ready_tickets": [],
   "wave_open": {
     "wave": "W5R",
-    "status": "active",
+    "status": "closed_blocked",
     "wave_base_sha": "fd17e64b45f58558d84a200b5498db463998a239",
     "control_overlay_sha256": "6e06ed22e5cf607734367d17ae784db6a0338bc8fbb18af3e1dc35d4d8f75cf0",
     "upstream_canonical_sha": "a885581bb39b46f7f856b40cffdbbfbc3da0918a",
@@ -2202,10 +2262,35 @@
         "pico/core/model_errors.py remains 109 lines against its unchanged 100-line architecture budget"
       ],
       "checkpointed_at": "2026-07-22T15:36:10.6004991+08:00"
+    },
+    {
+      "wave": "W5R",
+      "batch": 2,
+      "canonical_head": "4938bf258b8ffe3f955857cd9243d7867477ee80",
+      "accepted_tickets": ["EVAL-032-F"],
+      "blocked_tickets": ["TOOL-042-G-R1"],
+      "dependency_commits": ["c283b7ccb20794d9f9bd361a476be045eee42833"],
+      "gate_run_snapshot_sha": "d5464bf08ed50405301d474b7e64f7a4dc3d4918",
+      "gate_report_sha256": "fab078c630df496a65a4835f4a0ed601240a039caca684b04e3dd8cbb315a5c4",
+      "stable_patch_ids_verified": true,
+      "checkpointed_at": "2026-07-22T16:14:00+08:00"
     }
   ],
-  "wave_close": null,
-  "last_gate": {
+  "wave_close": {
+    "wave": "W5R",
+    "status": "blocked",
+    "accepted_tickets": ["TOOL-044-F", "ARCH-045-B", "CHORE-045-L", "TOOL-043-R", "EVAL-032-F"],
+    "blocked_tickets": ["TOOL-042-G-R1"],
+    "native_eval_ready": false,
+    "native_resume_ready": false,
+    "w6_ready": false,
+    "next_wave_ready_tickets": [],
+    "freeze_changed": false,
+    "freeze_proposals_promoted": false,
+    "worker_bundle_sha256": "11a07f3108f74c82fd53219e7d80690603bf3eeca158d2b1251c9583631a1901",
+    "closed_at": "2026-07-22T16:14:00+08:00"
+  },
+  "prior_gate": {
     "wave": "W5",
     "status": "blocked",
     "wave_integrator_thread": "/root",
@@ -2271,5 +2356,43 @@
     ],
     "blocked_at": "2026-07-22T12:57:04.6125953+08:00"
   },
-  "updated_at": "2026-07-22T15:36:10.6004991+08:00"
+  "last_gate": {
+    "wave": "W5R",
+    "status": "blocked",
+    "wave_integrator_thread": "019f8899-40f8-7231-9458-dcc8084aa44e",
+    "wave_base_sha": "fd17e64b45f58558d84a200b5498db463998a239",
+    "ticket_integration_head": "4938bf258b8ffe3f955857cd9243d7867477ee80",
+    "integration_order": ["TOOL-044-F", "ARCH-045-B", "CHORE-045-L", "TOOL-043-R", "EVAL-032-F", "TOOL-042-G-R1"],
+    "accepted_ticket_count": 5,
+    "blocked_ticket_count": 1,
+    "plan_validation": "VALID: 69 ticket templates, 12 waves",
+    "initial_ready_set_match": true,
+    "stable_patch_ids_verified": true,
+    "worker_bundle_sha256": "11a07f3108f74c82fd53219e7d80690603bf3eeca158d2b1251c9583631a1901",
+    "native_gate_report_sha256": "fab078c630df496a65a4835f4a0ed601240a039caca684b04e3dd8cbb315a5c4",
+    "native_gate_artifact_manifest_sha256": "4acf8b1641ddd07e35c87967f57e10623a9586b0c8bea3846f87deb959714157",
+    "environment": "Ubuntu WSL2 fresh ext4 clone, user papewhit, Python 3.12.13, committed uv.lock, user-level uv, no sudo",
+    "targeted_test_evidence": {
+      "ruff": "passed",
+      "protected": "26 passed, 1 failed: pico/core/model_errors.py 109 lines against budget 100",
+      "deterministic": "92 passed",
+      "full": "400 passed, 79 failed, 2 pre-existing live-provider opt-in skipped",
+      "fixture_repetition_audit": "10 passed",
+      "context_binding": "verified Git blob OID 5e9bdf06e75f6661660947e880f07edfe7480880 and SHA-256 e08066749520a52af5bb14a9435e359f4a85d3f3ae6e8dd0e962001f99c2df17"
+    },
+    "blocking_defects": [
+      "TOOL-042-G-R1-BLOCK-001: pico/core/model_errors.py exceeds its protected architecture budget",
+      "TOOL-042-G-R1-BLOCK-002: 70 full-suite tests do not supply the locked provider_profile required by native Runtime",
+      "TOOL-042-G-R1-BLOCK-003: four worker-event assertions and four TUI tests fail or time out"
+    ],
+    "freeze_changed": false,
+    "freeze_proposals_promoted": false,
+    "native_eval_ready": false,
+    "w5r_exit_gate_satisfied": false,
+    "w6_ready": false,
+    "next_wave_ready_tickets": [],
+    "w6_started": false,
+    "blocked_at": "2026-07-22T16:14:00+08:00"
+  },
+  "updated_at": "2026-07-22T16:14:00+08:00"
 }

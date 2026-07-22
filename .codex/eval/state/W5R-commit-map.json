@@ -101,9 +101,41 @@
       "stable_patch_id_scope": "applied_dependency_tip_to_worker_head_and_canonical_ticket_commit",
       "stable_patch_id_match": true,
       "outcome": "accepted"
+    },
+    "TOOL-042-G-R1": {
+      "worker_thread_uuid": "019f88cf-45c6-74a3-b211-525d3e526ebc",
+      "prompt_sha256": "f2b3a43e2e571a8879ab465132067cc5fa4b7d80eeb3f6456f12ab6052fc6a14",
+      "worker_head": "71d4a3f40635f4d94e99caf510c9decf83a76f11",
+      "worker_run_snapshot_sha": "d5464bf08ed50405301d474b7e64f7a4dc3d4918",
+      "worker_commits": [
+        "ac2cfda1ebb7546e55fc9e36f5d132a4706a77a4",
+        "71d4a3f40635f4d94e99caf510c9decf83a76f11"
+      ],
+      "dependency_commits": [
+        "5b68bb8c1e9a23f9fb9b7828a4aee5c6657718c3",
+        "89203e262674d6d4a695712f739c14e110e66d12",
+        "892fb5afd471f99d3cddcb1ba3797dee3ba94a75",
+        "ae6f6bc219a543a13f9fb7a3528118362d726490",
+        "c283b7ccb20794d9f9bd361a476be045eee42833"
+      ],
+      "canonical_commit": "4938bf258b8ffe3f955857cd9243d7867477ee80",
+      "handoff_sha256": "f44e7f3764ad4c834c6fc9bb12651647aa71c5094c5836f4e5d647bd3be9d679",
+      "gate_report_sha256": "fab078c630df496a65a4835f4a0ed601240a039caca684b04e3dd8cbb315a5c4",
+      "artifact_manifest_sha256": "4acf8b1641ddd07e35c87967f57e10623a9586b0c8bea3846f87deb959714157",
+      "stable_patch_id": "0001dde7adb895914774f44403f27ef45bebddc1",
+      "stable_patch_id_scope": "run_snapshot_to_worker_head_and_canonical_ticket_commit",
+      "stable_patch_id_match": true,
+      "outcome": "blocked",
+      "ready_for_integration": false
     }
   },
-  "worker_bundle": null,
+  "worker_bundle": {
+    "path": "F:/dev/llm/pico-eval-artifacts/wave-bundles/W5R-workers.bundle",
+    "sha256": "11a07f3108f74c82fd53219e7d80690603bf3eeca158d2b1251c9583631a1901",
+    "size_bytes": 16417989,
+    "ref_count": 6,
+    "verified_complete_history": true
+  },
   "gate_dispatch": {
     "ticket_id": "TOOL-042-G-R1",
     "instance_id": "W5R-TOOL-042-G-R1-01",
@@ -121,7 +153,10 @@
       "ae6f6bc219a543a13f9fb7a3528118362d726490",
       "c283b7ccb20794d9f9bd361a476be045eee42833"
     ],
-    "status": "active"
+    "status": "blocked",
+    "worker_run_snapshot_sha": "d5464bf08ed50405301d474b7e64f7a4dc3d4918",
+    "worker_head": "71d4a3f40635f4d94e99caf510c9decf83a76f11",
+    "canonical_commit": "4938bf258b8ffe3f955857cd9243d7867477ee80"
   },
-  "updated_at": "2026-07-22T15:55:00+08:00"
+  "updated_at": "2026-07-22T16:14:00+08:00"
 }
