@@ -83,7 +83,35 @@
     "source_head_sha": "4f1a74a67a02f84ad6c4cbe14b318790d2754177",
     "integration_sha": "74c05e74b99ff303287ea60525fc4d5e99ffdab7"
   },
-  "native_deterministic_gate": null,
+  "native_deterministic_gate": {
+    "version": "pico-native-deterministic-gate-w5r2-v1",
+    "status": "complete",
+    "sha256": "2fc1ebbe4d64c5be80e7fe063584915f12aabf3a8f8c08796d2cf009e94849a5",
+    "hash_basis": "gate_report_file_bytes",
+    "run_snapshot_sha": "dd8a677782f90c749a422ee066daa1afcb36c516",
+    "run_snapshot_approved_for_live_conformance": true,
+    "artifact": {
+      "root": "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate-w5r2/W5R2-TOOL-042-G-R2-01",
+      "report_sha256": "2fc1ebbe4d64c5be80e7fe063584915f12aabf3a8f8c08796d2cf009e94849a5",
+      "manifest_sha256": "1c859f11adebceaa13115c7a9947d19de23014f9abbfc1d47bdaf02b0494620f"
+    },
+    "gate_result": {
+      "all_required_commands_exit_zero": true,
+      "ruff": "passed",
+      "protected": "27 passed",
+      "deterministic": "92 passed",
+      "full_suite": "487 passed, 2 pre-existing live-provider opt-in skipped",
+      "architecture_violations": 0,
+      "text_envelope_seen_count": 0,
+      "call_id_result_match": 1.0,
+      "batch_completeness": 1.0,
+      "unknown_block_loss_count": 0,
+      "safety_chain_bypass_count": 0,
+      "sdk_tool_or_agent_runner_used": false,
+      "context_v2_binding_verified": true
+    },
+    "source_ticket": "TOOL-042-G-R2"
+  },
   "native_scripted_fixtures": {
     "version": "pico-scripted-native-model-client-v1",
     "path": "pico/testing.py",
@@ -224,6 +252,43 @@
     "source_ticket": "EVAL-031-G",
     "source_head_sha": "8888b0b77f712ac8a2edda3afbcb5fcdfed36ca4",
     "integration_sha": "f1fc030271a6c4fd3d793e40b7e9f42227391890"
+  },
+  "structured_context_deterministic_gate_v2": {
+    "version": "pico-context-asset-gate-v2",
+    "status": "complete",
+    "binding": {
+      "path": "benchmarks/v3/context-assets/cases-v2.binding.json",
+      "schema_version": "pico-context-asset-cases-binding-v2",
+      "git_blob_oid": "3426371758b7bb9569680e271d3d782a486d2bd1",
+      "git_blob_sha256": "4fa2a43d0733621280c19323ade951f8dcca6328efa8d9d46b53777388c962c5"
+    },
+    "cases": {
+      "path": "benchmarks/v3/context-assets/cases.json",
+      "schema_version": "pico-context-asset-cases-v1",
+      "case_count": 15,
+      "git_blob_oid": "5e9bdf06e75f6661660947e880f07edfe7480880",
+      "sha256": "e08066749520a52af5bb14a9435e359f4a85d3f3ae6e8dd0e962001f99c2df17",
+      "hash_basis": "git_blob_bytes"
+    },
+    "supersession": {
+      "invalidated_declaration_sha256": "d69dfc1808cb12b179f8a1fb30ffa74136339d7783d9f11a5fbe8fd4259400ba",
+      "status": "retained_invalidated_superseded",
+      "replacement_binding_version": "pico-context-asset-cases-binding-v2"
+    },
+    "artifact": {
+      "root": "F:/dev/llm/pico-eval-artifacts/phase-2-context-assets-w5r",
+      "evaluation_sha256": "ee39ac9eb1e22633a23f0858fadc29802b252a6fb0ada15184b5bfad75d12b24",
+      "manifest_sha256": "6c74b0f920fd2acd528e648e49917750d9438e945be6864f95d53ee149ff1355"
+    },
+    "gate_result": {
+      "total": 15,
+      "passed": 15,
+      "failed": 0,
+      "fresh_clone_binding_verified": true,
+      "lf_crlf_independent": true
+    },
+    "source_ticket": "EVAL-032-F",
+    "source_run_snapshot_sha": "b3ec3e226de82d87c30fa8e4f1bc681a6c42a5b4"
   },
   "context_ablation_selection": null
 }
