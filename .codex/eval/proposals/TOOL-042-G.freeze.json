@@ -1,0 +1,83 @@
+{
+  "schema_version": "pico-eval-freeze-proposal-v1",
+  "ticket_id": "TOOL-042-G",
+  "instance_id": "W5-TOOL-042-G-01",
+  "wave": "W5",
+  "role": "integrator_ticket/gate",
+  "status": "blocked",
+  "base_sha": "a834e78098487888264b5ffdea37f52a8d635fbf",
+  "run_snapshot_sha": "7e93936331317c119c8adac26bdc500b3ba608ea",
+  "dependency_commits": [
+    "68d1829babe6d2908bc22ee52488098962aa94c5",
+    "3dd42df4981febb00f221f8c3471640eeb5efb8d",
+    "6a12fa8a05aa1a7cbac36496fce2c930a230e72b",
+    "f1fc030271a6c4fd3d793e40b7e9f42227391890"
+  ],
+  "applied_dependency_commits": [
+    "b8caeabeaa0691151dbf30ebe0d3889997f5dc49",
+    "22f18219af28bba18f4f106b07d5481a6740fff1",
+    "c1dd4e15641fd9efec8aab4d9d67b72e672d07aa",
+    "7e93936331317c119c8adac26bdc500b3ba608ea"
+  ],
+  "dependency_handoff_hashes": {
+    "TOOL-041-M": "7b3b413cc1f41f8db5f5d218936013e32ea41059dfe0505b74a5eefc7fbd64d5",
+    "TOOL-049-I": "5eef3b00058eb07ec33527ff6e33ba628dea5ec27967a0ae0caf6b60e1cb2936",
+    "EVAL-031-G": "c317b79cd19afdcac2df3de5e71cf08748647fac8fcb9e4244e5b669826fb31c"
+  },
+  "dependency_freeze_hashes": {
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "sdk_dependency_lock": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+    "structured_context_cases_declared": "d69dfc1808cb12b179f8a1fb30ffa74136339d7783d9f11a5fbe8fd4259400ba",
+    "structured_context_artifact": "b941868234be06832f5b1d3f246d4015baf39d69fac65c01a3c15a94228fdd65",
+    "canonical_FREEZE_pre_gate": "dbedbc07dcc042546ec37392fb17214b2947bdbfe757d872bb438b9f7cca6f8e"
+  },
+  "freeze_proposal": {
+    "key": "native_deterministic_gate",
+    "version": "pico-native-deterministic-gate-v1",
+    "status": "blocked",
+    "sha256": "ee42ddaabd4ea35c859154f5b2e4056a8c786e0f421ec8ecfa0304082072503e",
+    "hash_basis": "gate_report_file_bytes",
+    "run_snapshot_sha": "7e93936331317c119c8adac26bdc500b3ba608ea",
+    "run_snapshot_approved_for_live_conformance": false,
+    "artifact": {
+      "root": "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate/W5-TOOL-042-G-01",
+      "report": {
+        "path": "gate-report.json",
+        "sha256": "ee42ddaabd4ea35c859154f5b2e4056a8c786e0f421ec8ecfa0304082072503e"
+      },
+      "manifest": {
+        "path": "artifact-manifest.json",
+        "sha256": "3a6bbfc396e20256940624163d2dfc6103a21f89596344be59437e9363f5e2ad"
+      }
+    },
+    "gate_result": {
+      "call_id_result_match": 1.0,
+      "batch_completeness": 1.0,
+      "text_envelope_seen_count": 0,
+      "unknown_block_loss_count": 0,
+      "safety_chain_bypass_count": 0,
+      "sdk_tool_or_agent_runner_used": false,
+      "native_tests": "79/79 passed",
+      "context_tests": "27/27 passed",
+      "architecture_safety_permission_policy": "15 passed, 12 failed",
+      "overall": "blocked"
+    },
+    "blocking_defects": [
+      "TOOL-042-G-NEW-001: retry-after-informing-read policy acceptance regression",
+      "TOOL-042-G-NEW-002: structured_context_cases declared hash is not reproducible from the run snapshot",
+      "Acceptance requires architecture/safety/permission/policy all pass; the known W4 failures also remain actual failures and were not rewritten as passes."
+    ],
+    "execution_constraints": {
+      "live_provider_used": false,
+      "formal_effectiveness_evaluation_run": false,
+      "resume_evaluation_run": false,
+      "product_fix_mixed_with_gate": false
+    }
+  },
+  "canonical_state_write_required": true,
+  "canonical_state_written": false,
+  "canonical_freeze_promotion_allowed": false,
+  "canonical_freeze_owner": "W5 Wave Integrator"
+}

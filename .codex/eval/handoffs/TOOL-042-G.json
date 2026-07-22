@@ -1,0 +1,175 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-042-G",
+  "instance_id": "W5-TOOL-042-G-01",
+  "wave": "W5",
+  "role": "integrator_ticket/gate",
+  "status": "blocked",
+  "base_sha": "a834e78098487888264b5ffdea37f52a8d635fbf",
+  "run_snapshot_sha": "7e93936331317c119c8adac26bdc500b3ba608ea",
+  "head_sha": "712a398632f410be2c25f1f9394d50200befa4fc",
+  "head_sha_semantics": "Ticket content head containing the blocked freeze proposal; the metadata-only commit containing this handoff is the final branch HEAD reported to the Wave Integrator.",
+  "branch": "codex/eval-v3-w5-tool-042-g",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/w5-042g/pico",
+  "dependency_commits": [
+    "68d1829babe6d2908bc22ee52488098962aa94c5",
+    "3dd42df4981febb00f221f8c3471640eeb5efb8d",
+    "6a12fa8a05aa1a7cbac36496fce2c930a230e72b",
+    "f1fc030271a6c4fd3d793e40b7e9f42227391890"
+  ],
+  "applied_dependency_commits": [
+    "b8caeabeaa0691151dbf30ebe0d3889997f5dc49",
+    "22f18219af28bba18f4f106b07d5481a6740fff1",
+    "c1dd4e15641fd9efec8aab4d9d67b72e672d07aa",
+    "7e93936331317c119c8adac26bdc500b3ba608ea"
+  ],
+  "dependency_handoff_hashes": {
+    "TOOL-041-M": "7b3b413cc1f41f8db5f5d218936013e32ea41059dfe0505b74a5eefc7fbd64d5",
+    "TOOL-049-I": "5eef3b00058eb07ec33527ff6e33ba628dea5ec27967a0ae0caf6b60e1cb2936",
+    "EVAL-031-G": "c317b79cd19afdcac2df3de5e71cf08748647fac8fcb9e4244e5b669826fb31c"
+  },
+  "own_commits": [
+    "712a398632f410be2c25f1f9394d50200befa4fc"
+  ],
+  "files_changed": [
+    ".codex/eval/proposals/TOOL-042-G.freeze.json",
+    ".codex/eval/handoffs/TOOL-042-G.json"
+  ],
+  "commands_run": [
+    "initial branch/base/clean-worktree verification and complete required-document reads",
+    "dependency handoff and freeze SHA-256 verification",
+    "git cherry-pick 68d1829babe6d2908bc22ee52488098962aa94c5",
+    "git cherry-pick 3dd42df4981febb00f221f8c3471640eeb5efb8d",
+    "git cherry-pick 6a12fa8a05aa1a7cbac36496fce2c930a230e72b",
+    "git cherry-pick f1fc030271a6c4fd3d793e40b7e9f42227391890",
+    "uv run ruff check .",
+    "uv run pytest tests/test_architecture_boundaries.py tests/test_safety_invariants.py tests/test_tool_policy_acceptance.py tests/test_permissions_acceptance.py -q",
+    "uv run pytest tests/test_provider_contracts.py tests/test_openai_responses_tools.py tests/test_anthropic_messages_tools.py tests/test_native_tool_loop.py tests/test_native_session_exchange.py tests/test_native_request_context.py tests/test_native_runtime_integration.py tests/test_native_provider_evaluator.py -q",
+    "uv run pytest tests/test_context_asset_evaluator.py tests/test_context_manager.py tests/test_context_governance_acceptance.py tests/test_native_request_context.py -q",
+    "static hash, parser, SDK Runner, safety-chain, protected-test, forbidden-scope and baseline audit"
+  ],
+  "tests": [
+    {
+      "command": "uv run ruff check .",
+      "result": "failed",
+      "details": "14 pre-existing F401/F541 findings, all in unchanged scripts/readable_session.py. This is a known baseline, not a pass."
+    },
+    {
+      "command": "uv run pytest tests/test_architecture_boundaries.py tests/test_safety_invariants.py tests/test_tool_policy_acceptance.py tests/test_permissions_acceptance.py -q",
+      "result": "failed",
+      "details": "15 passed, 12 failed. Eleven are the W4-known baseline (worker_manager.py 232/220 and ten Windows platform/environment failures). test_rejected_patch_can_be_retried_after_informing_read is a new W5 regression. Therefore the all-pass checklist item is false."
+    },
+    {
+      "command": "uv run pytest tests/test_provider_contracts.py tests/test_openai_responses_tools.py tests/test_anthropic_messages_tools.py tests/test_native_tool_loop.py tests/test_native_session_exchange.py tests/test_native_request_context.py tests/test_native_runtime_integration.py tests/test_native_provider_evaluator.py -q",
+      "result": "passed",
+      "details": "79 passed in 15.00s. Covers one-to-one provider call IDs/results, complete batches including rejection/budget/error paths, adapter unknown/private block preservation, Runtime native-only execution, safety-chain rejection, retry evidence and SDK Runner absence."
+    },
+    {
+      "command": "uv run pytest tests/test_context_asset_evaluator.py tests/test_context_manager.py tests/test_context_governance_acceptance.py tests/test_native_request_context.py -q",
+      "result": "passed",
+      "details": "27 passed in 20.85s. The prior structured Context artifact remains 15/15 and hash-only opaque continuation evidence remains intact."
+    },
+    {
+      "command": "static audit",
+      "result": "failed",
+      "details": "All contract/SDK/artifact/pre-gate FREEZE hashes matched except structured_context_cases: declared d69dfc... versus Git blob e080667... and worktree bytes 00846e3.... Protected tests were not weakened."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate/W5-TOOL-042-G-01/gate-report.json",
+      "sha256": "ee42ddaabd4ea35c859154f5b2e4056a8c786e0f421ec8ecfa0304082072503e",
+      "role": "native_deterministic_gate"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate/W5-TOOL-042-G-01/artifact-manifest.json",
+      "sha256": "3a6bbfc396e20256940624163d2dfc6103a21f89596344be59437e9363f5e2ad"
+    },
+    {
+      "path": ".codex/eval/proposals/TOOL-042-G.freeze.json",
+      "sha256": "f90bc12f5588d565da4f3a5f2cc83e36eec91ec91dac10edead1ac0f91d05e35",
+      "hash_basis": "file_bytes_and_git_blob_bytes"
+    },
+    {
+      "path": ".codex/eval/handoffs/TOOL-042-G.json",
+      "persistence": "Metadata-only commit generated after the proposal content commit."
+    }
+  ],
+  "frozen_hashes": {
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "sdk_dependency_lock": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+    "structured_context_cases_declared": "d69dfc1808cb12b179f8a1fb30ffa74136339d7783d9f11a5fbe8fd4259400ba",
+    "structured_context_cases_git_blob_actual": "e08066749520a52af5bb14a9435e359f4a85d3f3ae6e8dd0e962001f99c2df17",
+    "structured_context_cases_worktree_actual": "00846e33ef32b6885d21001ae57df18760036709226e49031d8afcd6305a19fc",
+    "structured_context_artifact": "b941868234be06832f5b1d3f246d4015baf39d69fac65c01a3c15a94228fdd65",
+    "canonical_FREEZE_pre_gate": "dbedbc07dcc042546ec37392fb17214b2947bdbfe757d872bb438b9f7cca6f8e",
+    "native_deterministic_gate": "ee42ddaabd4ea35c859154f5b2e4056a8c786e0f421ec8ecfa0304082072503e",
+    "provider_selection": null,
+    "native_resume_gate": null
+  },
+  "native_protocol_observations": {
+    "observation_scope": "Offline deterministic positive Gate cases only; no live provider, formal effectiveness or Resume evaluation. The adverse detector test intentionally injects one envelope/retry/mismatch and is excluded from positive-observation counts.",
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0,
+    "sdk_tool_runner_used": false,
+    "sdk_agent_runner_used": false,
+    "sdk_managed_pico_tool_execution_used": false
+  },
+  "defects": [
+    {
+      "id": "TOOL-042-G-NEW-001",
+      "classification": "new_regression",
+      "details": "Native retry-after-informing-read policy acceptance fails; the target remains unchanged. The test is byte-identical to the base."
+    },
+    {
+      "id": "TOOL-042-G-NEW-002",
+      "classification": "new_freeze_integrity_failure",
+      "details": "The declared structured Context cases hash is not reproducible from either the run-snapshot Git blob or checkout bytes."
+    },
+    {
+      "id": "W4-worker-manager-budget",
+      "classification": "known_baseline",
+      "details": "Unchanged worker_manager.py is 232 lines against the 220-line budget."
+    },
+    {
+      "id": "W4-windows-platform-set",
+      "classification": "known_baseline",
+      "details": "Ten known Windows environment/platform failures remain."
+    },
+    {
+      "id": "W4-readable-session-lint",
+      "classification": "known_baseline",
+      "details": "Fourteen known Ruff findings remain in unchanged scripts/readable_session.py."
+    }
+  ],
+  "risks": [
+    "The run snapshot must not be used for live conformance because the deterministic Gate is blocked.",
+    "The structured Context artifact reports 15/15 but its frozen cases binding is not reproducible from the snapshot.",
+    "Known W4 failures remain real Gate failures under TOOL-042-G's all-pass acceptance checklist."
+  ],
+  "minimal_followups": [
+    "Open a product-fix ticket for native repeated-call history semantics so an intervening informative read permits the same patch retry, then rerun TOOL-042-G from a new immutable snapshot.",
+    "Open a separate freeze/oracle correction ticket; preserve the existing frozen version and publish a new reproducible structured Context cases hash/version rather than mutating the old declaration.",
+    "Resolve or explicitly redesign the W4 architecture/Windows Gate baseline before claiming the all-pass checklist."
+  ],
+  "status_proposal": {
+    "ticket_id": "TOOL-042-G",
+    "status": "blocked",
+    "head_sha": "712a398632f410be2c25f1f9394d50200befa4fc",
+    "native_eval_ready": false,
+    "w5_exit_gate_satisfied": false,
+    "reason": "The required all-pass architecture/safety/permission/policy Gate failed, including one new W5 regression, and the declared structured Context cases hash is not reproducible."
+  },
+  "freeze_proposal": {
+    "path": ".codex/eval/proposals/TOOL-042-G.freeze.json",
+    "sha256": "f90bc12f5588d565da4f3a5f2cc83e36eec91ec91dac10edead1ac0f91d05e35",
+    "promotion_allowed": false
+  },
+  "ownership_change_request": null,
+  "ready_for_integration": false
+}
