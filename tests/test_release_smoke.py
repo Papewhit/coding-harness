@@ -17,7 +17,7 @@ import pytest
 
 from pico import Pico, SessionStore, WorkspaceContext
 from tests.native_fixtures import final as final_response
-from tests.native_fixtures import scripted_client, tool
+from tests.native_fixtures import lock_scripted_provider_profile, scripted_client, tool
 
 
 def _build_workspace(tmp_path):
@@ -31,12 +31,14 @@ def _build_workspace(tmp_path):
 def _build_agent(tmp_path, outputs):
     workspace = _build_workspace(tmp_path)
     store = SessionStore(tmp_path / ".pico" / "sessions")
-    return Pico(
-        model_client=scripted_client(outputs),
-        workspace=workspace,
-        session_store=store,
-        approval_policy="auto",
-        auto_dream=False,
+    return lock_scripted_provider_profile(
+        Pico(
+            model_client=scripted_client(outputs),
+            workspace=workspace,
+            session_store=store,
+            approval_policy="auto",
+            auto_dream=False,
+        )
     )
 
 

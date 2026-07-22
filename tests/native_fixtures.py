@@ -15,11 +15,14 @@ from pico.testing import (
 )
 
 
-def lock_scripted_provider_profile(agent: Any) -> Any:
-    """Persist the explicit native profile required by scripted Runtime tests."""
+SCRIPTED_NATIVE_PROFILE_ID = "scripted-native:test-profile"
 
-    agent.session["provider_profile"] = {
-        "profile_id": "scripted-native:test-profile",
+
+def scripted_provider_identity() -> dict[str, Any]:
+    """Build the JSON-safe transport identity for deterministic native tests."""
+
+    return {
+        "profile_id": SCRIPTED_NATIVE_PROFILE_ID,
         "profile": "scripted",
         "model": "scripted-model",
         "wire_dialect": "scripted-native",
@@ -30,8 +33,22 @@ def lock_scripted_provider_profile(agent: Any) -> Any:
         "sdk_version": "0",
         "sdk_max_retries": 0,
         "provider_attempts": 1,
+    }
+
+
+def scripted_provider_profile(agent: Any) -> dict[str, Any]:
+    """Bind the scripted transport identity to one Runtime tool schema."""
+
+    return {
+        **scripted_provider_identity(),
         "tool_schema": agent.tool_signature(),
     }
+
+
+def lock_scripted_provider_profile(agent: Any) -> Any:
+    """Persist the explicit native profile required by scripted Runtime tests."""
+
+    agent.session["provider_profile"] = scripted_provider_profile(agent)
     agent.session_path = agent.session_store.save(agent.session)
     return agent
 
@@ -74,6 +91,7 @@ class PromptLoggingNativeClient(ScriptedNativeModelClient):
         self.prompts: list[str] = []
         self.last_completion_metadata: dict[str, Any] = {}
         self._pico_test_native = True
+        self._pico_profile_identity = scripted_provider_identity()
 
     def request(self, request: ModelRequest) -> ModelResponse:
         rendered_results = [str(result.output) for result in request.tool_results]

@@ -12,7 +12,12 @@ import pico as pico_pkg
 import pico.providers as providers_pkg
 import pytest
 from pico.testing import native_final_response, native_protocol_error_response
-from tests.native_fixtures import final, scripted_client, tool
+from tests.native_fixtures import (
+    final,
+    lock_scripted_provider_profile,
+    scripted_client,
+    tool,
+)
 from pico import (
     AnthropicCompatibleModelClient,
     Pico,
@@ -33,12 +38,14 @@ def build_agent(tmp_path, outputs, **kwargs):
     workspace = build_workspace(tmp_path)
     store = SessionStore(tmp_path / ".pico" / "sessions")
     approval_policy = kwargs.pop("approval_policy", "auto")
-    return Pico(
-        model_client=scripted_client(outputs),
-        workspace=workspace,
-        session_store=store,
-        approval_policy=approval_policy,
-        **kwargs,
+    return lock_scripted_provider_profile(
+        Pico(
+            model_client=scripted_client(outputs),
+            workspace=workspace,
+            session_store=store,
+            approval_policy=approval_policy,
+            **kwargs,
+        )
     )
 
 
@@ -1524,14 +1531,16 @@ def test_freshness_mismatch_creates_checkpoint_before_model_completion(tmp_path)
 def test_runtime_identity_persists_key_execution_metadata(tmp_path):
     workspace = build_workspace(tmp_path)
     store = SessionStore(tmp_path / ".pico" / "sessions")
-    agent = Pico(
-        model_client=scripted_client([final("Done.")]),
-        workspace=workspace,
-        session_store=store,
-        approval_policy="never",
-        max_steps=9,
-        max_new_tokens=1024,
-        feature_flags={"memory": True, "relevant_memory": False},
+    agent = lock_scripted_provider_profile(
+        Pico(
+            model_client=scripted_client([final("Done.")]),
+            workspace=workspace,
+            session_store=store,
+            approval_policy="never",
+            max_steps=9,
+            max_new_tokens=1024,
+            feature_flags={"memory": True, "relevant_memory": False},
+        )
     )
 
     runtime_identity = agent.session["runtime_identity"]
@@ -1798,11 +1807,13 @@ def test_memory_dir_is_workspace_relative_and_repo_local(tmp_path):
     workspace = build_workspace(tmp_path)
     store = SessionStore(tmp_path / ".pico" / "sessions")
 
-    agent = Pico(
-        model_client=scripted_client(),
-        workspace=workspace,
-        session_store=store,
-        memory_dir="custom-memory",
+    agent = lock_scripted_provider_profile(
+        Pico(
+            model_client=scripted_client(),
+            workspace=workspace,
+            session_store=store,
+            memory_dir="custom-memory",
+        )
     )
 
     assert agent.memory_dir == tmp_path / "custom-memory"
@@ -2094,23 +2105,25 @@ def test_explicit_memory_promotion_dedupes_duplicate_durable_note(tmp_path):
 def test_agent_records_model_cache_metadata_in_last_prompt_metadata(tmp_path):
     workspace = build_workspace(tmp_path)
     store = SessionStore(tmp_path / ".pico" / "sessions")
-    agent = Pico(
-        model_client=scripted_client(
-            [
-                native_final_response(
-                    "Done.",
-                    metadata={
-                        "prompt_cache_supported": True,
-                        "cached_tokens": 512,
-                        "cache_hit": True,
-                        "input_tokens": 1024,
-                    },
-                )
-            ]
-        ),
-        workspace=workspace,
-        session_store=store,
-        approval_policy="auto",
+    agent = lock_scripted_provider_profile(
+        Pico(
+            model_client=scripted_client(
+                [
+                    native_final_response(
+                        "Done.",
+                        metadata={
+                            "prompt_cache_supported": True,
+                            "cached_tokens": 512,
+                            "cache_hit": True,
+                            "input_tokens": 1024,
+                        },
+                    )
+                ]
+            ),
+            workspace=workspace,
+            session_store=store,
+            approval_policy="auto",
+        )
     )
 
     assert agent.ask("Cache aware run") == "Done."
