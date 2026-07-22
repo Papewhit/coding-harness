@@ -164,5 +164,66 @@
     "integration_sha": "059f176a31539b475573524bff640f1a34b9609c"
   },
   "resume_predicates": null,
+  "structured_context_deterministic_gate": {
+    "version": "pico-context-asset-gate-v1",
+    "proposal": {
+      "path": ".codex/eval/proposals/EVAL-031-G.freeze.json",
+      "sha256": "6f8ef9f2725da04b6283bf37b7900df86120a7bde89700f505f852626d5f1f48"
+    },
+    "contract_hashes": {
+      "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+      "context_assets": "d8349c034524cc488958a1f3b460a7b6080915eed0b03b64c635810c21bf8e15",
+      "fragment_C01_C08": "6bef856d9df68209d60d0ef7e9df1dc927fd861f64a6f646f0cc58fba9c808b8",
+      "fragment_C09_C15": "1c2975e53696faed737a676e14faef7008cb4a2c4c5db27c804a903af3e1455c",
+      "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb"
+    },
+    "cases": {
+      "path": "benchmarks/v3/context-assets/cases.json",
+      "schema_version": "pico-context-asset-cases-v1",
+      "case_count": 15,
+      "sha256": "d69dfc1808cb12b179f8a1fb30ffa74136339d7783d9f11a5fbe8fd4259400ba",
+      "hash_basis": "UTF-8 file bytes"
+    },
+    "artifacts": {
+      "root": "F:/dev/llm/pico-eval-artifacts/phase-2-context-assets",
+      "evaluation_sha256": "b941868234be06832f5b1d3f246d4015baf39d69fac65c01a3c15a94228fdd65",
+      "summary_sha256": "0a04d182aa2d4decd53600b98acb072fd653bd939e989b32f8da5aebd13b8223"
+    },
+    "gate_result": {
+      "total": 15,
+      "passed": 15,
+      "failed": 0,
+      "pass_rate": 1.0,
+      "normal_budget_asset_classes_evidenced": [
+        "skills",
+        "todo",
+        "plan",
+        "checkpoint",
+        "worker",
+        "durable",
+        "compact",
+        "pointer"
+      ],
+      "current_request_preserved": "15/15",
+      "tool_schema_system_match_count": 0,
+      "unfinished_native_turn": {
+        "case_id": "C14",
+        "status": "awaiting_result",
+        "provider_call_id": "call-c14-1",
+        "result_call_ids": [],
+        "compactable": false
+      }
+    },
+    "known_runtime_defects": [
+      "runtime-asset-record-contract-incomplete",
+      "runtime-provider-request-flattens-structured-context",
+      "ticket-cli-command-drift"
+    ],
+    "live_provider_used": false,
+    "formal_effectiveness_evaluation_run": false,
+    "source_ticket": "EVAL-031-G",
+    "source_head_sha": "8888b0b77f712ac8a2edda3afbcb5fcdfed36ca4",
+    "integration_sha": "f1fc030271a6c4fd3d793e40b7e9f42227391890"
+  },
   "context_ablation_selection": null
 }

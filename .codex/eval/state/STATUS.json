@@ -492,11 +492,36 @@
       "handoff_path": ".codex/eval/handoffs/TOOL-041-M.json",
       "handoff_sha256": "7b3b413cc1f41f8db5f5d218936013e32ea41059dfe0505b74a5eefc7fbd64d5",
       "stable_patch_id": "654c3091cfcdfd7075d857aa984c983c848e1e3a"
+    },
+    "TOOL-049-I": {
+      "instance_id": "W5-TOOL-049-I-01",
+      "status": "accepted",
+      "base_sha": "a834e78098487888264b5ffdea37f52a8d635fbf",
+      "head_sha": "dd03ed6dbf2a03a384f73d3111f3f8a00d591ab3",
+      "dependency_commits": ["68d1829babe6d2908bc22ee52488098962aa94c5"],
+      "applied_dependency_commits": ["0239f661beece60124473d72db4f4e43a4ad75bd"],
+      "own_commits": ["f1623c8dcb6dd54a08cc68be1b6578d579bbdb60", "dd03ed6dbf2a03a384f73d3111f3f8a00d591ab3"],
+      "integration_commits": ["6a12fa8a05aa1a7cbac36496fce2c930a230e72b"],
+      "handoff_path": ".codex/eval/handoffs/TOOL-049-I.json",
+      "handoff_sha256": "5eef3b00058eb07ec33527ff6e33ba628dea5ec27967a0ae0caf6b60e1cb2936",
+      "stable_patch_id": "085b3965be17c21cf4b5ecca7893dc99daff44de"
+    },
+    "EVAL-031-G": {
+      "instance_id": "W5-EVAL-031-G-01",
+      "status": "accepted",
+      "base_sha": "a834e78098487888264b5ffdea37f52a8d635fbf",
+      "head_sha": "8888b0b77f712ac8a2edda3afbcb5fcdfed36ca4",
+      "dependency_commits": ["68d1829babe6d2908bc22ee52488098962aa94c5", "3dd42df4981febb00f221f8c3471640eeb5efb8d"],
+      "applied_dependency_commits": ["d101d4dff392632f6ad47e17a28f63cb7de509ea", "a77b4a9177838120bdcdaebd3f3320b57f83f4a9"],
+      "own_commits": ["df4f6567cda2955d347fc18df82a85c01e887323", "8888b0b77f712ac8a2edda3afbcb5fcdfed36ca4"],
+      "integration_commits": ["f1fc030271a6c4fd3d793e40b7e9f42227391890"],
+      "handoff_path": ".codex/eval/handoffs/EVAL-031-G.json",
+      "handoff_sha256": "c317b79cd19afdcac2df3de5e71cf08748647fac8fcb9e4244e5b669826fb31c",
+      "stable_patch_id": "8d79bfcbb21c783beebc200095d52f1f996a81c0"
     }
   },
   "active_tickets": {
-    "TOOL-049-I": {"instance_id": "W5-TOOL-049-I-01", "status": "active"},
-    "EVAL-031-G": {"instance_id": "W5-EVAL-031-G-01", "status": "active"}
+    "TOOL-042-G": {"instance_id": "W5-TOOL-042-G-01", "status": "active"}
   },
   "blocked_tickets": {},
   "ticket_instances": {
@@ -1795,7 +1820,13 @@
         ".codex/eval/handoffs/TOOL-049-I.json"
       ],
       "prompt_sha256": "3eb8674d2e7f3d6bfd20c4b1fa46d2bd1bb8ac08c4d71ac08baec9d1012b3873",
-      "status": "active"
+      "head_sha": "dd03ed6dbf2a03a384f73d3111f3f8a00d591ab3",
+      "applied_dependency_commits": ["0239f661beece60124473d72db4f4e43a4ad75bd"],
+      "own_commits": ["f1623c8dcb6dd54a08cc68be1b6578d579bbdb60", "dd03ed6dbf2a03a384f73d3111f3f8a00d591ab3"],
+      "integration_commits": ["6a12fa8a05aa1a7cbac36496fce2c930a230e72b"],
+      "handoff_sha256": "5eef3b00058eb07ec33527ff6e33ba628dea5ec27967a0ae0caf6b60e1cb2936",
+      "stable_patch_id": "085b3965be17c21cf4b5ecca7893dc99daff44de",
+      "status": "accepted"
     },
     "W5-EVAL-031-G-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -1832,6 +1863,52 @@
         ".codex/eval/handoffs/EVAL-031-G.json"
       ],
       "prompt_sha256": "b74a5ed238d23b409a9b608c89eb3039f8e6a003e2d1de90b85b7bb8d17d51ed",
+      "head_sha": "8888b0b77f712ac8a2edda3afbcb5fcdfed36ca4",
+      "applied_dependency_commits": ["d101d4dff392632f6ad47e17a28f63cb7de509ea", "a77b4a9177838120bdcdaebd3f3320b57f83f4a9"],
+      "own_commits": ["df4f6567cda2955d347fc18df82a85c01e887323", "8888b0b77f712ac8a2edda3afbcb5fcdfed36ca4"],
+      "integration_commits": ["f1fc030271a6c4fd3d793e40b7e9f42227391890"],
+      "handoff_sha256": "c317b79cd19afdcac2df3de5e71cf08748647fac8fcb9e4244e5b669826fb31c",
+      "stable_patch_id": "8d79bfcbb21c783beebc200095d52f1f996a81c0",
+      "status": "accepted"
+    },
+    "W5-TOOL-042-G-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "TOOL-042-G",
+      "instance_id": "W5-TOOL-042-G-01",
+      "wave": "W5",
+      "role": "integrator",
+      "thread_id": "/root/w5_tool_042_g",
+      "durable_thread_uuid": null,
+      "thread_identity_basis": "agent_path_and_prompt_sha256; durable UUID unavailable from collaboration interface",
+      "base_sha": "a834e78098487888264b5ffdea37f52a8d635fbf",
+      "branch": "codex/eval-v3-w5-tool-042-g",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\w5-042g\\pico",
+      "dependency_handoff_hashes": {
+        "TOOL-041-M": "7b3b413cc1f41f8db5f5d218936013e32ea41059dfe0505b74a5eefc7fbd64d5",
+        "TOOL-049-I": "5eef3b00058eb07ec33527ff6e33ba628dea5ec27967a0ae0caf6b60e1cb2936",
+        "EVAL-031-G": "c317b79cd19afdcac2df3de5e71cf08748647fac8fcb9e4244e5b669826fb31c"
+      },
+      "dependency_commits": [
+        "68d1829babe6d2908bc22ee52488098962aa94c5",
+        "3dd42df4981febb00f221f8c3471640eeb5efb8d",
+        "6a12fa8a05aa1a7cbac36496fce2c930a230e72b",
+        "f1fc030271a6c4fd3d793e40b7e9f42227391890"
+      ],
+      "freeze_hashes": {
+        "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+        "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+        "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+        "sdk_dependency_lock": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+        "structured_context_cases": "d69dfc1808cb12b179f8a1fb30ffa74136339d7783d9f11a5fbe8fd4259400ba",
+        "structured_context_artifact": "b941868234be06832f5b1d3f246d4015baf39d69fac65c01a3c15a94228fdd65",
+        "canonical_FREEZE_pre_gate": "dbedbc07dcc042546ec37392fb17214b2947bdbfe757d872bb438b9f7cca6f8e"
+      },
+      "allowed_write_paths": [
+        "F:\\dev\\llm\\pico-eval-artifacts\\native-deterministic-gate\\W5-TOOL-042-G-01\\**",
+        ".codex/eval/proposals/TOOL-042-G.freeze.json",
+        ".codex/eval/handoffs/TOOL-042-G.json"
+      ],
+      "prompt_sha256": "72dd396261ed1c2c38d08dc83b93785c99fdf442c97d772bd4b2af68bcd6ee82",
       "status": "active"
     }
   },
@@ -1875,6 +1952,21 @@
       ],
       "stable_patch_ids_verified": true,
       "checkpointed_at": "2026-07-22T12:19:20.9437963+08:00"
+    },
+    {
+      "wave": "W5",
+      "batch": 3,
+      "canonical_head": "f1fc030271a6c4fd3d793e40b7e9f42227391890",
+      "accepted_tickets": ["TOOL-040-I", "TOOL-041-M", "TOOL-049-I", "EVAL-031-G"],
+      "dispatched_tickets": ["TOOL-042-G"],
+      "dependency_commits": [
+        "68d1829babe6d2908bc22ee52488098962aa94c5",
+        "3dd42df4981febb00f221f8c3471640eeb5efb8d",
+        "6a12fa8a05aa1a7cbac36496fce2c930a230e72b",
+        "f1fc030271a6c4fd3d793e40b7e9f42227391890"
+      ],
+      "stable_patch_ids_verified": true,
+      "checkpointed_at": "2026-07-22T12:40:42.7470617+08:00"
     }
   ],
   "wave_close": null,
@@ -1929,5 +2021,5 @@
     "discrepancies": [],
     "accepted_at": "2026-07-22T10:16:43.6669036+08:00"
   },
-  "updated_at": "2026-07-22T12:19:20.9437963+08:00"
+  "updated_at": "2026-07-22T12:40:42.7470617+08:00"
 }
