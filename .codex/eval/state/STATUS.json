@@ -596,24 +596,33 @@
       "handoff_path": ".codex/eval/handoffs/TEST-046-P.json",
       "handoff_sha256": "f061aa3e8bfc28c93616f57eb63416afe9b774c3038dc0aa5361186c257eab75",
       "stable_patch_id": "1812146a7c5fc3e78e2b85ee60d34d72552035fc"
-    }
-  },
-  "active_tickets": {
+    },
     "TOOL-046-W": {
       "instance_id": "W5R2-TOOL-046-W-01",
-      "status": "active",
-      "thread_id": "019f8980-579d-7733-b29a-86d27d1ac67f",
-      "branch": "codex/eval-v3-w5r2-tool-046-w",
-      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\4b54\\pico"
+      "status": "accepted",
+      "base_sha": "aab051fbf30c50df3af6ed2df5954717e104eac0",
+      "head_sha": "cb5ab8c058edcf79ca627efbf9323edf6f06535e",
+      "dependency_commits": ["3f95f6ae5bdec56e75367cfcad1aadb9526332dd", "7dd7a08440848b01cc3863dd286610e3cc7ce7b2"],
+      "own_commits": ["5430725c8d13ddc284c08da64390055578fc727c", "cb5ab8c058edcf79ca627efbf9323edf6f06535e"],
+      "integration_commits": ["0f1dc6b706ab8f86bd1f0e1d6b047fefce2d16de", "6207efe389bd92f1388330e656f297b64f8d676a"],
+      "handoff_path": ".codex/eval/handoffs/TOOL-046-W.json",
+      "handoff_sha256": "18b314728ca7b40fe7598a8c58737d7d4db79f02ead8792e1e84be72ddf3f78e",
+      "stable_patch_id": "27ae0323a41a165808abf854d8368b3a9affcb25"
     },
     "TEST-046-T": {
       "instance_id": "W5R2-TEST-046-T-01",
-      "status": "active",
-      "thread_id": "019f8980-5791-7141-8bf2-f3763af0c191",
-      "branch": "codex/eval-v3-w5r2-test-046-t",
-      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\8eb6\\pico"
+      "status": "accepted",
+      "base_sha": "aab051fbf30c50df3af6ed2df5954717e104eac0",
+      "head_sha": "e5266ba717dbb77f5cf8b0bf774f593f62a96f14",
+      "dependency_commits": ["3f95f6ae5bdec56e75367cfcad1aadb9526332dd", "7dd7a08440848b01cc3863dd286610e3cc7ce7b2"],
+      "own_commits": ["3632767d25b6739aff75248b274c99ac5936db62", "e5266ba717dbb77f5cf8b0bf774f593f62a96f14"],
+      "integration_commits": ["7cc5933a570ec98f4479dd00b71223d6f3d5d9e6", "bb9a4b40b9eb6266a17abd537781d632a6a82c79"],
+      "handoff_path": ".codex/eval/handoffs/TEST-046-T.json",
+      "handoff_sha256": "673eaa4fc31939ae2299edd8bf9e894844e27472b4ca1d2ee3dd6c16226464dc",
+      "stable_patch_id": "a3e8b1cbb0a9ac433c94d94a24c292dddfe4c30c"
     }
   },
+  "active_tickets": {},
   "blocked_tickets": {},
   "prior_wave_blocked_tickets": {
     "TOOL-042-G-R1": {
@@ -2358,7 +2367,12 @@
       "prompt_sha256": "8a26fcdd5eb42a9a4e24cc624b3bc75fb2650190319a63464162c6e53eea1a30",
       "model": "gpt-5.6-sol",
       "reasoning_effort": "high",
-      "status": "active"
+      "head_sha": "cb5ab8c058edcf79ca627efbf9323edf6f06535e",
+      "own_commits": ["5430725c8d13ddc284c08da64390055578fc727c", "cb5ab8c058edcf79ca627efbf9323edf6f06535e"],
+      "integration_commits": ["0f1dc6b706ab8f86bd1f0e1d6b047fefce2d16de", "6207efe389bd92f1388330e656f297b64f8d676a"],
+      "handoff_sha256": "18b314728ca7b40fe7598a8c58737d7d4db79f02ead8792e1e84be72ddf3f78e",
+      "stable_patch_id": "27ae0323a41a165808abf854d8368b3a9affcb25",
+      "status": "accepted"
     },
     "W5R2-TEST-046-T-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -2390,7 +2404,12 @@
       "prompt_sha256": "52c36074c9778f8fc1fa076331be777ab0d0acb3fec2c379c55c8673dcfb5fa5",
       "model": "gpt-5.6-sol",
       "reasoning_effort": "medium",
-      "status": "active"
+      "head_sha": "e5266ba717dbb77f5cf8b0bf774f593f62a96f14",
+      "own_commits": ["3632767d25b6739aff75248b274c99ac5936db62", "e5266ba717dbb77f5cf8b0bf774f593f62a96f14"],
+      "integration_commits": ["7cc5933a570ec98f4479dd00b71223d6f3d5d9e6", "bb9a4b40b9eb6266a17abd537781d632a6a82c79"],
+      "handoff_sha256": "673eaa4fc31939ae2299edd8bf9e894844e27472b4ca1d2ee3dd6c16226464dc",
+      "stable_patch_id": "a3e8b1cbb0a9ac433c94d94a24c292dddfe4c30c",
+      "status": "accepted"
     }
   },
   "wave_handoffs": {
@@ -2435,6 +2454,17 @@
       "provider_profile_wsl_result": "119 passed, 1 pre-existing live-provider opt-in skip",
       "stable_patch_ids_verified": true,
       "checkpointed_at": "2026-07-22T19:06:11.6420177+08:00"
+    },
+    {
+      "wave": "W5R2",
+      "batch": 2,
+      "canonical_head": "bb9a4b40b9eb6266a17abd537781d632a6a82c79",
+      "accepted_tickets": ["TOOL-046-W", "TEST-046-T"],
+      "worker_profile_result": "15 passed; one post-fix startup timing observation was not reproducible",
+      "tui_profile_result": "19 passed",
+      "independent_product_defects": ["TOOL-046-W-INTERMITTENT-START-TIMING"],
+      "stable_patch_ids_verified": true,
+      "checkpointed_at": "2026-07-22T19:18:07.6574170+08:00"
     }
   ],
   "wave_close": null,
@@ -2542,5 +2572,5 @@
     "w6_started": false,
     "blocked_at": "2026-07-22T16:14:00+08:00"
   },
-  "updated_at": "2026-07-22T19:06:11.6420177+08:00"
+  "updated_at": "2026-07-22T19:18:07.6574170+08:00"
 }
