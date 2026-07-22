@@ -1,14 +1,14 @@
 import pytest
 
 from pico import Pico, SessionStore, WorkspaceContext
-from pico.testing import ScriptedModelClient
+from tests.native_fixtures import final, scripted_client, tool
 
 
 def build_agent(tmp_path, outputs, approval_policy="auto"):
     (tmp_path / "README.md").write_text("demo\n", encoding="utf-8")
     workspace = WorkspaceContext.build(tmp_path)
     return Pico(
-        model_client=ScriptedModelClient(outputs),
+        model_client=scripted_client(outputs),
         workspace=workspace,
         session_store=SessionStore(tmp_path / ".pico" / "sessions"),
         approval_policy=approval_policy,
@@ -243,7 +243,7 @@ def test_agents_slash_command_shows_worker_status(tmp_path):
 def test_subagent_slash_command_launches_explore_worker(tmp_path):
     from pico.cli import handle_repl_command
 
-    agent = build_agent(tmp_path, ["<final>Subagent checked README.</final>"])
+    agent = build_agent(tmp_path, [final("Subagent checked README.")])
 
     handled, should_exit, output = handle_repl_command(
         agent, "/subagent explore inspect README"
@@ -279,7 +279,7 @@ async def test_tui_runs_agent_turn_and_renders_final_answer(tmp_path):
     from pico.tui.app import PicoTuiApp
     from pico.tui.widgets import InputBar
 
-    agent = build_agent(tmp_path, ["<final>Done from TUI.</final>"])
+    agent = build_agent(tmp_path, [final("Done from TUI.")])
     app = PicoTuiApp(agent)
 
     async with app.run_test() as pilot:
@@ -296,7 +296,7 @@ async def test_tui_hides_welcome_after_first_turn_so_chat_stays_visible(tmp_path
     from pico.tui.app import PicoTuiApp
     from pico.tui.widgets import ChatLog, InputBar, WelcomeBanner
 
-    agent = build_agent(tmp_path, ["<final>Done from TUI.</final>"])
+    agent = build_agent(tmp_path, [final("Done from TUI.")])
     app = PicoTuiApp(agent)
 
     async with app.run_test(size=(80, 16)) as pilot:
@@ -323,7 +323,7 @@ async def test_tui_chat_stream_uses_terminal_transcript_layout(tmp_path):
 
     agent = build_agent(
         tmp_path,
-        ["<final>我是 pico。\n\n- 读代码\n- 跑命令\n- 改文件</final>"],
+        [final("我是 pico。\n\n- 读代码\n- 跑命令\n- 改文件")],
     )
     app = PicoTuiApp(agent)
 
@@ -361,8 +361,8 @@ async def test_tui_renders_tool_card_result(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            '<tool name="write_file" path="notes/result.txt"><content>ok\n</content></tool>',
-            "<final>Wrote it.</final>",
+            tool("write_file", path="notes/result.txt", content="ok\n"),
+            final("Wrote it."),
         ],
     )
     app = PicoTuiApp(agent)
@@ -387,8 +387,8 @@ async def test_tui_approval_prompt_controls_risky_tool(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            '<tool name="write_file" path="notes/result.txt"><content>ok\n</content></tool>',
-            "<final>Wrote it.</final>",
+            tool("write_file", path="notes/result.txt", content="ok\n"),
+            final("Wrote it."),
         ],
         approval_policy="ask",
     )
@@ -418,8 +418,8 @@ async def test_tui_ask_user_prompt_returns_selected_choice(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            '<tool>{"name":"ask_user","args":{"question":"Ship?","choices":["no","yes"]}}</tool>',
-            "<final>User chose yes.</final>",
+            tool("ask_user", question="Ship?", choices=["no", "yes"]),
+            final("User chose yes."),
         ],
     )
     app = PicoTuiApp(agent)

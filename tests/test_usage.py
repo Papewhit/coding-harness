@@ -1,7 +1,7 @@
 from pathlib import Path
 import pytest
 
-from pico.testing import ScriptedModelClient
+from tests.native_fixtures import final, scripted_client
 from pico import Pico, SessionStore, WorkspaceContext
 
 
@@ -9,7 +9,7 @@ def build_agent(tmp_path, outputs=None, **kwargs):
     (tmp_path / "README.md").write_text("demo\n", encoding="utf-8")
     workspace = WorkspaceContext.build(tmp_path)
     return Pico(
-        model_client=ScriptedModelClient(outputs or []),
+        model_client=scripted_client(outputs),
         workspace=workspace,
         session_store=SessionStore(tmp_path / ".pico" / "sessions"),
         approval_policy="auto",
@@ -20,7 +20,7 @@ def build_agent(tmp_path, outputs=None, **kwargs):
 def test_usage_command_reports_provider_model_and_last_usage(tmp_path):
     from pico.cli import handle_repl_command
 
-    agent = build_agent(tmp_path, ["<final>Done.</final>"])
+    agent = build_agent(tmp_path, [final("Done.")])
     agent.model_client.model = "gpt-test"
     agent.model_client.base_url = "https://example.com/v1"
     agent.model_client.last_completion_metadata = {
@@ -59,12 +59,12 @@ def test_model_command_updates_current_runtime_only(tmp_path):
 def test_session_history_resume_and_clear_commands(tmp_path):
     from pico.cli import handle_repl_command
 
-    first = build_agent(tmp_path, ["<final>First.</final>"])
+    first = build_agent(tmp_path, [final("First.")])
     assert first.ask("first request") == "First."
     first_id = first.session["id"]
 
     second = Pico.from_session(
-        model_client=ScriptedModelClient(["<final>Second.</final>"]),
+        model_client=scripted_client([final("Second.")]),
         workspace=first.workspace,
         session_store=first.session_store,
         session_id=first_id,

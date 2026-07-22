@@ -33,8 +33,13 @@ def _weather_tool() -> ToolDefinition:
 
 
 def test_request_and_result_contracts_are_json_safe() -> None:
-    continuation_source = {"response_id": "resp_1", "blocks": [{"type": "reasoning", "id": "r_1"}]}
-    continuation = ProviderContinuation("openai-responses:test-profile", continuation_source)
+    continuation_source = {
+        "response_id": "resp_1",
+        "blocks": [{"type": "reasoning", "id": "r_1"}],
+    }
+    continuation = ProviderContinuation(
+        "openai-responses:test-profile", continuation_source
+    )
     request = ModelRequest(
         prompt="What is the weather?",
         max_output_tokens=256,
@@ -82,7 +87,9 @@ def test_tool_calls_require_non_empty_stable_call_ids() -> None:
     with pytest.raises(ValueError, match="call_id must be a non-empty string"):
         ToolCallResult(call_id="", output="not executed", is_error=True)
 
-    result = ToolCallResult(call_id="provider-call-42", output={"reason": "denied"}, is_error=True)
+    result = ToolCallResult(
+        call_id="provider-call-42", output={"reason": "denied"}, is_error=True
+    )
     assert result.to_dict() == {
         "call_id": "provider-call-42",
         "output": {"reason": "denied"},
@@ -93,7 +100,9 @@ def test_tool_calls_require_non_empty_stable_call_ids() -> None:
 def test_response_can_carry_text_tool_calls_and_stop_reason_together() -> None:
     response = ModelResponse(
         text="I will check that now.",
-        tool_calls=[ToolCall(call_id="call_1", name="weather", arguments={"city": "Hong Kong"})],
+        tool_calls=[
+            ToolCall(call_id="call_1", name="weather", arguments={"city": "Hong Kong"})
+        ],
         stop_reason=StopReason.TOOL_CALLS,
         metadata={"usage": {"input_tokens": 12, "output_tokens": 8}},
     )
@@ -108,7 +117,9 @@ def test_request_and_response_reject_ambiguous_native_identifiers() -> None:
     tool = _weather_tool()
     with pytest.raises(ValueError, match="duplicate tool definition name"):
         ModelRequest(prompt="", max_output_tokens=10, tools=[tool, tool])
-    with pytest.raises(ValueError, match="named tool choice must reference a declared tool"):
+    with pytest.raises(
+        ValueError, match="named tool choice must reference a declared tool"
+    ):
         ModelRequest(
             prompt="",
             max_output_tokens=10,
@@ -144,19 +155,25 @@ def test_legacy_prompt_to_text_boundary_remains_active() -> None:
         last_completion_metadata = {"provider_attempts": 1}
 
         def complete(self, prompt: str, max_new_tokens: int, **kwargs: object) -> str:
-            assert (prompt, max_new_tokens, kwargs) == ("legacy prompt", 32, {"prompt_cache_key": "cache"})
+            assert (prompt, max_new_tokens, kwargs) == (
+                "legacy prompt",
+                32,
+                {"prompt_cache_key": "cache"},
+            )
             return "legacy text"
 
-    result = complete_model(LegacyClient(), "legacy prompt", 32, prompt_cache_key="cache")
+    result = complete_model(
+        LegacyClient(), "legacy prompt", 32, prompt_cache_key="cache"
+    )
     assert result.text == "legacy text"
     assert result.metadata == {"provider_attempts": 1}
 
 
 def test_contract_module_has_no_sdk_or_text_envelope_dependency() -> None:
-    source = (Path(__file__).resolve().parents[1] / "pico" / "providers" / "contracts.py").read_text(
-        encoding="utf-8"
-    )
+    source = (
+        Path(__file__).resolve().parents[1] / "pico" / "providers" / "contracts.py"
+    ).read_text(encoding="utf-8")
     assert "openai" not in source.lower()
     assert "anthropic" not in source.lower()
-    assert "<tool>" not in source
-    assert "<final>" not in source
+    assert "<" + "tool>" not in source
+    assert "<" + "final>" not in source

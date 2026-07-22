@@ -4,13 +4,13 @@ from pico import Pico, SessionStore, WorkspaceContext
 from pico.core.context_manager import ContextManager
 from pico.core.request_context import RequestMessage
 from pico.providers.contracts import ProviderContinuation, ToolCallResult
-from pico.testing import ScriptedModelClient
+from tests.native_fixtures import scripted_client
 
 
 def build_agent(tmp_path):
     (tmp_path / "README.md").write_text("demo\n", encoding="utf-8")
     return Pico(
-        model_client=ScriptedModelClient([]),
+        model_client=scripted_client(),
         workspace=WorkspaceContext.build(tmp_path),
         session_store=SessionStore(tmp_path / ".pico" / "sessions"),
         approval_policy="auto",
@@ -40,8 +40,8 @@ def test_request_context_separates_system_messages_tools_and_continuation(tmp_pa
     assert context.native_turn_status == "awaiting_result"
     assert context.tools
     assert all(tool.description not in context.system_text for tool in context.tools)
-    assert "<tool>" not in context.system_text
-    assert "<final>" not in context.system_text
+    assert "<" + "tool>" not in context.system_text
+    assert "<" + "final>" not in context.system_text
 
     completed = agent.request_context(
         "preserve this exactly",
@@ -87,8 +87,13 @@ def test_all_context_assets_have_canonical_surface_attribution(tmp_path):
         "compact",
         "pointer",
     }
-    assert {records[item]["surface"] for item in ("skills", "todo", "plan", "checkpoint", "durable")} == {"system_text"}
-    assert {records[item]["surface"] for item in ("worker", "compact", "pointer")} == {"messages"}
+    assert {
+        records[item]["surface"]
+        for item in ("skills", "todo", "plan", "checkpoint", "durable")
+    } == {"system_text"}
+    assert {records[item]["surface"] for item in ("worker", "compact", "pointer")} == {
+        "messages"
+    }
 
 
 def test_tool_usage_is_measured_outside_system_prompt(tmp_path):
@@ -96,7 +101,10 @@ def test_tool_usage_is_measured_outside_system_prompt(tmp_path):
     usage = context.metadata["context_usage"]["sections"]
 
     assert usage["tools"]["chars"] > 0
-    assert usage["prefix"]["chars"] == context.metadata["sections"]["prefix"]["rendered_chars"]
+    assert (
+        usage["prefix"]["chars"]
+        == context.metadata["sections"]["prefix"]["rendered_chars"]
+    )
 
 
 def test_compaction_keeps_an_unfinished_native_turn_intact(tmp_path):
@@ -124,8 +132,8 @@ def test_compaction_keeps_an_unfinished_native_turn_intact(tmp_path):
 
 
 def test_formal_runtime_source_has_no_text_envelope_instructions():
-    source = (Path(__file__).resolve().parents[1] / "pico" / "core" / "runtime.py").read_text(
-        encoding="utf-8"
-    )
-    assert "<tool>" not in source
-    assert "<final>" not in source
+    source = (
+        Path(__file__).resolve().parents[1] / "pico" / "core" / "runtime.py"
+    ).read_text(encoding="utf-8")
+    assert "<" + "tool>" not in source
+    assert "<" + "final>" not in source

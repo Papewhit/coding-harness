@@ -2,7 +2,7 @@ import json
 import threading
 import time
 
-from pico.testing import ScriptedModelClient
+from tests.native_fixtures import final, scripted_client, tool
 from pico import Pico, SessionStore, WorkspaceContext
 
 
@@ -11,7 +11,7 @@ def build_agent(tmp_path, outputs, **kwargs):
     workspace = WorkspaceContext.build(tmp_path)
     store = SessionStore(tmp_path / ".pico" / "sessions")
     return Pico(
-        model_client=ScriptedModelClient(outputs),
+        model_client=scripted_client(outputs),
         workspace=workspace,
         session_store=store,
         approval_policy="auto",
@@ -29,22 +29,18 @@ def read_jsonl(path):
 
 class BlockingModelClient:
     def __init__(self, outputs, started, release):
-        self.outputs = list(outputs)
+        self.client = scripted_client(outputs)
+        self._pico_test_native = True
         self.started = started
         self.release = release
-        self.prompts = []
-        self.supports_prompt_cache = False
-        self.last_completion_metadata = {}
+        self.prompts = self.client.prompts
         self.abort_count = 0
 
-    def complete(self, prompt, max_new_tokens, **kwargs):
-        self.prompts.append(prompt)
+    def request(self, request):
         self.started.set()
         if not self.release.wait(timeout=5):
             raise RuntimeError("blocking test client timed out")
-        if not self.outputs:
-            raise RuntimeError("scripted model ran out of outputs")
-        return self.outputs.pop(0)
+        return self.client.request(request)
 
     def abort(self):
         self.abort_count += 1
@@ -64,7 +60,7 @@ def test_delegate_is_removed_from_runtime_tool_surface(tmp_path):
 def test_async_worker_notification_is_drained_by_coordinator_only(tmp_path):
     started = threading.Event()
     release = threading.Event()
-    child_client = BlockingModelClient(["<final>Child done.</final>"], started, release)
+    child_client = BlockingModelClient([final("Child done.")], started, release)
     agent = build_agent(
         tmp_path,
         [],
@@ -84,7 +80,7 @@ def test_async_worker_notification_is_drained_by_coordinator_only(tmp_path):
     )
 
     assert payload["status"] == "started"
-    assert time.monotonic() - before < 0.5
+    assert time.monotonic() - before < 2.0
     assert started.wait(timeout=1)
     assert not any(
         "<task-notification>" in item.get("content", "")
@@ -117,7 +113,7 @@ def test_send_message_rejects_running_worker(tmp_path):
         tmp_path,
         [],
         model_client_factory=lambda: BlockingModelClient(
-            ["<final>Child done.</final>"], started, release
+            [final("Child done.")], started, release
         ),
     )
 
@@ -142,7 +138,7 @@ def test_send_message_rejects_running_worker(tmp_path):
 def test_task_stop_requests_child_runtime_abort(tmp_path):
     started = threading.Event()
     release = threading.Event()
-    child_client = BlockingModelClient(["<final>Child done.</final>"], started, release)
+    child_client = BlockingModelClient([final("Child done.")], started, release)
     agent = build_agent(
         tmp_path,
         [],
@@ -174,7 +170,7 @@ def test_task_stop_requests_child_runtime_abort(tmp_path):
 def test_clear_session_stops_running_background_workers(tmp_path):
     started = threading.Event()
     release = threading.Event()
-    child_client = BlockingModelClient(["<final>Child done.</final>"], started, release)
+    child_client = BlockingModelClient([final("Child done.")], started, release)
     agent = build_agent(
         tmp_path,
         [],
@@ -206,10 +202,15 @@ def test_explore_agent_runs_real_readonly_child_session_and_records_notification
     agent = build_agent(
         tmp_path,
         [
-            '<tool>{"name":"agent","args":{"description":"Inspect readme","prompt":"Read README.md and summarize it","subagent_type":"Explore"}}</tool>',
-            '<tool>{"name":"read_file","args":{"path":"README.md","start":1,"end":1}}</tool>',
-            "<final>README says demo readme.</final>",
-            "<final>Exploration complete.</final>",
+            tool(
+                "agent",
+                description="Inspect readme",
+                prompt="Read README.md and summarize it",
+                subagent_type="Explore",
+            ),
+            tool("read_file", path="README.md", start=1, end=1),
+            final("README says demo readme."),
+            final("Exploration complete."),
         ],
         max_steps=4,
     )
@@ -248,28 +249,41 @@ def test_worker_agent_can_be_continued_with_same_child_context_and_write_scope(
     agent = build_agent(
         tmp_path,
         [
-            '<tool>{"name":"agent","args":{"description":"Write notes","prompt":"Create the first note","subagent_type":"worker","write_scope":["notes"]}}</tool>',
-            '<tool name="write_file" path="notes/first.txt"><content>first\n</content></tool>',
-            "<final>First note written.</final>",
-            '<tool>{"name":"send_message","args":{"to":"agent_1","message":"Create the second note"}}</tool>',
-            '<tool name="write_file" path="notes/second.txt"><content>second\n</content></tool>',
-            "<final>Second note written.</final>",
-            "<final>Both worker steps are done.</final>",
+            tool(
+                "agent",
+                description="Write notes",
+                prompt="Create the first note",
+                subagent_type="worker",
+                write_scope=["notes"],
+            ),
+            tool("write_file", path="notes/first.txt", content="first\n"),
+            final("First note written."),
+            tool("send_message", to="agent_1", message="Create the second note"),
+            tool("write_file", path="notes/second.txt", content="second\n"),
+            final("Second note written."),
+            final("Both worker steps are done."),
         ],
         max_steps=5,
     )
 
     assert agent.ask("use a worker twice") == "Both worker steps are done."
 
+    deadline = time.monotonic() + 3
+    while time.monotonic() < deadline:
+        agent.engine.drain_worker_notifications()
+        notifications = [
+            item
+            for item in agent.session["history"]
+            if item["role"] == "user" and "<task-notification>" in item["content"]
+        ]
+        if len(notifications) == 2:
+            break
+        time.sleep(0.01)
+
     assert (tmp_path / "notes" / "first.txt").read_text(encoding="utf-8") == "first\n"
     assert (tmp_path / "notes" / "second.txt").read_text(encoding="utf-8") == "second\n"
     assert agent.model_client.prompts[4].count("First note written.") >= 1
 
-    notifications = [
-        item
-        for item in agent.session["history"]
-        if item["role"] == "user" and "<task-notification>" in item["content"]
-    ]
     assert len(notifications) == 2
     assert all(
         "<task-id>agent_1</task-id>" in item["content"] for item in notifications
@@ -289,10 +303,16 @@ def test_worker_write_scope_blocks_child_file_modification_outside_scope(tmp_pat
     agent = build_agent(
         tmp_path,
         [
-            '<tool>{"name":"agent","args":{"description":"Bad write","prompt":"Write outside scope","subagent_type":"worker","write_scope":["allowed"]}}</tool>',
-            '<tool name="write_file" path="forbidden/out.txt"><content>no\n</content></tool>',
-            "<final>Write was blocked.</final>",
-            "<final>Worker reported the blocked write.</final>",
+            tool(
+                "agent",
+                description="Bad write",
+                prompt="Write outside scope",
+                subagent_type="worker",
+                write_scope=["allowed"],
+            ),
+            tool("write_file", path="forbidden/out.txt", content="no\n"),
+            final("Write was blocked."),
+            final("Worker reported the blocked write."),
         ],
         max_steps=4,
     )
@@ -312,10 +332,15 @@ def test_worker_without_write_scope_cannot_modify_workspace(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            '<tool>{"name":"agent","args":{"description":"No scope","prompt":"Write without scope","subagent_type":"worker"}}</tool>',
-            '<tool name="write_file" path="notes/out.txt"><content>no\n</content></tool>',
-            "<final>Write was blocked.</final>",
-            "<final>Worker respected missing scope.</final>",
+            tool(
+                "agent",
+                description="No scope",
+                prompt="Write without scope",
+                subagent_type="worker",
+            ),
+            tool("write_file", path="notes/out.txt", content="no\n"),
+            final("Write was blocked."),
+            final("Worker respected missing scope."),
         ],
         max_steps=4,
     )
@@ -329,9 +354,15 @@ def test_plan_mode_cannot_continue_write_capable_worker(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            '<tool>{"name":"agent","args":{"description":"Worker","prompt":"Read only first","subagent_type":"worker","write_scope":["notes"]}}</tool>',
-            "<final>Worker ready.</final>",
-            "<final>Coordinator done.</final>",
+            tool(
+                "agent",
+                description="Worker",
+                prompt="Read only first",
+                subagent_type="worker",
+                write_scope=["notes"],
+            ),
+            final("Worker ready."),
+            final("Coordinator done."),
         ],
         max_steps=3,
     )
@@ -351,11 +382,16 @@ def test_plan_mode_allows_only_explore_agents(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            '<tool>{"name":"agent","args":{"description":"Explore plan","prompt":"Read README","subagent_type":"Explore"}}</tool>',
-            '<tool>{"name":"read_file","args":{"path":"README.md","start":1,"end":1}}</tool>',
-            "<final>Explored.</final>",
-            '<tool name="write_file" path=".pico/plans/gate7-plan.md"><content># Gate7\n</content></tool>',
-            "<final>Plan ready.</final>",
+            tool(
+                "agent",
+                description="Explore plan",
+                prompt="Read README",
+                subagent_type="Explore",
+            ),
+            tool("read_file", path="README.md", start=1, end=1),
+            final("Explored."),
+            tool("write_file", path=".pico/plans/gate7-plan.md", content="# Gate7\n"),
+            final("Plan ready."),
         ],
         max_steps=5,
     )

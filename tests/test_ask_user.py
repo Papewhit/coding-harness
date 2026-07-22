@@ -1,4 +1,4 @@
-from pico.testing import ScriptedModelClient
+from tests.native_fixtures import scripted_client
 from pico import Pico, SessionStore, WorkspaceContext
 
 
@@ -6,7 +6,7 @@ def build_agent(tmp_path, outputs, **kwargs):
     (tmp_path / "README.md").write_text("demo\n", encoding="utf-8")
     workspace = WorkspaceContext.build(tmp_path)
     return Pico(
-        model_client=ScriptedModelClient(outputs),
+        model_client=scripted_client(outputs),
         workspace=workspace,
         session_store=SessionStore(tmp_path / ".pico" / "sessions"),
         approval_policy="auto",

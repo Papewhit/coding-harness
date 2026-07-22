@@ -16,9 +16,11 @@ ASK_USER_TOOL_SPECS = {
 }
 
 ASK_USER_TOOL_EXAMPLES = {
-    "ask_user": '<tool>{"name":"ask_user","args":{"question":"Which target should I deploy?","choices":["staging","production"]}}</tool>',
+    "ask_user": {
+        "question": "Which target should I deploy?",
+        "choices": ["staging", "production"],
+    },
 }
-
 
 
 def tool_ask_user(agent: Pico, args: dict[str, Any]) -> str:

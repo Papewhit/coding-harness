@@ -1,6 +1,6 @@
 import json
 
-from pico.testing import ScriptedModelClient
+from tests.native_fixtures import final, scripted_client, tool
 from pico import Pico, SessionStore, WorkspaceContext
 from pico.cli import handle_repl_command
 from pico.core.permissions import PermissionDecision
@@ -13,7 +13,7 @@ def build_agent(tmp_path, outputs=None, **kwargs):
     store = SessionStore(tmp_path / ".pico" / "sessions")
     approval_policy = kwargs.pop("approval_policy", "auto")
     return Pico(
-        model_client=ScriptedModelClient(outputs or []),
+        model_client=scripted_client(outputs),
         workspace=workspace,
         session_store=store,
         approval_policy=approval_policy,
@@ -96,8 +96,12 @@ def test_plan_mode_switches_tool_profile_and_allows_only_active_plan_file(tmp_pa
     agent = build_agent(
         tmp_path,
         [
-            '<tool name="write_file" path=".pico/plans/v3-plan.md"><content># Plan\n- Gate 1\n</content></tool>',
-            "<final>Plan ready.</final>",
+            tool(
+                "write_file",
+                path=".pico/plans/v3-plan.md",
+                content="# Plan\n- Gate 1\n",
+            ),
+            final("Plan ready."),
         ],
         max_steps=3,
     )
@@ -146,15 +150,19 @@ def test_plan_mode_switches_tool_profile_and_allows_only_active_plan_file(tmp_pa
 
 
 def test_repeated_plan_mode_denial_is_blocked_before_hitting_step_limit(tmp_path):
-    bad_call = '<tool name="write_file" path="src.py"><content>print("no")\n</content></tool>'
+    bad_call = tool("write_file", path="src.py", content='print("no")\n')
     agent = build_agent(
         tmp_path,
         [
             bad_call,
             bad_call,
             bad_call,
-            '<tool name="write_file" path=".pico/plans/repeat-plan.md"><content># Plan\n- Retry stopped.\n</content></tool>',
-            "<final>Plan ready.</final>",
+            tool(
+                "write_file",
+                path=".pico/plans/repeat-plan.md",
+                content="# Plan\n- Retry stopped.\n",
+            ),
+            final("Plan ready."),
         ],
         max_steps=6,
     )
@@ -165,7 +173,9 @@ def test_repeated_plan_mode_denial_is_blocked_before_hitting_step_limit(tmp_path
 
     trace = [
         json.loads(line)
-        for line in (agent.current_run_dir / "trace.jsonl").read_text(encoding="utf-8").splitlines()
+        for line in (agent.current_run_dir / "trace.jsonl")
+        .read_text(encoding="utf-8")
+        .splitlines()
         if line.strip()
     ]
     write_events = [

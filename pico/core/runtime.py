@@ -18,12 +18,12 @@ from typing import Any, Callable, Sequence
 
 from ..features import memory as memorylib, skills as skillslib
 from ..features.sandbox import SandboxConfig, SandboxRunner
-from ..providers.base import ModelClient, NativeModelClient
+from ..providers.base import NativeModelClient
 from ..tools.base import RegisteredTool
 from .compact import CompactManager
 from .context_manager import ContextManager
 from .engine import Engine
-from . import model_output, tool_executor
+from . import tool_executor
 from .plan_mode import PlanModeController
 from .permissions import PermissionChecker
 from .request_context import ModelRequestContext, stable_system_text
@@ -87,7 +87,7 @@ class PromptPrefix:
 class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
     def __init__(
         self,
-        model_client: NativeModelClient | ModelClient,
+        model_client: NativeModelClient,
         workspace: WorkspaceContext,
         session_store: SessionStore,
         session: dict[str, Any] | None = None,
@@ -106,11 +106,15 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         auto_dream: bool = True,
         dream_interval_hours: float = 24.0,
         dream_min_sessions: int = 5,
-        model_client_factory: Callable[[], NativeModelClient | ModelClient] | None = None,
+        model_client_factory: Callable[[], NativeModelClient] | None = None,
         sandbox_config: SandboxConfig | None = None,
         ask_user_callback: Callable | None = None,
         allowed_tools: Sequence[str] | None = None,
     ):
+        if not callable(getattr(model_client, "request", None)):
+            raise TypeError(
+                "Pico Runtime requires a native model client with request()"
+            )
         self.model_client = model_client
         self.model_client_factory = model_client_factory
         self.abort_requested = False
@@ -197,6 +201,15 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         self.permission_checker = PermissionChecker(self)
         self.prefix_state = self.build_prefix()
         self.prefix = self.prefix_state.text
+        provider_identity = getattr(self.model_client, "_pico_profile_identity", None)
+        if (
+            isinstance(provider_identity, dict)
+            and "provider_profile" not in self.session
+        ):
+            self.session["provider_profile"] = {
+                **provider_identity,
+                "tool_schema": self.tool_signature(),
+            }
         self.current_turn_id = ""
         self.current_run_id = ""
         self._trace_seq = 0
@@ -228,7 +241,7 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
     @classmethod
     def from_session(
         cls,
-        model_client: NativeModelClient | ModelClient,
+        model_client: NativeModelClient,
         workspace: WorkspaceContext,
         session_store: SessionStore,
         session_id: str,
@@ -423,7 +436,9 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         return toolkit.build_tool_registry(self)
 
     @staticmethod
-    def _normalize_allowed_tools(allowed_tools: Sequence[str] | None) -> tuple[str, ...] | None:
+    def _normalize_allowed_tools(
+        allowed_tools: Sequence[str] | None,
+    ) -> tuple[str, ...] | None:
         if allowed_tools is None:
             return None
         normalized = tuple(str(name).strip() for name in allowed_tools)
@@ -431,7 +446,9 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
             raise ValueError("allowed_tools must be a non-empty sequence of tool names")
         return normalized
 
-    def _apply_tool_allowlist(self, tools: dict[str, RegisteredTool]) -> dict[str, RegisteredTool]:
+    def _apply_tool_allowlist(
+        self, tools: dict[str, RegisteredTool]
+    ) -> dict[str, RegisteredTool]:
         if self.allowed_tools is None:
             return tools
         unknown = [name for name in self.allowed_tools if name not in tools]
@@ -582,7 +599,9 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         _, metadata = self._build_prompt_and_metadata(user_message)
         return metadata
 
-    def _build_prompt_and_metadata(self, user_message: str) -> tuple[str, dict[str, Any]]:
+    def _build_prompt_and_metadata(
+        self, user_message: str
+    ) -> tuple[str, dict[str, Any]]:
         refresh = self.refresh_prefix()
         self.resume_state = self.evaluate_resume_state()
         prompt, metadata = self.context_manager.build(user_message)
@@ -634,7 +653,9 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         self.session_event_bus.emit("context_usage_recorded", usage_payload)
         return prompt, metadata
 
-    def compact_history(self, trigger: str = "manual", keep_recent_turns: int = 2) -> Any:
+    def compact_history(
+        self, trigger: str = "manual", keep_recent_turns: int = 2
+    ) -> Any:
         return self.compact_manager.compact(
             trigger=trigger, keep_recent_turns=keep_recent_turns
         )
@@ -661,7 +682,9 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
             return index
         return "No durable memories yet. Use /remember <text> and /dream to consolidate daily logs."
 
-    def run_dream(self, quiet: bool = False, session_ids: list[str] | None = None) -> Any:
+    def run_dream(
+        self, quiet: bool = False, session_ids: list[str] | None = None
+    ) -> Any:
         return memorylib.run_dream(self, quiet=quiet, session_ids=session_ids)
 
     def maintain_memory_after_turn(self, final_answer: str) -> Any:
@@ -674,7 +697,9 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         thread.join(timeout=timeout)
         return not thread.is_alive()
 
-    def emit_trace(self, task_state: TaskState, event: str, payload: dict[str, Any] | None = None) -> Any:
+    def emit_trace(
+        self, task_state: TaskState, event: str, payload: dict[str, Any] | None = None
+    ) -> Any:
         payload = self.redact_artifact(payload or {})
         for path in payload.get("affected_paths", []) or []:
             if path not in task_state.changed_paths:
@@ -698,7 +723,9 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
             return f"Decide the next action after {task_state.last_tool}."
         return "Continue the task from the latest checkpoint."
 
-    def update_memory_after_tool(self, name: str, args: dict[str, Any], result: Any) -> None:
+    def update_memory_after_tool(
+        self, name: str, args: dict[str, Any], result: Any
+    ) -> None:
         """把少量高价值工具结果沉淀到 working memory。
 
         为什么存在：
@@ -874,13 +901,6 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         except EOFError:
             return False
         return answer.strip().lower() in {"y", "yes"}
-
-    parse = staticmethod(model_output.parse)
-    retry_notice = staticmethod(model_output.retry_notice)
-    parse_xml_tool = staticmethod(model_output.parse_xml_tool)
-    parse_attrs = staticmethod(model_output.parse_attrs)
-    extract = staticmethod(model_output.extract)
-    extract_raw = staticmethod(model_output.extract_raw)
 
     def reset(self) -> None:
         self.session["history"] = []

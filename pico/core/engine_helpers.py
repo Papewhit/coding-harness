@@ -5,9 +5,10 @@ from __future__ import annotations
 import time
 from typing import TYPE_CHECKING, Any, Generator
 
-from ..providers.base import complete_model
 from ..providers.contracts import ModelRequest
 from ..providers.errors import ProviderError
+from .model_errors import finish_model_error
+from .request_context import build_model_request_context
 from .session_lifecycle import NativeSessionRecorder
 from .task_state import TaskState
 from .workspace import clip, now
@@ -42,18 +43,41 @@ def run_native_turn(
             "runtime_mode": agent.runtime_mode,
         },
     )
-    yield {"type": "turn_started", "run_id": task_state.run_id, "task_id": task_state.task_id}
+    yield {
+        "type": "turn_started",
+        "run_id": task_state.run_id,
+        "task_id": task_state.task_id,
+    }
     agent.memory.set_task_summary(user_message)
     agent.record({"role": "user", "content": user_message, "created_at": now()})
     agent.session_event_bus.emit(
-        "user_message", {"run_id": task_state.run_id, "content": clip(user_message, 300)}
+        "user_message",
+        {"run_id": task_state.run_id, "content": clip(user_message, 300)},
+    )
+    agent.emit_trace(
+        task_state,
+        "run_started",
+        {"task_id": task_state.task_id, "user_request": clip(user_message, 300)},
     )
     recorder = NativeSessionRecorder(agent, task_state)
     continuation = recorder.latest_continuation()
-    context = agent.request_context(user_message, continuation=continuation)
+    prompt_started_at = time.monotonic()
+    prompt, prompt_metadata = agent._build_prompt_and_metadata(user_message)
+    context = build_model_request_context(
+        agent, prompt, prompt_metadata, continuation=continuation
+    )
     prompt_metadata = dict(context.metadata)
     prompt_metadata["provider_profile"] = dict(recorder.profile)
     agent.last_prompt_metadata = prompt_metadata
+    agent.emit_trace(
+        task_state,
+        "prompt_built",
+        {
+            "prompt_metadata": prompt_metadata,
+            "duration_ms": int((time.monotonic() - prompt_started_at) * 1000),
+        },
+    )
+    _checkpoint_for_prompt_state(agent, task_state, user_message, prompt_metadata)
     request = ModelRequest(
         prompt=context.legacy_prompt(),
         max_output_tokens=agent.max_new_tokens,
@@ -72,6 +96,14 @@ def run_native_turn(
             "sdk_max_retries": recorder.profile.get("sdk_max_retries"),
         },
     )
+    agent.session_event_bus.emit(
+        "model_requested",
+        {
+            "run_id": task_state.run_id,
+            "attempts": task_state.attempts,
+            "tool_steps": task_state.tool_steps,
+        },
+    )
     yield {
         "type": "model_requested",
         "run_id": task_state.run_id,
@@ -79,11 +111,106 @@ def run_native_turn(
         "tool_steps": task_state.tool_steps,
     }
     model_started_at = time.monotonic()
-    try:
-        result = engine.run_native_tool_loop(request, persist_hook=recorder.persist)
-    except Exception as exc:
-        from .model_errors import finish_model_error
+    provider_retries: dict[str, int] = {}
+    worker_events: list[dict[str, Any]] = []
 
+    def on_native_event(event: dict[str, Any]) -> None:
+        if event.get("event") == "native_tool_call_state" and event.get("status") in {
+            "completed",
+            "rejected",
+            "uncertain",
+        }:
+            for notification in engine.drain_worker_notifications():
+                worker_events.append(
+                    {
+                        "type": "worker_notification",
+                        "run_id": task_state.run_id,
+                        "content": notification,
+                    }
+                )
+
+    while True:
+        try:
+            result = engine.run_native_tool_loop(
+                request,
+                persist_hook=recorder.persist,
+                event_hook=on_native_event,
+            )
+            break
+        except Exception as exc:
+            if should_retry_model_error(exc, provider_retries):
+                code = str(getattr(exc, "code", type(exc).__name__))
+                provider_retries[code] = provider_retries.get(code, 0) + 1
+                task_state.record_attempt()
+                agent.run_store.write_task_state(task_state)
+                payload = {
+                    "run_id": task_state.run_id,
+                    "code": code,
+                    "attempts": task_state.attempts,
+                    "retry_count": provider_retries[code],
+                }
+                agent.session_event_bus.emit("model_retry_scheduled", payload)
+                agent.emit_trace(task_state, "model_retry_scheduled", payload)
+                continue
+            yield from finish_model_error(
+                engine,
+                task_state,
+                user_message,
+                prompt_metadata,
+                exc,
+                int((time.monotonic() - model_started_at) * 1000),
+                int((time.monotonic() - run_started_at) * 1000),
+            )
+            return
+
+    policy_attempts = 0
+    while agent.runtime_mode == "plan" and not agent.plan_mode.can_finish():
+        notice = agent.plan_mode.final_notice()
+        agent.record({"role": "assistant", "content": notice, "created_at": now()})
+        agent.session_event_bus.emit(
+            "assistant_message",
+            {
+                "run_id": task_state.run_id,
+                "kind": "runtime_notice",
+                "content": notice,
+            },
+        )
+        yield {"type": "runtime_notice", "run_id": task_state.run_id, "content": notice}
+        policy_attempts += 1
+        if policy_attempts >= agent.max_steps + 2:
+            final = "Stopped after too many final answers before the plan artifact was written."
+            task_state.stop_retry_limit(final)
+            yield from finish_limited_run(
+                engine, task_state, user_message, final, run_started_at
+            )
+            return
+        request = ModelRequest(
+            prompt=f"{prompt}\n\nRuntime notice:\n{notice}",
+            max_output_tokens=agent.max_new_tokens,
+            tools=context.tools,
+            continuation=result.responses[-1].continuation,
+        )
+        try:
+            result = engine.run_native_tool_loop(
+                request,
+                persist_hook=recorder.persist,
+                event_hook=on_native_event,
+            )
+        except Exception as exc:
+            yield from finish_model_error(
+                engine,
+                task_state,
+                user_message,
+                prompt_metadata,
+                exc,
+                int((time.monotonic() - model_started_at) * 1000),
+                int((time.monotonic() - run_started_at) * 1000),
+            )
+            return
+
+    try:
+        recorder.finish(result.responses[-1])
+    except Exception as exc:
         yield from finish_model_error(
             engine,
             task_state,
@@ -95,8 +222,8 @@ def run_native_turn(
         )
         return
     task_state.attempts = len(result.responses)
-    recorder.finish(result.responses[-1])
     yield from recorder.events
+    yield from worker_events
     final = result.final_text
     completion_metadata = dict(result.responses[-1].metadata)
     completion_metadata.update(
@@ -110,8 +237,54 @@ def run_native_turn(
         }
     )
     agent.last_completion_metadata = completion_metadata
+    prompt_metadata.update(completion_metadata)
+    agent.last_prompt_metadata = prompt_metadata
+    if result.step_limit_reached:
+        if final != "Stopped after reaching the step limit.":
+            final += (
+                "\n\n— 已达本轮 step 预算上限（max_steps）。以上是当前进展总结。"
+                "继续工作：在 REPL 输入 /resume 续接本会话，或直接说「继续」让我接着干。"
+            )
+        task_state.stop_step_limit(final)
+        yield from finish_limited_run(
+            engine, task_state, user_message, final, run_started_at
+        )
+        return
     yield from finish_successful_run(
         engine, task_state, user_message, final, run_started_at
+    )
+
+
+def _checkpoint_for_prompt_state(
+    agent: Pico,
+    task_state: TaskState,
+    user_message: str,
+    prompt_metadata: dict[str, Any],
+) -> None:
+    trigger = ""
+    if prompt_metadata.get("resume_status") == "partial-stale":
+        trigger = "freshness_mismatch"
+    elif prompt_metadata.get("resume_status") == "workspace-mismatch":
+        trigger = "workspace_mismatch"
+        agent.emit_trace(
+            task_state,
+            "runtime_identity_mismatch",
+            {
+                "fields": list(
+                    prompt_metadata.get("runtime_identity_mismatch_fields", [])
+                )
+            },
+        )
+    elif prompt_metadata.get("budget_reductions"):
+        trigger = "context_reduction"
+    if not trigger:
+        return
+    checkpoint = agent.create_checkpoint(task_state, user_message, trigger=trigger)
+    agent.run_store.write_task_state(task_state)
+    agent.emit_trace(
+        task_state,
+        "checkpoint_created",
+        {"checkpoint_id": checkpoint["checkpoint_id"], "trigger": trigger},
     )
 
 
@@ -135,7 +308,9 @@ def finish_successful_run(
     task_state.finish_success(final)
     agent.promote_durable_memory(user_message, final)
     maintain_memory_safely(agent, task_state, final)
-    checkpoint = agent.create_checkpoint(task_state, user_message, trigger="run_finished")
+    checkpoint = agent.create_checkpoint(
+        task_state, user_message, trigger="run_finished"
+    )
     agent.run_store.write_task_state(task_state)
     agent.emit_trace(
         task_state,
@@ -250,7 +425,12 @@ def execute_tool_payload(
 
 
 def finish_stopped_run(
-    engine: Engine, task_state: TaskState, user_message: str, final: str, stop_reason: str, run_started_at: float
+    engine: Engine,
+    task_state: TaskState,
+    user_message: str,
+    final: str,
+    stop_reason: str,
+    run_started_at: float,
 ) -> Generator[dict[str, Any], None, None]:
     agent = engine.runtime
     task_state.stop(stop_reason, final_answer=final)
@@ -301,7 +481,11 @@ def finish_stopped_run(
 
 
 def finish_limited_run(
-    engine: Engine, task_state: TaskState, user_message: str, final: str, run_started_at: float
+    engine: Engine,
+    task_state: TaskState,
+    user_message: str,
+    final: str,
+    run_started_at: float,
 ) -> Generator[dict[str, Any], None, None]:
     agent = engine.runtime
     agent.record({"role": "assistant", "content": final, "created_at": now()})
@@ -365,7 +549,9 @@ def should_retry_model_error(exc: Exception, provider_retries: dict[str, int]) -
     return provider_retries.get(code, 0) < 1
 
 
-def maintain_memory_safely(agent: Pico, task_state: TaskState, final_answer: str) -> None:
+def maintain_memory_safely(
+    agent: Pico, task_state: TaskState, final_answer: str
+) -> None:
     try:
         agent.maintain_memory_after_turn(final_answer)
     except Exception as exc:
@@ -382,43 +568,12 @@ def maintain_memory_safely(agent: Pico, task_state: TaskState, final_answer: str
         )
 
 
-_STEP_LIMIT_SUMMARY_NOTICE = (
-    "You have hit the per-turn tool budget (max_steps). Do not call any more tools. "
-    "Right now, return a single <final>...</final> answer in the user's language that "
-    "briefly covers: (1) what you accomplished this turn, (2) what remains undone, "
-    "(3) how the user can continue (e.g., `/resume` then `继续`). Keep it concise."
-)
+def request_step_limit_summary(
+    engine: Engine, task_state: TaskState, user_message: str
+) -> str | None:
+    """Legacy Engine hook retained as an unreachable compatibility tombstone.
 
-
-def request_step_limit_summary(engine: Engine, task_state: TaskState, user_message: str) -> str | None:
-    """Ask the model to write a graceful step-limit summary.
-
-    Returns the final text, or None if the model fails or refuses to comply.
-    Side effects: emits a trace event but does NOT mutate session history —
-    the caller decides whether to record the resulting final.
+    Native turns request their structured step-limit summary in tool_call_batch.
     """
-    agent = engine.runtime
-    started_at = time.monotonic()
-    try:
-        prompt, _ = agent._build_prompt_and_metadata(_STEP_LIMIT_SUMMARY_NOTICE)
-        result = complete_model(
-            agent.model_client, prompt, agent.max_new_tokens
-        )
-    except Exception as exc:
-        agent.emit_trace(
-            task_state,
-            "step_limit_summary_failed",
-            {"error": clip(str(exc), 200)},
-        )
-        return None
-    raw = (result.text or "").strip() if result else ""
-    kind, payload = agent.parse(raw)
-    duration_ms = int((time.monotonic() - started_at) * 1000)
-    agent.emit_trace(
-        task_state,
-        "step_limit_summary",
-        {"kind": kind, "duration_ms": duration_ms, "produced": bool(kind == "final")},
-    )
-    if kind == "final" and payload:
-        return str(payload).strip()
+    del engine, task_state, user_message
     return None

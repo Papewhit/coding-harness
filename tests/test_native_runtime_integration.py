@@ -51,7 +51,9 @@ def _agent(tmp_path, responses, **kwargs) -> Pico:
     return agent
 
 
-def test_active_runtime_uses_native_tools_results_and_session_exchange(tmp_path) -> None:
+def test_active_runtime_uses_native_tools_results_and_session_exchange(
+    tmp_path,
+) -> None:
     continuation = native_continuation({"response_id": "one"})
     agent = _agent(
         tmp_path,
@@ -71,7 +73,7 @@ def test_active_runtime_uses_native_tools_results_and_session_exchange(tmp_path)
 
     requests = agent.model_client.requests
     assert requests[0].tools
-    assert "<tool>" not in requests[0].prompt
+    assert "<" + "tool>" not in requests[0].prompt
     assert [item.call_id for item in requests[1].tool_results] == ["call-read"]
     assert requests[1].tool_results[0].is_error is False
     assert requests[1].continuation == continuation

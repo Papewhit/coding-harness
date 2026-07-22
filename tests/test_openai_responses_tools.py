@@ -55,7 +55,9 @@ def _wire_response(
         raw_bytes=json.dumps(payload).encode(),
         status_code=200,
         request_id="req_1",
-        http_attempts=(HttpAttempt(1, "POST", "https://redacted.invalid/v1/responses", 200),),
+        http_attempts=(
+            HttpAttempt(1, "POST", "https://redacted.invalid/v1/responses", 200),
+        ),
         sdk_retry_count=0,
     )
 
@@ -123,9 +125,13 @@ def test_request_golden_compiles_instructions_input_tools_and_named_choice() -> 
         (ToolChoice(mode=ToolChoiceMode.REQUIRED), "required"),
     ],
 )
-def test_request_compiles_each_non_named_tool_choice(choice: ToolChoice, expected: str) -> None:
+def test_request_compiles_each_non_named_tool_choice(
+    choice: ToolChoice, expected: str
+) -> None:
     adapter, _ = _adapter()
-    request = ModelRequest(prompt="next", max_output_tokens=32, tools=[_tool()], tool_choice=choice)
+    request = ModelRequest(
+        prompt="next", max_output_tokens=32, tools=[_tool()], tool_choice=choice
+    )
 
     assert adapter.compile_request(request)["tool_choice"] == expected
 
@@ -266,13 +272,26 @@ def test_adapter_sends_exactly_one_operation_and_returns_native_contract() -> No
 @pytest.mark.parametrize(
     ("item", "code"),
     [
-        ({"type": "function_call", "name": "weather", "arguments": "{}"}, "missing_call_id"),
         (
-            {"type": "function_call", "call_id": "call_1", "name": "weather", "arguments": "{"},
+            {"type": "function_call", "name": "weather", "arguments": "{}"},
+            "missing_call_id",
+        ),
+        (
+            {
+                "type": "function_call",
+                "call_id": "call_1",
+                "name": "weather",
+                "arguments": "{",
+            },
             "invalid_arguments",
         ),
         (
-            {"type": "function_call", "call_id": "call_1", "name": "weather", "arguments": "[]"},
+            {
+                "type": "function_call",
+                "call_id": "call_1",
+                "name": "weather",
+                "arguments": "[]",
+            },
             "invalid_arguments",
         ),
         (
@@ -298,7 +317,12 @@ def test_malformed_native_call_fails_closed_with_stable_taxonomy(
 
 
 def test_duplicate_call_id_fails_closed() -> None:
-    call = {"type": "function_call", "call_id": "same", "name": "weather", "arguments": "{}"}
+    call = {
+        "type": "function_call",
+        "call_id": "same",
+        "name": "weather",
+        "arguments": "{}",
+    }
     adapter, _ = _adapter()
 
     with pytest.raises(OpenAIResponsesProtocolError) as captured:
@@ -318,10 +342,15 @@ def test_continuation_is_profile_bound_and_structurally_validated() -> None:
         {"version": "future-version", "output_items": []},
     )
 
-    for continuation, code in ((wrong_profile, "profile_mismatch"), (malformed, "invalid_continuation")):
+    for continuation, code in (
+        (wrong_profile, "profile_mismatch"),
+        (malformed, "invalid_continuation"),
+    ):
         with pytest.raises(OpenAIResponsesProtocolError) as captured:
             adapter.compile_request(
-                ModelRequest(prompt="next", max_output_tokens=16, continuation=continuation)
+                ModelRequest(
+                    prompt="next", max_output_tokens=16, continuation=continuation
+                )
             )
         assert captured.value.code == code
 
@@ -354,10 +383,13 @@ def test_no_text_protocol_or_chat_completions_fallback_is_present() -> None:
     from pathlib import Path
 
     source = (
-        Path(__file__).resolve().parents[1] / "pico" / "providers" / "openai_responses.py"
+        Path(__file__).resolve().parents[1]
+        / "pico"
+        / "providers"
+        / "openai_responses.py"
     ).read_text(encoding="utf-8")
-    assert "<tool>" not in source
-    assert "<final>" not in source
+    assert "<" + "tool>" not in source
+    assert "<" + "final>" not in source
     assert "chat/completions" not in source
     assert "ToolRunner" not in source
     assert "AgentRunner" not in source

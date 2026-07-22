@@ -3,9 +3,14 @@
 from pico.core.runtime import Pico
 from pico.core.session_store import SessionStore
 from pico.core.workspace import WorkspaceContext
-from pico.testing import ScriptedModelClient
+from tests.native_fixtures import scripted_client
 from pico.tools.definitions import TOOL_DEFINITIONS
-from pico.tools.schemas import AgentArgs, AskUserArgs, ReadFileArgs, normalized_json_schema
+from pico.tools.schemas import (
+    AgentArgs,
+    AskUserArgs,
+    ReadFileArgs,
+    normalized_json_schema,
+)
 
 
 def build_agent(tmp_path):
@@ -13,7 +18,7 @@ def build_agent(tmp_path):
     return Pico(
         workspace=WorkspaceContext.build(tmp_path),
         session_store=SessionStore(tmp_path / ".pico" / "sessions"),
-        model_client=ScriptedModelClient([]),
+        model_client=scripted_client(),
     )
 
 
@@ -80,7 +85,10 @@ def test_schema_fingerprint_is_stable_and_sensitive_to_the_model():
     assert read_file.schema_fingerprint == (
         "3265d798bfa3c433e051b238a328ded7bad8ff603726c026832a7a17622653bd"
     )
-    assert read_file.schema_fingerprint != TOOL_DEFINITIONS["list_files"].schema_fingerprint
+    assert (
+        read_file.schema_fingerprint
+        != TOOL_DEFINITIONS["list_files"].schema_fingerprint
+    )
 
 
 def test_runtime_tool_signature_is_stable(tmp_path):

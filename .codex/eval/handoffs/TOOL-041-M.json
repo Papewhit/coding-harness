@@ -1,0 +1,206 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-041-M",
+  "instance_id": "W5-TOOL-041-M-01",
+  "wave": "W5",
+  "role": "implementer",
+  "status": "complete",
+  "base_sha": "a834e78098487888264b5ffdea37f52a8d635fbf",
+  "head_sha": "419fb2f5165860aa801cada58bd4f47ed1bdcb08",
+  "head_sha_semantics": "Implementation-content head before the metadata-only commit containing this handoff; the containing commit is the final branch HEAD reported to the Wave Integrator.",
+  "branch": "codex/eval-v3-w5-tool-041-m",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/w5-041m/pico",
+  "dependency_commits": [
+    "68d1829babe6d2908bc22ee52488098962aa94c5"
+  ],
+  "applied_dependency_commits": [
+    "d8b4d44"
+  ],
+  "dependency_handoff_hashes": {
+    "TOOL-015": "e3e37d00beba52addbea070666f932b71593a131dfa67778b42f7216ec6bc413",
+    "TOOL-040-I": "3ea08ab84d4bcdc632280bb8e65e572aa1a448b04781394f242880790faf0922"
+  },
+  "own_commits": [
+    "419fb2f5165860aa801cada58bd4f47ed1bdcb08"
+  ],
+  "files_changed": [
+    "pico/core/engine_helpers.py",
+    "pico/core/model_output.py",
+    "pico/core/runtime.py",
+    "pico/evaluation/evaluator.py",
+    "pico/evaluation/metrics.py",
+    "pico/tools/agents.py",
+    "pico/tools/ask_user.py",
+    "pico/tools/plan.py",
+    "pico/tools/registry.py",
+    "pico/tools/todos.py",
+    "scripts/run_business_scenario_dogfood.py",
+    "scripts/run_real_session_acceptance.py",
+    "scripts/run_v3_human_scenario_gate.py",
+    "tests/__init__.py",
+    "tests/conftest.py",
+    "tests/native_fixtures.py",
+    "tests/test_agent_workers_acceptance.py",
+    "tests/test_ask_user.py",
+    "tests/test_business_scenario_dogfood.py",
+    "tests/test_context_governance_acceptance.py",
+    "tests/test_context_manager.py",
+    "tests/test_engine_acceptance.py",
+    "tests/test_evaluator.py",
+    "tests/test_native_request_context.py",
+    "tests/test_native_runtime_integration.py",
+    "tests/test_openai_responses_tools.py",
+    "tests/test_permissions_acceptance.py",
+    "tests/test_pico.py",
+    "tests/test_provider_contracts.py",
+    "tests/test_release_smoke.py",
+    "tests/test_runtime_evidence_acceptance.py",
+    "tests/test_skills_acceptance.py",
+    "tests/test_todo_ledger_acceptance.py",
+    "tests/test_tool_schema_export.py",
+    "tests/test_tool_validation.py",
+    "tests/test_tui.py",
+    "tests/test_usage.py",
+    "tests/test_v3_runtime.py",
+    ".codex/eval/handoffs/TOOL-041-M.json"
+  ],
+  "commands_run": [
+    "dependency handoff/freeze SHA-256 and branch/base/history verification",
+    "uv sync --extra providers --locked",
+    "uv run pytest tests -q",
+    "uv run pytest tests/test_pico.py -q",
+    "uv run pytest tests/test_engine_acceptance.py tests/test_v3_runtime.py tests/test_agent_workers_acceptance.py tests/test_runtime_evidence_acceptance.py tests/test_context_governance_acceptance.py tests/test_permissions_acceptance.py tests/test_business_scenario_dogfood.py tests/test_release_smoke.py tests/test_usage.py -q",
+    "uv run pytest tests/test_ask_user.py tests/test_context_manager.py tests/test_native_request_context.py tests/test_tool_schema_export.py tests/test_tool_validation.py tests/test_runtime_evidence_acceptance.py tests/test_todo_ledger_acceptance.py tests/test_usage.py tests/test_native_runtime_integration.py tests/test_openai_responses_tools.py tests/test_provider_contracts.py -q",
+    "uv run python scripts/run_real_session_acceptance.py --output-dir %TEMP%/tool-041m-real-session-2",
+    "uv run ruff check .",
+    "changed-file ruff check, exact-tag grep, active-protocol grep, forbidden-path diff"
+  ],
+  "tests": [
+    {
+      "command": "uv run pytest tests/test_engine_acceptance.py tests/test_v3_runtime.py tests/test_agent_workers_acceptance.py tests/test_runtime_evidence_acceptance.py tests/test_context_governance_acceptance.py tests/test_permissions_acceptance.py tests/test_business_scenario_dogfood.py tests/test_release_smoke.py tests/test_usage.py -q",
+      "result": "passed",
+      "details": "49 passed, 2 skipped after the final native profile and worker-notification fixes. This covers plan/step-limit policy, native worker continuation, permissions, evidence, release smoke, and usage metadata. The worker async-return threshold is 2 seconds after measured Windows native child initialization, still well below the fixture's 5-second blocking timeout."
+    },
+    {
+      "command": "uv run pytest tests/test_pico.py -q",
+      "result": "failed",
+      "details": "64 passed and 5 failed only because Windows tests clear all home variables and pathlib.Path.home() cannot resolve. These are the immutable-base Windows failures recorded by TOOL-040-I; all migrated native Runtime cases in this module passed."
+    },
+    {
+      "command": "uv run pytest tests/test_ask_user.py tests/test_context_manager.py tests/test_native_request_context.py tests/test_tool_schema_export.py tests/test_tool_validation.py tests/test_runtime_evidence_acceptance.py tests/test_todo_ledger_acceptance.py tests/test_usage.py tests/test_native_runtime_integration.py tests/test_openai_responses_tools.py tests/test_provider_contracts.py -q",
+      "result": "passed",
+      "details": "The group reached 123 passed after the sole usage-metadata fixture mismatch was fixed and rechecked directly."
+    },
+    {
+      "command": "uv run pytest tests -q",
+      "result": "failed",
+      "details": "After uv sync --extra providers --locked, the exact command reached 72 passed and 1 skipped with the sole observed assertion failure being the immutable-base architecture budget (worker_manager.py 232/220). The Windows command host then interrupted the long-running child process, so no complete aggregate count is claimed. A pre-sync attempt also stopped at collection because the optional httpx extra was absent."
+    },
+    {
+      "command": "uv run python scripts/run_real_session_acceptance.py --output-dir %TEMP%/tool-041m-real-session-2",
+      "result": "failed",
+      "details": "7 required scenarios passed and the live scenario skipped. The only required failure was bugfix_pytest: Windows subprocess output decoding raised a GBK UnicodeDecodeError, making run_shell report a None stdout. Worker write-scope, security rejection, resume, context pressure, plan, skill, and provider-error scenarios passed with explicit native profiles."
+    },
+    {
+      "command": "uv run ruff check .",
+      "result": "failed",
+      "details": "All 14 findings are pre-existing F401/F541 violations in tracked, unchanged scripts/readable_session.py (last modified before the ticket). Ruff over every TOOL-041-M changed Python file passed."
+    },
+    {
+      "command": "exact-tag grep, active-protocol grep, forbidden-path diff",
+      "result": "passed",
+      "details": "No active parser import, retry notice, or protocol prompt remains. Exact tag literals remain only in five frozen lines of forbidden tests/test_tool_policy_acceptance.py; Runtime execution observes none. runtime_checkpoints.py and the three forbidden tests have empty diffs. tests/test_permissions_acceptance.py changed fixture construction only and retains all assertions."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "pico/core/model_output.py",
+      "sha256": "abf62062f5ab1e006e1b79c4ea76b6ebcd99eecdb5aa6ac044f31b945e2a98a9",
+      "coverage": "Non-executable removal tombstone; the legacy parser implementation is deleted."
+    },
+    {
+      "path": "pico/core/runtime.py",
+      "sha256": "de7b1304a47fed33e046633ed532eb884b1b7b62357ca87c55c8b7e69333f5ca",
+      "coverage": "Native-only Runtime client boundary and explicit credential-free profile identity locking; 923/950 lines."
+    },
+    {
+      "path": "pico/core/engine_helpers.py",
+      "sha256": "f10395dae38ae9b80ade2bcb1da5193af7bb8fc18b650968f42c255fb3746adc",
+      "coverage": "Mechanical native parity for traces, resume checkpoints, plan final gate, provider retry evidence, step-limit completion, and worker notifications without a text parser."
+    },
+    {
+      "path": "pico/evaluation/evaluator.py",
+      "sha256": "8081d8d10cd8c7e317e2ac2d76d5589bd6cd147eb7484680db2089eb029b6cac",
+      "coverage": "Structured offline benchmark fixtures and native provider profile locking."
+    },
+    {
+      "path": "pico/evaluation/metrics.py",
+      "sha256": "de5874849816e7472dd4c9355327519c971ae6c4298867227ddf13364a3be5f6",
+      "coverage": "Structured metric fixtures and native online provider factories."
+    },
+    {
+      "path": "tests/native_fixtures.py",
+      "sha256": "a800c470c32a23a709afab0dd95eb704d5586600961c8c54e542506b7662dd8f",
+      "coverage": "Provider-native structured fixture DSL and prompt logging."
+    },
+    {
+      "path": "tests/conftest.py",
+      "sha256": "d7cd5da3560108badb73142b01218b9a5ddf2184acde2edd6a42132cf7385595",
+      "coverage": "Pytest-only adapter for the two forbidden frozen legacy fixture modules."
+    },
+    {
+      "path": ".codex/eval/handoffs/TOOL-041-M.json",
+      "persistence": "Metadata-only commit generated after the implementation content commit."
+    }
+  ],
+  "frozen_hashes": {
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "native_scripted_fixtures": "ff2a8febe36730b6c18d096312f9455dce0793c9d1f975ffb941c726706904cf",
+    "sdk_transport_decision": null,
+    "provider_selection": null,
+    "native_resume_gate": null
+  },
+  "native_protocol_observations": {
+    "observation_scope": "Offline deterministic Runtime, evaluator, scenario, fixture, permission, policy, worker, resume, and provider-error tests; no live endpoint or formal effectiveness evaluation was run.",
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0,
+    "sdk_tool_runner_used": false,
+    "sdk_agent_runner_used": false,
+    "sdk_managed_pico_tool_execution_used": false
+  },
+  "defects": [
+    {
+      "code": "pre_existing_windows_acceptance_failures",
+      "scope": "unchanged base/platform outside TOOL-041-M ownership",
+      "detail": "Path.home() under cleared environment, symlink privilege, POSIX shell commands/quoting, python3 verifier availability, timezone data, and GBK subprocess decoding remain Windows environment failures."
+    },
+    {
+      "code": "pre_existing_worker_manager_budget",
+      "scope": "pico/core/worker_manager.py outside TOOL-041-M ownership",
+      "detail": "The immutable-base architecture failure remains 232 lines versus the 220-line budget. TOOL-041-M did not modify the file or architecture test."
+    },
+    {
+      "code": "pre_existing_readable_session_lint",
+      "scope": "scripts/readable_session.py outside TOOL-041-M ownership",
+      "detail": "The exact repository Ruff command reports 14 existing F401/F541 findings in this tracked, unchanged file; changed-file Ruff is clean."
+    }
+  ],
+  "risks": [
+    "Five literal legacy envelopes remain only in tests/test_tool_policy_acceptance.py because the ticket explicitly forbids modifying that safety test; tests/conftest.py converts only those frozen pytest fixtures before Runtime construction.",
+    "tests/__init__.py exists solely to make the structured fixture module importable; setuptools includes only pico*, so test support is excluded from production packages.",
+    "The exact full-suite aggregate is unavailable because the Windows command host interrupted the long-running process after the already-known architecture failure; targeted ticket-owned groups and changed-file lint completed."
+  ],
+  "status_proposal": {
+    "ticket_id": "TOOL-041-M",
+    "status": "complete",
+    "head_sha": "419fb2f5165860aa801cada58bd4f47ed1bdcb08",
+    "reason": "Active Runtime, prompt construction, scripts, evaluator, and editable fixtures now use provider-native structured responses; no executable text-envelope parser/retry path remains, and protected safety assertions are unchanged."
+  },
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}

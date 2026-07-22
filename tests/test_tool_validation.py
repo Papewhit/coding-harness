@@ -10,7 +10,7 @@ import pytest
 from pico.core.runtime import Pico
 from pico.core.session_store import SessionStore
 from pico.core.workspace import WorkspaceContext
-from pico.testing import ScriptedModelClient
+from tests.native_fixtures import scripted_client
 
 
 def build_workspace(tmp_path):
@@ -22,7 +22,7 @@ def build_agent(tmp_path, **kwargs):
     workspace = build_workspace(tmp_path)
     store = SessionStore(tmp_path / ".pico" / "sessions")
     return Pico(
-        model_client=ScriptedModelClient([]),
+        model_client=scripted_client(),
         workspace=workspace,
         session_store=store,
         approval_policy=kwargs.pop("approval_policy", "auto"),
@@ -33,6 +33,7 @@ def build_agent(tmp_path, **kwargs):
 # ---------------------------------------------------------------------------
 # list_files
 # ---------------------------------------------------------------------------
+
 
 class TestListFilesValidation:
     def test_valid_default_path(self, tmp_path):
@@ -58,6 +59,7 @@ class TestListFilesValidation:
 # ---------------------------------------------------------------------------
 # read_file
 # ---------------------------------------------------------------------------
+
 
 class TestReadFileValidation:
     def test_valid(self, tmp_path):
@@ -106,6 +108,7 @@ class TestReadFileValidation:
 # search
 # ---------------------------------------------------------------------------
 
+
 class TestSearchValidation:
     def test_valid(self, tmp_path):
         agent = build_agent(tmp_path)
@@ -134,6 +137,7 @@ class TestSearchValidation:
 # ---------------------------------------------------------------------------
 # run_shell
 # ---------------------------------------------------------------------------
+
 
 class TestRunShellValidation:
     def test_valid(self, tmp_path):
@@ -179,6 +183,7 @@ class TestRunShellValidation:
 # write_file
 # ---------------------------------------------------------------------------
 
+
 class TestWriteFileValidation:
     def test_valid_new_file(self, tmp_path):
         agent = build_agent(tmp_path)
@@ -216,16 +221,20 @@ class TestWriteFileValidation:
 # patch_file
 # ---------------------------------------------------------------------------
 
+
 class TestPatchFileValidation:
     def test_valid(self, tmp_path):
         f = tmp_path / "a.py"
         f.write_text("def foo():\n    return 1\n")
         agent = build_agent(tmp_path)
-        agent.validate_tool("patch_file", {
-            "path": "a.py",
-            "old_text": "return 1",
-            "new_text": "return 2",
-        })
+        agent.validate_tool(
+            "patch_file",
+            {
+                "path": "a.py",
+                "old_text": "return 1",
+                "new_text": "return 2",
+            },
+        )
 
     def test_missing_path_raises(self, tmp_path):
         agent = build_agent(tmp_path)
@@ -235,14 +244,18 @@ class TestPatchFileValidation:
     def test_path_not_a_file_raises(self, tmp_path):
         agent = build_agent(tmp_path)
         with pytest.raises(ValueError, match="not a file"):
-            agent.validate_tool("patch_file", {"path": "no_such.py", "old_text": "x", "new_text": "y"})
+            agent.validate_tool(
+                "patch_file", {"path": "no_such.py", "old_text": "x", "new_text": "y"}
+            )
 
     def test_empty_old_text_raises(self, tmp_path):
         f = tmp_path / "a.py"
         f.write_text("x\n")
         agent = build_agent(tmp_path)
         with pytest.raises(ValueError, match="old_text"):
-            agent.validate_tool("patch_file", {"path": "a.py", "old_text": "", "new_text": "y"})
+            agent.validate_tool(
+                "patch_file", {"path": "a.py", "old_text": "", "new_text": "y"}
+            )
 
     def test_missing_new_text_raises(self, tmp_path):
         f = tmp_path / "a.py"
@@ -256,19 +269,24 @@ class TestPatchFileValidation:
         f.write_text("hello\n")
         agent = build_agent(tmp_path)
         with pytest.raises(ValueError, match="exactly once"):
-            agent.validate_tool("patch_file", {"path": "a.py", "old_text": "world", "new_text": "y"})
+            agent.validate_tool(
+                "patch_file", {"path": "a.py", "old_text": "world", "new_text": "y"}
+            )
 
     def test_old_text_found_multiple_times_raises(self, tmp_path):
         f = tmp_path / "a.py"
         f.write_text("x\nx\n")
         agent = build_agent(tmp_path)
         with pytest.raises(ValueError, match="exactly once"):
-            agent.validate_tool("patch_file", {"path": "a.py", "old_text": "x", "new_text": "y"})
+            agent.validate_tool(
+                "patch_file", {"path": "a.py", "old_text": "x", "new_text": "y"}
+            )
 
 
 # ---------------------------------------------------------------------------
 # todo tools
 # ---------------------------------------------------------------------------
+
 
 class TestTodoValidation:
     def test_todo_add_valid(self, tmp_path):
@@ -303,14 +321,18 @@ class TestTodoValidation:
 # agent / send_message / task_stop
 # ---------------------------------------------------------------------------
 
+
 class TestAgentToolValidation:
     def test_agent_valid(self, tmp_path):
         agent = build_agent(tmp_path)
-        agent.validate_tool("agent", {
-            "description": "Explore auth",
-            "prompt": "Find entry points",
-            "subagent_type": "Explore",
-        })
+        agent.validate_tool(
+            "agent",
+            {
+                "description": "Explore auth",
+                "prompt": "Find entry points",
+                "subagent_type": "Explore",
+            },
+        )
 
     def test_agent_empty_description_raises(self, tmp_path):
         agent = build_agent(tmp_path)
@@ -325,16 +347,16 @@ class TestAgentToolValidation:
     def test_agent_invalid_subagent_type_raises(self, tmp_path):
         agent = build_agent(tmp_path)
         with pytest.raises(ValueError, match="subagent_type"):
-            agent.validate_tool("agent", {
-                "description": "x", "prompt": "y", "subagent_type": "invalid"
-            })
+            agent.validate_tool(
+                "agent", {"description": "x", "prompt": "y", "subagent_type": "invalid"}
+            )
 
     def test_agent_invalid_write_scope_raises(self, tmp_path):
         agent = build_agent(tmp_path)
         with pytest.raises(ValueError, match="write_scope"):
-            agent.validate_tool("agent", {
-                "description": "x", "prompt": "y", "write_scope": 42
-            })
+            agent.validate_tool(
+                "agent", {"description": "x", "prompt": "y", "write_scope": 42}
+            )
 
     def test_send_message_valid(self, tmp_path):
         agent = build_agent(tmp_path)
@@ -364,6 +386,7 @@ class TestAgentToolValidation:
 # plan mode tools
 # ---------------------------------------------------------------------------
 
+
 class TestPlanToolValidation:
     def test_enter_plan_mode_valid(self, tmp_path):
         agent = build_agent(tmp_path)
@@ -383,6 +406,7 @@ class TestPlanToolValidation:
 # ask_user
 # ---------------------------------------------------------------------------
 
+
 class TestAskUserValidation:
     def test_valid(self, tmp_path):
         agent = build_agent(tmp_path)
@@ -390,7 +414,9 @@ class TestAskUserValidation:
 
     def test_valid_with_choices(self, tmp_path):
         agent = build_agent(tmp_path)
-        agent.validate_tool("ask_user", {"question": "Which env?", "choices": ["dev", "prod"]})
+        agent.validate_tool(
+            "ask_user", {"question": "Which env?", "choices": ["dev", "prod"]}
+        )
 
     def test_empty_question_raises(self, tmp_path):
         agent = build_agent(tmp_path)

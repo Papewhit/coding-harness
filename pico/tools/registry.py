@@ -40,6 +40,7 @@ from .todos import (
     tool_todo_list,
     tool_todo_update,
 )
+
 BASE_TOOL_SPECS = {
     name: {
         "schema": definition.schema,
@@ -50,12 +51,19 @@ BASE_TOOL_SPECS = {
 }
 
 TOOL_EXAMPLES = {
-    "list_files": '<tool>{"name":"list_files","args":{"path":"."}}</tool>',
-    "read_file": '<tool>{"name":"read_file","args":{"path":"README.md","start":1,"end":80}}</tool>',
-    "search": '<tool>{"name":"search","args":{"pattern":"binary_search","path":"."}}</tool>',
-    "run_shell": '<tool>{"name":"run_shell","args":{"command":"uv run --with pytest python -m pytest -q","timeout":20}}</tool>',
-    "write_file": '<tool name="write_file" path="binary_search.py"><content>def binary_search(nums, target):\n    return -1\n</content></tool>',
-    "patch_file": '<tool name="patch_file" path="binary_search.py"><old_text>return -1</old_text><new_text>return mid</new_text></tool>',
+    "list_files": {"path": "."},
+    "read_file": {"path": "README.md", "start": 1, "end": 80},
+    "search": {"pattern": "binary_search", "path": "."},
+    "run_shell": {"command": "uv run --with pytest python -m pytest -q", "timeout": 20},
+    "write_file": {
+        "path": "binary_search.py",
+        "content": "def binary_search(nums, target):\n    return -1\n",
+    },
+    "patch_file": {
+        "path": "binary_search.py",
+        "old_text": "return -1",
+        "new_text": "return mid",
+    },
     **TODO_TOOL_EXAMPLES,
     **AGENT_TOOL_EXAMPLES,
     **PLAN_TOOL_EXAMPLES,
@@ -79,8 +87,8 @@ def build_tool_registry(agent: Pico) -> dict[str, RegisteredTool]:
     return tools
 
 
-def tool_example(name: str) -> str:
-    return TOOL_EXAMPLES.get(name, "")
+def tool_example(name: str) -> Any:
+    return TOOL_EXAMPLES.get(name, {})
 
 
 def validate_tool(agent: Pico, name: str, args: dict[str, Any] | None) -> None:
