@@ -19,7 +19,7 @@
   "current_wave": "W5",
   "wave_base_sha": "a834e78098487888264b5ffdea37f52a8d635fbf",
   "gates": {
-    "native_eval_ready": "pending",
+    "native_eval_ready": "blocked",
     "native_resume_ready": "pending"
   },
   "accepted_tickets": {
@@ -520,10 +520,17 @@
       "stable_patch_id": "8d79bfcbb21c783beebc200095d52f1f996a81c0"
     }
   },
-  "active_tickets": {
-    "TOOL-042-G": {"instance_id": "W5-TOOL-042-G-01", "status": "active"}
+  "active_tickets": {},
+  "blocked_tickets": {
+    "TOOL-042-G": {
+      "instance_id": "W5-TOOL-042-G-01",
+      "status": "blocked",
+      "head_sha": "1c95e7a9c2d1728675175188a3325f59e294e99b",
+      "integration_commit": "e17396dda5f871ec83de7c845e60182587e32b14",
+      "handoff_sha256": "437d9c24c7cc38c68f8f3f6f2bdfe322e55408ada19c01f61d1474d3a0b55b2d",
+      "reason": "W5 Exit Gate failed: one new retry-after-read policy regression and an unreproducible structured-context cases hash; the all-pass protected gate also retains eleven W4 baseline failures."
+    }
   },
-  "blocked_tickets": {},
   "ticket_instances": {
     "W0-EVAL-000-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -1909,7 +1916,22 @@
         ".codex/eval/handoffs/TOOL-042-G.json"
       ],
       "prompt_sha256": "72dd396261ed1c2c38d08dc83b93785c99fdf442c97d772bd4b2af68bcd6ee82",
-      "status": "active"
+      "head_sha": "1c95e7a9c2d1728675175188a3325f59e294e99b",
+      "applied_dependency_commits": [
+        "b8caeabeaa0691151dbf30ebe0d3889997f5dc49",
+        "22f18219af28bba18f4f106b07d5481a6740fff1",
+        "c1dd4e15641fd9efec8aab4d9d67b72e672d07aa",
+        "7e93936331317c119c8adac26bdc500b3ba608ea"
+      ],
+      "own_commits": [
+        "712a398632f410be2c25f1f9394d50200befa4fc",
+        "1c95e7a9c2d1728675175188a3325f59e294e99b"
+      ],
+      "integration_commits": ["e17396dda5f871ec83de7c845e60182587e32b14"],
+      "handoff_sha256": "437d9c24c7cc38c68f8f3f6f2bdfe322e55408ada19c01f61d1474d3a0b55b2d",
+      "freeze_proposal_sha256": "f90bc12f5588d565da4f3a5f2cc83e36eec91ec91dac10edead1ac0f91d05e35",
+      "stable_patch_id": "c559f1cf7572c7a1f40e971c12ff891f6f08ca61",
+      "status": "blocked"
     }
   },
   "wave_handoffs": {
@@ -1917,12 +1939,13 @@
     "W1": ".codex/eval/state/W1-wave-handoff.json",
     "W2": ".codex/eval/state/W2-wave-handoff.json",
     "W3": ".codex/eval/state/W3-wave-handoff.json",
-    "W4": ".codex/eval/state/W4-wave-handoff.json"
+    "W4": ".codex/eval/state/W4-wave-handoff.json",
+    "W5": ".codex/eval/state/W5-wave-handoff.json"
   },
   "ready_tickets": [],
   "wave_open": {
     "wave": "W5",
-    "status": "active",
+    "status": "blocked",
     "wave_base_sha": "a834e78098487888264b5ffdea37f52a8d635fbf",
     "control_overlay_sha256": "68e66b17aff7c348c223402a0093cb76ab2bd14565547e8b8aa06a94b7aad279",
     "upstream_handoff_sha256": "36d9ec41a14f9b7d1c0804267c315022b88639e39f1bf8c27024ff95c88057b9",
@@ -1967,59 +1990,95 @@
       ],
       "stable_patch_ids_verified": true,
       "checkpointed_at": "2026-07-22T12:40:42.7470617+08:00"
+    },
+    {
+      "wave": "W5",
+      "batch": 4,
+      "canonical_head": "e17396dda5f871ec83de7c845e60182587e32b14",
+      "accepted_tickets": ["TOOL-040-I", "TOOL-041-M", "TOOL-049-I", "EVAL-031-G"],
+      "blocked_tickets": ["TOOL-042-G"],
+      "dispatched_tickets": [],
+      "stable_patch_ids_verified": true,
+      "exit_gate_status": "blocked",
+      "checkpointed_at": "2026-07-22T12:57:04.6125953+08:00"
     }
   ],
-  "wave_close": null,
+  "wave_close": {
+    "wave": "W5",
+    "status": "blocked",
+    "accepted_tickets": ["TOOL-040-I", "TOOL-041-M", "TOOL-049-I", "EVAL-031-G"],
+    "blocked_tickets": ["TOOL-042-G"],
+    "ticket_integration_head": "e17396dda5f871ec83de7c845e60182587e32b14",
+    "next_wave": "W6",
+    "next_wave_ready_tickets": [],
+    "next_wave_started": false,
+    "closed_at": "2026-07-22T12:57:04.6125953+08:00"
+  },
   "last_gate": {
-    "wave": "W4",
-    "status": "accepted",
-    "wave_integrator_thread": "019f8782-a4ea-7dd0-b324-bfdcf7613c35",
-    "wave_base_sha": "005ded3eceaaa13e816ae8073973a50db87772f2",
-    "ticket_integration_head": "a215f15cd8019ff2d8f0b936745c83bfd0009fe4",
-    "accepted_ticket_count": 3,
+    "wave": "W5",
+    "status": "blocked",
+    "wave_integrator_thread": "/root",
+    "wave_base_sha": "a834e78098487888264b5ffdea37f52a8d635fbf",
+    "ticket_integration_head": "e17396dda5f871ec83de7c845e60182587e32b14",
+    "accepted_ticket_count": 4,
+    "blocked_ticket_count": 1,
     "plan_validation": "VALID: 63 ticket templates, 11 waves",
     "initial_ready_set_match": true,
-    "initial_ready_ticket_count": 3,
+    "initial_ready_ticket_count": 1,
     "allowed_path_ownership_conflicts": [],
-    "integration_order": ["TOOL-031-S", "TOOL-030-E", "TOOL-032-C"],
+    "integration_order": ["TOOL-040-I", "TOOL-041-M", "TOOL-049-I", "EVAL-031-G", "TOOL-042-G"],
     "stable_patch_ids_verified": true,
     "subagent_identity": {
       "durable_thread_uuid_available": false,
+      "unavailability_reason": "the collaboration interface returned canonical agent paths but no durable thread UUID",
       "recorded_basis": "agent_path_and_prompt_sha256",
       "agents": {
-        "TOOL-030-E": {"agent_path": "/root/w4_tool_030_e", "prompt_sha256": "43313eb872e8356e161f4c98faad6574afb8b03f7ad113dcc6c967ba7c7c7b63"},
-        "TOOL-031-S": {"agent_path": "/root/w4_tool_031_s", "prompt_sha256": "775f266b3dd989a3890a6e1c96f72a3e022ea2c2c3e94a1718bc9d43100f23d2"},
-        "TOOL-032-C": {"agent_path": "/root/w4_tool_032_c", "prompt_sha256": "801578312a9c0fe334458ddde4524e7b4a90701c844245207c9d4ebda2c91bd3"}
+        "TOOL-040-I": {"agent_path": "/root/w5_tool_040_i", "prompt_sha256": "b4fedf757bba53fdf0876e4f2820914d9c52399bbf25ae94255da0de527d616a"},
+        "TOOL-041-M": {"agent_path": "/root/w5_tool_041_m", "prompt_sha256": "2faf566f20517b572ab16991089690731337e1e2f2985e437b84286d8a6e7a3c"},
+        "TOOL-049-I": {"agent_path": "/root/w5_tool_049_i", "prompt_sha256": "3eb8674d2e7f3d6bfd20c4b1fa46d2bd1bb8ac08c4d71ac08baec9d1012b3873"},
+        "EVAL-031-G": {"agent_path": "/root/w5_eval_031_g", "prompt_sha256": "b74a5ed238d23b409a9b608c89eb3039f8e6a003e2d1de90b85b7bb8d17d51ed"},
+        "TOOL-042-G": {"agent_path": "/root/w5_tool_042_g", "prompt_sha256": "72dd396261ed1c2c38d08dc83b93785c99fdf442c97d772bd4b2af68bcd6ee82"}
       }
     },
-    "native_engine_batch_loop_accepted": true,
-    "native_session_exchange_accepted": true,
-    "structured_request_context_accepted": true,
-    "runtime_line_count": 903,
-    "runtime_line_budget": 950,
+    "deterministic_native_loop_completed": true,
+    "runtime_executable_text_protocol_fallback_count": 0,
+    "structured_context_gate_attempted": true,
+    "structured_context_gate_declared_frozen": true,
+    "structured_context_gate_integrity_verified": false,
     "core_sdk_import_count": 0,
     "sdk_runner_usage_count": 0,
-    "changed_production_text_envelope_reference_count": 0,
+    "safety_chain_bypass_count": 0,
     "formal_online_evaluation_run": false,
     "online_effectiveness_conclusions": false,
     "resume_evaluation_run": false,
-    "w5_started": true,
+    "w6_started": false,
     "targeted_test_evidence": {
-      "combined_native_core_context": "134 passed",
-      "prescribed_ticket_groups": "113 passed, 4 known failures (3 Windows tool-policy, 1 unchanged latent worker_manager budget)",
-      "ruff_pico_tests": "passed",
-      "compileall_pico": "passed",
-      "architecture_safety_policy_permissions": "16 passed, 11 failures: 10 Windows failures unchanged; architecture now exposes unchanged W3 worker_manager.py 232/220 after runtime.py was reduced below budget"
+      "native_deterministic": "79 passed",
+      "structured_context_regression": "27 passed",
+      "architecture_safety_permission_policy": "15 passed, 12 failed: 11 W4-known failures plus 1 new retry-after-informing-read policy regression",
+      "ruff": "14 known findings in unchanged scripts/readable_session.py"
     },
+    "blocking_defects": [
+      "TOOL-042-G-NEW-001: retry-after-informing-read policy acceptance regression",
+      "TOOL-042-G-NEW-002: structured_context_cases declared hash d69dfc... is not reproducible from run-snapshot Git blob e080667... or checkout bytes 00846e3...",
+      "TOOL-042-G requires the architecture/safety/permission/policy suite to pass; eleven W4-known failures remain actual failures"
+    ],
     "known_baseline_failures": {
-      "architecture": "pico/core/worker_manager.py is 232 lines against its unchanged 220-line budget; W3 canonical, W4 base and W4 integration blobs are identical (a0b07d1b8cca2b7918b830979c962296ec8c1a1f)",
-      "windows_environment": "10 unchanged Windows symlink/home/path/shell-command failures; exact identities match the W3 canonical baseline"
+      "architecture": "pico/core/worker_manager.py remains 232 lines against its unchanged 220-line budget",
+      "windows_environment": "10 unchanged Windows symlink/home/path/shell-command failures",
+      "ruff": "14 unchanged scripts/readable_session.py findings"
     },
-    "worker_bundle_sha256": "46b0000eeadd66be2261c20b8cb9d22ae78c336086a1eaf67f1dfa394bc4236c",
-    "freeze_changed": false,
-    "next_wave_ready_tickets": ["TOOL-040-I"],
-    "discrepancies": [],
-    "accepted_at": "2026-07-22T10:16:43.6669036+08:00"
+    "native_gate_report_sha256": "ee42ddaabd4ea35c859154f5b2e4056a8c786e0f421ec8ecfa0304082072503e",
+    "worker_bundle_sha256": "5b89f26e4a587da8ced5ed24b5466bb1898f97017d0b47fab6713d8029b07d16",
+    "freeze_changed": true,
+    "native_eval_ready": false,
+    "w5_exit_gate_satisfied": false,
+    "next_wave_ready_tickets": [],
+    "discrepancies": [
+      "The EVAL-031-G declared cases hash cannot be reproduced from canonical bytes.",
+      "The protected tool-policy suite has one new W5 regression."
+    ],
+    "blocked_at": "2026-07-22T12:57:04.6125953+08:00"
   },
-  "updated_at": "2026-07-22T12:40:42.7470617+08:00"
+  "updated_at": "2026-07-22T12:57:04.6125953+08:00"
 }
