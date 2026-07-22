@@ -1,0 +1,82 @@
+{
+  "schema_version": "pico-eval-control-overlay-v1",
+  "wave": "W5R",
+  "purpose": "readable canonical integration history",
+  "overlay_parent_sha": "ac944b4cbac4728473323c94276debe87c8fb78a",
+  "upstream_canonical_sha": "a885581bb39b46f7f856b40cffdbbfbc3da0918a",
+  "upstream_metadata_sha": "fd249ee5352a4d4973b1519305cf16d83bf452e9",
+  "upstream_control_head_sha": "ac944b4cbac4728473323c94276debe87c8fb78a",
+  "upstream_handoff": {
+    "path": ".codex/eval/state/W5-wave-handoff.json",
+    "sha256": "8bb358e325764457d727a11cbe07742bc230e730296c8ce35fc2ce1e3b5b2625"
+  },
+  "upstream_status_sha256": "4011314f02969b1d415c3d8fbd8b7f44eb57872bf6cd88d7f9deaf8472f05d87",
+  "upstream_freeze_sha256": "dbedbc07dcc042546ec37392fb17214b2947bdbfe757d872bb438b9f7cca6f8e",
+  "preserved_w5_evidence": {
+    "canonical_tag": "eval-v3/w5-canonical",
+    "canonical_tag_target_sha": "a885581bb39b46f7f856b40cffdbbfbc3da0918a",
+    "blocked_handoff_sha256": "8bb358e325764457d727a11cbe07742bc230e730296c8ce35fc2ce1e3b5b2625",
+    "failed_gate_report_sha256": "ee42ddaabd4ea35c859154f5b2e4056a8c786e0f421ec8ecfa0304082072503e",
+    "invalid_context_hash_declaration": "d69dfc1808cb12b179f8a1fb30ffa74136339d7783d9f11a5fbe8fd4259400ba"
+  },
+  "rules": {
+    "normalized_ticket_commit": {
+      "maximum_per_ticket_with_source_or_fixture_changes": 1,
+      "subject_must_contain_ticket_id": true,
+      "merge_method": "git cherry-pick --no-commit for every worker-owned commit, followed by one canonical commit",
+      "required_commit_body_fields": [
+        "worker_head",
+        "worker_commits",
+        "dependency_commits",
+        "handoff_sha256",
+        "tests",
+        "stable_patch_id_verification"
+      ],
+      "stable_patch_id_command": "git diff <ticket-own-base>..<worker-head> | git patch-id --stable"
+    },
+    "control_commits": {
+      "forbid_per_ticket_dispatch_commits": true,
+      "forbid_per_ticket_accept_commits": true,
+      "allowed_kinds": [
+        "wave_open",
+        "batch_checkpoint",
+        "wave_close",
+        "wave_handoff"
+      ]
+    },
+    "integration_order": [
+      "TOOL-044-F",
+      "ARCH-045-B",
+      "CHORE-045-L",
+      "TOOL-043-R",
+      "EVAL-032-F",
+      "TOOL-042-G-R1"
+    ],
+    "negative_control": {
+      "ticket": "TOOL-044-F",
+      "environment": "Ubuntu WSL2 fresh ext4 clone",
+      "must_pass_before_accepting": "TOOL-043-R",
+      "fixture_only_patch_applied_to_sha": "a885581bb39b46f7f856b40cffdbbfbc3da0918a",
+      "retry_fix_applied": false
+    },
+    "commit_map": {
+      "path": ".codex/eval/state/W5R-commit-map.json",
+      "must_map_every_worker_commit_to_canonical_commit": true
+    },
+    "worker_bundle": {
+      "required_at_wave_close": true,
+      "artifact_path": "F:\\dev\\llm\\pico-eval-artifacts\\wave-bundles\\W5R-workers.bundle",
+      "verification_command": "git bundle verify <bundle>",
+      "record_sha256": true
+    },
+    "cleanup": {
+      "delete_worker_branches_or_worktrees_without_user_approval": false,
+      "report_cleanup_candidates_only": true
+    },
+    "canonical_tag": {
+      "name": "eval-v3/w5r-canonical",
+      "annotated": true,
+      "must_verify_target": true
+    }
+  }
+}
