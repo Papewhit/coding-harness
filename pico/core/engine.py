@@ -21,6 +21,7 @@ from .engine_helpers import (
 from .task_state import TaskState
 from .workspace import clip, now
 from typing import TYPE_CHECKING, Any, Iterator
+
 if TYPE_CHECKING:
     from .runtime import Pico
 
@@ -39,6 +40,12 @@ class Engine:
             if event["type"] in {"final", "stop"}:
                 final_answer = event["content"]
         return final_answer
+
+    def run_native_tool_loop(self, request: Any, **kwargs: Any) -> Any:
+        """Run one provider-native exchange; Runtime supplies persistence hooks."""
+        from .tool_call_batch import run_native_tool_loop
+
+        return run_native_tool_loop(self.runtime, request, **kwargs)
 
     def drain_worker_notifications(self) -> list[Any]:
         agent = self.runtime

@@ -1,0 +1,141 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-030-E",
+  "instance_id": "W4-TOOL-030-E-01",
+  "wave": "W4",
+  "role": "implementer",
+  "status": "complete",
+  "base_sha": "005ded3eceaaa13e816ae8073973a50db87772f2",
+  "head_sha": "e8e5b732905a6536ce9516d62efff49e289908da",
+  "branch": "codex/eval-v3-w4-tool-030-e",
+  "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\w4-030e\\pico",
+  "prompt_sha256": "43313eb872e8356e161f4c98faad6574afb8b03f7ad113dcc6c967ba7c7c7b63",
+  "control_overlay": {
+    "path": ".codex/eval/state/W4-control-overlay.json",
+    "sha256": "55ec6149ce76bd87d344185d4828fcdf719483572ab1444d46c454d5e5b1429c"
+  },
+  "dependency_commits": [],
+  "applied_dependency_commits": [],
+  "dependency_handoff_hashes": {
+    "TOOL-010": "300faf3f58f369248291ba72be3aefca9e3444dac9999cf45c5767c4eefbde0d",
+    "TOOL-011": "825e0d3a64abd065e3a9c67a3ce3d1bb9c06d2bbe1b5b00b8b24423cfa3d4dfa",
+    "TOOL-015": "e3e37d00beba52addbea070666f932b71593a131dfa67778b42f7216ec6bc413"
+  },
+  "dependency_freeze_hashes": {
+    "freeze_file": "0e985d4a46479c34f4bf4567191f487e5f3e530671129b6974c86316e03a400f",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "native_scripted_fixtures": "ff2a8febe36730b6c18d096312f9455dce0793c9d1f975ffb941c726706904cf"
+  },
+  "own_commits": [
+    "e8e5b732905a6536ce9516d62efff49e289908da"
+  ],
+  "files_changed": [
+    "pico/core/engine.py",
+    "pico/core/tool_call_batch.py",
+    "tests/test_native_tool_loop.py",
+    ".codex/eval/handoffs/TOOL-030-E.json"
+  ],
+  "commands_run": [
+    "uv run pytest tests/test_native_tool_loop.py -q",
+    "uv run ruff check pico/core/engine.py pico/core/tool_call_batch.py tests/test_native_tool_loop.py",
+    "uv run pytest tests/test_native_tool_loop.py tests/test_tool_validation.py tests/test_permissions_acceptance.py tests/test_tool_policy_acceptance.py -q",
+    "uv run pytest tests/test_architecture_boundaries.py tests/test_safety_invariants.py -q",
+    "uv run pytest tests/test_native_tool_loop.py tests/test_engine_acceptance.py tests/test_provider_contracts.py -q",
+    "git diff --check",
+    "engine.py line-budget assertion (465 <= 470)",
+    "SHA-256 Git blob bytes for committed source and test outputs"
+  ],
+  "tests": [
+    {
+      "command": "uv run pytest tests/test_native_tool_loop.py -q",
+      "result": "passed",
+      "details": "9 passed; covers persist-before-execute, lifecycle states, exact ordered results, unknown/argument/permission/policy rejection bridges, budget rejection, tool_choice=none summary, continuation forwarding, uncertain execution, protocol errors, and no legacy parser use."
+    },
+    {
+      "command": "uv run ruff check pico/core/engine.py pico/core/tool_call_batch.py tests/test_native_tool_loop.py",
+      "result": "passed",
+      "details": "All checks passed."
+    },
+    {
+      "command": "uv run pytest tests/test_native_tool_loop.py tests/test_tool_validation.py tests/test_permissions_acceptance.py tests/test_tool_policy_acceptance.py -q",
+      "result": "failed",
+      "details": "82 passed, 3 failed on documented Windows immutable-base behavior outside TOOL-030-E ownership: backslash rendering in a pre-existing write_file assertion, unavailable POSIX tail, and POSIX shlex quoting under cmd.exe. All native-loop, validation, and permission tests passed."
+    },
+    {
+      "command": "uv run pytest tests/test_architecture_boundaries.py tests/test_safety_invariants.py -q",
+      "result": "failed",
+      "details": "3 passed, 8 failed on immutable-base/environment conditions: runtime.py is 952 lines against its existing 950-line budget; Windows lacks symlink privilege; environment-clearing tests cannot resolve Path.home(); and POSIX shell quoting fails under cmd.exe. engine.py remains within its own budget at 465/470 lines."
+    },
+    {
+      "command": "uv run pytest tests/test_native_tool_loop.py tests/test_engine_acceptance.py tests/test_provider_contracts.py -q",
+      "result": "passed",
+      "details": "27 passed after final implementation changes."
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed",
+      "details": "No whitespace errors."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "pico/core/engine.py",
+      "sha256": "0ad18c2763863ece5dc27f5245aba79d1d0ba14dcfdd5a3bf452ecc6ee549edf",
+      "hash_basis": "git_blob_bytes",
+      "source": "e8e5b732905a6536ce9516d62efff49e289908da:pico/core/engine.py",
+      "coverage": "Engine entry point for provider-native exchanges"
+    },
+    {
+      "path": "pico/core/tool_call_batch.py",
+      "sha256": "7e19a68f6f185624348b88d187e25b92fd0a2ff7bb5b377eff228d7e4a9f9fc6",
+      "hash_basis": "git_blob_bytes",
+      "source": "e8e5b732905a6536ce9516d62efff49e289908da:pico/core/tool_call_batch.py",
+      "coverage": "native ModelResponse loop, received/persisted/executing/completed/rejected/uncertain state model, exact error-result bridge, and native step-limit summary"
+    },
+    {
+      "path": "tests/test_native_tool_loop.py",
+      "sha256": "9cdead190ca979b427fd64c14b1e222bc2ecc6693c49fbe1ca3754d74efadfa0",
+      "hash_basis": "git_blob_bytes",
+      "source": "e8e5b732905a6536ce9516d62efff49e289908da:tests/test_native_tool_loop.py"
+    },
+    {
+      "path": ".codex/eval/handoffs/TOOL-030-E.json",
+      "persistence": "Committed as ticket metadata in the direct descendant of the implementation head recorded above."
+    }
+  ],
+  "contract_hashes": {
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema_catalog": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "batch_state_contract": "7e19a68f6f185624348b88d187e25b92fd0a2ff7bb5b377eff228d7e4a9f9fc6"
+  },
+  "frozen_hashes": {
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "provider_selection": null,
+    "native_resume_gate": null
+  },
+  "native_protocol_observations": {
+    "observation_scope": "offline deterministic native engine-loop, provider-contract, validation, permission, and tool-policy tests only; no provider HTTP request or formal online evaluation was issued",
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0
+  },
+  "defects": [],
+  "risks": [
+    "TOOL-030-E exposes the native loop and persistence/event hooks but intentionally does not wire the active Runtime or own checkpoint storage; final wiring remains downstream work.",
+    "An unexpected BaseException can leave a durably exposed executing state for later Resume logic; ordinary Exceptions are converted to uncertain matching results.",
+    "The prescribed acceptance group retains three known Windows platform failures outside this ticket's allowed paths."
+  ],
+  "status_proposal": {
+    "ticket_id": "TOOL-030-E",
+    "status": "complete",
+    "head_sha": "e8e5b732905a6536ce9516d62efff49e289908da"
+  },
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}
