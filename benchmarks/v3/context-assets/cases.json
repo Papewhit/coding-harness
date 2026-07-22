@@ -1,0 +1,1791 @@
+{
+  "assembly": {
+    "case_count": 15,
+    "case_ids": [
+      "C01",
+      "C02",
+      "C03",
+      "C04",
+      "C05",
+      "C06",
+      "C07",
+      "C08",
+      "C09",
+      "C10",
+      "C11",
+      "C12",
+      "C13",
+      "C14",
+      "C15"
+    ],
+    "formal_effectiveness_evaluation": false,
+    "online_provider_used": false,
+    "request_path": "provider_native_structured_capture"
+  },
+  "cases": [
+    {
+      "id": "C01",
+      "model_request": {
+        "max_output_tokens": 256,
+        "prompt": "{\"activated_body\":\"# Release sentinel\\nWhen active, preserve the release procedure exactly.\",\"activation_state\":\"active\",\"catalog\":[{\"description\":\"Use the QZ-7319 release sentinel procedure.\",\"skill_id\":\"release-sentinel\",\"source\":\"skills/release-sentinel/SKILL.md\",\"user_invocable\":true,\"version_or_hash\":\"sha256:1a3c9e8b\"}]}\n\nREQUEST-C01-KEEP-VERBATIM",
+        "tool_choice": {
+          "mode": "auto",
+          "name": null
+        },
+        "tool_results": [],
+        "tools": []
+      },
+      "oracle": {
+        "assets": [
+          {
+            "activated": true,
+            "asset_id": "skills",
+            "metadata": {
+              "activation_reason": "fixture_explicit_activation",
+              "skill_id": "release-sentinel",
+              "source": "skills/release-sentinel/SKILL.md",
+              "user_invocable": true,
+              "version_or_hash": "sha256:1a3c9e8b"
+            },
+            "required_metadata": [
+              "skill_id",
+              "source",
+              "version_or_hash",
+              "user_invocable",
+              "activation_reason"
+            ],
+            "sentinel": "QZ-7319",
+            "surface": "system_text"
+          }
+        ],
+        "current_request": "REQUEST-C01-KEEP-VERBATIM"
+      },
+      "request_id": "context-c01-native",
+      "source": {
+        "budget": {
+          "kind": "normal",
+          "max_utf8_bytes": 8192
+        },
+        "fixture": "fixtures/C01/fixture.json",
+        "fragment": "fragments/C01-C08.json"
+      },
+      "surfaces": {
+        "asset_records": [
+          {
+            "activation_state": "active",
+            "asset_id": "skills",
+            "content_hash": "sha256:1790e130be9b2e86f7849cfe76f03735d38f25cbd0a321f7b281e3489cce72d6",
+            "drop_action": "none",
+            "floor_satisfied": true,
+            "metadata": {
+              "activation_reason": "fixture_explicit_activation",
+              "skill_id": "release-sentinel",
+              "source": "skills/release-sentinel/SKILL.md",
+              "user_invocable": true,
+              "version_or_hash": "sha256:1a3c9e8b"
+            },
+            "priority": "high",
+            "producer": "fixture_skills",
+            "raw_size": 7,
+            "rendered_size": 7,
+            "surface": "system_text"
+          }
+        ],
+        "messages": [
+          {
+            "compactable": false,
+            "content": "REQUEST-C01-KEEP-VERBATIM",
+            "kind": "current_request",
+            "role": "user"
+          }
+        ],
+        "native_turn_status": "terminal",
+        "system_text": "{\"activated_body\":\"# Release sentinel\\nWhen active, preserve the release procedure exactly.\",\"activation_state\":\"active\",\"catalog\":[{\"description\":\"Use the QZ-7319 release sentinel procedure.\",\"skill_id\":\"release-sentinel\",\"source\":\"skills/release-sentinel/SKILL.md\",\"user_invocable\":true,\"version_or_hash\":\"sha256:1a3c9e8b\"}]}"
+      }
+    },
+    {
+      "id": "C02",
+      "model_request": {
+        "max_output_tokens": 256,
+        "prompt": "{\"activation_state\":\"active\",\"items\":[{\"content\":\"Verify QZ-1842 migration sentinel.\",\"id\":\"todo-qz-1842\",\"priority\":\"high\",\"status\":\"in_progress\"}],\"ledger_version\":\"todo-fixture-v1\"}\n\nREQUEST-C02-KEEP-VERBATIM",
+        "tool_choice": {
+          "mode": "auto",
+          "name": null
+        },
+        "tool_results": [],
+        "tools": []
+      },
+      "oracle": {
+        "assets": [
+          {
+            "activated": true,
+            "asset_id": "todo",
+            "metadata": {
+              "active_count": 1,
+              "item_ids": [
+                "todo-qz-1842"
+              ],
+              "ledger_version": "todo-fixture-v1",
+              "terminal_count": 0,
+              "updated_at": "2026-07-22T00:00:00Z"
+            },
+            "required_metadata": [
+              "ledger_version",
+              "active_count",
+              "terminal_count",
+              "item_ids",
+              "updated_at"
+            ],
+            "sentinel": "QZ-1842",
+            "surface": "system_text"
+          }
+        ],
+        "current_request": "REQUEST-C02-KEEP-VERBATIM"
+      },
+      "request_id": "context-c02-native",
+      "source": {
+        "budget": {
+          "kind": "normal",
+          "max_utf8_bytes": 8192
+        },
+        "fixture": "fixtures/C02/fixture.json",
+        "fragment": "fragments/C01-C08.json"
+      },
+      "surfaces": {
+        "asset_records": [
+          {
+            "activation_state": "active",
+            "asset_id": "todo",
+            "content_hash": "sha256:c2ddfed358e566511c95d2810712f2a3aea88aaedbbf884c6b7f7a9e1b7fbec8",
+            "drop_action": "none",
+            "floor_satisfied": true,
+            "metadata": {
+              "active_count": 1,
+              "item_ids": [
+                "todo-qz-1842"
+              ],
+              "ledger_version": "todo-fixture-v1",
+              "terminal_count": 0,
+              "updated_at": "2026-07-22T00:00:00Z"
+            },
+            "priority": "high",
+            "producer": "fixture_todo",
+            "raw_size": 7,
+            "rendered_size": 7,
+            "surface": "system_text"
+          }
+        ],
+        "messages": [
+          {
+            "compactable": false,
+            "content": "REQUEST-C02-KEEP-VERBATIM",
+            "kind": "current_request",
+            "role": "user"
+          }
+        ],
+        "native_turn_status": "terminal",
+        "system_text": "{\"activation_state\":\"active\",\"items\":[{\"content\":\"Verify QZ-1842 migration sentinel.\",\"id\":\"todo-qz-1842\",\"priority\":\"high\",\"status\":\"in_progress\"}],\"ledger_version\":\"todo-fixture-v1\"}"
+      }
+    },
+    {
+      "id": "C03",
+      "model_request": {
+        "max_output_tokens": 256,
+        "prompt": "{\"activation_state\":\"active\",\"control_header\":\"Plan mode controls QZ-5930; continue only through the active plan pointer.\",\"mode\":\"plan\",\"plan_complete\":false,\"plan_content_hash\":\"sha256:2bf5c493f0a8e0d4\",\"plan_exists\":true,\"plan_path\":\".pico/plans/qz-5930.json\"}\n\nREQUEST-C03-KEEP-VERBATIM",
+        "tool_choice": {
+          "mode": "auto",
+          "name": null
+        },
+        "tool_results": [],
+        "tools": []
+      },
+      "oracle": {
+        "assets": [
+          {
+            "activated": true,
+            "asset_id": "plan",
+            "metadata": {
+              "mode": "plan",
+              "plan_complete": false,
+              "plan_content_hash": "sha256:2bf5c493f0a8e0d4",
+              "plan_exists": true,
+              "plan_path": ".pico/plans/qz-5930.json"
+            },
+            "required_metadata": [
+              "mode",
+              "plan_path",
+              "plan_content_hash",
+              "plan_exists",
+              "plan_complete"
+            ],
+            "sentinel": "QZ-5930",
+            "surface": "system_text"
+          }
+        ],
+        "current_request": "REQUEST-C03-KEEP-VERBATIM"
+      },
+      "request_id": "context-c03-native",
+      "source": {
+        "budget": {
+          "kind": "normal",
+          "max_utf8_bytes": 8192
+        },
+        "fixture": "fixtures/C03/fixture.json",
+        "fragment": "fragments/C01-C08.json"
+      },
+      "surfaces": {
+        "asset_records": [
+          {
+            "activation_state": "active",
+            "asset_id": "plan",
+            "content_hash": "sha256:ab461b13bada7ee98e595f61a679ce5d2a24aff23739454ac19ac5f2c0874add",
+            "drop_action": "none",
+            "floor_satisfied": true,
+            "metadata": {
+              "mode": "plan",
+              "plan_complete": false,
+              "plan_content_hash": "sha256:2bf5c493f0a8e0d4",
+              "plan_exists": true,
+              "plan_path": ".pico/plans/qz-5930.json"
+            },
+            "priority": "critical",
+            "producer": "fixture_plan",
+            "raw_size": 7,
+            "rendered_size": 7,
+            "surface": "system_text"
+          }
+        ],
+        "messages": [
+          {
+            "compactable": false,
+            "content": "REQUEST-C03-KEEP-VERBATIM",
+            "kind": "current_request",
+            "role": "user"
+          }
+        ],
+        "native_turn_status": "terminal",
+        "system_text": "{\"activation_state\":\"active\",\"control_header\":\"Plan mode controls QZ-5930; continue only through the active plan pointer.\",\"mode\":\"plan\",\"plan_complete\":false,\"plan_content_hash\":\"sha256:2bf5c493f0a8e0d4\",\"plan_exists\":true,\"plan_path\":\".pico/plans/qz-5930.json\"}"
+      }
+    },
+    {
+      "id": "C04",
+      "model_request": {
+        "max_output_tokens": 256,
+        "prompt": "{\"activation_reason\":\"resume_context_relevant\",\"activation_state\":\"active\",\"checkpoint_id\":\"ckpt-qz-7604\",\"freshness\":\"fresh\",\"parent_checkpoint_id\":null,\"resume_core\":\"Resume QZ-7604: verify the migration report, then publish the next step.\",\"runtime_identity\":\"runtime-qz-7604\",\"schema_version\":\"pico-checkpoint-v1\"}\n\nREQUEST-C04-KEEP-VERBATIM",
+        "tool_choice": {
+          "mode": "auto",
+          "name": null
+        },
+        "tool_results": [],
+        "tools": []
+      },
+      "oracle": {
+        "assets": [
+          {
+            "activated": true,
+            "asset_id": "checkpoint",
+            "metadata": {
+              "activation_reason": "resume_context_relevant",
+              "checkpoint_id": "ckpt-qz-7604",
+              "freshness": "fresh",
+              "parent_checkpoint_id": null,
+              "runtime_identity": "runtime-qz-7604",
+              "schema_version": "pico-checkpoint-v1"
+            },
+            "required_metadata": [
+              "checkpoint_id",
+              "parent_checkpoint_id",
+              "schema_version",
+              "freshness",
+              "runtime_identity",
+              "activation_reason"
+            ],
+            "sentinel": "QZ-7604",
+            "surface": "system_text"
+          }
+        ],
+        "current_request": "REQUEST-C04-KEEP-VERBATIM"
+      },
+      "request_id": "context-c04-native",
+      "source": {
+        "budget": {
+          "kind": "normal",
+          "max_utf8_bytes": 8192
+        },
+        "fixture": "fixtures/C04/fixture.json",
+        "fragment": "fragments/C01-C08.json"
+      },
+      "surfaces": {
+        "asset_records": [
+          {
+            "activation_state": "active",
+            "asset_id": "checkpoint",
+            "content_hash": "sha256:8718121680f76f0a3ec229feb20140024ed535416ebb2337cccf1e00453773df",
+            "drop_action": "none",
+            "floor_satisfied": true,
+            "metadata": {
+              "activation_reason": "resume_context_relevant",
+              "checkpoint_id": "ckpt-qz-7604",
+              "freshness": "fresh",
+              "parent_checkpoint_id": null,
+              "runtime_identity": "runtime-qz-7604",
+              "schema_version": "pico-checkpoint-v1"
+            },
+            "priority": "high",
+            "producer": "fixture_checkpoint",
+            "raw_size": 7,
+            "rendered_size": 7,
+            "surface": "system_text"
+          }
+        ],
+        "messages": [
+          {
+            "compactable": false,
+            "content": "REQUEST-C04-KEEP-VERBATIM",
+            "kind": "current_request",
+            "role": "user"
+          }
+        ],
+        "native_turn_status": "terminal",
+        "system_text": "{\"activation_reason\":\"resume_context_relevant\",\"activation_state\":\"active\",\"checkpoint_id\":\"ckpt-qz-7604\",\"freshness\":\"fresh\",\"parent_checkpoint_id\":null,\"resume_core\":\"Resume QZ-7604: verify the migration report, then publish the next step.\",\"runtime_identity\":\"runtime-qz-7604\",\"schema_version\":\"pico-checkpoint-v1\"}"
+      }
+    },
+    {
+      "id": "C05",
+      "model_request": {
+        "max_output_tokens": 256,
+        "prompt": "{\"action\":\"verify_fixture\",\"activation_state\":\"active\",\"artifact_pointer\":\"artifacts/qz-4481-result.json\",\"notification\":\"Worker QZ-4481 completed fixture verification.\",\"notification_drained\":false,\"result_hash\":\"sha256:7c3d1b9a40e2\",\"status\":\"completed\",\"subagent_type\":\"fixture_builder\",\"worker_id\":\"worker-qz-4481\"}\n\nREQUEST-C05-KEEP-VERBATIM",
+        "tool_choice": {
+          "mode": "auto",
+          "name": null
+        },
+        "tool_results": [],
+        "tools": []
+      },
+      "oracle": {
+        "assets": [
+          {
+            "activated": true,
+            "asset_id": "worker",
+            "metadata": {
+              "action": "verify_fixture",
+              "artifact_pointer": "artifacts/qz-4481-result.json",
+              "notification_drained": false,
+              "result_hash": "sha256:7c3d1b9a40e2",
+              "status": "completed",
+              "subagent_type": "fixture_builder",
+              "worker_id": "worker-qz-4481"
+            },
+            "required_metadata": [
+              "worker_id",
+              "status",
+              "action",
+              "subagent_type",
+              "notification_drained",
+              "result_hash",
+              "artifact_pointer"
+            ],
+            "sentinel": "QZ-4481",
+            "surface": "messages"
+          }
+        ],
+        "current_request": "REQUEST-C05-KEEP-VERBATIM"
+      },
+      "request_id": "context-c05-native",
+      "source": {
+        "budget": {
+          "kind": "normal",
+          "max_utf8_bytes": 8192
+        },
+        "fixture": "fixtures/C05/fixture.json",
+        "fragment": "fragments/C01-C08.json"
+      },
+      "surfaces": {
+        "asset_records": [
+          {
+            "activation_state": "active",
+            "asset_id": "worker",
+            "content_hash": "sha256:c10a353ac678041f67daf0fe17d31ee112c15f7a19d294309e9e9f2bcb7252b0",
+            "drop_action": "none",
+            "floor_satisfied": true,
+            "metadata": {
+              "action": "verify_fixture",
+              "artifact_pointer": "artifacts/qz-4481-result.json",
+              "notification_drained": false,
+              "result_hash": "sha256:7c3d1b9a40e2",
+              "status": "completed",
+              "subagent_type": "fixture_builder",
+              "worker_id": "worker-qz-4481"
+            },
+            "priority": "high",
+            "producer": "fixture_worker",
+            "raw_size": 7,
+            "rendered_size": 7,
+            "surface": "messages"
+          }
+        ],
+        "messages": [
+          {
+            "compactable": false,
+            "content": "{\"action\":\"verify_fixture\",\"activation_state\":\"active\",\"artifact_pointer\":\"artifacts/qz-4481-result.json\",\"notification\":\"Worker QZ-4481 completed fixture verification.\",\"notification_drained\":false,\"result_hash\":\"sha256:7c3d1b9a40e2\",\"status\":\"completed\",\"subagent_type\":\"fixture_builder\",\"worker_id\":\"worker-qz-4481\"}",
+            "kind": "worker_notification",
+            "role": "assistant"
+          },
+          {
+            "compactable": false,
+            "content": "REQUEST-C05-KEEP-VERBATIM",
+            "kind": "current_request",
+            "role": "user"
+          }
+        ],
+        "native_turn_status": "terminal",
+        "system_text": ""
+      }
+    },
+    {
+      "id": "C06",
+      "model_request": {
+        "max_output_tokens": 256,
+        "prompt": "{\"activation_state\":\"active\",\"memory_policy\":\"selected_note_only\",\"selected_notes\":[{\"content\":\"The QZ-9821 release train requires the offline verifier.\",\"content_hash\":\"sha256:8e12fd44a0cc\",\"kind\":\"project\",\"memory_id\":\"memory-qz-9821\",\"selection_score\":1.0,\"source_path\":\".pico/memory/qz-9821.md\",\"tags\":[\"release\"],\"updated_at\":\"2026-07-21T00:00:00Z\"}]}\n\nREQUEST-C06-KEEP-VERBATIM",
+        "tool_choice": {
+          "mode": "auto",
+          "name": null
+        },
+        "tool_results": [],
+        "tools": []
+      },
+      "oracle": {
+        "assets": [
+          {
+            "activated": true,
+            "asset_id": "durable",
+            "metadata": {
+              "content_hash": "sha256:8e12fd44a0cc",
+              "kind": "project",
+              "memory_id": "memory-qz-9821",
+              "selection_score": 1.0,
+              "source_path": ".pico/memory/qz-9821.md",
+              "tags": [
+                "release"
+              ],
+              "updated_at": "2026-07-21T00:00:00Z"
+            },
+            "required_metadata": [
+              "memory_id",
+              "source_path",
+              "kind",
+              "tags",
+              "updated_at",
+              "content_hash",
+              "selection_score"
+            ],
+            "sentinel": "QZ-9821",
+            "surface": "system_text"
+          }
+        ],
+        "current_request": "REQUEST-C06-KEEP-VERBATIM"
+      },
+      "request_id": "context-c06-native",
+      "source": {
+        "budget": {
+          "kind": "normal",
+          "max_utf8_bytes": 8192
+        },
+        "fixture": "fixtures/C06/fixture.json",
+        "fragment": "fragments/C01-C08.json"
+      },
+      "surfaces": {
+        "asset_records": [
+          {
+            "activation_state": "active",
+            "asset_id": "durable",
+            "content_hash": "sha256:43351374057fb23a458ad46272a15b0fb4fd6604a80e0f6e2710339d872baa27",
+            "drop_action": "none",
+            "floor_satisfied": true,
+            "metadata": {
+              "content_hash": "sha256:8e12fd44a0cc",
+              "kind": "project",
+              "memory_id": "memory-qz-9821",
+              "selection_score": 1.0,
+              "source_path": ".pico/memory/qz-9821.md",
+              "tags": [
+                "release"
+              ],
+              "updated_at": "2026-07-21T00:00:00Z"
+            },
+            "priority": "high",
+            "producer": "fixture_durable",
+            "raw_size": 7,
+            "rendered_size": 7,
+            "surface": "system_text"
+          }
+        ],
+        "messages": [
+          {
+            "compactable": false,
+            "content": "REQUEST-C06-KEEP-VERBATIM",
+            "kind": "current_request",
+            "role": "user"
+          }
+        ],
+        "native_turn_status": "terminal",
+        "system_text": "{\"activation_state\":\"active\",\"memory_policy\":\"selected_note_only\",\"selected_notes\":[{\"content\":\"The QZ-9821 release train requires the offline verifier.\",\"content_hash\":\"sha256:8e12fd44a0cc\",\"kind\":\"project\",\"memory_id\":\"memory-qz-9821\",\"selection_score\":1.0,\"source_path\":\".pico/memory/qz-9821.md\",\"tags\":[\"release\"],\"updated_at\":\"2026-07-21T00:00:00Z\"}]}"
+      }
+    },
+    {
+      "id": "C07",
+      "model_request": {
+        "max_output_tokens": 256,
+        "prompt": "{\"activation_state\":\"active\",\"compaction_id\":\"compact-qz-3375\",\"covered_turn_ids\":[\"turn-17\",\"turn-18\"],\"post_tokens\":210,\"pre_tokens\":840,\"source_hash\":\"sha256:9ca42e1f7b09\",\"summary\":\"Compaction QZ-3375 preserved the deployment decision and pending verification.\",\"trigger\":\"manual\"}\n\nREQUEST-C07-KEEP-VERBATIM",
+        "tool_choice": {
+          "mode": "auto",
+          "name": null
+        },
+        "tool_results": [],
+        "tools": []
+      },
+      "oracle": {
+        "assets": [
+          {
+            "activated": true,
+            "asset_id": "compact",
+            "metadata": {
+              "compaction_id": "compact-qz-3375",
+              "covered_turn_ids": [
+                "turn-17",
+                "turn-18"
+              ],
+              "post_tokens": 210,
+              "pre_tokens": 840,
+              "source_hash": "sha256:9ca42e1f7b09",
+              "trigger": "manual"
+            },
+            "required_metadata": [
+              "compaction_id",
+              "trigger",
+              "covered_turn_ids",
+              "source_hash",
+              "pre_tokens",
+              "post_tokens"
+            ],
+            "sentinel": "QZ-3375",
+            "surface": "messages"
+          }
+        ],
+        "current_request": "REQUEST-C07-KEEP-VERBATIM"
+      },
+      "request_id": "context-c07-native",
+      "source": {
+        "budget": {
+          "kind": "normal",
+          "max_utf8_bytes": 8192
+        },
+        "fixture": "fixtures/C07/fixture.json",
+        "fragment": "fragments/C01-C08.json"
+      },
+      "surfaces": {
+        "asset_records": [
+          {
+            "activation_state": "active",
+            "asset_id": "compact",
+            "content_hash": "sha256:adefddc6062848232a56b3159a22ab65d84eb64638eca7e26406dc7e9e120095",
+            "drop_action": "none",
+            "floor_satisfied": true,
+            "metadata": {
+              "compaction_id": "compact-qz-3375",
+              "covered_turn_ids": [
+                "turn-17",
+                "turn-18"
+              ],
+              "post_tokens": 210,
+              "pre_tokens": 840,
+              "source_hash": "sha256:9ca42e1f7b09",
+              "trigger": "manual"
+            },
+            "priority": "high",
+            "producer": "fixture_compact",
+            "raw_size": 7,
+            "rendered_size": 7,
+            "surface": "messages"
+          }
+        ],
+        "messages": [
+          {
+            "compactable": true,
+            "content": "{\"activation_state\":\"active\",\"compaction_id\":\"compact-qz-3375\",\"covered_turn_ids\":[\"turn-17\",\"turn-18\"],\"post_tokens\":210,\"pre_tokens\":840,\"source_hash\":\"sha256:9ca42e1f7b09\",\"summary\":\"Compaction QZ-3375 preserved the deployment decision and pending verification.\",\"trigger\":\"manual\"}",
+            "kind": "compact_summary",
+            "role": "assistant"
+          },
+          {
+            "compactable": false,
+            "content": "REQUEST-C07-KEEP-VERBATIM",
+            "kind": "current_request",
+            "role": "user"
+          }
+        ],
+        "native_turn_status": "terminal",
+        "system_text": ""
+      }
+    },
+    {
+      "id": "C08",
+      "model_request": {
+        "max_output_tokens": 256,
+        "prompt": "{\"activation_state\":\"active\",\"content_hash\":\"sha256:1e54a907c62d\",\"freshness\":\"fresh\",\"label\":\"QZ-6158 verifier report\",\"pointer_kind\":\"artifact\",\"producer\":\"fixture_builder\",\"resolvable\":true,\"target_id\":\"artifact-qz-6158\",\"target_path\":\"artifacts/qz-6158-report.json\"}\n\nREQUEST-C08-KEEP-VERBATIM",
+        "tool_choice": {
+          "mode": "auto",
+          "name": null
+        },
+        "tool_results": [],
+        "tools": []
+      },
+      "oracle": {
+        "assets": [
+          {
+            "activated": true,
+            "asset_id": "pointer",
+            "metadata": {
+              "content_hash": "sha256:1e54a907c62d",
+              "freshness": "fresh",
+              "pointer_kind": "artifact",
+              "producer": "fixture_builder",
+              "resolvable": true,
+              "target_id": "artifact-qz-6158",
+              "target_path": "artifacts/qz-6158-report.json"
+            },
+            "required_metadata": [
+              "pointer_kind",
+              "target_id",
+              "target_path",
+              "content_hash",
+              "freshness",
+              "producer",
+              "resolvable"
+            ],
+            "sentinel": "QZ-6158",
+            "surface": "messages"
+          }
+        ],
+        "current_request": "REQUEST-C08-KEEP-VERBATIM"
+      },
+      "request_id": "context-c08-native",
+      "source": {
+        "budget": {
+          "kind": "normal",
+          "max_utf8_bytes": 8192
+        },
+        "fixture": "fixtures/C08/fixture.json",
+        "fragment": "fragments/C01-C08.json"
+      },
+      "surfaces": {
+        "asset_records": [
+          {
+            "activation_state": "active",
+            "asset_id": "pointer",
+            "content_hash": "sha256:1e54a907c62d",
+            "drop_action": "none",
+            "floor_satisfied": true,
+            "metadata": {
+              "content_hash": "sha256:1e54a907c62d",
+              "freshness": "fresh",
+              "pointer_kind": "artifact",
+              "producer": "fixture_builder",
+              "resolvable": true,
+              "target_id": "artifact-qz-6158",
+              "target_path": "artifacts/qz-6158-report.json"
+            },
+            "priority": "high",
+            "producer": "fixture_pointer",
+            "raw_size": 7,
+            "rendered_size": 7,
+            "surface": "messages"
+          }
+        ],
+        "messages": [
+          {
+            "compactable": false,
+            "content": "{\"activation_state\":\"active\",\"content_hash\":\"sha256:1e54a907c62d\",\"freshness\":\"fresh\",\"label\":\"QZ-6158 verifier report\",\"pointer_kind\":\"artifact\",\"producer\":\"fixture_builder\",\"resolvable\":true,\"target_id\":\"artifact-qz-6158\",\"target_path\":\"artifacts/qz-6158-report.json\"}",
+            "kind": "artifact_pointer",
+            "role": "assistant"
+          },
+          {
+            "compactable": false,
+            "content": "REQUEST-C08-KEEP-VERBATIM",
+            "kind": "current_request",
+            "role": "user"
+          }
+        ],
+        "native_turn_status": "terminal",
+        "system_text": ""
+      }
+    },
+    {
+      "id": "C09",
+      "model_request": {
+        "max_output_tokens": 256,
+        "prompt": "SKILL-C09-ALPHA\n\nTODO-C09-ACTIVE\n\nPLAN-C09-CONTROL\n\nCHECKPOINT-C09-FRESH\n\nDURABLE-C09-SELECTED\n\nWORKER-C09-UNDRAINED\n\nCOMPACT-C09-LATEST\n\nPOINTER-C09-RESOLVABLE\n\nREQUEST-C09-KEEP-VERBATIM",
+        "tool_choice": {
+          "mode": "auto",
+          "name": null
+        },
+        "tool_results": [],
+        "tools": [
+          {
+            "description": "TOOL-C09-SCHEMA",
+            "input_schema": {
+              "properties": {
+                "path": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "name": "inspect_c09"
+          }
+        ]
+      },
+      "oracle": {
+        "assets": [
+          {
+            "activated": true,
+            "asset_id": "skills",
+            "disposition": "retain",
+            "required_metadata": [],
+            "sentinel": "SKILL-C09-ALPHA",
+            "surface": "system_text"
+          },
+          {
+            "activated": true,
+            "asset_id": "todo",
+            "disposition": "retain",
+            "required_metadata": [],
+            "sentinel": "TODO-C09-ACTIVE",
+            "surface": "system_text"
+          },
+          {
+            "activated": true,
+            "asset_id": "plan",
+            "disposition": "retain",
+            "required_metadata": [],
+            "sentinel": "PLAN-C09-CONTROL",
+            "surface": "system_text"
+          },
+          {
+            "activated": true,
+            "asset_id": "checkpoint",
+            "disposition": "retain",
+            "required_metadata": [],
+            "sentinel": "CHECKPOINT-C09-FRESH",
+            "surface": "system_text"
+          },
+          {
+            "activated": true,
+            "asset_id": "worker",
+            "disposition": "retain",
+            "required_metadata": [],
+            "sentinel": "WORKER-C09-UNDRAINED",
+            "surface": "messages"
+          },
+          {
+            "activated": true,
+            "asset_id": "durable",
+            "disposition": "retain",
+            "required_metadata": [],
+            "sentinel": "DURABLE-C09-SELECTED",
+            "surface": "system_text"
+          },
+          {
+            "activated": true,
+            "asset_id": "compact",
+            "disposition": "retain",
+            "required_metadata": [],
+            "sentinel": "COMPACT-C09-LATEST",
+            "surface": "messages"
+          },
+          {
+            "activated": true,
+            "asset_id": "pointer",
+            "disposition": "retain",
+            "required_metadata": [],
+            "sentinel": "POINTER-C09-RESOLVABLE",
+            "surface": "messages"
+          }
+        ],
+        "current_request": "REQUEST-C09-KEEP-VERBATIM"
+      },
+      "request_id": "context-c09-native",
+      "source": {
+        "budget": {
+          "messages": 2048,
+          "system_text": 2048,
+          "tools": 1024,
+          "unit": "utf8_bytes"
+        },
+        "expectations": "fixtures/C09/expectations.json",
+        "fixture": "fixtures/C09/input.json",
+        "focus": [
+          "all_assets",
+          "canonical_surfaces",
+          "duplication"
+        ],
+        "fragment": "fragments/C09-C15.json"
+      },
+      "surfaces": {
+        "asset_records": [
+          {
+            "activation_state": "active",
+            "asset_id": "skills",
+            "content_hash": "sha256:eb5bb8a3e8db02c16fe1d131d6104c3940b7435f1cc9edb13121978f312c4a37",
+            "drop_action": "none",
+            "floor_satisfied": true,
+            "metadata": {
+              "fixture_id": "C09"
+            },
+            "priority": "high",
+            "producer": "fixture_skills",
+            "raw_size": 15,
+            "rendered_size": 15,
+            "surface": "system_text"
+          },
+          {
+            "activation_state": "active",
+            "asset_id": "todo",
+            "content_hash": "sha256:bdb4d29ac79e68cbd2b3d01fe8f1bb71473b2667100afc61c93f457e8c08241d",
+            "drop_action": "none",
+            "floor_satisfied": true,
+            "metadata": {
+              "fixture_id": "C09"
+            },
+            "priority": "high",
+            "producer": "fixture_todo",
+            "raw_size": 15,
+            "rendered_size": 15,
+            "surface": "system_text"
+          },
+          {
+            "activation_state": "active",
+            "asset_id": "plan",
+            "content_hash": "sha256:007db0bfc22472cae0134ab54b8a6a66dff7356b5fe35b9ebef118063f63b3f4",
+            "drop_action": "none",
+            "floor_satisfied": true,
+            "metadata": {
+              "fixture_id": "C09"
+            },
+            "priority": "critical",
+            "producer": "fixture_plan",
+            "raw_size": 16,
+            "rendered_size": 16,
+            "surface": "system_text"
+          },
+          {
+            "activation_state": "active",
+            "asset_id": "checkpoint",
+            "content_hash": "sha256:9dae3ba7b2fb25f78855bbf601a476d8ff8b314f5e14f4bcaeea1f388d4d3a37",
+            "drop_action": "none",
+            "floor_satisfied": true,
+            "metadata": {
+              "fixture_id": "C09"
+            },
+            "priority": "high",
+            "producer": "fixture_checkpoint",
+            "raw_size": 20,
+            "rendered_size": 20,
+            "surface": "system_text"
+          },
+          {
+            "activation_state": "active",
+            "asset_id": "worker",
+            "content_hash": "sha256:bd5a9263863f467186ad9054c4e947fd5d5e9714cb536e972765c4f97be8f1ed",
+            "drop_action": "none",
+            "floor_satisfied": true,
+            "metadata": {
+              "fixture_id": "C09"
+            },
+            "priority": "high",
+            "producer": "fixture_worker",
+            "raw_size": 20,
+            "rendered_size": 20,
+            "surface": "messages"
+          },
+          {
+            "activation_state": "active",
+            "asset_id": "durable",
+            "content_hash": "sha256:70c76650880ebce212d25977a85e8eed9922d26f6785b679e064da4399ef3091",
+            "drop_action": "none",
+            "floor_satisfied": true,
+            "metadata": {
+              "fixture_id": "C09"
+            },
+            "priority": "high",
+            "producer": "fixture_durable",
+            "raw_size": 20,
+            "rendered_size": 20,
+            "surface": "system_text"
+          },
+          {
+            "activation_state": "active",
+            "asset_id": "compact",
+            "content_hash": "sha256:be5b13b4c0261b199bf9fa2a1ed7d67cf023053aec7e3ec1154ba716387db3b0",
+            "drop_action": "none",
+            "floor_satisfied": true,
+            "metadata": {
+              "fixture_id": "C09"
+            },
+            "priority": "high",
+            "producer": "fixture_compact",
+            "raw_size": 18,
+            "rendered_size": 18,
+            "surface": "messages"
+          },
+          {
+            "activation_state": "active",
+            "asset_id": "pointer",
+            "content_hash": "sha256:3a5c23d47827981aadd19df94531895a57c775bb5762970c8b97c095fbfb62b0",
+            "drop_action": "none",
+            "floor_satisfied": true,
+            "metadata": {
+              "content_hash": "sha256:3a5c23d47827981aadd19df94531895a57c775bb5762970c8b97c095fbfb62b0",
+              "freshness": "fresh",
+              "pointer_kind": "artifact",
+              "producer": "checkpoint",
+              "resolvable": true,
+              "target_path": "fixtures/C09/targets/design.md"
+            },
+            "priority": "high",
+            "producer": "fixture_pointer",
+            "raw_size": 22,
+            "rendered_size": 22,
+            "surface": "messages"
+          }
+        ],
+        "messages": [
+          {
+            "compactable": false,
+            "content": "WORKER-C09-UNDRAINED",
+            "kind": "worker_notification",
+            "role": "assistant"
+          },
+          {
+            "compactable": true,
+            "content": "COMPACT-C09-LATEST",
+            "kind": "compact_summary",
+            "role": "assistant"
+          },
+          {
+            "compactable": false,
+            "content": "POINTER-C09-RESOLVABLE",
+            "kind": "artifact_pointer",
+            "role": "assistant"
+          },
+          {
+            "compactable": false,
+            "content": "REQUEST-C09-KEEP-VERBATIM",
+            "kind": "current_request",
+            "role": "user"
+          }
+        ],
+        "native_turn_status": "terminal",
+        "system_text": "SKILL-C09-ALPHA\n\nTODO-C09-ACTIVE\n\nPLAN-C09-CONTROL\n\nCHECKPOINT-C09-FRESH\n\nDURABLE-C09-SELECTED"
+      }
+    },
+    {
+      "id": "C10",
+      "model_request": {
+        "max_output_tokens": 256,
+        "prompt": "TODO-C10-ACTIVE-DO-NOT-DROP\n\nCHECKPOINT-C10-FRESH-DO-NOT-DROP\n\nCOMPACT-C10-LATEST-DO-NOT-DROP\n\nPOINTER-C10-HISTORY\n\nREQUEST-C10-KEEP-VERBATIM",
+        "tool_choice": {
+          "mode": "auto",
+          "name": null
+        },
+        "tool_results": [],
+        "tools": [
+          {
+            "description": "TOOL-C10-SCHEMA",
+            "input_schema": {
+              "type": "object"
+            },
+            "name": "inspect_c10"
+          }
+        ]
+      },
+      "oracle": {
+        "assets": [
+          {
+            "activated": true,
+            "asset_id": "todo",
+            "disposition": "retain",
+            "required_metadata": [],
+            "sentinel": "TODO-C10-ACTIVE-DO-NOT-DROP",
+            "surface": "system_text"
+          },
+          {
+            "activated": true,
+            "asset_id": "checkpoint",
+            "disposition": "retain",
+            "required_metadata": [],
+            "sentinel": "CHECKPOINT-C10-FRESH-DO-NOT-DROP",
+            "surface": "system_text"
+          },
+          {
+            "activated": false,
+            "asset_id": "durable",
+            "disposition": "drop",
+            "required_metadata": [],
+            "sentinel": "DURABLE-C10-SELECTED-"
+          },
+          {
+            "activated": true,
+            "asset_id": "compact",
+            "disposition": "retain",
+            "required_metadata": [],
+            "sentinel": "COMPACT-C10-LATEST-DO-NOT-DROP",
+            "surface": "messages"
+          },
+          {
+            "activated": true,
+            "asset_id": "pointer",
+            "disposition": "retain",
+            "required_metadata": [],
+            "sentinel": "POINTER-C10-HISTORY",
+            "surface": "messages"
+          }
+        ],
+        "current_request": "REQUEST-C10-KEEP-VERBATIM"
+      },
+      "request_id": "context-c10-native",
+      "source": {
+        "budget": {
+          "messages": 220,
+          "system_text": 180,
+          "tools": 512,
+          "unit": "utf8_bytes"
+        },
+        "expectations": "fixtures/C10/expectations.json",
+        "fixture": "fixtures/C10/input.json",
+        "focus": [
+          "memory_pressure",
+          "history_pressure",
+          "drop_evidence"
+        ],
+        "fragment": "fragments/C09-C15.json"
+      },
+      "surfaces": {
+        "asset_records": [
+          {
+            "activation_state": "active",
+            "asset_id": "todo",
+            "content_hash": "sha256:280610e15733123dcf2c045c671f80a7ced84135eef4b5ffca9333571ed31f85",
+            "drop_action": "none",
+            "floor_satisfied": true,
+            "metadata": {
+              "fixture_id": "C10"
+            },
+            "priority": "high",
+            "producer": "fixture_todo",
+            "raw_size": 27,
+            "rendered_size": 27,
+            "surface": "system_text"
+          },
+          {
+            "activation_state": "active",
+            "asset_id": "checkpoint",
+            "content_hash": "sha256:13c1acfadfa10a203c5c1f07f293fd09d4b020a8b5cb2314639c3c5a52371788",
+            "drop_action": "none",
+            "floor_satisfied": true,
+            "metadata": {
+              "fixture_id": "C10"
+            },
+            "priority": "high",
+            "producer": "fixture_checkpoint",
+            "raw_size": 32,
+            "rendered_size": 32,
+            "surface": "system_text"
+          },
+          {
+            "activation_state": "dropped",
+            "asset_id": "durable",
+            "content_hash": "sha256:0740c89b99c43845d4bfa2e5b0b624168d1706c5c10275d6c25331ef6594e94e",
+            "drop_action": "dropped_under_budget",
+            "floor_satisfied": false,
+            "metadata": {
+              "fixture_id": "C10"
+            },
+            "priority": "high",
+            "producer": "fixture_durable",
+            "raw_size": 21,
+            "rendered_size": 0,
+            "surface": "system_text"
+          },
+          {
+            "activation_state": "active",
+            "asset_id": "compact",
+            "content_hash": "sha256:d0308836bcf4ce60828eba3829b98f30d14ce66aa195f244c96ae677ec1afa1a",
+            "drop_action": "none",
+            "floor_satisfied": true,
+            "metadata": {
+              "fixture_id": "C10"
+            },
+            "priority": "high",
+            "producer": "fixture_compact",
+            "raw_size": 30,
+            "rendered_size": 30,
+            "surface": "messages"
+          },
+          {
+            "activation_state": "active",
+            "asset_id": "pointer",
+            "content_hash": "sha256:c10-history",
+            "drop_action": "none",
+            "floor_satisfied": true,
+            "metadata": {
+              "content_hash": "sha256:c10-history",
+              "freshness": "fresh",
+              "pointer_kind": "artifact",
+              "producer": "compact",
+              "resolvable": true,
+              "target_id": "history-c10"
+            },
+            "priority": "high",
+            "producer": "fixture_pointer",
+            "raw_size": 19,
+            "rendered_size": 19,
+            "surface": "messages"
+          }
+        ],
+        "messages": [
+          {
+            "compactable": true,
+            "content": "COMPACT-C10-LATEST-DO-NOT-DROP",
+            "kind": "compact_summary",
+            "role": "assistant"
+          },
+          {
+            "compactable": false,
+            "content": "POINTER-C10-HISTORY",
+            "kind": "artifact_pointer",
+            "role": "assistant"
+          },
+          {
+            "compactable": false,
+            "content": "REQUEST-C10-KEEP-VERBATIM",
+            "kind": "current_request",
+            "role": "user"
+          }
+        ],
+        "native_turn_status": "terminal",
+        "system_text": "TODO-C10-ACTIVE-DO-NOT-DROP\n\nCHECKPOINT-C10-FRESH-DO-NOT-DROP"
+      }
+    },
+    {
+      "id": "C11",
+      "model_request": {
+        "max_output_tokens": 256,
+        "prompt": "PLAN-C11-MODE=plan;POINTER=plans/C11.md;WRITE=read_only;GATE=approve;PROGRESS=step-2\n\nTODO-C11-ACTIVE\n\nCHECKPOINT-C11-FRESH\n\nREQUEST-C11-KEEP-VERBATIM",
+        "tool_choice": {
+          "mode": "auto",
+          "name": null
+        },
+        "tool_results": [],
+        "tools": []
+      },
+      "oracle": {
+        "assets": [
+          {
+            "activated": false,
+            "asset_id": "skills",
+            "disposition": "drop",
+            "required_metadata": [],
+            "sentinel": "SKILL-C11-INACTIVE-AAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          {
+            "activated": true,
+            "asset_id": "plan",
+            "disposition": "retain",
+            "required_metadata": [],
+            "sentinel": "PLAN-C11-MODE=plan;POINTER=plans/C11.md;WRITE=read_only;GATE=approve;PROGRESS=step-2",
+            "surface": "system_text"
+          },
+          {
+            "activated": true,
+            "asset_id": "todo",
+            "disposition": "retain",
+            "required_metadata": [],
+            "sentinel": "TODO-C11-ACTIVE",
+            "surface": "system_text"
+          },
+          {
+            "activated": true,
+            "asset_id": "checkpoint",
+            "disposition": "retain",
+            "required_metadata": [],
+            "sentinel": "CHECKPOINT-C11-FRESH",
+            "surface": "system_text"
+          }
+        ],
+        "current_request": "REQUEST-C11-KEEP-VERBATIM"
+      },
+      "request_id": "context-c11-native",
+      "source": {
+        "budget": {
+          "messages": 512,
+          "system_text": 160,
+          "tools": 512,
+          "unit": "utf8_bytes"
+        },
+        "expectations": "fixtures/C11/expectations.json",
+        "fixture": "fixtures/C11/input.json",
+        "focus": [
+          "system_pressure",
+          "plan_floor"
+        ],
+        "fragment": "fragments/C09-C15.json"
+      },
+      "surfaces": {
+        "asset_records": [
+          {
+            "activation_state": "dropped",
+            "asset_id": "skills",
+            "content_hash": "sha256:a0ae787c25cd401901bbb0dac445058e0cfb4e4fb1468f869aadb8a80c42ecf3",
+            "drop_action": "dropped_under_budget",
+            "floor_satisfied": false,
+            "metadata": {
+              "fixture_id": "C11"
+            },
+            "priority": "high",
+            "producer": "fixture_skills",
+            "raw_size": 47,
+            "rendered_size": 0,
+            "surface": "system_text"
+          },
+          {
+            "activation_state": "active",
+            "asset_id": "plan",
+            "content_hash": "sha256:f7e1cbf2d3d02c2f106c214cd89616b7e178c3c26cda91c8e795117af31381f3",
+            "drop_action": "none",
+            "floor_satisfied": true,
+            "metadata": {
+              "fixture_id": "C11"
+            },
+            "priority": "critical",
+            "producer": "fixture_plan",
+            "raw_size": 84,
+            "rendered_size": 84,
+            "surface": "system_text"
+          },
+          {
+            "activation_state": "active",
+            "asset_id": "todo",
+            "content_hash": "sha256:91cb7a6b698674bc5ff4976154dbb7e53da0c8817c8afa0ec356f288e68b7f63",
+            "drop_action": "none",
+            "floor_satisfied": true,
+            "metadata": {
+              "fixture_id": "C11"
+            },
+            "priority": "high",
+            "producer": "fixture_todo",
+            "raw_size": 15,
+            "rendered_size": 15,
+            "surface": "system_text"
+          },
+          {
+            "activation_state": "active",
+            "asset_id": "checkpoint",
+            "content_hash": "sha256:6a1eada991ed706c55b8142e61fc50b29632f31d40eebba526f48c6142b50094",
+            "drop_action": "none",
+            "floor_satisfied": true,
+            "metadata": {
+              "fixture_id": "C11"
+            },
+            "priority": "high",
+            "producer": "fixture_checkpoint",
+            "raw_size": 20,
+            "rendered_size": 20,
+            "surface": "system_text"
+          }
+        ],
+        "messages": [
+          {
+            "compactable": false,
+            "content": "REQUEST-C11-KEEP-VERBATIM",
+            "kind": "current_request",
+            "role": "user"
+          }
+        ],
+        "native_turn_status": "terminal",
+        "system_text": "PLAN-C11-MODE=plan;POINTER=plans/C11.md;WRITE=read_only;GATE=approve;PROGRESS=step-2\n\nTODO-C11-ACTIVE\n\nCHECKPOINT-C11-FRESH"
+      }
+    },
+    {
+      "id": "C12",
+      "model_request": {
+        "max_output_tokens": 256,
+        "prompt": "PLAN-C12-CONTROL\n\nREQUEST-C12-KEEP-VERBATIM",
+        "tool_choice": {
+          "mode": "auto",
+          "name": null
+        },
+        "tool_results": [],
+        "tools": [
+          {
+            "description": "TOOL-C12-REQUIRED",
+            "input_schema": {
+              "properties": {
+                "path": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "path"
+              ],
+              "type": "object"
+            },
+            "name": "narrow_c12"
+          },
+          {
+            "description": "TOOL-C12-OPTIONAL-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "input_schema": {
+              "properties": {
+                "verbose": {
+                  "type": "boolean"
+                }
+              },
+              "type": "object"
+            },
+            "name": "wide_c12"
+          }
+        ]
+      },
+      "oracle": {
+        "assets": [
+          {
+            "activated": true,
+            "asset_id": "plan",
+            "disposition": "retain",
+            "required_metadata": [],
+            "sentinel": "PLAN-C12-CONTROL",
+            "surface": "system_text"
+          }
+        ],
+        "current_request": "REQUEST-C12-KEEP-VERBATIM"
+      },
+      "request_id": "context-c12-native",
+      "source": {
+        "budget": {
+          "messages": 256,
+          "system_text": 128,
+          "tools": 180,
+          "unit": "utf8_bytes"
+        },
+        "expectations": "fixtures/C12/expectations.json",
+        "fixture": "fixtures/C12/input.json",
+        "focus": [
+          "tools_budget",
+          "surface_isolation"
+        ],
+        "fragment": "fragments/C09-C15.json"
+      },
+      "surfaces": {
+        "asset_records": [
+          {
+            "activation_state": "active",
+            "asset_id": "plan",
+            "content_hash": "sha256:4ac25daeafcfb0a002f31a3760bbf942598b8b8c11c8dd3bb2fa661ee9b8f19c",
+            "drop_action": "none",
+            "floor_satisfied": true,
+            "metadata": {
+              "fixture_id": "C12"
+            },
+            "priority": "critical",
+            "producer": "fixture_plan",
+            "raw_size": 16,
+            "rendered_size": 16,
+            "surface": "system_text"
+          }
+        ],
+        "messages": [
+          {
+            "compactable": false,
+            "content": "REQUEST-C12-KEEP-VERBATIM",
+            "kind": "current_request",
+            "role": "user"
+          }
+        ],
+        "native_turn_status": "terminal",
+        "system_text": "PLAN-C12-CONTROL"
+      }
+    },
+    {
+      "id": "C13",
+      "model_request": {
+        "max_output_tokens": 256,
+        "prompt": "POINTER-C13-ONLY-REFERENCE\n\nREQUEST-C13-KEEP-VERBATIM",
+        "tool_choice": {
+          "mode": "auto",
+          "name": null
+        },
+        "tool_results": [],
+        "tools": []
+      },
+      "oracle": {
+        "assets": [
+          {
+            "activated": false,
+            "asset_id": "worker",
+            "disposition": "drop",
+            "required_metadata": [],
+            "sentinel": "WORKER-C13-RESULT-EXTERNALIZED"
+          },
+          {
+            "activated": true,
+            "asset_id": "pointer",
+            "disposition": "pointer",
+            "metadata": {
+              "content_hash": "sha256:545518d10e4112ba524bfcb76a4b9e7eab4200659f83563093c9db7256a68dbd",
+              "freshness": "fresh",
+              "producer": "worker",
+              "resolvable": true,
+              "target_path": "fixtures/C13/targets/runbook.md"
+            },
+            "required_metadata": [
+              "pointer_kind",
+              "target_path",
+              "content_hash",
+              "freshness",
+              "producer",
+              "resolvable"
+            ],
+            "sentinel": "# C13 external runbook\n\nThis content is represented only by its pointer metadata in the request.",
+            "surface": "messages"
+          }
+        ],
+        "current_request": "REQUEST-C13-KEEP-VERBATIM"
+      },
+      "request_id": "context-c13-native",
+      "source": {
+        "budget": {
+          "messages": 180,
+          "system_text": 256,
+          "tools": 256,
+          "unit": "utf8_bytes"
+        },
+        "expectations": "fixtures/C13/expectations.json",
+        "fixture": "fixtures/C13/input.json",
+        "focus": [
+          "pointer_integrity",
+          "externalized_body"
+        ],
+        "fragment": "fragments/C09-C15.json"
+      },
+      "surfaces": {
+        "asset_records": [
+          {
+            "activation_state": "dropped",
+            "asset_id": "worker",
+            "content_hash": "sha256:49d809e29eea58ba93bb11060a51054cf442a4274e5807b5d48df767d1dde8bb",
+            "drop_action": "dropped_under_budget",
+            "floor_satisfied": false,
+            "metadata": {
+              "fixture_id": "C13"
+            },
+            "priority": "high",
+            "producer": "fixture_worker",
+            "raw_size": 30,
+            "rendered_size": 0,
+            "surface": "messages"
+          },
+          {
+            "activation_state": "active",
+            "asset_id": "pointer",
+            "content_hash": "sha256:545518d10e4112ba524bfcb76a4b9e7eab4200659f83563093c9db7256a68dbd",
+            "drop_action": "externalized_to_pointer",
+            "floor_satisfied": true,
+            "metadata": {
+              "content_hash": "sha256:545518d10e4112ba524bfcb76a4b9e7eab4200659f83563093c9db7256a68dbd",
+              "freshness": "fresh",
+              "pointer_kind": "artifact",
+              "producer": "worker",
+              "resolvable": true,
+              "target_path": "fixtures/C13/targets/runbook.md"
+            },
+            "priority": "high",
+            "producer": "fixture_pointer",
+            "raw_size": 96,
+            "rendered_size": 0,
+            "surface": "messages"
+          }
+        ],
+        "messages": [
+          {
+            "compactable": false,
+            "content": "POINTER-C13-ONLY-REFERENCE",
+            "kind": "artifact_pointer",
+            "role": "assistant"
+          },
+          {
+            "compactable": false,
+            "content": "REQUEST-C13-KEEP-VERBATIM",
+            "kind": "current_request",
+            "role": "user"
+          }
+        ],
+        "native_turn_status": "terminal",
+        "system_text": ""
+      }
+    },
+    {
+      "id": "C14",
+      "model_request": {
+        "continuation": {
+          "payload": {
+            "opaque_fixture_state_hash": "sha256:c14-private",
+            "token_usage": 13
+          },
+          "profile_id": "fixture-native-c14"
+        },
+        "max_output_tokens": 256,
+        "prompt": "NATIVE-C14-CALL\n\nREQUEST-C14-KEEP-VERBATIM",
+        "tool_choice": {
+          "mode": "auto",
+          "name": null
+        },
+        "tool_results": [],
+        "tools": [
+          {
+            "description": "TOOL-C14-SCHEMA",
+            "input_schema": {
+              "type": "object"
+            },
+            "name": "native_c14"
+          }
+        ]
+      },
+      "oracle": {
+        "assets": [
+          {
+            "activated": true,
+            "asset_id": "unfinished_native_turn",
+            "metadata": {
+              "compactable": false,
+              "provider_call_id": "call-c14-1",
+              "result_call_ids": []
+            },
+            "required_metadata": [
+              "provider_call_id",
+              "result_call_ids",
+              "compactable"
+            ],
+            "sentinel": "NATIVE-C14-CALL",
+            "surface": "messages"
+          }
+        ],
+        "current_request": "REQUEST-C14-KEEP-VERBATIM"
+      },
+      "request_id": "context-c14-native",
+      "source": {
+        "budget": {
+          "messages": 160,
+          "system_text": 128,
+          "tools": 256,
+          "unit": "utf8_bytes"
+        },
+        "expectations": "fixtures/C14/expectations.json",
+        "fixture": "fixtures/C14/input.json",
+        "focus": [
+          "unfinished_native_turn",
+          "continuation_privacy"
+        ],
+        "fragment": "fragments/C09-C15.json"
+      },
+      "surfaces": {
+        "asset_records": [
+          {
+            "activation_state": "active",
+            "asset_id": "unfinished_native_turn",
+            "content_hash": "sha256:e87f8a096134683ec7b2c373e32ce178581d8588ab8bc32515f2a4d9b1f219fa",
+            "drop_action": "none",
+            "floor_satisfied": true,
+            "metadata": {
+              "compactable": false,
+              "provider_call_id": "call-c14-1",
+              "result_call_ids": []
+            },
+            "priority": "critical",
+            "producer": "native_exchange",
+            "raw_size": 15,
+            "rendered_size": 15,
+            "surface": "messages"
+          }
+        ],
+        "messages": [
+          {
+            "compactable": false,
+            "content": "NATIVE-C14-CALL",
+            "kind": "native_tool_call",
+            "provider_call_id": "call-c14-1",
+            "role": "assistant"
+          },
+          {
+            "compactable": false,
+            "content": "REQUEST-C14-KEEP-VERBATIM",
+            "kind": "current_request",
+            "role": "user"
+          }
+        ],
+        "native_turn_status": "awaiting_result",
+        "system_text": ""
+      }
+    },
+    {
+      "id": "C15",
+      "model_request": {
+        "max_output_tokens": 256,
+        "prompt": "REQUEST-C15-EXTREME-KEEP-VERBATIM-0123456789",
+        "tool_choice": {
+          "mode": "auto",
+          "name": null
+        },
+        "tool_results": [],
+        "tools": [
+          {
+            "description": "TOOL-C15-AAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "input_schema": {
+              "type": "object"
+            },
+            "name": "inspect_c15"
+          }
+        ]
+      },
+      "oracle": {
+        "assets": [
+          {
+            "activated": false,
+            "asset_id": "skills",
+            "disposition": "drop",
+            "required_metadata": [],
+            "sentinel": "SKILL-C15-AAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          {
+            "activated": false,
+            "asset_id": "todo",
+            "disposition": "drop",
+            "required_metadata": [],
+            "sentinel": "TODO-C15-ACTIVE-AAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          {
+            "activated": false,
+            "asset_id": "durable",
+            "disposition": "drop",
+            "required_metadata": [],
+            "sentinel": "DURABLE-C15-AAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          {
+            "activated": false,
+            "asset_id": "compact",
+            "disposition": "drop",
+            "required_metadata": [],
+            "sentinel": "COMPACT-C15-AAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          }
+        ],
+        "current_request": "REQUEST-C15-EXTREME-KEEP-VERBATIM-0123456789"
+      },
+      "request_id": "context-c15-native",
+      "source": {
+        "budget": {
+          "messages": 96,
+          "system_text": 96,
+          "tools": 96,
+          "unit": "utf8_bytes"
+        },
+        "expectations": "fixtures/C15/expectations.json",
+        "fixture": "fixtures/C15/input.json",
+        "focus": [
+          "extreme_pressure",
+          "current_request_survival"
+        ],
+        "fragment": "fragments/C09-C15.json"
+      },
+      "surfaces": {
+        "asset_records": [
+          {
+            "activation_state": "dropped",
+            "asset_id": "skills",
+            "content_hash": "sha256:0fa42b05cc9e893fabee7e95c1533d0cf339a44407de733e7971cc35aef623b2",
+            "drop_action": "dropped_under_budget",
+            "floor_satisfied": false,
+            "metadata": {
+              "fixture_id": "C15"
+            },
+            "priority": "high",
+            "producer": "fixture_skills",
+            "raw_size": 38,
+            "rendered_size": 0,
+            "surface": "system_text"
+          },
+          {
+            "activation_state": "dropped",
+            "asset_id": "todo",
+            "content_hash": "sha256:229239756ab30fa3a117185e548c38f12514ddacdf7f5713fc653563faad5f48",
+            "drop_action": "dropped_under_budget",
+            "floor_satisfied": false,
+            "metadata": {
+              "fixture_id": "C15"
+            },
+            "priority": "high",
+            "producer": "fixture_todo",
+            "raw_size": 44,
+            "rendered_size": 0,
+            "surface": "system_text"
+          },
+          {
+            "activation_state": "dropped",
+            "asset_id": "durable",
+            "content_hash": "sha256:71292005b32d4db0db088b08180c989904772960ea656533469cdb2e53c73a67",
+            "drop_action": "dropped_under_budget",
+            "floor_satisfied": false,
+            "metadata": {
+              "fixture_id": "C15"
+            },
+            "priority": "high",
+            "producer": "fixture_durable",
+            "raw_size": 40,
+            "rendered_size": 0,
+            "surface": "system_text"
+          },
+          {
+            "activation_state": "dropped",
+            "asset_id": "compact",
+            "content_hash": "sha256:e7664db3e8d471220b7610981c12c363ae849398a0b2802ec18aac6d275824df",
+            "drop_action": "dropped_under_budget",
+            "floor_satisfied": false,
+            "metadata": {
+              "fixture_id": "C15"
+            },
+            "priority": "high",
+            "producer": "fixture_compact",
+            "raw_size": 40,
+            "rendered_size": 0,
+            "surface": "messages"
+          }
+        ],
+        "messages": [
+          {
+            "compactable": false,
+            "content": "REQUEST-C15-EXTREME-KEEP-VERBATIM-0123456789",
+            "kind": "current_request",
+            "role": "user"
+          }
+        ],
+        "native_turn_status": "terminal",
+        "system_text": ""
+      }
+    }
+  ],
+  "contract": {
+    "artifact_contract_sha256": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "context_assets_sha256": "d8349c034524cc488958a1f3b460a7b6080915eed0b03b64c635810c21bf8e15",
+    "fragment_C01_C08_sha256": "6bef856d9df68209d60d0ef7e9df1dc927fd861f64a6f646f0cc58fba9c808b8",
+    "fragment_C09_C15_sha256": "1c2975e53696faed737a676e14faef7008cb4a2c4c5db27c804a903af3e1455c",
+    "native_contract_sha256": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb"
+  },
+  "schema_version": "pico-context-asset-cases-v1"
+}
