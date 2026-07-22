@@ -26,7 +26,7 @@ def is_repeated_tool_call(history: list[dict[str, Any]], name: str, args: dict[s
         if not matches:
             return False
         last_index, last_match = matches[-1]
-        return not _failed_file_write_retry_is_now_informed(
+        return not _prior_read_required_retry_is_now_informed(
             current_turn, last_index, last_match
         )
     return len(matches) >= 2
@@ -45,9 +45,15 @@ def repeated_tool_call_metadata(tool: RegisteredTool) -> dict[str, Any]:
     }
 
 
-def _failed_file_write_retry_is_now_informed(current_turn: list[dict[str, Any]], last_index: int, last_match: dict[str, Any]) -> bool:
-    content = str(last_match.get("content", ""))
-    if not content.startswith("error:"):
+def _prior_read_required_retry_is_now_informed(
+    current_turn: list[dict[str, Any]],
+    last_index: int,
+    last_match: dict[str, Any],
+) -> bool:
+    if (
+        last_match.get("tool_status") != "rejected"
+        or last_match.get("tool_error_code") != "prior_read_required"
+    ):
         return False
     path = str((last_match.get("args") or {}).get("path", ""))
     if not path:
@@ -58,7 +64,8 @@ def _failed_file_write_retry_is_now_informed(current_turn: list[dict[str, Any]],
         args = item.get("args") or {}
         if (
             str(args.get("path", "")) == path
-            and not str(item.get("content", "")).startswith("error:")
+            and item.get("tool_status") == "ok"
+            and not item.get("tool_error_code")
         ):
             return True
     return False

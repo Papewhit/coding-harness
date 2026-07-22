@@ -130,12 +130,16 @@ class NativeSessionRecorder:
         self.finished_calls.add(call.call_id)
         metadata = dict(state.get("result_metadata", {}) or {})
         rendered = _render_native_output(result.output)
+        tool_status = str(metadata.get("tool_status", status))
+        tool_error_code = str(metadata.get("tool_error_code", ""))
         self.agent.record(
             {
                 "role": "tool",
                 "name": call.name,
                 "args": dict(call.arguments),
                 "content": rendered,
+                "tool_status": tool_status,
+                "tool_error_code": tool_error_code,
                 "provider_call_id": call.call_id,
                 "created_at": now(),
             }
@@ -144,8 +148,8 @@ class NativeSessionRecorder:
             "run_id": self.task_state.run_id,
             "tool_name": call.name,
             "call_id": call.call_id,
-            "status": metadata.get("tool_status", status),
-            "tool_error_code": metadata.get("tool_error_code", ""),
+            "status": tool_status,
+            "tool_error_code": tool_error_code,
             "workspace_changed": bool(metadata.get("workspace_changed", False)),
             "affected_paths": list(metadata.get("affected_paths", [])),
         }
