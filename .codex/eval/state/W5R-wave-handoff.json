@@ -1,0 +1,182 @@
+{
+  "schema_version": "pico-eval-wave-handoff-v1",
+  "wave": "W5R",
+  "status": "blocked",
+  "wave_base_sha": "fd17e64b45f58558d84a200b5498db463998a239",
+  "control_overlay_sha256": "6e06ed22e5cf607734367d17ae784db6a0338bc8fbb18af3e1dc35d4d8f75cf0",
+  "integration_sha": "0c87dca9c823c98237cb50baf4cf7f2494cb69ef",
+  "integration_sha_role": "canonical W5R code/state blocked snapshot before the wave-handoff metadata commit",
+  "canonical_tag": {
+    "name": "eval-v3/w5r-canonical",
+    "type": "annotated",
+    "object_sha": "28cff620bd2fe55210e8083ce4c6e8545ebff5d3",
+    "target_sha": "0c87dca9c823c98237cb50baf4cf7f2494cb69ef",
+    "verified": true
+  },
+  "metadata_commit": {
+    "role": "commit adding this handoff after the canonical integration snapshot",
+    "parent_sha": "0c87dca9c823c98237cb50baf4cf7f2494cb69ef",
+    "sha_resolution": "git log -1 --format=%H -- .codex/eval/state/W5R-wave-handoff.json"
+  },
+  "upstream_anchors": {
+    "w5_control_head_sha": "ac944b4cbac4728473323c94276debe87c8fb78a",
+    "w5_blocked_metadata_head_sha": "fd249ee5352a4d4973b1519305cf16d83bf452e9",
+    "w5_blocked_canonical_sha": "a885581bb39b46f7f856b40cffdbbfbc3da0918a",
+    "w5_tag": "eval-v3/w5-canonical",
+    "w5_handoff_sha256": "8bb358e325764457d727a11cbe07742bc230e730296c8ce35fc2ce1e3b5b2625",
+    "verified": true
+  },
+  "status_sha256": "7a908883bdac3e82b49a4e8fbd47946b46e56b000a2a58dacd36d82822f00162",
+  "freeze_sha256": "dbedbc07dcc042546ec37392fb17214b2947bdbfe757d872bb438b9f7cca6f8e",
+  "freeze_changed": false,
+  "freeze_proposals_promoted": false,
+  "native_deterministic_gate_promoted": false,
+  "commit_map": {
+    "path": ".codex/eval/state/W5R-commit-map.json",
+    "sha256": "6268a1a08ecb8266eb31bc13f41c4a9c208f50e682ea828739f49f74dee3a621",
+    "entry_count": 6,
+    "stable_patch_ids_verified": true
+  },
+  "worker_bundle": {
+    "path": "F:/dev/llm/pico-eval-artifacts/wave-bundles/W5R-workers.bundle",
+    "sha256": "11a07f3108f74c82fd53219e7d80690603bf3eeca158d2b1251c9583631a1901",
+    "size_bytes": 16417989,
+    "ref_count": 6,
+    "verification": "git bundle verify passed; complete history"
+  },
+  "accepted_tickets": [
+    "TOOL-044-F",
+    "ARCH-045-B",
+    "CHORE-045-L",
+    "TOOL-043-R",
+    "EVAL-032-F"
+  ],
+  "blocked_tickets": ["TOOL-042-G-R1"],
+  "ticket_handoffs": {
+    "TOOL-044-F": {
+      "path": ".codex/eval/handoffs/TOOL-044-F.json",
+      "sha256": "3f9c248922cd8bc7c89789c255e89ca77df9e0293dd2ca05f9a4c40f4e1f472f",
+      "branch_head": "4e8258d58fb909dc72b647a1823f2bf013a72367",
+      "integration_commit": "5b68bb8c1e9a23f9fb9b7828a4aee5c6657718c3",
+      "stable_patch_id": "aaf1ff4dac024c3a385774de4c63350d029b1a60",
+      "outcome": "accepted; WSL fixture-only negative control verified"
+    },
+    "ARCH-045-B": {
+      "path": ".codex/eval/handoffs/ARCH-045-B.json",
+      "sha256": "31fbde29d32f0f6a0ea219ded1fe7460c80772659b134b248d2e4f252d6c02e9",
+      "branch_head": "700f6e219f543893d8d297fe6589078cc3e40d75",
+      "integration_commit": "89203e262674d6d4a695712f739c14e110e66d12",
+      "stable_patch_id": "5d89777ba87e53992675a1206a5b1d46fef2d936",
+      "outcome": "accepted; worker_manager budget changed from 220 to 250 without source changes"
+    },
+    "CHORE-045-L": {
+      "path": ".codex/eval/handoffs/CHORE-045-L.json",
+      "sha256": "8c62702b626d2be6c27ccf70d1db32cf84ecb61a281a9b590ccc65b19e34635c",
+      "branch_head": "8bfaccffc8f9832d72bbc0c0e9da0d31d1bf0ed0",
+      "integration_commit": "892fb5afd471f99d3cddcb1ba3797dee3ba94a75",
+      "stable_patch_id": "9fe7fcd5e68532fd73cf2a4cebe872bbda6c2557",
+      "outcome": "accepted; repository Ruff findings removed mechanically"
+    },
+    "TOOL-043-R": {
+      "path": ".codex/eval/handoffs/TOOL-043-R.json",
+      "sha256": "c96f81c9dd4c62d0eeb387a5d86ed36e252fd33d557f737ec0b9ea7c395606c3",
+      "branch_head": "1ef7e32b955047bd7d80b0481f644cbc98e76725",
+      "integration_commit": "ae6f6bc219a543a13f9fb7a3528118362d726490",
+      "stable_patch_id": "b74b7d1f2ea81756ed5b62d3bc4cee15b1622207",
+      "outcome": "accepted after TOOL-044-F negative-control prerequisite"
+    },
+    "EVAL-032-F": {
+      "path": ".codex/eval/handoffs/EVAL-032-F.json",
+      "sha256": "e051f284b03fedb266e145144c246ffa025c55b19bca045417fb5f7e62d0c0b1",
+      "branch_head": "b6f3a610a0ebf136903b76baff2435bb28ac51e6",
+      "run_snapshot_sha": "b3ec3e226de82d87c30fa8e4f1bc681a6c42a5b4",
+      "integration_commit": "c283b7ccb20794d9f9bd361a476be045eee42833",
+      "stable_patch_id": "4f2dec0a12485d031af1cac2562dd214dd4da5ce",
+      "outcome": "accepted; versioned Context binding reconstructed from Git blob bytes and evaluated 15/15"
+    },
+    "TOOL-042-G-R1": {
+      "path": ".codex/eval/handoffs/TOOL-042-G-R1.json",
+      "sha256": "f44e7f3764ad4c834c6fc9bb12651647aa71c5094c5836f4e5d647bd3be9d679",
+      "branch_head": "71d4a3f40635f4d94e99caf510c9decf83a76f11",
+      "run_snapshot_sha": "d5464bf08ed50405301d474b7e64f7a4dc3d4918",
+      "integration_commit": "4938bf258b8ffe3f955857cd9243d7867477ee80",
+      "stable_patch_id": "0001dde7adb895914774f44403f27ef45bebddc1",
+      "outcome": "blocked; protected and full repository required commands did not exit zero"
+    }
+  },
+  "thread_identity": {
+    "source_thread_uuid": "019f8899-40f8-7231-9458-dcc8084aa44e",
+    "instances": {
+      "TOOL-044-F": {"thread_uuid": "019f88a0-f72e-7d90-9968-23e9b74ddd05", "prompt_sha256": "183e6600c9807b7e9e43cd93f6284ba12df2291f2770e323be2f8d2bc85cf7b8"},
+      "ARCH-045-B": {"thread_uuid": "019f88a0-f6e4-7581-93a1-edf83dd1fd3c", "prompt_sha256": "a9d36a1e67d2ad96f3ecfe928f66b7195b2d4d979b29e02c81c6374a72193d07"},
+      "CHORE-045-L": {"thread_uuid": "019f88a0-f705-7010-a55d-f55b9b24b5c1", "prompt_sha256": "ee56f08ddf1ceeb49829274c97c7ea5c38a0400d4e6ba06c5499d4d2218d6518"},
+      "TOOL-043-R": {"thread_uuid": "019f88a0-f6c2-7940-8143-93bc3b977e7a", "prompt_sha256": "7d950b71fae38c43dea17a5dcc16cc5bb48c382768fa9a678e9b29900a02cdec"},
+      "EVAL-032-F": {"thread_uuid": "019f88c0-24a0-7b41-8919-7426e83231dd", "prompt_sha256": "0057b3fb99a7a79941dd1e0860e67c8848f1598b187bcf9701c26bce8ff49840"},
+      "TOOL-042-G-R1": {"thread_uuid": "019f88cf-45c6-74a3-b211-525d3e526ebc", "prompt_sha256": "f2b3a43e2e571a8879ab465132067cc5fa4b7d80eeb3f6456f12ab6052fc6a14"}
+    }
+  },
+  "audit_artifacts": {
+    "fixture_negative_control_root": "F:/dev/llm/pico-eval-artifacts/w5r-fixture-migration/W5R-TOOL-044-F-01",
+    "fixture_negative_control_report_sha256": "d2627e2989eab8b714491008fb691f15c7788cc1ab4a9973dbae586d1c0c4979",
+    "fixture_negative_control_junit_sha256": "0fadbb78458d39925c5abc924e1699dfba6efa4c5771be9309ba45456c043bc4",
+    "context_root": "F:/dev/llm/pico-eval-artifacts/phase-2-context-assets-w5r",
+    "context_evaluation_sha256": "ee39ac9eb1e22633a23f0858fadc29802b252a6fb0ada15184b5bfad75d12b24",
+    "context_manifest_sha256": "6c74b0f920fd2acd528e648e49917750d9438e945be6864f95d53ee149ff1355",
+    "gate_root": "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate-w5r/W5R-TOOL-042-G-R1-01",
+    "gate_report_sha256": "fab078c630df496a65a4835f4a0ed601240a039caca684b04e3dd8cbb315a5c4",
+    "gate_manifest_sha256": "4acf8b1641ddd07e35c87967f57e10623a9586b0c8bea3846f87deb959714157",
+    "gate_manifest_artifact_count": 64,
+    "gate_manifest_aggregate_sha256": "080bebbbe112236931608f582afe7985dcd179458d7d839802fd269fdf4e2b3b",
+    "freeze_proposal_sha256": "3e427f291bebb711a58efb7458cb8abbd766c49898170fa8eb797da5508acb1a",
+    "status_proposal_sha256": "336ee843226ac544e142503a0f0c54b958cf6c5c1ee95c764686101ef77ab289"
+  },
+  "exit_gate": {
+    "status": "blocked",
+    "satisfied": false,
+    "environment": "Ubuntu WSL2 fresh ext4 clone on /dev/sdd, user papewhit, Python 3.12.13, user-level uv, committed uv.lock, no sudo",
+    "positive_evidence": [
+      "PLAN validation passed: 69 ticket templates, 12 waves.",
+      "TOOL-044-F fixture-only WSL negative control passed its expected shape: 25 passed and exactly the retry-after-read test failed before TOOL-043-R.",
+      "Repository Ruff passed, the deterministic native/Context suite passed 92/92, and the fixture/repetition audit passed 10/10.",
+      "Context v2 reconstructed Git blob OID 5e9bdf06e75f6661660947e880f07edfe7480880 and SHA-256 e08066749520a52af5bb14a9435e359f4a85d3f3ae6e8dd0e962001f99c2df17.",
+      "Positive protocol observations retained zero text envelopes, complete call-ID/result matching and batches, zero unknown-block loss, zero safety-chain bypass, and no SDK Tool/Agent Runner usage.",
+      "All six worker-to-canonical stable patch IDs, handoff hashes, six-ref worker bundle, and 64-file Gate manifest were independently verified."
+    ],
+    "blocking_evidence": [
+      "The required protected suite produced 26 passes and one failure because pico/core/model_errors.py has 109 lines against its unchanged 100-line architecture budget.",
+      "The required full repository suite produced 400 passes, 79 failures, two pre-existing live-provider opt-in skips and six warnings; its dominant failure cluster is 70 tests without a locked provider_profile, plus worker-event and TUI failures/timeouts.",
+      "All required commands must exit zero. The blocked proposals are preserved but not promoted; native_eval_ready remains false and W6 has no ready tickets."
+    ]
+  },
+  "discrepancy_corrections": [
+    {
+      "field": "EVAL-032-F handoff SHA-256",
+      "incorrect_expanded_value": "e051f284b03fedb266e1451448ddb2b322446ca39a21cac07687e88aa6f023407",
+      "corrected_verified_value": "e051f284b03fedb266e145144c246ffa025c55b19bca045417fb5f7e62d0c0b1",
+      "verification_basis": "raw committed Git blob bytes",
+      "history_rewritten": false
+    }
+  ],
+  "risks": [
+    "The W5R snapshot must not be used as a live-conformance or W6 base because native_eval_ready remains blocked.",
+    "The full-suite provider_profile failure cluster requires separately owned remediation and a new immutable Gate snapshot.",
+    "The model_errors.py budget, worker-event assertions and TUI failures/timeouts remain actual failures; none was reclassified.",
+    "Formal FREEZE remains byte-identical to W5; EVAL-032-F and TOOL-042-G-R1 proposals were not promoted."
+  ],
+  "cleanup_candidates": [
+    {"branch": "codex/eval-v3-w5r-tool-044-f", "worktree": "C:/Users/Papewhit/.codex/worktrees/6d8c/pico"},
+    {"branch": "codex/eval-v3-w5r-arch-045-b", "worktree": "C:/Users/Papewhit/.codex/worktrees/1997/pico"},
+    {"branch": "codex/eval-v3-w5r-chore-045-l", "worktree": "C:/Users/Papewhit/.codex/worktrees/da77/pico"},
+    {"branch": "codex/eval-v3-w5r-tool-043-r", "worktree": "C:/Users/Papewhit/.codex/worktrees/e3f0/pico"},
+    {"branch": "codex/eval-v3-w5r-eval-032-f", "worktree": "C:/Users/Papewhit/.codex/worktrees/7343/pico"},
+    {"branch": "codex/eval-v3-w5r-tool-042-g-r1", "worktree": "C:/Users/Papewhit/.codex/worktrees/10cc/pico"}
+  ],
+  "cleanup_action_taken": false,
+  "user_decisions_required": [
+    "Authorize and schedule separately owned remediation tickets for the model_errors.py architecture budget, locked provider_profile coverage, worker-event assertions, and TUI failures before another W5R Gate attempt."
+  ],
+  "next_wave": "W6",
+  "next_wave_ready_tickets": [],
+  "next_wave_started": false,
+  "completed_at": "2026-07-22T16:15:30+08:00"
+}
