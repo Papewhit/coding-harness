@@ -479,10 +479,24 @@
       "handoff_path": ".codex/eval/handoffs/TOOL-040-I.json",
       "handoff_sha256": "3ea08ab84d4bcdc632280bb8e65e572aa1a448b04781394f242880790faf0922",
       "stable_patch_id": "d42016512ec5d9d00232835b1e04dbf00177d26b"
+    },
+    "TOOL-041-M": {
+      "instance_id": "W5-TOOL-041-M-01",
+      "status": "accepted",
+      "base_sha": "a834e78098487888264b5ffdea37f52a8d635fbf",
+      "head_sha": "9cf136fed19f2ae1224eed88840de76d44539dd3",
+      "dependency_commits": ["68d1829babe6d2908bc22ee52488098962aa94c5"],
+      "applied_dependency_commits": ["d8b4d445554223138188e6059e867ddb63dbc7be"],
+      "own_commits": ["419fb2f5165860aa801cada58bd4f47ed1bdcb08", "9cf136fed19f2ae1224eed88840de76d44539dd3"],
+      "integration_commits": ["3dd42df4981febb00f221f8c3471640eeb5efb8d"],
+      "handoff_path": ".codex/eval/handoffs/TOOL-041-M.json",
+      "handoff_sha256": "7b3b413cc1f41f8db5f5d218936013e32ea41059dfe0505b74a5eefc7fbd64d5",
+      "stable_patch_id": "654c3091cfcdfd7075d857aa984c983c848e1e3a"
     }
   },
   "active_tickets": {
-    "TOOL-041-M": {"instance_id": "W5-TOOL-041-M-01", "status": "active"}
+    "TOOL-049-I": {"instance_id": "W5-TOOL-049-I-01", "status": "active"},
+    "EVAL-031-G": {"instance_id": "W5-EVAL-031-G-01", "status": "active"}
   },
   "blocked_tickets": {},
   "ticket_instances": {
@@ -1742,6 +1756,82 @@
         ".codex/eval/handoffs/TOOL-041-M.json"
       ],
       "prompt_sha256": "2faf566f20517b572ab16991089690731337e1e2f2985e437b84286d8a6e7a3c",
+      "head_sha": "9cf136fed19f2ae1224eed88840de76d44539dd3",
+      "applied_dependency_commits": ["d8b4d445554223138188e6059e867ddb63dbc7be"],
+      "own_commits": ["419fb2f5165860aa801cada58bd4f47ed1bdcb08", "9cf136fed19f2ae1224eed88840de76d44539dd3"],
+      "integration_commits": ["3dd42df4981febb00f221f8c3471640eeb5efb8d"],
+      "handoff_sha256": "7b3b413cc1f41f8db5f5d218936013e32ea41059dfe0505b74a5eefc7fbd64d5",
+      "stable_patch_id": "654c3091cfcdfd7075d857aa984c983c848e1e3a",
+      "status": "accepted"
+    },
+    "W5-TOOL-049-I-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "TOOL-049-I",
+      "instance_id": "W5-TOOL-049-I-01",
+      "wave": "W5",
+      "role": "implementer",
+      "thread_id": "/root/w5_tool_049_i",
+      "durable_thread_uuid": null,
+      "thread_identity_basis": "agent_path_and_prompt_sha256; durable UUID unavailable from collaboration interface",
+      "base_sha": "a834e78098487888264b5ffdea37f52a8d635fbf",
+      "branch": "codex/eval-v3-w5-tool-049-i",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\w5-049i\\pico",
+      "dependency_handoff_hashes": {
+        "TOOL-040-I": "3ea08ab84d4bcdc632280bb8e65e572aa1a448b04781394f242880790faf0922",
+        "EVAL-001": "cc8c951e0a0e0dac20e46c611b102bc538a6863099310a90690eb639f931a3be"
+      },
+      "dependency_commits": ["68d1829babe6d2908bc22ee52488098962aa94c5"],
+      "freeze_hashes": {
+        "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+        "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+        "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+        "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215"
+      },
+      "allowed_write_paths": [
+        "pico/evaluation/native_provider.py",
+        "scripts/run_native_provider_conformance.py",
+        "tests/test_native_provider_evaluator.py",
+        "benchmarks/v3/native-provider/**",
+        ".codex/eval/handoffs/TOOL-049-I.json"
+      ],
+      "prompt_sha256": "3eb8674d2e7f3d6bfd20c4b1fa46d2bd1bb8ac08c4d71ac08baec9d1012b3873",
+      "status": "active"
+    },
+    "W5-EVAL-031-G-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "EVAL-031-G",
+      "instance_id": "W5-EVAL-031-G-01",
+      "wave": "W5",
+      "role": "integrator",
+      "thread_id": "/root/w5_eval_031_g",
+      "durable_thread_uuid": null,
+      "thread_identity_basis": "agent_path_and_prompt_sha256; durable UUID unavailable from collaboration interface",
+      "base_sha": "a834e78098487888264b5ffdea37f52a8d635fbf",
+      "branch": "codex/eval-v3-w5-eval-031-g",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\w5-031g\\pico",
+      "dependency_handoff_hashes": {
+        "EVAL-031-I": "3ae1145487d17faca6a5443a4e229eddc2e6eed9aff18242a1cada8ce644ead4",
+        "EVAL-031-A": "c875c4ede3a0e4330a2ea45d6266ded2c9882ad2943e05432794ab3eeb4ba1bd",
+        "EVAL-031-B": "abda701d825119311a68795edfc89d145ded6e72dae454ecf78c134cd624a904",
+        "TOOL-041-M": "7b3b413cc1f41f8db5f5d218936013e32ea41059dfe0505b74a5eefc7fbd64d5"
+      },
+      "dependency_commits": [
+        "68d1829babe6d2908bc22ee52488098962aa94c5",
+        "3dd42df4981febb00f221f8c3471640eeb5efb8d"
+      ],
+      "freeze_hashes": {
+        "context_assets": "d8349c034524cc488958a1f3b460a7b6080915eed0b03b64c635810c21bf8e15",
+        "fragment_C01_C08": "6bef856d9df68209d60d0ef7e9df1dc927fd861f64a6f646f0cc58fba9c808b8",
+        "fragment_C09_C15": "1c2975e53696faed737a676e14faef7008cb4a2c4c5db27c804a903af3e1455c",
+        "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb"
+      },
+      "allowed_write_paths": [
+        "benchmarks/v3/context-assets/cases.json",
+        "F:\\dev\\llm\\pico-eval-artifacts\\phase-2-context-assets\\**",
+        ".codex/eval/proposals/EVAL-031-G.freeze.json",
+        ".codex/eval/handoffs/EVAL-031-G.json"
+      ],
+      "prompt_sha256": "b74a5ed238d23b409a9b608c89eb3039f8e6a003e2d1de90b85b7bb8d17d51ed",
       "status": "active"
     }
   },
@@ -1772,6 +1862,19 @@
       "dependency_commits": ["68d1829babe6d2908bc22ee52488098962aa94c5"],
       "stable_patch_ids_verified": true,
       "checkpointed_at": "2026-07-22T11:15:10.9404675+08:00"
+    },
+    {
+      "wave": "W5",
+      "batch": 2,
+      "canonical_head": "3dd42df4981febb00f221f8c3471640eeb5efb8d",
+      "accepted_tickets": ["TOOL-040-I", "TOOL-041-M"],
+      "dispatched_tickets": ["TOOL-049-I", "EVAL-031-G"],
+      "dependency_commits": [
+        "68d1829babe6d2908bc22ee52488098962aa94c5",
+        "3dd42df4981febb00f221f8c3471640eeb5efb8d"
+      ],
+      "stable_patch_ids_verified": true,
+      "checkpointed_at": "2026-07-22T12:19:20.9437963+08:00"
     }
   ],
   "wave_close": null,
@@ -1826,5 +1929,5 @@
     "discrepancies": [],
     "accepted_at": "2026-07-22T10:16:43.6669036+08:00"
   },
-  "updated_at": "2026-07-22T11:15:10.9404675+08:00"
+  "updated_at": "2026-07-22T12:19:20.9437963+08:00"
 }
