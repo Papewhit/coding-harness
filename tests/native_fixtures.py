@@ -15,6 +15,27 @@ from pico.testing import (
 )
 
 
+def lock_scripted_provider_profile(agent: Any) -> Any:
+    """Persist the explicit native profile required by scripted Runtime tests."""
+
+    agent.session["provider_profile"] = {
+        "profile_id": "scripted-native:test-profile",
+        "profile": "scripted",
+        "model": "scripted-model",
+        "wire_dialect": "scripted-native",
+        "base_url_fingerprint": "sha256:test",
+        "capabilities": {"native_tools": True},
+        "adapter_mode": "scripted",
+        "sdk_package": "none",
+        "sdk_version": "0",
+        "sdk_max_retries": 0,
+        "provider_attempts": 1,
+        "tool_schema": agent.tool_signature(),
+    }
+    agent.session_path = agent.session_store.save(agent.session)
+    return agent
+
+
 @dataclass(frozen=True)
 class ToolStep:
     name: str

@@ -1,0 +1,87 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-044-F",
+  "instance_id": "W5R-TOOL-044-F-01",
+  "wave": "W5R",
+  "role": "implementer",
+  "status": "complete",
+  "thread_uuid": "019f88a0-f72e-7d90-9968-23e9b74ddd05",
+  "source_thread_id": "019f8899-40f8-7231-9458-dcc8084aa44e",
+  "prompt_sha256": "183e6600c9807b7e9e43cd93f6284ba12df2291f2770e323be2f8d2bc85cf7b8",
+  "base_sha": "fd17e64b45f58558d84a200b5498db463998a239",
+  "head_sha": "a69c70062c1db6891a398dfc58fe46e4894c7aaf",
+  "branch": "codex/eval-v3-w5r-tool-044-f",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/6d8c/pico",
+  "dependency_commits": [],
+  "dependency_handoff_hashes": {
+    "TOOL-041-M": "7b3b413cc1f41f8db5f5d218936013e32ea41059dfe0505b74a5eefc7fbd64d5",
+    "TOOL-042-G": "437d9c24c7cc38c68f8f3f6f2bdfe322e55408ada19c01f61d1474d3a0b55b2d",
+    "W5-wave-handoff": "8bb358e325764457d727a11cbe07742bc230e730296c8ce35fc2ce1e3b5b2625"
+  },
+  "own_commits": ["a69c70062c1db6891a398dfc58fe46e4894c7aaf"],
+  "files_changed": [
+    "tests/conftest.py",
+    "tests/native_fixtures.py",
+    "tests/test_tool_policy_acceptance.py",
+    "tests/test_safety_invariants.py",
+    "tests/test_permissions_acceptance.py",
+    "tests/test_fixture_migration_integrity.py"
+  ],
+  "tests": [
+    {
+      "command": "uv run pytest tests/test_fixture_migration_integrity.py -q",
+      "result": "passed",
+      "details": "2 passed; test names and assertion ASTs match canonical W5 blocked SHA a885581."
+    },
+    {
+      "command": "uv run pytest tests/test_safety_invariants.py tests/test_tool_policy_acceptance.py tests/test_permissions_acceptance.py -k \"not test_rejected_patch_can_be_retried_after_informing_read\" -q",
+      "result": "failed_known_windows_baseline",
+      "details": "15 passed, 10 failed, 1 deselected. Failures are W5-recorded Windows symlink privilege, cleared-home, POSIX command/quoting, and path-separator platform differences; no fixture migration failure was observed."
+    },
+    {
+      "command": "Ubuntu WSL2 ext4 negative control: uv run --python 3.12 pytest tests/test_safety_invariants.py tests/test_tool_policy_acceptance.py tests/test_permissions_acceptance.py -q --junitxml=negative-control-junit.xml",
+      "result": "expected_negative_control",
+      "details": "25 passed, 1 failed. The only failure is test_rejected_patch_can_be_retried_after_informing_read, proving the pre-TOOL-043-R retry-after-read product regression remains isolated."
+    },
+    {
+      "command": "uv run ruff check tests/native_fixtures.py tests/test_tool_policy_acceptance.py tests/test_safety_invariants.py tests/test_permissions_acceptance.py tests/test_fixture_migration_integrity.py",
+      "result": "passed"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/w5r-fixture-migration/W5R-TOOL-044-F-01/negative-control-report.json",
+      "sha256": "d2627e2989eab8b714491008fb691f15c7788cc1ab4a9973dbae586d1c0c4979"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/w5r-fixture-migration/W5R-TOOL-044-F-01/negative-control-junit.xml",
+      "sha256": "0fadbb78458d39925c5abc924e1699dfba6efa4c5771be9309ba45456c043bc4"
+    }
+  ],
+  "native_protocol_observations": {
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0
+  },
+  "defects": [
+    {
+      "id": "TOOL-042-G-NEW-001",
+      "classification": "expected_pre-TOOL-043-R_product_semantic_regression",
+      "details": "retry-after-read remains the sole Ubuntu negative-control failure."
+    }
+  ],
+  "risks": [
+    "The local Windows protected-suite command remains affected by its pre-existing platform baseline; the required Ubuntu control isolates fixture behavior."
+  ],
+  "status_proposal": {
+    "ticket_id": "TOOL-044-F",
+    "status": "complete",
+    "head_sha": "a69c70062c1db6891a398dfc58fe46e4894c7aaf",
+    "reason": "Global monkey patches are removed, protected fixtures are native and explicit, and the pre-TOOL-043-R negative control has exactly one product-semantic failure."
+  },
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}

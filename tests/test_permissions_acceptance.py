@@ -1,6 +1,6 @@
 import json
 
-from tests.native_fixtures import final, scripted_client, tool
+from tests.native_fixtures import final, lock_scripted_provider_profile, scripted_client, tool
 from pico import Pico, SessionStore, WorkspaceContext
 from pico.cli import handle_repl_command
 from pico.core.permissions import PermissionDecision
@@ -12,13 +12,13 @@ def build_agent(tmp_path, outputs=None, **kwargs):
     workspace = WorkspaceContext.build(tmp_path)
     store = SessionStore(tmp_path / ".pico" / "sessions")
     approval_policy = kwargs.pop("approval_policy", "auto")
-    return Pico(
+    return lock_scripted_provider_profile(Pico(
         model_client=scripted_client(outputs),
         workspace=workspace,
         session_store=store,
         approval_policy=approval_policy,
         **kwargs,
-    )
+    ))
 
 
 def read_session_events(agent):

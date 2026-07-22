@@ -2,7 +2,7 @@ import json
 import shlex
 import sys
 
-from pico.testing import ScriptedModelClient
+from tests.native_fixtures import final, lock_scripted_provider_profile, scripted_client, tool
 from pico import Pico, SessionStore, WorkspaceContext
 
 
@@ -10,13 +10,13 @@ def build_agent(tmp_path, outputs=None, **kwargs):
     (tmp_path / "README.md").write_text("hello world\n", encoding="utf-8")
     workspace = WorkspaceContext.build(tmp_path)
     store = SessionStore(tmp_path / ".pico" / "sessions")
-    return Pico(
-        model_client=ScriptedModelClient(outputs or []),
+    return lock_scripted_provider_profile(Pico(
+        model_client=scripted_client(outputs),
         workspace=workspace,
         session_store=store,
         approval_policy="auto",
         **kwargs,
-    )
+    ))
 
 
 def read_jsonl(path):
@@ -43,10 +43,10 @@ def test_rejected_patch_can_be_retried_after_informing_read(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            '<tool name="patch_file" path="README.md"><old_text>world</old_text><new_text>pico</new_text></tool>',
-            '<tool>{"name":"read_file","args":{"path":"README.md","start":1,"end":1}}</tool>',
-            '<tool name="patch_file" path="README.md"><old_text>world</old_text><new_text>pico</new_text></tool>',
-            "<final>done</final>",
+            tool("patch_file", path="README.md", old_text="world", new_text="pico"),
+            tool("read_file", path="README.md", start=1, end=1),
+            tool("patch_file", path="README.md", old_text="world", new_text="pico"),
+            final("done"),
         ],
         max_steps=4,
     )
@@ -96,10 +96,10 @@ def test_repeated_mutating_file_tool_cannot_overwrite_later_patch(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            '<tool name="write_file" path="scripts/check.py"><content>VALUE = False\n</content></tool>',
-            '<tool name="patch_file" path="scripts/check.py"><old_text>False</old_text><new_text>True</new_text></tool>',
-            '<tool name="write_file" path="scripts/check.py"><content>VALUE = False\n</content></tool>',
-            "<final>done</final>",
+            tool("write_file", path="scripts/check.py", content="VALUE = False\n"),
+            tool("patch_file", path="scripts/check.py", old_text="False", new_text="True"),
+            tool("write_file", path="scripts/check.py", content="VALUE = False\n"),
+            final("done"),
         ],
         max_steps=4,
     )
@@ -160,8 +160,8 @@ def test_long_shell_output_is_clipped_and_full_output_is_saved_as_run_artifact(t
     agent = build_agent(
         tmp_path,
         [
-            f'<tool>{{"name":"run_shell","args":{{"command":{json.dumps(command)},"timeout":20}}}}</tool>',
-            "<final>captured</final>",
+            tool("run_shell", command=command, timeout=20),
+            final("captured"),
         ],
     )
 
