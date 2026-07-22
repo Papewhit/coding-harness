@@ -1,0 +1,83 @@
+{
+  "schema_version": "pico-eval-commit-map-v1",
+  "wave": "W5R",
+  "wave_base_sha": "fd17e64b45f58558d84a200b5498db463998a239",
+  "control_overlay_sha256": "6e06ed22e5cf607734367d17ae784db6a0338bc8fbb18af3e1dc35d4d8f75cf0",
+  "entries": {
+    "TOOL-044-F": {
+      "worker_thread_uuid": "019f88a0-f72e-7d90-9968-23e9b74ddd05",
+      "prompt_sha256": "183e6600c9807b7e9e43cd93f6284ba12df2291f2770e323be2f8d2bc85cf7b8",
+      "worker_head": "4e8258d58fb909dc72b647a1823f2bf013a72367",
+      "worker_commits": [
+        "a69c70062c1db6891a398dfc58fe46e4894c7aaf",
+        "2eec522cc84076c6f485907a171296ec5e475d6c",
+        "4e8258d58fb909dc72b647a1823f2bf013a72367"
+      ],
+      "dependency_commits": [],
+      "canonical_commit": "5b68bb8c1e9a23f9fb9b7828a4aee5c6657718c3",
+      "handoff_sha256": "3f9c248922cd8bc7c89789c255e89ca77df9e0293dd2ca05f9a4c40f4e1f472f",
+      "stable_patch_id": "aaf1ff4dac024c3a385774de4c63350d029b1a60",
+      "stable_patch_id_scope": "wave_base_to_worker_head_and_canonical_ticket_commit",
+      "stable_patch_id_match": true,
+      "negative_control": {
+        "report_sha256": "d2627e2989eab8b714491008fb691f15c7788cc1ab4a9973dbae586d1c0c4979",
+        "junit_sha256": "0fadbb78458d39925c5abc924e1699dfba6efa4c5771be9309ba45456c043bc4",
+        "result": "25 passed, exactly 1 expected retry-after-read failure"
+      },
+      "outcome": "accepted"
+    },
+    "ARCH-045-B": {
+      "worker_thread_uuid": "019f88a0-f6e4-7581-93a1-edf83dd1fd3c",
+      "prompt_sha256": "a9d36a1e67d2ad96f3ecfe928f66b7195b2d4d979b29e02c81c6374a72193d07",
+      "worker_head": "700f6e219f543893d8d297fe6589078cc3e40d75",
+      "worker_commits": [
+        "dc4dcd02eca63889790c7aefc41d1334b7eeb825",
+        "700f6e219f543893d8d297fe6589078cc3e40d75"
+      ],
+      "dependency_commits": [],
+      "canonical_commit": "89203e262674d6d4a695712f739c14e110e66d12",
+      "handoff_sha256": "31fbde29d32f0f6a0ea219ded1fe7460c80772659b134b248d2e4f252d6c02e9",
+      "stable_patch_id": "5d89777ba87e53992675a1206a5b1d46fef2d936",
+      "stable_patch_id_scope": "wave_base_to_worker_head_and_canonical_ticket_commit",
+      "stable_patch_id_match": true,
+      "outcome": "accepted",
+      "remaining_gate_risk": "unchanged pico/core/model_errors.py is 109 lines against its separate 100-line budget"
+    },
+    "CHORE-045-L": {
+      "worker_thread_uuid": "019f88a0-f705-7010-a55d-f55b9b24b5c1",
+      "prompt_sha256": "ee56f08ddf1ceeb49829274c97c7ea5c38a0400d4e6ba06c5499d4d2218d6518",
+      "worker_head": "8bfaccffc8f9832d72bbc0c0e9da0d31d1bf0ed0",
+      "worker_commits": [
+        "57000ad99c315fcb7c7d976bad08c35986f00d90",
+        "f73c305cff1285fa9bf9b58cfaab23d83944de2a",
+        "8bfaccffc8f9832d72bbc0c0e9da0d31d1bf0ed0"
+      ],
+      "dependency_commits": [],
+      "canonical_commit": "892fb5afd471f99d3cddcb1ba3797dee3ba94a75",
+      "handoff_sha256": "8c62702b626d2be6c27ccf70d1db32cf84ecb61a281a9b590ccc65b19e34635c",
+      "stable_patch_id": "9fe7fcd5e68532fd73cf2a4cebe872bbda6c2557",
+      "stable_patch_id_scope": "wave_base_to_worker_head_and_canonical_ticket_commit",
+      "stable_patch_id_match": true,
+      "outcome": "accepted"
+    },
+    "TOOL-043-R": {
+      "worker_thread_uuid": "019f88a0-f6c2-7940-8143-93bc3b977e7a",
+      "prompt_sha256": "7d950b71fae38c43dea17a5dcc16cc5bb48c382768fa9a678e9b29900a02cdec",
+      "worker_head": "1ef7e32b955047bd7d80b0481f644cbc98e76725",
+      "worker_commits": [
+        "10af860397a18f1a43dd4ea528fc77f5397cffb9",
+        "1ef7e32b955047bd7d80b0481f644cbc98e76725"
+      ],
+      "dependency_commits": [],
+      "canonical_commit": "ae6f6bc219a543a13f9fb7a3528118362d726490",
+      "handoff_sha256": "c96f81c9dd4c62d0eeb387a5d86ed36e252fd33d557f737ec0b9ea7c395606c3",
+      "stable_patch_id": "b74b7d1f2ea81756ed5b62d3bc4cee15b1622207",
+      "stable_patch_id_scope": "wave_base_to_worker_head_and_canonical_ticket_commit",
+      "stable_patch_id_match": true,
+      "acceptance_prerequisite": "TOOL-044-F WSL fixture-only negative control verified before integration",
+      "outcome": "accepted"
+    }
+  },
+  "worker_bundle": null,
+  "updated_at": "2026-07-22T15:36:10.6004991+08:00"
+}

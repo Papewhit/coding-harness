@@ -518,13 +518,54 @@
       "handoff_path": ".codex/eval/handoffs/EVAL-031-G.json",
       "handoff_sha256": "c317b79cd19afdcac2df3de5e71cf08748647fac8fcb9e4244e5b669826fb31c",
       "stable_patch_id": "8d79bfcbb21c783beebc200095d52f1f996a81c0"
+    },
+    "TOOL-044-F": {
+      "instance_id": "W5R-TOOL-044-F-01",
+      "status": "accepted",
+      "base_sha": "fd17e64b45f58558d84a200b5498db463998a239",
+      "head_sha": "4e8258d58fb909dc72b647a1823f2bf013a72367",
+      "own_commits": ["a69c70062c1db6891a398dfc58fe46e4894c7aaf", "2eec522cc84076c6f485907a171296ec5e475d6c", "4e8258d58fb909dc72b647a1823f2bf013a72367"],
+      "integration_commits": ["5b68bb8c1e9a23f9fb9b7828a4aee5c6657718c3"],
+      "handoff_path": ".codex/eval/handoffs/TOOL-044-F.json",
+      "handoff_sha256": "3f9c248922cd8bc7c89789c255e89ca77df9e0293dd2ca05f9a4c40f4e1f472f",
+      "stable_patch_id": "aaf1ff4dac024c3a385774de4c63350d029b1a60"
+    },
+    "ARCH-045-B": {
+      "instance_id": "W5R-ARCH-045-B-01",
+      "status": "accepted",
+      "base_sha": "fd17e64b45f58558d84a200b5498db463998a239",
+      "head_sha": "700f6e219f543893d8d297fe6589078cc3e40d75",
+      "own_commits": ["dc4dcd02eca63889790c7aefc41d1334b7eeb825", "700f6e219f543893d8d297fe6589078cc3e40d75"],
+      "integration_commits": ["89203e262674d6d4a695712f739c14e110e66d12"],
+      "handoff_path": ".codex/eval/handoffs/ARCH-045-B.json",
+      "handoff_sha256": "31fbde29d32f0f6a0ea219ded1fe7460c80772659b134b248d2e4f252d6c02e9",
+      "stable_patch_id": "5d89777ba87e53992675a1206a5b1d46fef2d936"
+    },
+    "CHORE-045-L": {
+      "instance_id": "W5R-CHORE-045-L-01",
+      "status": "accepted",
+      "base_sha": "fd17e64b45f58558d84a200b5498db463998a239",
+      "head_sha": "8bfaccffc8f9832d72bbc0c0e9da0d31d1bf0ed0",
+      "own_commits": ["57000ad99c315fcb7c7d976bad08c35986f00d90", "f73c305cff1285fa9bf9b58cfaab23d83944de2a", "8bfaccffc8f9832d72bbc0c0e9da0d31d1bf0ed0"],
+      "integration_commits": ["892fb5afd471f99d3cddcb1ba3797dee3ba94a75"],
+      "handoff_path": ".codex/eval/handoffs/CHORE-045-L.json",
+      "handoff_sha256": "8c62702b626d2be6c27ccf70d1db32cf84ecb61a281a9b590ccc65b19e34635c",
+      "stable_patch_id": "9fe7fcd5e68532fd73cf2a4cebe872bbda6c2557"
+    },
+    "TOOL-043-R": {
+      "instance_id": "W5R-TOOL-043-R-01",
+      "status": "accepted",
+      "base_sha": "fd17e64b45f58558d84a200b5498db463998a239",
+      "head_sha": "1ef7e32b955047bd7d80b0481f644cbc98e76725",
+      "own_commits": ["10af860397a18f1a43dd4ea528fc77f5397cffb9", "1ef7e32b955047bd7d80b0481f644cbc98e76725"],
+      "integration_commits": ["ae6f6bc219a543a13f9fb7a3528118362d726490"],
+      "handoff_path": ".codex/eval/handoffs/TOOL-043-R.json",
+      "handoff_sha256": "c96f81c9dd4c62d0eeb387a5d86ed36e252fd33d557f737ec0b9ea7c395606c3",
+      "stable_patch_id": "b74b7d1f2ea81756ed5b62d3bc4cee15b1622207"
     }
   },
   "active_tickets": {
-    "TOOL-043-R": {"instance_id": "W5R-TOOL-043-R-01", "status": "active"},
-    "TOOL-044-F": {"instance_id": "W5R-TOOL-044-F-01", "status": "active"},
-    "ARCH-045-B": {"instance_id": "W5R-ARCH-045-B-01", "status": "active"},
-    "CHORE-045-L": {"instance_id": "W5R-CHORE-045-L-01", "status": "active"}
+    "EVAL-032-F": {"instance_id": "W5R-EVAL-032-F-01", "status": "active"}
   },
   "blocked_tickets": {},
   "prior_wave_blocked_tickets": {
@@ -1968,7 +2009,12 @@
       "prompt_sha256": "7d950b71fae38c43dea17a5dcc16cc5bb48c382768fa9a678e9b29900a02cdec",
       "model": "gpt-5.6-sol",
       "reasoning_effort": "high",
-      "status": "active"
+      "head_sha": "1ef7e32b955047bd7d80b0481f644cbc98e76725",
+      "own_commits": ["10af860397a18f1a43dd4ea528fc77f5397cffb9", "1ef7e32b955047bd7d80b0481f644cbc98e76725"],
+      "integration_commits": ["ae6f6bc219a543a13f9fb7a3528118362d726490"],
+      "handoff_sha256": "c96f81c9dd4c62d0eeb387a5d86ed36e252fd33d557f737ec0b9ea7c395606c3",
+      "stable_patch_id": "b74b7d1f2ea81756ed5b62d3bc4cee15b1622207",
+      "status": "accepted"
     },
     "W5R-TOOL-044-F-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -2003,7 +2049,12 @@
       "prompt_sha256": "183e6600c9807b7e9e43cd93f6284ba12df2291f2770e323be2f8d2bc85cf7b8",
       "model": "gpt-5.6-terra",
       "reasoning_effort": "medium",
-      "status": "active"
+      "head_sha": "4e8258d58fb909dc72b647a1823f2bf013a72367",
+      "own_commits": ["a69c70062c1db6891a398dfc58fe46e4894c7aaf", "2eec522cc84076c6f485907a171296ec5e475d6c", "4e8258d58fb909dc72b647a1823f2bf013a72367"],
+      "integration_commits": ["5b68bb8c1e9a23f9fb9b7828a4aee5c6657718c3"],
+      "handoff_sha256": "3f9c248922cd8bc7c89789c255e89ca77df9e0293dd2ca05f9a4c40f4e1f472f",
+      "stable_patch_id": "aaf1ff4dac024c3a385774de4c63350d029b1a60",
+      "status": "accepted"
     },
     "W5R-ARCH-045-B-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -2028,7 +2079,12 @@
       "prompt_sha256": "a9d36a1e67d2ad96f3ecfe928f66b7195b2d4d979b29e02c81c6374a72193d07",
       "model": "gpt-5.6-sol",
       "reasoning_effort": "high",
-      "status": "active"
+      "head_sha": "700f6e219f543893d8d297fe6589078cc3e40d75",
+      "own_commits": ["dc4dcd02eca63889790c7aefc41d1334b7eeb825", "700f6e219f543893d8d297fe6589078cc3e40d75"],
+      "integration_commits": ["89203e262674d6d4a695712f739c14e110e66d12"],
+      "handoff_sha256": "31fbde29d32f0f6a0ea219ded1fe7460c80772659b134b248d2e4f252d6c02e9",
+      "stable_patch_id": "5d89777ba87e53992675a1206a5b1d46fef2d936",
+      "status": "accepted"
     },
     "W5R-CHORE-045-L-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -2054,6 +2110,52 @@
       "prompt_sha256": "ee56f08ddf1ceeb49829274c97c7ea5c38a0400d4e6ba06c5499d4d2218d6518",
       "model": "gpt-5.6-sol",
       "reasoning_effort": "medium",
+      "head_sha": "8bfaccffc8f9832d72bbc0c0e9da0d31d1bf0ed0",
+      "own_commits": ["57000ad99c315fcb7c7d976bad08c35986f00d90", "f73c305cff1285fa9bf9b58cfaab23d83944de2a", "8bfaccffc8f9832d72bbc0c0e9da0d31d1bf0ed0"],
+      "integration_commits": ["892fb5afd471f99d3cddcb1ba3797dee3ba94a75"],
+      "handoff_sha256": "8c62702b626d2be6c27ccf70d1db32cf84ecb61a281a9b590ccc65b19e34635c",
+      "stable_patch_id": "9fe7fcd5e68532fd73cf2a4cebe872bbda6c2557",
+      "status": "accepted"
+    },
+    "W5R-EVAL-032-F-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "EVAL-032-F",
+      "instance_id": "W5R-EVAL-032-F-01",
+      "wave": "W5R",
+      "role": "integrator_ticket/aggregator",
+      "thread_id": "019f88c0-24a0-7b41-8919-7426e83231dd",
+      "base_sha": "fd17e64b45f58558d84a200b5498db463998a239",
+      "branch": "codex/eval-v3-w5r-eval-032-f",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\7343\\pico",
+      "dependency_handoff_hashes": {
+        "TOOL-044-F": "3f9c248922cd8bc7c89789c255e89ca77df9e0293dd2ca05f9a4c40f4e1f472f",
+        "ARCH-045-B": "31fbde29d32f0f6a0ea219ded1fe7460c80772659b134b248d2e4f252d6c02e9",
+        "CHORE-045-L": "8c62702b626d2be6c27ccf70d1db32cf84ecb61a281a9b590ccc65b19e34635c",
+        "TOOL-043-R": "c96f81c9dd4c62d0eeb387a5d86ed36e252fd33d557f737ec0b9ea7c395606c3",
+        "EVAL-031-G": "c317b79cd19afdcac2df3de5e71cf08748647fac8fcb9e4244e5b669826fb31c"
+      },
+      "dependency_commits": [
+        "5b68bb8c1e9a23f9fb9b7828a4aee5c6657718c3",
+        "89203e262674d6d4a695712f739c14e110e66d12",
+        "892fb5afd471f99d3cddcb1ba3797dee3ba94a75",
+        "ae6f6bc219a543a13f9fb7a3528118362d726490"
+      ],
+      "freeze_hashes": {
+        "structured_context_cases_invalidated": "d69dfc1808cb12b179f8a1fb30ffa74136339d7783d9f11a5fbe8fd4259400ba",
+        "w5_cases_git_blob_oid": "5e9bdf06e75f6661660947e880f07edfe7480880",
+        "w5_cases_git_blob_sha256": "e08066749520a52af5bb14a9435e359f4a85d3f3ae6e8dd0e962001f99c2df17"
+      },
+      "allowed_write_paths": [
+        "benchmarks/v3/context-assets/cases-v2.binding.json",
+        "scripts/verify_context_freeze.py",
+        "tests/test_context_freeze_integrity.py",
+        "F:\\dev\\llm\\pico-eval-artifacts\\phase-2-context-assets-w5r\\**",
+        ".codex/eval/proposals/EVAL-032-F.freeze.json",
+        ".codex/eval/handoffs/EVAL-032-F.json"
+      ],
+      "prompt_sha256": "0057b3fb99a7a79941dd1e0860e67c8848f1598b187bcf9701c26bce8ff49840",
+      "model": "gpt-5.6-sol",
+      "reasoning_effort": "high",
       "status": "active"
     }
   },
@@ -2080,7 +2182,28 @@
     "allowed_path_ownership_conflicts": [],
     "opened_at": "2026-07-22T15:05:28.8996211+08:00"
   },
-  "batch_checkpoints": [],
+  "batch_checkpoints": [
+    {
+      "wave": "W5R",
+      "batch": 1,
+      "canonical_head": "ae6f6bc219a543a13f9fb7a3528118362d726490",
+      "accepted_tickets": ["TOOL-044-F", "ARCH-045-B", "CHORE-045-L", "TOOL-043-R"],
+      "dispatched_tickets": ["EVAL-032-F"],
+      "dependency_commits": [
+        "5b68bb8c1e9a23f9fb9b7828a4aee5c6657718c3",
+        "89203e262674d6d4a695712f739c14e110e66d12",
+        "892fb5afd471f99d3cddcb1ba3797dee3ba94a75",
+        "ae6f6bc219a543a13f9fb7a3528118362d726490"
+      ],
+      "fixture_negative_control_verified": true,
+      "fixture_negative_control_junit_sha256": "0fadbb78458d39925c5abc924e1699dfba6efa4c5771be9309ba45456c043bc4",
+      "stable_patch_ids_verified": true,
+      "remaining_gate_risks": [
+        "pico/core/model_errors.py remains 109 lines against its unchanged 100-line architecture budget"
+      ],
+      "checkpointed_at": "2026-07-22T15:36:10.6004991+08:00"
+    }
+  ],
   "wave_close": null,
   "last_gate": {
     "wave": "W5",
@@ -2148,5 +2271,5 @@
     ],
     "blocked_at": "2026-07-22T12:57:04.6125953+08:00"
   },
-  "updated_at": "2026-07-22T15:05:28.8996211+08:00"
+  "updated_at": "2026-07-22T15:36:10.6004991+08:00"
 }
