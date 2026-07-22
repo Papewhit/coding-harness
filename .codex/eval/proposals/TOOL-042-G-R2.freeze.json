@@ -1,0 +1,141 @@
+{
+  "schema_version": "pico-eval-freeze-proposal-v1",
+  "ticket_id": "TOOL-042-G-R2",
+  "instance_id": "W5R2-TOOL-042-G-R2-01",
+  "wave": "W5R2",
+  "role": "integrator_ticket/gate",
+  "status": "complete",
+  "immutable_base_sha": "aab051fbf30c50df3af6ed2df5954717e104eac0",
+  "run_snapshot_sha": "dd8a677782f90c749a422ee066daa1afcb36c516",
+  "source_status_sha256": "7a908883bdac3e82b49a4e8fbd47946b46e56b000a2a58dacd36d82822f00162",
+  "source_freeze_sha256": "dbedbc07dcc042546ec37392fb17214b2947bdbfe757d872bb438b9f7cca6f8e",
+  "dependency_commits": [
+    "cbf71d4fdbf7c9971b8af3dfc7d76ef5a0765efb",
+    "6dad1263f57196e9e9b41402306bd920636c4cca",
+    "3f95f6ae5bdec56e75367cfcad1aadb9526332dd",
+    "7dd7a08440848b01cc3863dd286610e3cc7ce7b2",
+    "0f1dc6b706ab8f86bd1f0e1d6b047fefce2d16de",
+    "6207efe389bd92f1388330e656f297b64f8d676a",
+    "7cc5933a570ec98f4479dd00b71223d6f3d5d9e6",
+    "bb9a4b40b9eb6266a17abd537781d632a6a82c79"
+  ],
+  "applied_dependency_commits": [
+    "126434913d03d662be378d14dda708f7bcff5ce9",
+    "5c3f95e0afa109f3b4f98b45f7bec49f4517cc7c",
+    "e89d03115909a4104d024dbe0d64f43647e97e25",
+    "b07a2b3256ef785f47b6d5915aaaa5f5d35caecd",
+    "8b237f7a46c5d71f38e55ac3b79ca534951316d5",
+    "198ffa7e269cd19318d0f52c2cd2716cfed39b8c",
+    "1900d3e1a15d2ceca439f982f19bffd4f5228c1b",
+    "dd8a677782f90c749a422ee066daa1afcb36c516"
+  ],
+  "dependency_handoff_hashes": {
+    "ARCH-046-T": "b452db6941c3ea4de13b373fb08927536b807cb3df0197f140a7bde383c68838",
+    "TEST-046-P": "f061aa3e8bfc28c93616f57eb63416afe9b774c3038dc0aa5361186c257eab75",
+    "TOOL-046-W": "18b314728ca7b40fe7598a8c58737d7d4db79f02ead8792e1e84be72ddf3f78e",
+    "TEST-046-T": "673eaa4fc31939ae2299edd8bf9e894844e27472b4ca1d2ee3dd6c16226464dc",
+    "EVAL-032-F": "e051f284b03fedb266e145144c246ffa025c55b19bca045417fb5f7e62d0c0b1",
+    "TOOL-049-I": "5eef3b00058eb07ec33527ff6e33ba628dea5ec27967a0ae0caf6b60e1cb2936",
+    "TOOL-042-G-R1": "f44e7f3764ad4c834c6fc9bb12651647aa71c5094c5836f4e5d647bd3be9d679",
+    "W5R-wave-handoff": "bcc4432477409529a46085441c4717188b77ab3aea5943565f3a7dd552da2665"
+  },
+  "gate_artifact": {
+    "root": "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate-w5r2/W5R2-TOOL-042-G-R2-01",
+    "report": {
+      "path": "gate-report.json",
+      "sha256": "2fc1ebbe4d64c5be80e7fe063584915f12aabf3a8f8c08796d2cf009e94849a5"
+    },
+    "manifest": {
+      "path": "artifact-manifest.json",
+      "sha256": "1c859f11adebceaa13115c7a9947d19de23014f9abbfc1d47bdaf02b0494620f",
+      "file_count": 31,
+      "aggregate_sha256": "bee6e70c66cad4555aa394b94ee3ec174b67a62ef39fc11655a3d0e3133f234a"
+    },
+    "environment_manifest_sha256": "7f058fd6d824e6e0ae6a4c7fb152476062240d6c14dff4aef6471b67ced065e2",
+    "command_results_sha256": "469a0b85f1c39569e5631b899995cf4be68d67ed87ab3f42f074b11e7fed165b",
+    "junit_summary_sha256": "da9a9642cc4dfbd300e620047e70ade735b2cf3efed61c4947ca67d8b62ebd4b"
+  },
+  "proposed_promotions": {
+    "structured_context_deterministic_gate_v2": {
+      "action": "add",
+      "source_ticket": "EVAL-032-F",
+      "source_proposal": {
+        "path": ".codex/eval/proposals/EVAL-032-F.freeze.json",
+        "sha256": "bffb87a6b0b886899a704660435fc3673a5a06fbf5d92cbeb1556549e1b8d199"
+      },
+      "value": {
+        "version": "pico-context-asset-gate-v2",
+        "status": "complete",
+        "binding": {
+          "path": "benchmarks/v3/context-assets/cases-v2.binding.json",
+          "schema_version": "pico-context-asset-cases-binding-v2",
+          "git_blob_oid": "3426371758b7bb9569680e271d3d782a486d2bd1",
+          "git_blob_sha256": "4fa2a43d0733621280c19323ade951f8dcca6328efa8d9d46b53777388c962c5"
+        },
+        "cases": {
+          "path": "benchmarks/v3/context-assets/cases.json",
+          "schema_version": "pico-context-asset-cases-v1",
+          "case_count": 15,
+          "git_blob_oid": "5e9bdf06e75f6661660947e880f07edfe7480880",
+          "sha256": "e08066749520a52af5bb14a9435e359f4a85d3f3ae6e8dd0e962001f99c2df17",
+          "hash_basis": "git_blob_bytes"
+        },
+        "supersession": {
+          "invalidated_declaration_sha256": "d69dfc1808cb12b179f8a1fb30ffa74136339d7783d9f11a5fbe8fd4259400ba",
+          "status": "retained_invalidated_superseded",
+          "replacement_binding_version": "pico-context-asset-cases-binding-v2"
+        },
+        "artifact": {
+          "root": "F:/dev/llm/pico-eval-artifacts/phase-2-context-assets-w5r",
+          "evaluation_sha256": "ee39ac9eb1e22633a23f0858fadc29802b252a6fb0ada15184b5bfad75d12b24",
+          "manifest_sha256": "6c74b0f920fd2acd528e648e49917750d9438e945be6864f95d53ee149ff1355"
+        },
+        "gate_result": {
+          "total": 15,
+          "passed": 15,
+          "failed": 0,
+          "fresh_clone_binding_verified": true,
+          "lf_crlf_independent": true
+        },
+        "source_ticket": "EVAL-032-F",
+        "source_run_snapshot_sha": "b3ec3e226de82d87c30fa8e4f1bc681a6c42a5b4"
+      }
+    },
+    "native_deterministic_gate": {
+      "action": "replace_null",
+      "value": {
+        "version": "pico-native-deterministic-gate-w5r2-v1",
+        "status": "complete",
+        "sha256": "2fc1ebbe4d64c5be80e7fe063584915f12aabf3a8f8c08796d2cf009e94849a5",
+        "hash_basis": "gate_report_file_bytes",
+        "run_snapshot_sha": "dd8a677782f90c749a422ee066daa1afcb36c516",
+        "run_snapshot_approved_for_live_conformance": true,
+        "artifact": {
+          "root": "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate-w5r2/W5R2-TOOL-042-G-R2-01",
+          "report_sha256": "2fc1ebbe4d64c5be80e7fe063584915f12aabf3a8f8c08796d2cf009e94849a5",
+          "manifest_sha256": "1c859f11adebceaa13115c7a9947d19de23014f9abbfc1d47bdaf02b0494620f"
+        },
+        "gate_result": {
+          "all_required_commands_exit_zero": true,
+          "ruff": "passed",
+          "protected": "27 passed",
+          "deterministic": "92 passed",
+          "full_suite": "487 passed, 2 pre-existing live-provider opt-in skipped",
+          "architecture_violations": 0,
+          "text_envelope_seen_count": 0,
+          "call_id_result_match": 1.0,
+          "batch_completeness": 1.0,
+          "unknown_block_loss_count": 0,
+          "safety_chain_bypass_count": 0,
+          "sdk_tool_or_agent_runner_used": false,
+          "context_v2_binding_verified": true
+        },
+        "source_ticket": "TOOL-042-G-R2"
+      }
+    }
+  },
+  "promotion_allowed": true,
+  "canonical_state_write_required": true,
+  "canonical_state_written": false,
+  "canonical_freeze_owner": "W5R2 Wave Integrator"
+}

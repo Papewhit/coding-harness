@@ -1,0 +1,69 @@
+{
+  "schema_version": "pico-eval-status-proposal-v1",
+  "ticket_id": "TOOL-042-G-R2",
+  "instance_id": "W5R2-TOOL-042-G-R2-01",
+  "wave": "W5R2",
+  "role": "integrator_ticket/gate",
+  "status": "complete",
+  "immutable_base_sha": "aab051fbf30c50df3af6ed2df5954717e104eac0",
+  "run_snapshot_sha": "dd8a677782f90c749a422ee066daa1afcb36c516",
+  "source_status_sha256": "7a908883bdac3e82b49a4e8fbd47946b46e56b000a2a58dacd36d82822f00162",
+  "source_freeze_sha256": "dbedbc07dcc042546ec37392fb17214b2947bdbfe757d872bb438b9f7cca6f8e",
+  "gate_report_sha256": "2fc1ebbe4d64c5be80e7fe063584915f12aabf3a8f8c08796d2cf009e94849a5",
+  "artifact_manifest_sha256": "1c859f11adebceaa13115c7a9947d19de23014f9abbfc1d47bdaf02b0494620f",
+  "proposed_changes": {
+    "ticket_instances": {
+      "W5R2-TOOL-042-G-R2-01": {
+        "ticket_id": "TOOL-042-G-R2",
+        "role": "integrator_ticket/gate",
+        "branch": "codex/eval-v3-w5r2-tool-042-g-r2",
+        "worktree": "C:/Users/Papewhit/.codex/worktrees/5e0d/pico",
+        "base_sha": "aab051fbf30c50df3af6ed2df5954717e104eac0",
+        "run_snapshot_sha": "dd8a677782f90c749a422ee066daa1afcb36c516",
+        "status": "complete"
+      }
+    },
+    "accepted_tickets_add": [
+      "TOOL-042-G-R2"
+    ],
+    "blocked_tickets_remove": [
+      "TOOL-042-G-R2"
+    ],
+    "prerequisite_acceptance_recommendations": [
+      "ARCH-046-T",
+      "TEST-046-P",
+      "TOOL-046-W",
+      "TEST-046-T"
+    ],
+    "gates": {
+      "native_eval_ready": "accepted",
+      "native_resume_ready": "pending"
+    },
+    "native_eval_ready": true,
+    "w5r2_exit_gate_satisfied": true,
+    "w6_ready": true,
+    "next_wave": "W6",
+    "next_wave_ready_tickets": [
+      "TOOL-050-QO-R",
+      "TOOL-050-QA-R",
+      "TOOL-050-DA-R"
+    ],
+    "w6_started": false,
+    "retain_historical_blocked_ticket": "TOOL-042-G-R1",
+    "reason": "All five required commands exited zero in the canonical fresh Ubuntu WSL2 ext4 clone. Context v2 binding reconstruction, architecture/profile/worker/TUI recovery, protected safety semantics, and positive native protocol evidence all passed without live-provider or Resume execution."
+  },
+  "freeze_promotions": {
+    "structured_context_deterministic_gate_v2": {
+      "proposal_path": ".codex/eval/proposals/EVAL-032-F.freeze.json",
+      "proposal_sha256": "bffb87a6b0b886899a704660435fc3673a5a06fbf5d92cbeb1556549e1b8d199"
+    },
+    "native_deterministic_gate": {
+      "proposal_path": ".codex/eval/proposals/TOOL-042-G-R2.freeze.json",
+      "gate_report_sha256": "2fc1ebbe4d64c5be80e7fe063584915f12aabf3a8f8c08796d2cf009e94849a5"
+    }
+  },
+  "canonical_status_written": false,
+  "canonical_freeze_written": false,
+  "canonical_state_written": false,
+  "canonical_state_owner": "W5R2 Wave Integrator"
+}
