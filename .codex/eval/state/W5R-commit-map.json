@@ -76,8 +76,51 @@
       "stable_patch_id_match": true,
       "acceptance_prerequisite": "TOOL-044-F WSL fixture-only negative control verified before integration",
       "outcome": "accepted"
+    },
+    "EVAL-032-F": {
+      "worker_thread_uuid": "019f88c0-24a0-7b41-8919-7426e83231dd",
+      "prompt_sha256": "0057b3fb99a7a79941dd1e0860e67c8848f1598b187bcf9701c26bce8ff49840",
+      "worker_head": "b6f3a610a0ebf136903b76baff2435bb28ac51e6",
+      "worker_run_snapshot_sha": "b3ec3e226de82d87c30fa8e4f1bc681a6c42a5b4",
+      "worker_commits": [
+        "b3ec3e226de82d87c30fa8e4f1bc681a6c42a5b4",
+        "b6f3a610a0ebf136903b76baff2435bb28ac51e6"
+      ],
+      "dependency_commits": [
+        "5b68bb8c1e9a23f9fb9b7828a4aee5c6657718c3",
+        "89203e262674d6d4a695712f739c14e110e66d12",
+        "892fb5afd471f99d3cddcb1ba3797dee3ba94a75",
+        "ae6f6bc219a543a13f9fb7a3528118362d726490"
+      ],
+      "canonical_commit": "c283b7ccb20794d9f9bd361a476be045eee42833",
+      "handoff_sha256": "e051f284b03fedb266e1451448ddb2b322446ca39a21cac07687e88aa6f023407",
+      "freeze_proposal_sha256": "bffb87a6b0b886899a704660435fc3673a5a06fbf5d92cbeb1556549e1b8d199",
+      "artifact_manifest_sha256": "6c74b0f920fd2acd528e648e49917750d9438e945be6864f95d53ee149ff1355",
+      "stable_patch_id": "4f2dec0a12485d031af1cac2562dd214dd4da5ce",
+      "stable_patch_id_scope": "applied_dependency_tip_to_worker_head_and_canonical_ticket_commit",
+      "stable_patch_id_match": true,
+      "outcome": "accepted"
     }
   },
   "worker_bundle": null,
-  "updated_at": "2026-07-22T15:36:10.6004991+08:00"
+  "gate_dispatch": {
+    "ticket_id": "TOOL-042-G-R1",
+    "instance_id": "W5R-TOOL-042-G-R1-01",
+    "thread_uuid": "019f88cf-45c6-74a3-b211-525d3e526ebc",
+    "worktree": "C:/Users/Papewhit/.codex/worktrees/10cc/pico",
+    "branch": "codex/eval-v3-w5r-tool-042-g-r1",
+    "prompt_sha256": "f2b3a43e2e571a8879ab465132067cc5fa4b7d80eeb3f6456f12ab6052fc6a14",
+    "model": "gpt-5.6-sol",
+    "reasoning_effort": "xhigh",
+    "wave_base_sha": "fd17e64b45f58558d84a200b5498db463998a239",
+    "dependency_commits": [
+      "5b68bb8c1e9a23f9fb9b7828a4aee5c6657718c3",
+      "89203e262674d6d4a695712f739c14e110e66d12",
+      "892fb5afd471f99d3cddcb1ba3797dee3ba94a75",
+      "ae6f6bc219a543a13f9fb7a3528118362d726490",
+      "c283b7ccb20794d9f9bd361a476be045eee42833"
+    ],
+    "status": "active"
+  },
+  "updated_at": "2026-07-22T15:55:00+08:00"
 }
