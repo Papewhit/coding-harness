@@ -31,6 +31,7 @@ class BlockingModelClient:
     def __init__(self, outputs, started, release):
         self.client = scripted_client(outputs)
         self._pico_test_native = True
+        self._pico_profile_identity = dict(self.client._pico_profile_identity)
         self.started = started
         self.release = release
         self.prompts = self.client.prompts
