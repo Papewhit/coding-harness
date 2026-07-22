@@ -468,10 +468,21 @@
       "handoff_path": ".codex/eval/handoffs/TOOL-032-C.json",
       "handoff_sha256": "e657ffc685f32ae3df036c4d0a36bc491d2c6577f47aefcaf12090bcb5142843",
       "stable_patch_id": "0ad978ff0be31eab8a1dd88d511e8d8e15b94792"
+    },
+    "TOOL-040-I": {
+      "instance_id": "W5-TOOL-040-I-01",
+      "status": "accepted",
+      "base_sha": "a834e78098487888264b5ffdea37f52a8d635fbf",
+      "head_sha": "5de57fd3988e9b4fbfc5753d179f2d69a87dce29",
+      "own_commits": ["32a617054cb06bfb9b8c4ae8e3e05d90afe31559", "5de57fd3988e9b4fbfc5753d179f2d69a87dce29"],
+      "integration_commits": ["68d1829babe6d2908bc22ee52488098962aa94c5"],
+      "handoff_path": ".codex/eval/handoffs/TOOL-040-I.json",
+      "handoff_sha256": "3ea08ab84d4bcdc632280bb8e65e572aa1a448b04781394f242880790faf0922",
+      "stable_patch_id": "d42016512ec5d9d00232835b1e04dbf00177d26b"
     }
   },
   "active_tickets": {
-    "TOOL-040-I": {"instance_id": "W5-TOOL-040-I-01", "status": "active"}
+    "TOOL-041-M": {"instance_id": "W5-TOOL-041-M-01", "status": "active"}
   },
   "blocked_tickets": {},
   "ticket_instances": {
@@ -1684,6 +1695,53 @@
         ".codex/eval/handoffs/TOOL-040-I.json"
       ],
       "prompt_sha256": "b4fedf757bba53fdf0876e4f2820914d9c52399bbf25ae94255da0de527d616a",
+      "head_sha": "5de57fd3988e9b4fbfc5753d179f2d69a87dce29",
+      "own_commits": ["32a617054cb06bfb9b8c4ae8e3e05d90afe31559", "5de57fd3988e9b4fbfc5753d179f2d69a87dce29"],
+      "integration_commits": ["68d1829babe6d2908bc22ee52488098962aa94c5"],
+      "handoff_sha256": "3ea08ab84d4bcdc632280bb8e65e572aa1a448b04781394f242880790faf0922",
+      "stable_patch_id": "d42016512ec5d9d00232835b1e04dbf00177d26b",
+      "status": "accepted"
+    },
+    "W5-TOOL-041-M-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "TOOL-041-M",
+      "instance_id": "W5-TOOL-041-M-01",
+      "wave": "W5",
+      "role": "implementer",
+      "thread_id": "/root/w5_tool_041_m",
+      "durable_thread_uuid": null,
+      "thread_identity_basis": "agent_path_and_prompt_sha256; durable UUID unavailable from collaboration interface",
+      "base_sha": "a834e78098487888264b5ffdea37f52a8d635fbf",
+      "branch": "codex/eval-v3-w5-tool-041-m",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\w5-041m\\pico",
+      "dependency_handoff_hashes": {
+        "TOOL-040-I": "3ea08ab84d4bcdc632280bb8e65e572aa1a448b04781394f242880790faf0922",
+        "TOOL-015": "e3e37d00beba52addbea070666f932b71593a131dfa67778b42f7216ec6bc413"
+      },
+      "dependency_commits": ["68d1829babe6d2908bc22ee52488098962aa94c5"],
+      "freeze_hashes": {
+        "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+        "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+        "native_scripted_fixtures": "ff2a8febe36730b6c18d096312f9455dce0793c9d1f975ffb941c726706904cf"
+      },
+      "allowed_write_paths": [
+        "pico/core/model_output.py",
+        "pico/core/runtime.py",
+        "pico/core/engine_helpers.py",
+        "pico/evaluation/evaluator.py",
+        "pico/evaluation/metrics.py",
+        "pico/tools/agents.py",
+        "pico/tools/ask_user.py",
+        "pico/tools/plan.py",
+        "pico/tools/registry.py",
+        "pico/tools/todos.py",
+        "scripts/run_business_scenario_dogfood.py",
+        "scripts/run_real_session_acceptance.py",
+        "scripts/run_v3_human_scenario_gate.py",
+        "tests/**",
+        ".codex/eval/handoffs/TOOL-041-M.json"
+      ],
+      "prompt_sha256": "2faf566f20517b572ab16991089690731337e1e2f2985e437b84286d8a6e7a3c",
       "status": "active"
     }
   },
@@ -1704,7 +1762,18 @@
     "initial_ready_tickets": ["TOOL-040-I"],
     "opened_at": "2026-07-22T10:51:38.7950357+08:00"
   },
-  "batch_checkpoints": [],
+  "batch_checkpoints": [
+    {
+      "wave": "W5",
+      "batch": 1,
+      "canonical_head": "68d1829babe6d2908bc22ee52488098962aa94c5",
+      "accepted_tickets": ["TOOL-040-I"],
+      "dispatched_tickets": ["TOOL-041-M"],
+      "dependency_commits": ["68d1829babe6d2908bc22ee52488098962aa94c5"],
+      "stable_patch_ids_verified": true,
+      "checkpointed_at": "2026-07-22T11:15:10.9404675+08:00"
+    }
+  ],
   "wave_close": null,
   "last_gate": {
     "wave": "W4",
@@ -1757,5 +1826,5 @@
     "discrepancies": [],
     "accepted_at": "2026-07-22T10:16:43.6669036+08:00"
   },
-  "updated_at": "2026-07-22T10:51:38.7950357+08:00"
+  "updated_at": "2026-07-22T11:15:10.9404675+08:00"
 }
