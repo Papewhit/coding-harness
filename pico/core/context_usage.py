@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import json
 from typing import Any
+
+from .request_context import provider_tool_definitions
 
 
 DEFAULT_CONTEXT_WINDOW = 200_000
@@ -23,8 +26,6 @@ class ContextUsageAnalyzer:
         for name, section in rendered.items():
             key = "current_request" if name == "current_request" else name
             chars = int(section.rendered_chars)
-            if key == "prefix":
-                chars = max(0, chars - tools_chars)
             sections[key] = {
                 "chars": chars,
                 "tokens": estimate_tokens(chars),
@@ -54,9 +55,15 @@ class ContextUsageAnalyzer:
         return DEFAULT_CONTEXT_WINDOW
 
     def _tools_chars(self) -> int:
-        total = 0
-        for name, tool in self.agent.available_tools().items():
-            fields = ", ".join(f"{key}: {value}" for key, value in tool.schema.items())
-            risk = "approval required" if tool.risky else "safe"
-            total += len(f"- {name}({fields}) [{risk}] {tool.description}\n")
-        return total
+        payload = [
+            tool.to_dict()
+            for tool in provider_tool_definitions(self.agent.available_tools())
+        ]
+        return len(
+            json.dumps(
+                payload,
+                ensure_ascii=True,
+                separators=(",", ":"),
+                sort_keys=True,
+            )
+        )

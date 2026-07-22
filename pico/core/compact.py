@@ -24,8 +24,15 @@ class CompactManager:
             self.agent.session_event_bus.emit("compaction_created", summary)
             return summary
 
-        compacted_turns = groups[:-keep_recent_turns]
-        kept_turns = groups[-keep_recent_turns:]
+        cutoff = len(groups) - keep_recent_turns
+        cutoff = self._native_safe_cutoff(groups, cutoff)
+        if cutoff <= 0:
+            summary = self._summary(trigger, history, history, "")
+            summary["compaction_action"] = "kept_unfinished_native_turn"
+            self.agent.session_event_bus.emit("compaction_created", summary)
+            return summary
+        compacted_turns = groups[:cutoff]
+        kept_turns = groups[cutoff:]
         compacted_items = [item for _, items in compacted_turns for item in items]
         kept_items = [item for _, items in kept_turns for item in items]
         summary_text = self._summary_text(compacted_items)
@@ -80,6 +87,40 @@ class CompactManager:
             "post_items": len(after),
             "summary_chars": len(summary_text),
         }
+
+    @staticmethod
+    def _native_safe_cutoff(
+        groups: list[tuple[str, list[dict[str, Any]]]], cutoff: int
+    ) -> int:
+        calls: dict[str, int] = {}
+        results: dict[str, int] = {}
+        awaiting = []
+        for index, (_, items) in enumerate(groups):
+            for item in items:
+                status = str(item.get("native_turn_status", ""))
+                if status in {"awaiting_result", "incomplete", "pending"}:
+                    awaiting.append(index)
+                call_id = str(
+                    item.get("provider_call_id")
+                    or item.get("tool_call_id")
+                    or item.get("call_id")
+                    or ""
+                ).strip()
+                kind = str(item.get("kind", ""))
+                if call_id and kind in {"native_tool_call", "tool_call"}:
+                    calls.setdefault(call_id, index)
+                if call_id and kind in {"native_tool_result", "tool_result"}:
+                    results.setdefault(call_id, index)
+                for call in item.get("tool_calls", []) or []:
+                    if isinstance(call, dict) and str(call.get("call_id", "")).strip():
+                        calls.setdefault(str(call["call_id"]), index)
+        for call_id, call_index in calls.items():
+            result_index = results.get(call_id)
+            if result_index is None or call_index < cutoff <= result_index:
+                cutoff = min(cutoff, call_index)
+        if awaiting:
+            cutoff = min(cutoff, min(awaiting))
+        return cutoff
 
     def _summary_text(self, items: list[dict[str, Any]]) -> str:
         files_read = []

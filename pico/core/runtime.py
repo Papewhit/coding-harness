@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import json
 import os
-import textwrap
 import uuid
 import hashlib
 from dataclasses import dataclass
@@ -27,6 +26,7 @@ from .engine import Engine
 from . import model_output, tool_executor
 from .plan_mode import PlanModeController
 from .permissions import PermissionChecker
+from .request_context import ModelRequestContext, stable_system_text
 from .run_store import RunStore
 from .runtime_consumers import default_runtime_consumers
 from .runtime_checkpoints import RuntimeCheckpointsMixin
@@ -470,63 +470,7 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         ).hexdigest()
 
     def build_prefix(self) -> PromptPrefix:
-        tool_lines = []
-        for name, tool in self.available_tools().items():
-            fields = ", ".join(
-                f"{key}: {value}" for key, value in tool["schema"].items()
-            )
-            risk = "approval required" if tool["risky"] else "safe"
-            tool_lines.append(f"- {name}({fields}) [{risk}] {tool['description']}")
-        tool_text = "\n".join(tool_lines)
-        examples = "\n".join(
-            [
-                '<tool>{"name":"list_files","args":{"path":"."}}</tool>',
-                '<tool>{"name":"read_file","args":{"path":"README.md","start":1,"end":80}}</tool>',
-                '<tool name="write_file" path="binary_search.py"><content>def binary_search(nums, target):\n    return -1\n</content></tool>',
-                '<tool name="patch_file" path="binary_search.py"><old_text>return -1</old_text><new_text>return mid</new_text></tool>',
-                '<tool>{"name":"run_shell","args":{"command":"uv run --with pytest python -m pytest -q","timeout":20}}</tool>',
-                '<tool>{"name":"agent","args":{"description":"Inspect auth","prompt":"Find auth entry points","subagent_type":"Explore"}}</tool>',
-                "<final>Done.</final>",
-            ]
-        )
-        # prefix 可以理解成 agent 的“工作手册”：
-        # 它是谁、工具怎么调用、当前仓库是什么状态，都写在这里。
-        text = textwrap.dedent(
-            f"""\
-            You are pico, a small local coding agent working inside a local repository.
-
-            Rules:
-            - Use tools instead of guessing about the workspace.
-            - Return exactly one <tool>...</tool> or one <final>...</final>.
-            - Tool calls must look like:
-              <tool>{{"name":"tool_name","args":{{...}}}}</tool>
-            - For write_file and patch_file with multi-line text, prefer XML style:
-              <tool name="write_file" path="file.py"><content>...</content></tool>
-            - Final answers must look like:
-              <final>your answer</final>
-            - Never invent tool results.
-            - Keep answers concise and concrete.
-            - If the user asks you to create or update a specific file and the path is clear, use write_file or patch_file instead of repeatedly listing files.
-            - Before writing tests for existing code, read the implementation first.
-            - When writing tests, match the current implementation unless the user explicitly asked you to change the code.
-            - New files should be complete and runnable, including obvious imports.
-            - Do not repeat the same tool call with the same arguments if it did not help. Choose a different tool or return a final answer.
-            - Required tool arguments must not be empty. Do not call read_file, write_file, patch_file, run_shell, or agent with args={{}}.
-            - Use agent for bounded subagents. Explore is read-only; worker writes must stay inside write_scope.
-            - Use send_message to continue an existing worker instead of spawning a fresh worker with missing context.
-            - {skillslib.SKILL_FILE_CREATION_GUIDE}
-
-            {self.runtime_mode_text()}
-
-            Tools:
-            {tool_text}
-
-            Valid response examples:
-            {examples}
-
-            {self.workspace.text()}
-            """
-        ).strip()
+        text = stable_system_text(self)
         return PromptPrefix(
             text=text,
             hash=hashlib.sha256(text.encode("utf-8")).hexdigest(),
@@ -622,6 +566,13 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
     def prompt(self, user_message: str) -> str:
         prompt, _ = self._build_prompt_and_metadata(user_message)
         return prompt
+
+    def request_context(self, user_message: str, **kwargs: Any) -> ModelRequestContext:
+        """Expose the structured request surface for native Runtime wiring."""
+
+        self.refresh_prefix()
+        self.resume_state = self.evaluate_resume_state()
+        return self.context_manager.build_request(user_message, **kwargs)
 
     def record(self, item: dict[str, Any]) -> None:
         self.session["history"].append(self.turn_history.enrich(item))

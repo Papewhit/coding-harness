@@ -12,7 +12,9 @@ from dataclasses import dataclass
 if TYPE_CHECKING:
     from .runtime import Pico
 from ..features import memory as memorylib, skills as skillslib
+from ..providers.contracts import ProviderContinuation, ToolCallResult
 from .context_usage import ContextUsageAnalyzer
+from .request_context import ModelRequestContext, RequestMessage, build_model_request_context
 from .turn_history import TurnHistoryBuilder, tail_clip
 
 DEFAULT_TOTAL_BUDGET = 60000
@@ -183,6 +185,26 @@ class ContextManager:
             section_texts=section_texts,
         )
         return prompt, metadata
+
+    def build_request(
+        self,
+        user_message: str,
+        *,
+        public_messages: tuple[RequestMessage, ...] = (),
+        tool_results: tuple[ToolCallResult, ...] = (),
+        continuation: ProviderContinuation | None = None,
+    ) -> ModelRequestContext:
+        """Build explicit system, public-message, tool, and continuation surfaces."""
+
+        prompt, metadata = self.build(user_message)
+        return build_model_request_context(
+            self.agent,
+            prompt,
+            metadata,
+            public_messages=public_messages,
+            tool_results=tool_results,
+            continuation=continuation,
+        )
 
     def _render_sections_without_reduction(self, section_texts: dict[str, str], selected_notes: list[dict[str, Any]] | None = None) -> dict[str, SectionRender]:
         selected_notes = selected_notes or []
