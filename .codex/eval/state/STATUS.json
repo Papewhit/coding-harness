@@ -435,13 +435,42 @@
       "handoff_path": ".codex/eval/handoffs/TOOL-021-P.json",
       "handoff_sha256": "7fe89f8337b5b2873d2cc5616f66a8f3819433c86d796df9d4cb22ea91488551",
       "stable_patch_id": "c99d37f69994a53384ef2956209a60857cd3650c"
+    },
+    "TOOL-031-S": {
+      "instance_id": "W4-TOOL-031-S-01",
+      "status": "accepted",
+      "base_sha": "005ded3eceaaa13e816ae8073973a50db87772f2",
+      "head_sha": "03d517db8fdf027376db13be2e577b43b0c7463b",
+      "own_commits": ["7e81b455f4616ca4962691c9eb139271ae28f3e3", "03d517db8fdf027376db13be2e577b43b0c7463b"],
+      "integration_commits": ["6f223413c11941c36f978c6547ba4dd60afd44d6"],
+      "handoff_path": ".codex/eval/handoffs/TOOL-031-S.json",
+      "handoff_sha256": "2f74b423a92ce989a54e86be60a64f875c350f8ee407862c9dfa475b99801cdc",
+      "stable_patch_id": "57bfba1eaae272861e2b7ca87b0dabdc2327f46f"
+    },
+    "TOOL-030-E": {
+      "instance_id": "W4-TOOL-030-E-01",
+      "status": "accepted",
+      "base_sha": "005ded3eceaaa13e816ae8073973a50db87772f2",
+      "head_sha": "3549254bdb99582cb5bb38418ea6d959d51b9a78",
+      "own_commits": ["e8e5b732905a6536ce9516d62efff49e289908da", "3549254bdb99582cb5bb38418ea6d959d51b9a78"],
+      "integration_commits": ["1f12821bbc8e5dd1242b23807cb0356dcb486fc4"],
+      "handoff_path": ".codex/eval/handoffs/TOOL-030-E.json",
+      "handoff_sha256": "da88292e505b9c12beff59513a06ca9ddbee181d9e5754a26c78907d211b6970",
+      "stable_patch_id": "847c8ccb5f5842b22919a2300d46ed79ad81da11"
+    },
+    "TOOL-032-C": {
+      "instance_id": "W4-TOOL-032-C-01",
+      "status": "accepted",
+      "base_sha": "005ded3eceaaa13e816ae8073973a50db87772f2",
+      "head_sha": "26910493a30460016d327c6451f249902eec9221",
+      "own_commits": ["93a323fdf7fe2b6e0381b315ae6e2b248b154627", "26910493a30460016d327c6451f249902eec9221"],
+      "integration_commits": ["a215f15cd8019ff2d8f0b936745c83bfd0009fe4"],
+      "handoff_path": ".codex/eval/handoffs/TOOL-032-C.json",
+      "handoff_sha256": "e657ffc685f32ae3df036c4d0a36bc491d2c6577f47aefcaf12090bcb5142843",
+      "stable_patch_id": "0ad978ff0be31eab8a1dd88d511e8d8e15b94792"
     }
   },
-  "active_tickets": {
-    "TOOL-030-E": {"instance_id": "W4-TOOL-030-E-01", "status": "active"},
-    "TOOL-031-S": {"instance_id": "W4-TOOL-031-S-01", "status": "active"},
-    "TOOL-032-C": {"instance_id": "W4-TOOL-032-C-01", "status": "active"}
-  },
+  "active_tickets": {},
   "blocked_tickets": {},
   "ticket_instances": {
     "W0-EVAL-000-01": {
@@ -1500,6 +1529,8 @@
       "wave": "W4",
       "role": "implementer",
       "thread_id": "/root/w4_tool_030_e",
+      "durable_thread_uuid": null,
+      "thread_identity_basis": "agent_path_and_prompt_sha256; durable UUID unavailable from collaboration interface",
       "base_sha": "005ded3eceaaa13e816ae8073973a50db87772f2",
       "branch": "codex/eval-v3-w4-tool-030-e",
       "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\w4-030e\\pico",
@@ -1524,7 +1555,12 @@
         ".codex/eval/handoffs/TOOL-030-E.json"
       ],
       "prompt_sha256": "43313eb872e8356e161f4c98faad6574afb8b03f7ad113dcc6c967ba7c7c7b63",
-      "status": "active"
+      "head_sha": "3549254bdb99582cb5bb38418ea6d959d51b9a78",
+      "own_commits": ["e8e5b732905a6536ce9516d62efff49e289908da", "3549254bdb99582cb5bb38418ea6d959d51b9a78"],
+      "integration_commits": ["1f12821bbc8e5dd1242b23807cb0356dcb486fc4"],
+      "handoff_sha256": "da88292e505b9c12beff59513a06ca9ddbee181d9e5754a26c78907d211b6970",
+      "stable_patch_id": "847c8ccb5f5842b22919a2300d46ed79ad81da11",
+      "status": "accepted"
     },
     "W4-TOOL-031-S-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -1533,6 +1569,8 @@
       "wave": "W4",
       "role": "implementer",
       "thread_id": "/root/w4_tool_031_s",
+      "durable_thread_uuid": null,
+      "thread_identity_basis": "agent_path_and_prompt_sha256; durable UUID unavailable from collaboration interface",
       "base_sha": "005ded3eceaaa13e816ae8073973a50db87772f2",
       "branch": "codex/eval-v3-w4-tool-031-s",
       "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\w4-031s\\pico",
@@ -1556,7 +1594,12 @@
         ".codex/eval/handoffs/TOOL-031-S.json"
       ],
       "prompt_sha256": "775f266b3dd989a3890a6e1c96f72a3e022ea2c2c3e94a1718bc9d43100f23d2",
-      "status": "active"
+      "head_sha": "03d517db8fdf027376db13be2e577b43b0c7463b",
+      "own_commits": ["7e81b455f4616ca4962691c9eb139271ae28f3e3", "03d517db8fdf027376db13be2e577b43b0c7463b"],
+      "integration_commits": ["6f223413c11941c36f978c6547ba4dd60afd44d6"],
+      "handoff_sha256": "2f74b423a92ce989a54e86be60a64f875c350f8ee407862c9dfa475b99801cdc",
+      "stable_patch_id": "57bfba1eaae272861e2b7ca87b0dabdc2327f46f",
+      "status": "accepted"
     },
     "W4-TOOL-032-C-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -1565,6 +1608,8 @@
       "wave": "W4",
       "role": "implementer",
       "thread_id": "/root/w4_tool_032_c",
+      "durable_thread_uuid": null,
+      "thread_identity_basis": "agent_path_and_prompt_sha256; durable UUID unavailable from collaboration interface",
       "base_sha": "005ded3eceaaa13e816ae8073973a50db87772f2",
       "branch": "codex/eval-v3-w4-tool-032-c",
       "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\w4-032c\\pico",
@@ -1590,7 +1635,12 @@
         ".codex/eval/handoffs/TOOL-032-C.json"
       ],
       "prompt_sha256": "801578312a9c0fe334458ddde4524e7b4a90701c844245207c9d4ebda2c91bd3",
-      "status": "active"
+      "head_sha": "26910493a30460016d327c6451f249902eec9221",
+      "own_commits": ["93a323fdf7fe2b6e0381b315ae6e2b248b154627", "26910493a30460016d327c6451f249902eec9221"],
+      "integration_commits": ["a215f15cd8019ff2d8f0b936745c83bfd0009fe4"],
+      "handoff_sha256": "e657ffc685f32ae3df036c4d0a36bc491d2c6577f47aefcaf12090bcb5142843",
+      "stable_patch_id": "0ad978ff0be31eab8a1dd88d511e8d8e15b94792",
+      "status": "accepted"
     }
   },
   "wave_handoffs": {
@@ -1599,54 +1649,97 @@
     "W2": ".codex/eval/state/W2-wave-handoff.json",
     "W3": ".codex/eval/state/W3-wave-handoff.json"
   },
-  "ready_tickets": [],
+  "ready_tickets": ["TOOL-040-I"],
   "wave_open": {
     "wave": "W4",
-    "status": "active",
+    "status": "accepted",
     "wave_base_sha": "005ded3eceaaa13e816ae8073973a50db87772f2",
     "control_overlay_sha256": "55ec6149ce76bd87d344185d4828fcdf719483572ab1444d46c454d5e5b1429c",
     "upstream_handoff_sha256": "2ce386f998b774cbb9fa2bb8cef9f84ebd0f5854a6af4a11e01d252f7675d37b",
     "initial_ready_tickets": ["TOOL-030-E", "TOOL-031-S", "TOOL-032-C"],
-    "opened_at": "2026-07-22T09:52:22.6962426+08:00"
+    "opened_at": "2026-07-22T09:52:22.6962426+08:00",
+    "closed_at": "2026-07-22T10:16:43.6669036+08:00"
   },
-  "batch_checkpoints": [],
-  "wave_close": null,
-  "last_gate": {
-    "wave": "W3",
+  "batch_checkpoints": [
+    {
+      "wave": "W4",
+      "batch": 1,
+      "canonical_head": "a215f15cd8019ff2d8f0b936745c83bfd0009fe4",
+      "accepted_tickets": ["TOOL-031-S", "TOOL-030-E", "TOOL-032-C"],
+      "dispatched_tickets": [],
+      "stable_patch_ids_verified": true,
+      "checkpointed_at": "2026-07-22T10:16:43.6669036+08:00"
+    }
+  ],
+  "wave_close": {
+    "wave": "W4",
     "status": "accepted",
-    "wave_integrator_thread": "019f84a4-e3fa-7bb3-94dd-df62c7d60fed",
-    "wave_base_sha": "807dc8f348c609bf885f4b65e69cebd781e8f1ba",
-    "accepted_ticket_count": 4,
+    "ticket_integration_head": "a215f15cd8019ff2d8f0b936745c83bfd0009fe4",
+    "accepted_ticket_count": 3,
+    "active_ticket_count": 0,
+    "blocked_ticket_count": 0,
+    "worker_bundle": {
+      "path": "F:\\dev\\llm\\pico-eval-artifacts\\wave-bundles\\W4-workers.bundle",
+      "sha256": "46b0000eeadd66be2261c20b8cb9d22ae78c336086a1eaf67f1dfa394bc4236c",
+      "size_bytes": 16255358,
+      "ref_count": 3,
+      "verified": true
+    },
+    "next_wave": "W5",
+    "next_wave_ready_tickets": ["TOOL-040-I"],
+    "next_wave_started": false,
+    "closed_at": "2026-07-22T10:16:43.6669036+08:00"
+  },
+  "last_gate": {
+    "wave": "W4",
+    "status": "accepted",
+    "wave_integrator_thread": "019f8782-a4ea-7dd0-b324-bfdcf7613c35",
+    "wave_base_sha": "005ded3eceaaa13e816ae8073973a50db87772f2",
+    "ticket_integration_head": "a215f15cd8019ff2d8f0b936745c83bfd0009fe4",
+    "accepted_ticket_count": 3,
     "plan_validation": "VALID: 63 ticket templates, 11 waves",
     "initial_ready_set_match": true,
-    "initial_ready_ticket_count": 2,
+    "initial_ready_ticket_count": 3,
     "allowed_path_ownership_conflicts": [],
-    "sdk_transport_decision_frozen": true,
-    "sdk_dependency_lock_frozen": true,
-    "sdk_dependency_lock_sha256": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
-    "openai_responses_adapter_accepted": true,
-    "anthropic_messages_adapter_accepted": true,
-    "provider_profile_capabilities_explicit": true,
+    "integration_order": ["TOOL-031-S", "TOOL-030-E", "TOOL-032-C"],
+    "stable_patch_ids_verified": true,
+    "subagent_identity": {
+      "durable_thread_uuid_available": false,
+      "recorded_basis": "agent_path_and_prompt_sha256",
+      "agents": {
+        "TOOL-030-E": {"agent_path": "/root/w4_tool_030_e", "prompt_sha256": "43313eb872e8356e161f4c98faad6574afb8b03f7ad113dcc6c967ba7c7c7b63"},
+        "TOOL-031-S": {"agent_path": "/root/w4_tool_031_s", "prompt_sha256": "775f266b3dd989a3890a6e1c96f72a3e022ea2c2c3e94a1718bc9d43100f23d2"},
+        "TOOL-032-C": {"agent_path": "/root/w4_tool_032_c", "prompt_sha256": "801578312a9c0fe334458ddde4524e7b4a90701c844245207c9d4ebda2c91bd3"}
+      }
+    },
+    "native_engine_batch_loop_accepted": true,
+    "native_session_exchange_accepted": true,
+    "structured_request_context_accepted": true,
+    "runtime_line_count": 903,
+    "runtime_line_budget": 950,
     "core_sdk_import_count": 0,
-    "w3_core_changed_paths": [],
     "sdk_runner_usage_count": 0,
-    "new_text_fallback_count": 0,
+    "changed_production_text_envelope_reference_count": 0,
     "formal_online_evaluation_run": false,
     "online_effectiveness_conclusions": false,
-    "final_evaluation_model_selected": false,
-    "w4_started": false,
+    "resume_evaluation_run": false,
+    "w5_started": false,
     "targeted_test_evidence": {
-      "w3_provider_and_adapter_contracts": "60 passed",
+      "combined_native_core_context": "134 passed",
+      "prescribed_ticket_groups": "113 passed, 4 known failures (3 Windows tool-policy, 1 unchanged latent worker_manager budget)",
       "ruff_pico_tests": "passed",
-      "architecture_safety_policy_permissions": "16 passed, 11 failures identical to the W2 canonical baseline"
+      "compileall_pico": "passed",
+      "architecture_safety_policy_permissions": "16 passed, 11 failures: 10 Windows failures unchanged; architecture now exposes unchanged W3 worker_manager.py 232/220 after runtime.py was reduced below budget"
     },
     "known_baseline_failures": {
-      "architecture": "pico/core/runtime.py remains 952 lines against the unchanged 950-line budget",
-      "windows_environment": "10 unchanged Windows symlink/home/path/shell-command failures; exact test outcome matches the W2 canonical baseline"
+      "architecture": "pico/core/worker_manager.py is 232 lines against its unchanged 220-line budget; W3 canonical, W4 base and W4 integration blobs are identical (a0b07d1b8cca2b7918b830979c962296ec8c1a1f)",
+      "windows_environment": "10 unchanged Windows symlink/home/path/shell-command failures; exact identities match the W3 canonical baseline"
     },
-    "worker_bundle_sha256": "a2d93faa5d3c6d6562bb2714d8e39c67439a062f0d35c73b68c4abb076a42801",
+    "worker_bundle_sha256": "46b0000eeadd66be2261c20b8cb9d22ae78c336086a1eaf67f1dfa394bc4236c",
+    "freeze_changed": false,
+    "next_wave_ready_tickets": ["TOOL-040-I"],
     "discrepancies": [],
-    "accepted_at": "2026-07-21T20:59:31.9387107+08:00"
+    "accepted_at": "2026-07-22T10:16:43.6669036+08:00"
   },
-  "updated_at": "2026-07-22T09:52:22.6962426+08:00"
+  "updated_at": "2026-07-22T10:16:43.6669036+08:00"
 }

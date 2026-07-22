@@ -1,0 +1,64 @@
+{
+  "schema_version": "pico-eval-commit-map-v1",
+  "wave": "W4",
+  "wave_base_sha": "005ded3eceaaa13e816ae8073973a50db87772f2",
+  "control_overlay_sha256": "55ec6149ce76bd87d344185d4828fcdf719483572ab1444d46c454d5e5b1429c",
+  "entries": {
+    "TOOL-031-S": {
+      "worker_agent_path": "/root/w4_tool_031_s",
+      "durable_thread_uuid": null,
+      "prompt_sha256": "775f266b3dd989a3890a6e1c96f72a3e022ea2c2c3e94a1718bc9d43100f23d2",
+      "worker_head": "03d517db8fdf027376db13be2e577b43b0c7463b",
+      "worker_commits": [
+        "7e81b455f4616ca4962691c9eb139271ae28f3e3",
+        "03d517db8fdf027376db13be2e577b43b0c7463b"
+      ],
+      "dependency_commits": [],
+      "canonical_commit": "6f223413c11941c36f978c6547ba4dd60afd44d6",
+      "handoff_sha256": "2f74b423a92ce989a54e86be60a64f875c350f8ee407862c9dfa475b99801cdc",
+      "stable_patch_id": "57bfba1eaae272861e2b7ca87b0dabdc2327f46f",
+      "stable_patch_id_scope": "wave_base_to_worker_head_and_canonical_ticket_commit",
+      "stable_patch_id_match": true
+    },
+    "TOOL-030-E": {
+      "worker_agent_path": "/root/w4_tool_030_e",
+      "durable_thread_uuid": null,
+      "prompt_sha256": "43313eb872e8356e161f4c98faad6574afb8b03f7ad113dcc6c967ba7c7c7b63",
+      "worker_head": "3549254bdb99582cb5bb38418ea6d959d51b9a78",
+      "worker_commits": [
+        "e8e5b732905a6536ce9516d62efff49e289908da",
+        "3549254bdb99582cb5bb38418ea6d959d51b9a78"
+      ],
+      "dependency_commits": [],
+      "canonical_commit": "1f12821bbc8e5dd1242b23807cb0356dcb486fc4",
+      "handoff_sha256": "da88292e505b9c12beff59513a06ca9ddbee181d9e5754a26c78907d211b6970",
+      "stable_patch_id": "847c8ccb5f5842b22919a2300d46ed79ad81da11",
+      "stable_patch_id_scope": "wave_base_to_worker_head_and_canonical_ticket_commit",
+      "stable_patch_id_match": true
+    },
+    "TOOL-032-C": {
+      "worker_agent_path": "/root/w4_tool_032_c",
+      "durable_thread_uuid": null,
+      "prompt_sha256": "801578312a9c0fe334458ddde4524e7b4a90701c844245207c9d4ebda2c91bd3",
+      "worker_head": "26910493a30460016d327c6451f249902eec9221",
+      "worker_commits": [
+        "93a323fdf7fe2b6e0381b315ae6e2b248b154627",
+        "26910493a30460016d327c6451f249902eec9221"
+      ],
+      "dependency_commits": [],
+      "canonical_commit": "a215f15cd8019ff2d8f0b936745c83bfd0009fe4",
+      "handoff_sha256": "e657ffc685f32ae3df036c4d0a36bc491d2c6577f47aefcaf12090bcb5142843",
+      "stable_patch_id": "0ad978ff0be31eab8a1dd88d511e8d8e15b94792",
+      "stable_patch_id_scope": "wave_base_to_worker_head_and_canonical_ticket_commit",
+      "stable_patch_id_match": true
+    }
+  },
+  "worker_bundle": {
+    "path": "F:\\dev\\llm\\pico-eval-artifacts\\wave-bundles\\W4-workers.bundle",
+    "sha256": "46b0000eeadd66be2261c20b8cb9d22ae78c336086a1eaf67f1dfa394bc4236c",
+    "size_bytes": 16255358,
+    "ref_count": 3,
+    "verification": "complete history; git bundle verify passed"
+  },
+  "updated_at": "2026-07-22T10:16:01.0786844+08:00"
+}
