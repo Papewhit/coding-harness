@@ -23,6 +23,30 @@
     "native_resume_ready": "pending"
   },
   "accepted_tickets": {
+    "EVAL-056-H": {
+      "instance_id": "W6R2-EVAL-056-H-01",
+      "status": "accepted",
+      "base_sha": "6b4fa94948888b7c95dfbe4cd0134205356decba",
+      "dependency_commits": [
+        "50f728ba824a142ba0d64a5f820c80bbc1942496"
+      ],
+      "applied_dependency_commits": [
+        "b268e575917084ce05626b10a7ac42069d4525f4"
+      ],
+      "head_sha": "c7a4a16cd124349448952063894f81d18c0b50c9",
+      "worker_branch_head": "08c7c348743207a29a951f59313bd25da5b8fe3d",
+      "own_commits": [
+        "c7a4a16cd124349448952063894f81d18c0b50c9",
+        "08c7c348743207a29a951f59313bd25da5b8fe3d"
+      ],
+      "integration_commits": [
+        "1d16508a6f68ea33d3ecda0a84c63cf89db37606",
+        "3f8a5ac681611652571584e2b53c6e666fa14d28"
+      ],
+      "handoff_path": ".codex/eval/handoffs/EVAL-056-H.json",
+      "handoff_sha256": "88dd58e2a7a726c18bc584b92538de259b02e698d15c079830be858ccacc05f5",
+      "stable_patch_id": "cb8100e853515f99195e7a37f58cf690d6dc46f5"
+    },
     "TOOL-055-E": {
       "instance_id": "W6R2-TOOL-055-E-01",
       "status": "accepted",
@@ -770,16 +794,7 @@
       "selected_profile": null
     }
   },
-  "active_tickets": {
-    "EVAL-056-H": {
-      "instance_id": "W6R2-EVAL-056-H-01",
-      "status": "active",
-      "thread_id": "019f8e3b-a3d4-7a01-be55-e932179d69f1",
-      "base_sha": "6b4fa94948888b7c95dfbe4cd0134205356decba",
-      "branch": "codex/w6r2-eval-056-h",
-      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\ca3c\\pico"
-    }
-  },
+  "active_tickets": {},
   "blocked_tickets": {
     "TOOL-050-QO-R": {
       "instance_id": "W6-TOOL-050-QO-R-01",
@@ -852,8 +867,35 @@
       "reasoning_effort": "medium",
       "prompt_sha256": "8f5b536ecf36f7a9aaf73d288833b81cf86b3af911db3e2f1edbb18e30e22dce",
       "prompt_hash_basis": "UTF-8 codexDelegation.input",
-      "status": "active",
-      "dispatched_at": "2026-07-23T17:09:04.0996032+08:00"
+      "applied_dependency_commits": [
+        {
+          "original_commit": "50f728ba824a142ba0d64a5f820c80bbc1942496",
+          "applied_commit": "b268e575917084ce05626b10a7ac42069d4525f4",
+          "stable_patch_id": "86f900fa077405162cfa49435551f500cfb2c344"
+        }
+      ],
+      "head_sha": "c7a4a16cd124349448952063894f81d18c0b50c9",
+      "worker_branch_head": "08c7c348743207a29a951f59313bd25da5b8fe3d",
+      "own_commits": [
+        "c7a4a16cd124349448952063894f81d18c0b50c9",
+        "08c7c348743207a29a951f59313bd25da5b8fe3d"
+      ],
+      "integration_commits": [
+        "1d16508a6f68ea33d3ecda0a84c63cf89db37606",
+        "3f8a5ac681611652571584e2b53c6e666fa14d28"
+      ],
+      "handoff_sha256": "88dd58e2a7a726c18bc584b92538de259b02e698d15c079830be858ccacc05f5",
+      "stable_patch_id": "cb8100e853515f99195e7a37f58cf690d6dc46f5",
+      "tests": {
+        "ticket": "23 passed",
+        "adjacent_native_regressions": "45 passed",
+        "cli_help": "passed",
+        "ruff": "passed",
+        "diff_check": "passed"
+      },
+      "status": "accepted",
+      "dispatched_at": "2026-07-23T17:09:04.0996032+08:00",
+      "accepted_at": "2026-07-23T17:22:29.4639326+08:00"
     },
     "W6R2-TOOL-055-E-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -3172,7 +3214,7 @@
     "W6": ".codex/eval/state/W6-wave-handoff.json",
     "W6R": ".codex/eval/state/W6R-wave-handoff.json"
   },
-  "ready_tickets": [],
+  "ready_tickets": ["TOOL-057-A"],
   "wave_open": {
     "wave": "W6R2",
     "status": "open",
@@ -3205,6 +3247,24 @@
         "diff_check": "passed"
       },
       "checkpointed_at": "2026-07-23T17:06:58.7794000+08:00"
+    },
+    {
+      "wave": "W6R2",
+      "batch": 2,
+      "accepted_tickets": ["EVAL-056-H"],
+      "canonical_head": "3f8a5ac681611652571584e2b53c6e666fa14d28",
+      "dependency_commits_for_next_ticket": [
+        "50f728ba824a142ba0d64a5f820c80bbc1942496",
+        "c7a4a16cd124349448952063894f81d18c0b50c9"
+      ],
+      "targeted_test_evidence": {
+        "ticket": "23 passed",
+        "adjacent_native_regressions": "45 passed",
+        "cli_help": "passed",
+        "ruff": "passed",
+        "diff_check": "passed"
+      },
+      "checkpointed_at": "2026-07-23T17:22:29.4639326+08:00"
     }
   ],
   "wave_close": {
@@ -3456,5 +3516,5 @@
     "w7_started": false,
     "completed_at": "2026-07-23T15:16:48.5580598+08:00"
   },
-  "updated_at": "2026-07-23T17:09:04.0996032+08:00"
+  "updated_at": "2026-07-23T17:22:29.4639326+08:00"
 }
