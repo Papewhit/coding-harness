@@ -15,7 +15,9 @@
   "head_sha": "cf262e551ff948bc574adb574edd172635ab7877",
   "head_tree": "158cd2abde04d20e0544c4615db3cb0676f8fc83",
   "head_sha_semantics": "Audited dependency-applied source head before the metadata-only commit containing this handoff.",
-  "metadata_commit_semantics": "The commit containing this handoff is metadata-only; its self-referential SHA is intentionally not embedded in this file.",
+  "metadata_commit_semantics": "The commit containing this corrected handoff is metadata-only; its self-referential SHA is intentionally not embedded in this file.",
+  "supersedes_metadata_commit": "a456edc41ece3bb3a28445d4cfd0fb5446b2fbd5",
+  "superseded_handoff_sha256": "768ce930a47e14e2fab6265b3c522ba4af92ed54dc9dab3674d0c346446ac526",
   "dependency_commits": [
     "50f728ba824a142ba0d64a5f820c80bbc1942496",
     "c7a4a16cd124349448952063894f81d18c0b50c9"
@@ -34,7 +36,9 @@
       "stable_patch_id": "cb8100e853515f99195e7a37f58cf690d6dc46f5"
     }
   ],
-  "own_commits": [],
+  "own_commits": [
+    "a456edc41ece3bb3a28445d4cfd0fb5446b2fbd5"
+  ],
   "dependency_handoff_hashes": {
     "TOOL-055-E": "733e9488b787dc0bf07d6b5f8d51b2ec502e2682feed8e139baa8cedd0c033d4",
     "EVAL-056-H": "88dd58e2a7a726c18bc584b92538de259b02e698d15c079830be858ccacc05f5",
@@ -74,6 +78,9 @@
     "independent_bundle_reconstruction": {
       "result": "passed",
       "verifier": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/verify_artifacts.py",
+      "verifier_mode": "read_only",
+      "report_generator": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/generate_audit_report.py",
+      "inventory_generator": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/generate_inventory.py",
       "verifier_imports_pico": false,
       "monkey_patch_used": false,
       "temporary_instrumentation_used": false,
@@ -115,10 +122,31 @@
     },
     "format_validation": {
       "result": "passed",
-      "json_files_parsed": 15,
+      "json_files_parsed": 16,
       "jsonl_files_parsed": 4,
       "xml_files_parsed": 3,
       "post_redaction_parse_failures": 0
+    },
+    "read_only_repeatability": {
+      "result": "passed",
+      "command": "python -B verify_artifacts.py --root <audit-root> --repo <repo>",
+      "run_count": 2,
+      "writes_per_run": 0,
+      "artifact_file_count_including_inventory": 35,
+      "inventory_verified_file_count_excluding_self": 34,
+      "inventory_mismatch_count_per_run": 0,
+      "snapshot_fingerprint_before": "fa1b189f77b5d4eb651667662810ba0e92917fc8e1d765a9b020f28633f38aef",
+      "snapshot_fingerprint_after_first": "fa1b189f77b5d4eb651667662810ba0e92917fc8e1d765a9b020f28633f38aef",
+      "snapshot_fingerprint_after_second": "fa1b189f77b5d4eb651667662810ba0e92917fc8e1d765a9b020f28633f38aef",
+      "changed_file_count_first_run": 0,
+      "changed_file_count_second_run": 0
+    },
+    "artifact_supersession": {
+      "record": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/supersession.json",
+      "integrator_reproduced_report_sha256": "26fa5108ca598f204fbd54a365f91df27708f8771b72e6afdd7929aa8e8edb3f",
+      "pre_fix_inventory_expected_report_sha256": "6b4b2cdc805e5f576165722eabcb788b40a577445b5696ede7980992eca3e42a",
+      "pre_fix_inventory_mismatch_count": 1,
+      "status": "resolved_and_superseded"
     },
     "frozen_inputs_unchanged": true
   },
@@ -154,15 +182,24 @@
       "output": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/commands/ruff-audited-paths.txt"
     },
     {
-      "command": "stdlib-only verify_artifacts.py over both dual-dialect bundles and both preflight bundles",
-      "result": "passed",
-      "details": "Recomputed manifest, row, and per-call evidence hashes; reconstructed all call/result safety chains; verified parity, zero-row semantics, frozen inputs, formats, and credential absence.",
-      "output": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/audit-report.json"
+      "command": "pre-supersession stdlib verifier over both dual-dialect bundles and both preflight bundles",
+      "result": "superseded",
+      "details": "The bundle reconstruction was correct, but Integrator acceptance proved this entrypoint mutated audit-report.json and invalidated inventory. The corrected workflow separates explicit report generation from read-only verification."
     },
     {
-      "command": "final inventory, JSON/JSONL/XML parse, credential/raw URL/config locator scan, git diff --check, git diff --cached --check",
+      "command": "python -B generate_audit_report.py --root <audit-root> --repo <repo>; python -B generate_inventory.py --root <audit-root>",
       "result": "passed",
-      "details": "31 inventory entries independently matched size and SHA-256; 15 JSON, 4 JSONL, and 3 XML files parsed; credential scan found 0 matches; Git whitespace checks passed."
+      "details": "Explicitly regenerated the corrected deterministic report bound to source-provenance audited_head_sha, then regenerated an inventory that excludes exactly inventory.json."
+    },
+    {
+      "command": "python -B verify_artifacts.py --root <audit-root> --repo <repo> run twice with full artifact hash snapshots before and after each run",
+      "result": "passed",
+      "details": "Both runs reported passed=true, writes_performed=0, 34 verified inventory entries, and 0 mismatches. All three 35-file snapshot fingerprints were fa1b189f77b5d4eb651667662810ba0e92917fc8e1d765a9b020f28633f38aef; each run changed 0 files."
+    },
+    {
+      "command": "final JSON/JSONL/XML parse and credential/raw URL/config locator scan over all public artifact files",
+      "result": "passed",
+      "details": "16 JSON, 4 JSONL, and 3 XML files parsed; credential/raw URL/private config locator scan found 0 matches."
     },
     {
       "command": "initial uv run --no-sync collection attempt before isolated environment creation",
@@ -174,12 +211,15 @@
   "outputs": [
     {
       "path": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/audit-report.json",
-      "sha256": "6b4b2cdc805e5f576165722eabcb788b40a577445b5696ede7980992eca3e42a"
+      "sha256": "f230ddac6ad9abe2a37d2e5ce2daabd43f4405ee4c71ada66ff418ae71364daa"
     },
     {
       "path": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/inventory.json",
-      "sha256": "682e662a1f5bd2aa08f8c3ea93f87f0865a1bb3288e5b05ba7eb66b762270e60",
-      "inventory_file_count_excluding_self": 31,
+      "sha256": "a4f832c10ef86ebb5b52db40d25cf9be7affa1fcb5c0fac545d6037baf28b458",
+      "inventory_self_excluded_paths": [
+        "inventory.json"
+      ],
+      "inventory_file_count_excluding_self": 34,
       "inventory_mismatch_count": 0
     },
     {
@@ -188,7 +228,19 @@
     },
     {
       "path": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/verify_artifacts.py",
-      "sha256": "5b5021a874b60a202160f61368f076018e9c5db6288390a606f7e316c7c304e1"
+      "sha256": "b6150d9583e893eb41b332f4adbd38cc8bed1576f05060a69867ab566d86d521"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/generate_audit_report.py",
+      "sha256": "a783486a3266ec38dfe137d8e2cac8778519ad85df7b945b5d3b40ce8da2db3d"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/generate_inventory.py",
+      "sha256": "5116e16fa70d8db0b0f8463d2ae364ca0bdc7a6b558ca30c9d92a87d099c35ab"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/supersession.json",
+      "sha256": "e8161b16d0ae196b4b7060f92e228de431666e6321f24d2fc6a518bf62393efe"
     }
   ],
   "frozen_hashes": {
@@ -230,12 +282,22 @@
     "private_config_locator_value_persisted": false,
     "credential_or_raw_provider_url_persisted": false
   },
-  "defects": [],
+  "defects": [
+    {
+      "id": "TOOL-057-A-ARTIFACT-SELF-MUTATION-001",
+      "severity": "blocking",
+      "detected_by": "Wave Integrator",
+      "status": "resolved_and_superseded",
+      "description": "The original acceptance verifier rewrote audit-report.json and invalidated its own inventory entry.",
+      "resolution": "Separated explicit report/inventory generation from a permanently read-only verifier, bound report source_head to source-provenance, rebuilt inventory with a single explicit self-exclusion, and proved two read-only runs changed no artifact hashes."
+    }
+  ],
   "blocking_defects": [],
   "risks": [
     "This is an offline Windows reviewer audit; canonical Ubuntu WSL2/Python 3.12 preflight remains owned by the separately authorized downstream gate.",
     "No real endpoint was contacted, so provider eligibility, selected profile, and recovered Gate N1 remain unresolved.",
-    "The verifier proves the persisted fake-transport evidence closure and safety-chain semantics; it does not broaden the ticket into live conformance or effectiveness evaluation."
+    "The verifier proves the persisted fake-transport evidence closure and safety-chain semantics; it does not broaden the ticket into live conformance or effectiveness evaluation.",
+    "The original artifact self-mutation defect is retained in supersession.json for auditability; consumers must use the corrected hashes in this handoff and the read-only verify_artifacts.py entrypoint."
   ],
   "ownership_change_request": null,
   "status_proposal": {
