@@ -20,10 +20,34 @@
   "wave_base_sha": "6b4fa94948888b7c95dfbe4cd0134205356decba",
   "run_snapshot_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
   "gates": {
-    "native_eval_ready": "preflight_passed_pending_conformance_shards",
+    "native_eval_ready": "accepted_pending_authorized_human_smoke",
     "native_resume_ready": "pending"
   },
   "accepted_tickets": {
+    "TOOL-050-S-R1": {
+      "instance_id": "W6R2-TOOL-050-S-R1-01",
+      "status": "accepted",
+      "gate_status": "passed",
+      "base_sha": "6b4fa94948888b7c95dfbe4cd0134205356decba",
+      "head_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+      "worker_branch_head": "7fb9c4ac80d7447fff5fc1ff09cd316f7ef47190",
+      "own_commits": [
+        "df19376d2298c610f1923cedbc58a64f293f52d8",
+        "7fb9c4ac80d7447fff5fc1ff09cd316f7ef47190"
+      ],
+      "integration_commits": [
+        "ef15567e55a34253fb2e027c49041a08920060e4",
+        "5da1f9dcf5d4e4c180ff708241320ed2bc5c96e8"
+      ],
+      "handoff_path": ".codex/eval/handoffs/TOOL-050-S-R1.json",
+      "handoff_sha256": "ada774641c62e871b00181090f1983a68e90d113380f0057f3f737bcf298c072",
+      "freeze_proposal_sha256": "599c7f1466f81514a6242c36bb4c764afddf29d20ef19755af720ff72bb0e699",
+      "status_proposal_sha256": "039fca1eebce351bce7d156cd6f49b3bfbf112f3df2e6bdb873e69f58441351f",
+      "selection_sha256": "e94483ef222373139b9f07173632d579416056248431deaafcf0bcaf0c7a1278",
+      "selection_inventory_sha256": "8521b66b2614a51872d721e62869ccd942e6d903dbf20924d677bd87ab357310",
+      "selected_profile": "dashscope-o",
+      "eligible_profile_count": 1
+    },
     "TOOL-058-G": {
       "instance_id": "W6R2-TOOL-058-G-01",
       "status": "accepted",
@@ -849,16 +873,7 @@
       "selected_profile": null
     }
   },
-  "active_tickets": {
-    "TOOL-050-S-R1": {
-      "instance_id": "W6R2-TOOL-050-S-R1-01",
-      "status": "active",
-      "thread_id": "019f8ea8-ab3a-7783-b405-e6958b3dcd59",
-      "base_sha": "6b4fa94948888b7c95dfbe4cd0134205356decba",
-      "branch": "codex/w6r2-tool-050-s-r1",
-      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\5fb8\\pico"
-    }
-  },
+  "active_tickets": {},
   "blocked_tickets": {
     "TOOL-050-QO-R": {
       "instance_id": "W6-TOOL-050-QO-R-01",
@@ -944,8 +959,25 @@
       ],
       "model": "gpt-5.6-sol",
       "reasoning_effort": "high",
-      "status": "active",
-      "dispatched_at": "2026-07-23T19:08:47.9696303+08:00"
+      "worker_branch_head": "7fb9c4ac80d7447fff5fc1ff09cd316f7ef47190",
+      "own_commits": [
+        "df19376d2298c610f1923cedbc58a64f293f52d8",
+        "7fb9c4ac80d7447fff5fc1ff09cd316f7ef47190"
+      ],
+      "integration_commits": [
+        "ef15567e55a34253fb2e027c49041a08920060e4",
+        "5da1f9dcf5d4e4c180ff708241320ed2bc5c96e8"
+      ],
+      "handoff_sha256": "ada774641c62e871b00181090f1983a68e90d113380f0057f3f737bcf298c072",
+      "freeze_proposal_sha256": "599c7f1466f81514a6242c36bb4c764afddf29d20ef19755af720ff72bb0e699",
+      "status_proposal_sha256": "039fca1eebce351bce7d156cd6f49b3bfbf112f3df2e6bdb873e69f58441351f",
+      "selection_sha256": "e94483ef222373139b9f07173632d579416056248431deaafcf0bcaf0c7a1278",
+      "selected_profile": "dashscope-o",
+      "eligible_profile_count": 1,
+      "duplicate_aggregator_contamination": "stopped_audited_and_excluded",
+      "status": "accepted",
+      "dispatched_at": "2026-07-23T19:08:47.9696303+08:00",
+      "completed_at": "2026-07-23T19:26:35.0000000+08:00"
     },
     "W6R2-TOOL-050-QO-R2-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -3623,12 +3655,13 @@
     "W5R": ".codex/eval/state/W5R-wave-handoff.json",
     "W5R2": ".codex/eval/state/W5R2-wave-handoff.json",
     "W6": ".codex/eval/state/W6-wave-handoff.json",
-    "W6R": ".codex/eval/state/W6R-wave-handoff.json"
+    "W6R": ".codex/eval/state/W6R-wave-handoff.json",
+    "W6R2": ".codex/eval/state/W6R2-wave-handoff.json"
   },
   "ready_tickets": [],
   "wave_open": {
     "wave": "W6R2",
-    "status": "open",
+    "status": "closed",
     "wave_base_sha": "6b4fa94948888b7c95dfbe4cd0134205356decba",
     "control_overlay_commit_sha": "6b4fa94948888b7c95dfbe4cd0134205356decba",
     "control_plan_sha256": "7f187e28b8867247a96c0d9284d5fc0e34e640f09864d782336a8c77150631f2",
@@ -3640,7 +3673,8 @@
     "allowed_path_ownership_conflicts": [],
     "w6r_status_preserved": "blocked",
     "w7_started": false,
-    "opened_at": "2026-07-23T16:46:38.7440073+08:00"
+    "opened_at": "2026-07-23T16:46:38.7440073+08:00",
+    "closed_at": "2026-07-23T19:30:07.4329251+08:00"
   },
   "batch_checkpoints": [
     {
@@ -3757,38 +3791,53 @@
       "sensitive_exact_value_scan_matches": 0,
       "ready_for_gate_n1_aggregation": true,
       "checkpointed_at": "2026-07-23T19:04:34.6071701+08:00"
+    },
+    {
+      "wave": "W6R2",
+      "batch": 6,
+      "accepted_tickets": ["TOOL-050-S-R1"],
+      "canonical_head": "5da1f9dcf5d4e4c180ff708241320ed2bc5c96e8",
+      "gate_n1": "passed",
+      "native_eval_ready": "accepted_pending_authorized_human_smoke",
+      "eligible_profile_count": 1,
+      "selected_profile": "dashscope-o",
+      "selection_sha256": "e94483ef222373139b9f07173632d579416056248431deaafcf0bcaf0c7a1278",
+      "selection_inventory_sha256": "8521b66b2614a51872d721e62869ccd942e6d903dbf20924d677bd87ab357310",
+      "human_smoke_source_commit": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+      "human_smoke_run": false,
+      "w7_started": false,
+      "checkpointed_at": "2026-07-23T19:30:07.4329251+08:00"
     }
   ],
   "wave_close": {
-    "wave": "W6R",
-    "status": "blocked",
-    "accepted_tickets": ["TOOL-051-L", "EVAL-052-H", "TOOL-053-A", "TOOL-054-G"],
-    "blocked_tickets": [],
-    "native_eval_ready": false,
+    "wave": "W6R2",
+    "status": "passed_pending_authorized_human_smoke",
+    "accepted_tickets": ["TOOL-055-E", "EVAL-056-H", "TOOL-057-A", "TOOL-058-G", "TOOL-050-S-R1"],
+    "blocked_tickets": ["TOOL-050-QO-R2", "TOOL-050-QA-R2", "TOOL-050-DA-R2"],
+    "native_eval_ready": true,
     "native_resume_ready": false,
-    "gate_n1": "not_run",
-    "run_snapshot_approved": false,
-    "run_snapshot_sha": null,
+    "gate_n1": "passed",
+    "run_snapshot_approved": true,
+    "run_snapshot_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
     "bound_profile_count": 3,
-    "eligible_profile_count": 0,
-    "selected_profile": null,
+    "eligible_profile_count": 1,
+    "selected_profile": "dashscope-o",
+    "selected_profile_id": "sha256:41ebb321c6332867f0bb020621b7e1c17f8c60430374c37c3a670c916326ee70",
+    "human_smoke_source_commit": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+    "human_smoke_status": "awaiting_explicit_user_authorization",
     "w7_ready": false,
     "next_wave_ready_tickets": [],
-    "freeze_changed": false,
-    "freeze_proposals_promoted": false,
-    "formal_freeze_sha256": "b4893c10887bb774dda860a5f4b13ec6fa9b8c014e0cb0257e409c0f27df6ba6",
-    "worker_bundle_sha256": "3d8d0127cfbf2f575e98cfb77663186dcd80c96fe00b39276f8c34829f1fad16",
-    "commit_map_sha256": "cd761bd5837ad9f343f04f6d10a9909d8c9c55b23907a1f9ef4aa54ffb11e190",
-    "artifact_index_sha256": "512e4bf3259f4de97f17b5ee7732ab367a590912ca70843b4466a0e19520715a",
-    "blocking_defects": [
-      "TOOL-054-G-WIN-PROTECTED-001",
-      "TOOL-054-G-WIN-FULL-002"
-    ],
+    "freeze_changed": true,
+    "freeze_proposals_promoted": true,
+    "formal_freeze_sha256": "b15e4140c7bd8eed7e864531991eed6060c05ec53d376d677613ba6ef57d5b9e",
+    "commit_map_sha256": "c46de0e237a9db1724fb973097c33369993728efe305c8fe0db2ce703bd58e6f",
+    "artifact_index_sha256": "695061dd7e6026320d94f14c4bab4bc80ee250bc64b16b75455cb8e1ac77f211",
+    "blocking_defects": [],
     "formal_effectiveness_evaluation_run": false,
     "human_smoke_run": false,
     "resume_evaluation_run": false,
     "w7_started": false,
-    "closed_at": "2026-07-23T15:16:48.5580598+08:00"
+    "closed_at": "2026-07-23T19:30:07.4329251+08:00"
   },
   "prior_gate": {
     "wave": "W5",
@@ -3949,7 +3998,7 @@
     "w7_started": false,
     "completed_at": "2026-07-23T11:47:50.4506038+08:00"
   },
-  "last_gate": {
+  "prior_gate_w6r": {
     "wave": "W6R",
     "status": "blocked",
     "wave_integrator_thread": "019f8d54-adce-7be2-a422-a8ac0535307c",
@@ -4008,5 +4057,65 @@
     "w7_started": false,
     "completed_at": "2026-07-23T15:16:48.5580598+08:00"
   },
-  "updated_at": "2026-07-23T19:08:47.9696303+08:00"
+  "last_gate": {
+    "wave": "W6R2",
+    "status": "passed_pending_authorized_human_smoke",
+    "wave_integrator_thread": "019f8e25-2f02-73d0-9a55-3ce4ffa1bb1f",
+    "gate_thread": "019f8ea8-ab3a-7783-b405-e6958b3dcd59",
+    "wave_base_sha": "6b4fa94948888b7c95dfbe4cd0134205356decba",
+    "run_snapshot_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+    "ticket_integration_head": "5da1f9dcf5d4e4c180ff708241320ed2bc5c96e8",
+    "integration_order": ["TOOL-055-E", "EVAL-056-H", "TOOL-057-A", "TOOL-058-G", "TOOL-050-QO-R2", "TOOL-050-QA-R2", "TOOL-050-DA-R2", "TOOL-050-S-R1"],
+    "accepted_ticket_count": 5,
+    "blocked_ticket_count": 3,
+    "plan_validation": "VALID: 82 ticket templates, 14 waves",
+    "initial_ready_set_match": true,
+    "allowed_path_ownership_conflicts": [],
+    "gate_handoff_sha256": "ada774641c62e871b00181090f1983a68e90d113380f0057f3f737bcf298c072",
+    "selection_sha256": "e94483ef222373139b9f07173632d579416056248431deaafcf0bcaf0c7a1278",
+    "selection_inventory_sha256": "8521b66b2614a51872d721e62869ccd942e6d903dbf20924d677bd87ab357310",
+    "commit_map_sha256": "c46de0e237a9db1724fb973097c33369993728efe305c8fe0db2ce703bd58e6f",
+    "artifact_index_sha256": "695061dd7e6026320d94f14c4bab4bc80ee250bc64b16b75455cb8e1ac77f211",
+    "configured_profile_count": 3,
+    "bound_profile_count": 3,
+    "eligible_profile_count": 1,
+    "selected_profile": "dashscope-o",
+    "selected_profile_id": "sha256:41ebb321c6332867f0bb020621b7e1c17f8c60430374c37c3a670c916326ee70",
+    "http_attempt_count": 270,
+    "provider_observation_count": 72,
+    "protocol_metrics_status": "computable",
+    "absence_of_observation_treated_as_pass": false,
+    "hard_gate_result": {
+      "scheduled_rows": "72/72",
+      "tool_required_native_calls": "63/63",
+      "call_id_result_match": "283/283",
+      "batch_completeness": "200/200",
+      "selected_profile_safety_chain": "50/50",
+      "selected_profile_safety_chain_bypass_count": 0,
+      "duplicate_call_after_result_count": 0,
+      "unknown_block_loss_count": 0,
+      "text_envelope_seen_count": 0,
+      "sdk_retry_count": 0
+    },
+    "freeze_changed": true,
+    "freeze_proposals_promoted": true,
+    "native_eval_ready": true,
+    "gate_n1": "passed",
+    "w6r2_exit_gate_satisfied": true,
+    "human_smoke": {
+      "authorized": false,
+      "run": false,
+      "profile": "dashscope-o",
+      "profile_id": "sha256:41ebb321c6332867f0bb020621b7e1c17f8c60430374c37c3a670c916326ee70",
+      "source_commit": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+      "status": "awaiting_explicit_user_authorization"
+    },
+    "w7_ready": false,
+    "next_wave_ready_tickets": [],
+    "formal_effectiveness_evaluation_run": false,
+    "resume_evaluation_run": false,
+    "w7_started": false,
+    "completed_at": "2026-07-23T19:30:07.4329251+08:00"
+  },
+  "updated_at": "2026-07-23T19:30:07.4329251+08:00"
 }
