@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pico.local/schemas/native-provider-profile-v1.json",
+  "title": "Pico native provider public profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "provider",
+    "profile_id",
+    "model",
+    "base_url_fingerprint",
+    "wire_dialect",
+    "adapter_mode",
+    "sdk",
+    "capabilities",
+    "retry",
+    "stream",
+    "parallel_tool_calls"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "pico-native-provider-profile-v1"
+    },
+    "provider": {
+      "type": "string",
+      "minLength": 1
+    },
+    "profile_id": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "model": {
+      "type": "string",
+      "minLength": 1
+    },
+    "base_url_fingerprint": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "wire_dialect": {
+      "enum": [
+        "openai-responses",
+        "anthropic-messages"
+      ]
+    },
+    "adapter_mode": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sdk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "package",
+        "version"
+      ],
+      "properties": {
+        "package": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "native_tools",
+        "strict_tool_schema",
+        "parallel_tool_calls",
+        "reasoning_support",
+        "thinking_support",
+        "opaque_continuation_support"
+      ],
+      "properties": {
+        "native_tools": {
+          "const": true
+        },
+        "strict_tool_schema": {
+          "type": "boolean"
+        },
+        "parallel_tool_calls": {
+          "type": "boolean"
+        },
+        "reasoning_support": {
+          "type": "boolean"
+        },
+        "thinking_support": {
+          "type": "boolean"
+        },
+        "opaque_continuation_support": {
+          "type": "boolean"
+        }
+      }
+    },
+    "retry": {
+      "const": {
+        "sdk_max_retries": 0,
+        "pico_provider_attempts": 1
+      }
+    },
+    "stream": {
+      "const": false
+    },
+    "parallel_tool_calls": {
+      "const": false
+    }
+  }
+}
