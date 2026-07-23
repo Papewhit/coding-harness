@@ -1,0 +1,79 @@
+{
+  "schema_version": "pico-eval-status-proposal-v1",
+  "ticket_id": "TOOL-050-S",
+  "wave": "W6",
+  "wave_base_sha": "365732ded80bd5af2fdb60bb4d52c7bae6792d3e",
+  "run_snapshot_sha": "dd8a677782f90c749a422ee066daa1afcb36c516",
+  "promotion_owner": "W6 Wave Integrator",
+  "proposal": {
+    "ticket_status": "complete",
+    "gate_n1": "blocked",
+    "native_eval_ready": "blocked",
+    "eligible_profile_count": 0,
+    "selected_profile": null,
+    "formal_online_lanes": {
+      "formal_effectiveness": "blocked_not_run",
+      "auto_dream": "blocked_not_run",
+      "local_task": "blocked_not_run",
+      "resume": "blocked_not_run"
+    },
+    "reason": "TOOL-050-S completed the required aggregation, but no candidate produced real, complete live conformance evidence. All candidates were blocked before HTTP by missing frozen runner inputs, so Gate N1 cannot be passed."
+  },
+  "hard_gate_result": {
+    "complete_conformance_evidence": "missing",
+    "tool_required_native_call_observed": "not_computable",
+    "call_id_result_match": "not_computable",
+    "batch_result_completeness": "not_computable",
+    "duplicate_call_after_result": "not_computable",
+    "unknown_block_loss": "not_computable",
+    "safety_chain_bypass": "not_computable",
+    "text_envelope": "not_computable",
+    "absence_of_observation_treated_as_pass": false
+  },
+  "evidence_index": [
+    {
+      "profile": "dashscope-o",
+      "handoff_sha256": "af2f24021009fa1b9ea9a294d6226ca3dba3316f595f9542d0ca45b554a4168e",
+      "manifest_sha256": "83e6c784cfcfe18354238f8238adf01f75ec57cb9ec0eff6c4255847d3d87bbd",
+      "rows_sha256": "641cfe9550e79441b064df1829debeb69c257e343a616d687fa75d8e19f511cb"
+    },
+    {
+      "profile": "dashscope-a",
+      "handoff_sha256": "66cfb9a8a069075e313894cea600ba98f931d3a74ecd1d05c9d8d71afb6f75e7",
+      "manifest_sha256": "c4cde64ac86c344f3f4589507b02e2c96f9b044a6ffad3013759cb2df73641d1",
+      "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "profile": "deepseek",
+      "handoff_sha256": "1f4e84cca8073d9708c968610e1d29c61f91d36710da88c1591706fd9428ed17",
+      "manifest_sha256": "9c806284b39051b2b7adfd30519798741a58c519434926961443f64cdee78ddb",
+      "rows_sha256": "b5f389e0f2e253094475202b4a581a244aca00e09d52f0ef7107af665d8ef977"
+    }
+  ],
+  "artifact_index": {
+    "selection": {
+      "path": "benchmarks/v3/native-provider/selection.json",
+      "sha256": "e51ec2b3fd45c6f22f87e1db619c1c2cfc3fdc2304821ca92540fd24479f71df"
+    },
+    "summary_json": {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/summary.json",
+      "sha256": "f291706780d48f4d9c2a1ee113992f5bf7bcbe981f2ee6b9642b6203960e0368"
+    },
+    "summary_markdown": {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/summary.md",
+      "sha256": "3d9b7d7a9d3778b9beacd8208061fe6949ee40606d3df7a5879ae5aa33188186"
+    }
+  },
+  "frozen_inputs": {
+    "formal_freeze_sha256": "538f7644f91611abcbe4822a497490e0bb6d4ffa0d39286e871c92afdd81e70e",
+    "w5r2_handoff_sha256": "101e6006e0d67c693ebe439078cbbb82779810f54dee8a3cce51256c38a44f95",
+    "cases_sha256": "92f746b113a88ceb652e4e8ec651021b1358d9922ab91c0dad34e62c0068b9e3",
+    "native_gate_handoff_sha256": "c4b0dbd9549b33397e6377d421fd59193619cf655b10a3c78185ef34abdf3c1e",
+    "evaluator_handoff_sha256": "5eef3b00058eb07ec33527ff6e33ba628dea5ec27967a0ae0caf6b60e1cb2936"
+  },
+  "remediation_ownership_request": {
+    "owner": "W6 Wave Integrator to assign a new scoped evaluator/runner ticket owner",
+    "request": "Freeze a reviewed compliant live runner plugin, complete sanitized public profile artifacts, and a corrected runner invocation; rerun fresh candidate shards against unchanged frozen cases, then rerun profile selection."
+  },
+  "formal_state_written_by_ticket": false
+}
