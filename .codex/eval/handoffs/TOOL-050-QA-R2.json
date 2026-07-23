@@ -1,9 +1,15 @@
 {
+  "schema_version": "pico-eval-ticket-handoff-v1",
   "ticket_id": "TOOL-050-QA-R2",
-  "instance_id": "TOOL-050-QA-R2",
+  "instance_id": "W6R2-TOOL-050-QA-R2-01",
   "role": "run_shard",
   "wave": "W6R2",
+  "status": "blocked",
   "branch": "codex/w6r2-tool-050-qa-r2",
+  "base_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+  "run_snapshot_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+  "head_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+  "head_sha_semantics": "Immutable source/run snapshot used for the live shard. Current and any subsequent branch commits contain handoff metadata only and do not alter the run source or artifact.",
   "source_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
   "source_tree": "158cd2abde04d20e0544c4615db3cb0676f8fc83",
   "source_clean_before_run": true,
@@ -27,10 +33,46 @@
   },
   "metadata_sha256": "99c97102fa46f17bc0a120757eca0328401595d31af38a00c4b6dd2213d0b863",
   "metadata_sha256_semantics": "SHA-256 of re-parsed artifact manifest.json; identifies run metadata, not private configuration or credentials.",
+  "allowed_write_paths": [
+    "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/62e0a441b9321d96f50f2863f97ed7e96ace8c9d/TOOL-050-QA-R2/**",
+    ".codex/eval/handoffs/TOOL-050-QA-R2.json"
+  ],
+  "files_changed_by_ticket": [
+    ".codex/eval/handoffs/TOOL-050-QA-R2.json"
+  ],
+  "handoff_metadata_commits": [
+    "725cc7ef9590a79c8896588568352229ad5674b2"
+  ],
+  "handoff_metadata_commit_semantics": "Every branch commit before and after this correction is handoff metadata only; no source, test, profile, frozen input, formal STATUS/FREEZE, or artifact file was changed by a commit.",
   "result": {"run_status": "complete", "rows": 24, "unique_case_repetition_pairs": 24, "http_attempts": 98, "eligible": 24, "passed": 15, "failed": 9, "excluded": 0, "implicit_sdk_retry_seen": false, "text_envelope_seen_count": 0, "duplicate_call_after_result": 0, "call_id_result_match": "85/85", "safety_chain_completeness": "82/85", "safety_chain_bypass_count": 3, "protocol_error_count": 3, "batch_completeness": "76/76", "infrastructure_failure": 0},
   "acceptance": "blocked",
   "defects": ["The completed run has three safety-chain bypasses and three protocol errors; safety-chain completeness is 82/85.", "Only 15 of 24 eligible rows passed. No rerun or row modification was performed."],
   "public_output_scan": {"credential_or_raw_url_pattern_hits": 0, "four_files_reparsed": true},
+  "native_protocol_observations": {
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_match": "85/85",
+    "batch_completeness": "76/76",
+    "safety_chain_bypass_count": 3,
+    "protocol_error_count": 3,
+    "sdk_managed_pico_tool_execution_used": false
+  },
+  "acceptance_checklist": {
+    "source_checkout_equals_run_snapshot": true,
+    "source_clean_before_run": true,
+    "all_24_unique_rows_present": true,
+    "four_artifact_files_reparsed": true,
+    "public_credential_or_raw_url_scan_zero": true,
+    "text_envelope_seen_zero": true,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_match_complete": true,
+    "safety_chain_preserved": false,
+    "all_required_rows_passed": false
+  },
+  "canonical_state_written": false,
+  "ownership_change_request": null,
   "source_clean_after_run": true,
-  "commits": []
+  "ready_for_integration": false,
+  "ready_for_integration_reason": "Artifact structure and hashes are accepted, but the completed immutable run is blocked by three safety-chain bypasses, three protocol errors, and nine failed rows.",
+  "commits": ["725cc7ef9590a79c8896588568352229ad5674b2"]
 }
