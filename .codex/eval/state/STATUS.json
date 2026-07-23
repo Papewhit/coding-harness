@@ -694,7 +694,15 @@
       "selected_profile": null
     }
   },
-  "active_tickets": {},
+  "active_tickets": {
+    "TOOL-053-A": {
+      "instance_id": "W6R-TOOL-053-A-01",
+      "status": "running",
+      "thread_id": "019f8d81-b0ae-7d43-8e9b-688f8a563d7e",
+      "base_sha": "48a39193580e48acee3fea5c3bfa107e46443d04",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\f506\\pico"
+    }
+  },
   "blocked_tickets": {
     "TOOL-050-QO-R": {
       "instance_id": "W6-TOOL-050-QO-R-01",
@@ -730,6 +738,44 @@
     }
   },
   "ticket_instances": {
+    "W6R-TOOL-053-A-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "TOOL-053-A",
+      "instance_id": "W6R-TOOL-053-A-01",
+      "wave": "W6R",
+      "role": "reviewer/native-conformance-harness-safety-evidence-audit",
+      "thread_id": "019f8d81-b0ae-7d43-8e9b-688f8a563d7e",
+      "wave_base_sha": "48a39193580e48acee3fea5c3bfa107e46443d04",
+      "base_sha": "48a39193580e48acee3fea5c3bfa107e46443d04",
+      "starting_ref": "codex/w6r-wave-base",
+      "branch": null,
+      "branch_requested": "codex/w6r-tool-053-a",
+      "checkout_mode": "detached_at_dispatch",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\f506\\pico",
+      "dependency_handoff_hashes": {
+        "TOOL-051-L": "64d276287e7921a620e0e9e80e3e59b89c97be8f79ea97599767bbf93eb6c9d7",
+        "EVAL-052-H": "660d01fbdb45af6663d3a8f937a06acf92b7c78ff2d34f84ec4e8955c5e2b5db",
+        "W6-wave-handoff": "6055eca111fe08ebd11448e41550402096b017b34d50e2efde1aea906de8fc4f"
+      },
+      "dependency_commits": [
+        "cc5c18c8734301655dc1d0d841972067701c9c2e",
+        "d3f22239ef797a4e685790ed73584e0c582249ab"
+      ],
+      "freeze_hashes": {
+        "formal_freeze": "b4893c10887bb774dda860a5f4b13ec6fa9b8c014e0cb0257e409c0f27df6ba6"
+      },
+      "frozen_cases_git_blob_oid": "f513f6e15c521104b12fe348dc280f73624acd56",
+      "allowed_write_paths": [
+        "F:\\dev\\llm\\pico-eval-artifacts\\native-provider-harness-audit\\W6R-TOOL-053-A-01\\**",
+        ".codex/eval/handoffs/TOOL-053-A.json"
+      ],
+      "prompt_sha256": "2a70f976e7f4c562756d9d515327a90577dfd26285dd2b805791724e49e93245",
+      "prompt_hash_basis": "UTF-8 dispatcher source text",
+      "model": "gpt-5.6-sol",
+      "reasoning_effort": "high",
+      "status": "running",
+      "dispatched_at": "2026-07-23T13:45:45.2357821+08:00"
+    },
     "W6R-EVAL-052-H-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
       "ticket_id": "EVAL-052-H",
@@ -2848,7 +2894,7 @@
     "W5R2": ".codex/eval/state/W5R2-wave-handoff.json",
     "W6": ".codex/eval/state/W6-wave-handoff.json"
   },
-  "ready_tickets": ["TOOL-053-A"],
+  "ready_tickets": [],
   "wave_open": {
     "wave": "W6R",
     "status": "open",
@@ -3086,5 +3132,5 @@
     "w7_started": false,
     "completed_at": "2026-07-23T11:47:50.4506038+08:00"
   },
-  "updated_at": "2026-07-23T13:43:56.7328793+08:00"
+  "updated_at": "2026-07-23T13:45:45.2357821+08:00"
 }
