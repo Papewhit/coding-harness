@@ -6,7 +6,7 @@
 
 ## Start conditions
 
-- `TOOL-050-S`
+- `TOOL-050-S-R1`
 - `TOOL-061-T`
 
 只读取上述依赖的 handoff/freeze；不要读取其他 ticket 的完整对话。

@@ -11,7 +11,7 @@
 
 ## 两个硬 Gate
 
-**Native Eval-ready — `TOOL-050-S`**
+**Native Eval-ready — recovered Gate N1 `TOOL-050-S-R1` + user-authorized human smoke**
 
 要求 Runtime 端到端使用结构化 tool call/result、call ID 完整匹配、无文本 fallback，并至少有一个真实 provider profile 通过 native conformance。通过后才允许 Auto-dream Live、Local Coding Task 和 Context Ablation 正式运行。
 

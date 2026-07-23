@@ -39,7 +39,7 @@
 
 - [ ] 所有数字可追到 rows/hash/formula
 - [ ] 失败/exclusion 不丢失
-- [ ] Native claim 必须引用 TOOL-050-S
+- [ ] Native claim 必须引用 recovered Gate N1 `TOOL-050-S-R1`
 - [ ] Resume claim 必须引用 TOOL-062-G
 - [ ] 支持缺少可选 Context Ablation
 - [ ] Multi-agent claim experimental_only

@@ -11,7 +11,7 @@
 - 每个 call 必须恰好得到一个 result，包括参数错误、未知工具、权限拒绝、安全拒绝、预算拒绝和未执行调用。
 - 所有调用继续经过 Pico 既有 `validate → repetition → permission → policy → execute` 安全链。
 - endpoint 不支持声明方言的 native tools 时标记 `eligible=false`；不得静默降级。
-- `TOOL-050-S` 前，在线 Evaluation 只能作为 SDK/native conformance probe，不得进入正式效果结论。
+- recovered Gate N1 `TOOL-050-S-R1` 与用户授权的 human smoke 前，在线 Evaluation 只能作为 SDK/native conformance probe，不得进入正式效果结论。
 - `TOOL-062-G` 前，不得运行正式进程中断/Resume 结果集。
 
 ## 3. SDK 边界

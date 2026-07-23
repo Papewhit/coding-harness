@@ -44,7 +44,7 @@
 - [ ] 每 run 独立复制
 - [ ] provider/protocol/infrastructure 单独分类
 - [ ] 支持 task/repo/run-kind/shard filters
-- [ ] 正式 run 缺 TOOL-050-S hash 时拒绝
+- [ ] 正式 run 缺 recovered Gate N1 `TOOL-050-S-R1` selection hash 时拒绝
 - [ ] 不依赖最终 taskset 才能测试
 
 ## Commands

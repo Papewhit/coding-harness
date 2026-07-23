@@ -244,6 +244,40 @@
       "gate": "Gate N1 native_eval_ready accepted or all formal online lanes blocked"
     },
     {
+      "id": "W6R",
+      "name": "Native conformance harness repair and Gate N1 recovery",
+      "serial": false,
+      "tickets": [
+        "TOOL-051-L",
+        "EVAL-052-H",
+        "TOOL-053-A",
+        "TOOL-054-G",
+        "TOOL-050-QO-R2",
+        "TOOL-050-QA-R2",
+        "TOOL-050-DA-R2",
+        "TOOL-050-S-R1"
+      ],
+      "dynamic_dependencies": [
+        "TOOL-051-L implements the fixed production live runner and public-profile binding without changing frozen cases",
+        "EVAL-052-H waits for TOOL-051-L and aligns the harness CLI, repetition dimension and artifact bundle",
+        "TOOL-053-A performs a read-only safety and evidence audit after both implementation tickets",
+        "TOOL-054-G waits for the audit, reruns deterministic gates, emits sanitized public profile manifests and freezes a new immutable run snapshot",
+        "the three R2 provider shards start in parallel only after TOOL-054-G is accepted",
+        "TOOL-050-S-R1 waits for all configured R2 shards and stops before W7 for user-authorized human smoke"
+      ],
+      "integration_order": [
+        "TOOL-051-L",
+        "EVAL-052-H",
+        "TOOL-053-A",
+        "TOOL-054-G",
+        "TOOL-050-QO-R2",
+        "TOOL-050-QA-R2",
+        "TOOL-050-DA-R2",
+        "TOOL-050-S-R1"
+      ],
+      "gate": "fixed live runner and versioned harness are frozen; Gate N1 selects at least one complete profile or all formal online lanes remain blocked; W7 requires explicit user approval after human smoke"
+    },
+    {
       "id": "W7",
       "name": "Evaluation pilots and native Resume implementation",
       "serial": false,
@@ -257,7 +291,7 @@
         "EVAL-060"
       ],
       "dynamic_dependencies": [
-        "online shards require TOOL-050-S",
+        "online shards require TOOL-050-S-R1 and explicit user approval after the authorized human smoke",
         "TOOL-061-T and EVAL-060 wait for TOOL-060-R"
       ],
       "gate": "dream evidence and local pilot reviewed; native Resume deterministic contract and interruption runner ready"
@@ -462,7 +496,7 @@
       "thread_type": "run_shard",
       "wave": "W7",
       "depends_on": [
-        "TOOL-050-S",
+        "TOOL-050-S-R1",
         "EVAL-020",
         "EVAL-021-A",
         "EVAL-021-B",
@@ -769,7 +803,7 @@
       "thread_type": "run_shard",
       "wave": "W7",
       "depends_on": [
-        "TOOL-050-S",
+        "TOOL-050-S-R1",
         "EVAL-040-M",
         "EVAL-041"
       ],
@@ -804,7 +838,7 @@
       "thread_type": "run_shard",
       "wave": "W8",
       "depends_on": [
-        "TOOL-050-S",
+        "TOOL-050-S-R1",
         "EVAL-050-R"
       ],
       "ticket_file": "tickets/EVAL-050-F.md",
@@ -881,7 +915,7 @@
       "thread_type": "run_shard",
       "wave": "W9",
       "depends_on": [
-        "TOOL-050-S",
+        "TOOL-050-S-R1",
         "TOOL-062-G",
         "EVAL-061-P"
       ],
@@ -920,7 +954,7 @@
         "EVAL-031-G",
         "EVAL-040-M",
         "EVAL-041",
-        "TOOL-050-S"
+        "TOOL-050-S-R1"
       ],
       "ticket_file": "tickets/EVAL-070-I.md",
       "allowed_write_paths": [
@@ -960,7 +994,7 @@
       "thread_type": "run_shard",
       "wave": "W9",
       "depends_on": [
-        "TOOL-050-S",
+        "TOOL-050-S-R1",
         "EVAL-070-S"
       ],
       "ticket_file": "tickets/EVAL-070-R.md",
@@ -1015,7 +1049,7 @@
       "thread_type": "integrator",
       "wave": "W10",
       "depends_on": [
-        "TOOL-050-S",
+        "TOOL-050-S-R1",
         "TOOL-062-G",
         "EVAL-021-M",
         "EVAL-031-G",
@@ -1877,6 +1911,179 @@
         "conformance cases"
       ]
     },
+    "TOOL-051-L": {
+      "title": "Fixed Production Native Conformance Live Runner",
+      "thread_type": "implementer",
+      "wave": "W6R",
+      "depends_on": [
+        "TOOL-042-G-R2",
+        "TOOL-040-I",
+        "TOOL-049-I",
+        "TOOL-050-S"
+      ],
+      "ticket_file": "tickets/TOOL-051-L.md",
+      "allowed_write_paths": [
+        "pico/evaluation/native_provider_live.py",
+        "pico/evaluation/native_provider_profiles.py",
+        "scripts/build_native_provider_profile.py",
+        "tests/test_native_provider_live.py",
+        "tests/test_native_provider_profile_cli.py",
+        "benchmarks/v3/native-provider/profile.schema.json",
+        "benchmarks/v3/native-provider/profile.example.json",
+        ".codex/eval/handoffs/TOOL-051-L.json"
+      ],
+      "forbidden_write_paths": [
+        "benchmarks/v3/native-provider/cases.json",
+        "pico/cli.py",
+        "provider adapters、Core Runtime、ToolPolicy",
+        "动态 runner plugin 或 SDK-managed tool execution",
+        "本地配置与凭据写入"
+      ]
+    },
+    "EVAL-052-H": {
+      "title": "Versioned Native Conformance Harness Contract",
+      "thread_type": "implementer",
+      "wave": "W6R",
+      "depends_on": [
+        "TOOL-051-L",
+        "TOOL-049-I",
+        "TOOL-050-S"
+      ],
+      "ticket_file": "tickets/EVAL-052-H.md",
+      "allowed_write_paths": [
+        "pico/evaluation/native_provider.py",
+        "scripts/run_native_provider_conformance.py",
+        "tests/test_native_provider_evaluator.py",
+        "tests/test_native_provider_cli.py",
+        ".codex/eval/handoffs/EVAL-052-H.json"
+      ],
+      "forbidden_write_paths": [
+        "benchmarks/v3/native-provider/cases.json",
+        "pico/cli.py、pico/config/**、provider adapters",
+        "全局 evaluation artifact contract",
+        "任意 module:callable formal runner injection"
+      ]
+    },
+    "TOOL-053-A": {
+      "title": "Native Conformance Harness Safety and Evidence Audit",
+      "thread_type": "reviewer",
+      "wave": "W6R",
+      "depends_on": [
+        "TOOL-051-L",
+        "EVAL-052-H"
+      ],
+      "ticket_file": "tickets/TOOL-053-A.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-provider-harness-audit/**",
+        ".codex/eval/handoffs/TOOL-053-A.json"
+      ],
+      "forbidden_write_paths": [
+        "所有产品、evaluator、test 与 frozen input 源码",
+        "STATUS.json、FREEZE.json",
+        "live provider HTTP"
+      ]
+    },
+    "TOOL-054-G": {
+      "title": "Native Conformance Deterministic Preflight and Run Snapshot Gate",
+      "thread_type": "integrator",
+      "wave": "W6R",
+      "depends_on": [
+        "TOOL-042-G-R2",
+        "TOOL-051-L",
+        "EVAL-052-H",
+        "TOOL-053-A"
+      ],
+      "ticket_file": "tickets/TOOL-054-G.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-provider-preflight/**",
+        ".codex/eval/proposals/TOOL-054-G.freeze.json",
+        ".codex/eval/proposals/TOOL-054-G.status.json",
+        ".codex/eval/handoffs/TOOL-054-G.json"
+      ],
+      "forbidden_write_paths": [
+        "产品源码、tests、frozen cases",
+        "正式 live provider conformance HTTP",
+        "raw URL、API key 或其他 credential artifact",
+        "STATUS.json、FREEZE.json"
+      ]
+    },
+    "TOOL-050-QO-R2": {
+      "title": "Recovered Native Conformance：Qwen / OpenAI Responses",
+      "thread_type": "run_shard",
+      "wave": "W6R",
+      "depends_on": [
+        "TOOL-054-G",
+        "EVAL-052-H",
+        "TOOL-020-O"
+      ],
+      "ticket_file": "tickets/TOOL-050-QO-R2.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-provider-conformance/<RUN_SHA>/TOOL-050-QO-R2/**",
+        ".codex/eval/handoffs/TOOL-050-QO-R2.json"
+      ],
+      "forbidden_write_paths": [
+        "所有源码、frozen cases、public profile manifests、本地配置写入"
+      ]
+    },
+    "TOOL-050-QA-R2": {
+      "title": "Recovered Native Conformance：Qwen / Anthropic Messages",
+      "thread_type": "run_shard",
+      "wave": "W6R",
+      "depends_on": [
+        "TOOL-054-G",
+        "EVAL-052-H",
+        "TOOL-020-A"
+      ],
+      "ticket_file": "tickets/TOOL-050-QA-R2.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-provider-conformance/<RUN_SHA>/TOOL-050-QA-R2/**",
+        ".codex/eval/handoffs/TOOL-050-QA-R2.json"
+      ],
+      "forbidden_write_paths": [
+        "所有源码、frozen cases、public profile manifests、本地配置写入"
+      ]
+    },
+    "TOOL-050-DA-R2": {
+      "title": "Recovered Native Conformance：DeepSeek / Anthropic Messages",
+      "thread_type": "run_shard",
+      "wave": "W6R",
+      "depends_on": [
+        "TOOL-054-G",
+        "EVAL-052-H",
+        "TOOL-020-A"
+      ],
+      "ticket_file": "tickets/TOOL-050-DA-R2.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-provider-conformance/<RUN_SHA>/TOOL-050-DA-R2/**",
+        ".codex/eval/handoffs/TOOL-050-DA-R2.json"
+      ],
+      "forbidden_write_paths": [
+        "所有源码、frozen cases、public profile manifests、本地配置写入"
+      ]
+    },
+    "TOOL-050-S-R1": {
+      "title": "Recovered Native Provider Profile Selection（Gate N1）",
+      "thread_type": "integrator",
+      "wave": "W6R",
+      "depends_on": [
+        "TOOL-050-QO-R2",
+        "TOOL-050-QA-R2",
+        "TOOL-050-DA-R2"
+      ],
+      "ticket_file": "tickets/TOOL-050-S-R1.md",
+      "allowed_write_paths": [
+        "benchmarks/v3/native-provider/selection-w6r.json",
+        "<ARTIFACT_ROOT>/native-provider-conformance/<RUN_SHA>/selection/**",
+        ".codex/eval/proposals/TOOL-050-S-R1.freeze.json",
+        ".codex/eval/proposals/TOOL-050-S-R1.status.json",
+        ".codex/eval/handoffs/TOOL-050-S-R1.json"
+      ],
+      "forbidden_write_paths": [
+        "W6 selection.json 与 W6 artifacts",
+        "产品源码、raw rows、conformance cases、public profile manifests",
+        "STATUS.json、FREEZE.json"
+      ]
+    },
     "TOOL-060-R": {
       "title": "Native Tool-call Resume 状态机与 Checkpoint Schema",
       "thread_type": "implementer",
@@ -1926,7 +2133,7 @@
       "thread_type": "run_shard",
       "wave": "W8",
       "depends_on": [
-        "TOOL-050-S",
+        "TOOL-050-S-R1",
         "TOOL-061-T"
       ],
       "ticket_file": "tickets/TOOL-062-R.md",

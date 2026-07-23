@@ -6,7 +6,7 @@
 
 ## Start conditions
 
-- `TOOL-050-S`
+- `TOOL-050-S-R1`
 - `EVAL-040-M`
 - `EVAL-041`
 

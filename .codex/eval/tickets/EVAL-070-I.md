@@ -9,7 +9,7 @@
 - `EVAL-031-G`
 - `EVAL-040-M`
 - `EVAL-041`
-- `TOOL-050-S`
+- `TOOL-050-S-R1`
 
 只读取上述依赖的 handoff/freeze；不要读取其他 ticket 的完整对话。
 

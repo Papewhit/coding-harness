@@ -81,16 +81,16 @@ def depends_transitively(ticket_id: str, required: str) -> bool:
     return False
 
 for online in ("EVAL-021-R", "EVAL-050-P", "EVAL-050-F", "EVAL-061-R", "EVAL-070-R"):
-    if online in tickets and not depends_transitively(online, "TOOL-050-S"):
+    if online in tickets and not depends_transitively(online, "TOOL-050-S-R1"):
         errors.append(f"formal online ticket lacks Gate N1 dependency: {online}")
 for resume in ("EVAL-061-P", "EVAL-061-R"):
     if resume in tickets and not depends_transitively(resume, "TOOL-062-G"):
         errors.append(f"resume ticket lacks Gate N2 dependency: {resume}")
 
 for recovered_gate_consumer in (
-    "TOOL-050-QO-R",
-    "TOOL-050-QA-R",
-    "TOOL-050-DA-R",
+    "TOOL-050-QO-R2",
+    "TOOL-050-QA-R2",
+    "TOOL-050-DA-R2",
     "TOOL-060-R",
 ):
     if recovered_gate_consumer in tickets and not depends_transitively(
