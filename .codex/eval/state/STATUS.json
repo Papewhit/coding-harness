@@ -23,6 +23,29 @@
     "native_resume_ready": "pending"
   },
   "accepted_tickets": {
+    "EVAL-052-H": {
+      "instance_id": "W6R-EVAL-052-H-01",
+      "status": "accepted",
+      "base_sha": "48a39193580e48acee3fea5c3bfa107e46443d04",
+      "dependency_commits": [
+        "cc5c18c8734301655dc1d0d841972067701c9c2e"
+      ],
+      "applied_dependency_commits": [
+        "a2d271511dd5d0b7e32196de5e243c5d9bd1e38a"
+      ],
+      "head_sha": "d3f22239ef797a4e685790ed73584e0c582249ab",
+      "worker_branch_head": "aaf30ba23279f4c3dabb3023f6808ebda9a616c1",
+      "own_commits": [
+        "d3f22239ef797a4e685790ed73584e0c582249ab",
+        "aaf30ba23279f4c3dabb3023f6808ebda9a616c1"
+      ],
+      "integration_commits": [
+        "3717806c4bce448c8ebf89ef1500e0a1d06f62dd",
+        "cb3907b2edb4ec5da6885f7cba74bb7eb3e6ca5f"
+      ],
+      "handoff_path": ".codex/eval/handoffs/EVAL-052-H.json",
+      "handoff_sha256": "660d01fbdb45af6663d3a8f937a06acf92b7c78ff2d34f84ec4e8955c5e2b5db"
+    },
     "TOOL-051-L": {
       "instance_id": "W6R-TOOL-051-L-01",
       "status": "accepted",
@@ -671,15 +694,7 @@
       "selected_profile": null
     }
   },
-  "active_tickets": {
-    "EVAL-052-H": {
-      "instance_id": "W6R-EVAL-052-H-01",
-      "status": "running",
-      "thread_id": "019f8d73-2787-7c62-8a11-a2c68adf0b8c",
-      "base_sha": "48a39193580e48acee3fea5c3bfa107e46443d04",
-      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\534a\\pico"
-    }
-  },
+  "active_tickets": {},
   "blocked_tickets": {
     "TOOL-050-QO-R": {
       "instance_id": "W6-TOOL-050-QO-R-01",
@@ -725,9 +740,9 @@
       "wave_base_sha": "48a39193580e48acee3fea5c3bfa107e46443d04",
       "base_sha": "48a39193580e48acee3fea5c3bfa107e46443d04",
       "starting_ref": "codex/w6r-wave-base",
-      "branch": null,
+      "branch": "codex/w6r-eval-052-h",
       "branch_requested": "codex/w6r-eval-052-h",
-      "checkout_mode": "detached_at_dispatch",
+      "checkout_mode": "worker_branch_from_detached_base",
       "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\534a\\pico",
       "dependency_handoff_hashes": {
         "TOOL-051-L": "64d276287e7921a620e0e9e80e3e59b89c97be8f79ea97599767bbf93eb6c9d7",
@@ -751,8 +766,37 @@
       "prompt_hash_basis": "UTF-8 dispatcher source text",
       "model": "gpt-5.6-sol",
       "reasoning_effort": "medium",
-      "status": "running",
-      "dispatched_at": "2026-07-23T13:29:52.8133998+08:00"
+      "applied_dependency_commits": [
+        {
+          "original_commit": "cc5c18c8734301655dc1d0d841972067701c9c2e",
+          "applied_commit": "a2d271511dd5d0b7e32196de5e243c5d9bd1e38a",
+          "stable_patch_id": "084df602a69cc3dfe62423b164cafef0471f642f"
+        }
+      ],
+      "head_sha": "d3f22239ef797a4e685790ed73584e0c582249ab",
+      "worker_branch_head": "aaf30ba23279f4c3dabb3023f6808ebda9a616c1",
+      "own_commits": [
+        "d3f22239ef797a4e685790ed73584e0c582249ab",
+        "aaf30ba23279f4c3dabb3023f6808ebda9a616c1"
+      ],
+      "integration_commits": [
+        "3717806c4bce448c8ebf89ef1500e0a1d06f62dd",
+        "cb3907b2edb4ec5da6885f7cba74bb7eb3e6ca5f"
+      ],
+      "handoff_sha256": "660d01fbdb45af6663d3a8f937a06acf92b7c78ff2d34f84ec4e8955c5e2b5db",
+      "stable_patch_ids": [
+        "97789245c812198324dae4d258f2e109db16ef85",
+        "162c7badb69a8c8d5d0313f215224fd047fd3c76"
+      ],
+      "tests": {
+        "ticket": "19 passed",
+        "adjacent_native_regressions": "53 passed",
+        "ruff": "passed",
+        "diff_check": "passed"
+      },
+      "status": "accepted",
+      "dispatched_at": "2026-07-23T13:29:52.8133998+08:00",
+      "accepted_at": "2026-07-23T13:43:56.7328793+08:00"
     },
     "W6R-TOOL-051-L-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -2804,7 +2848,7 @@
     "W5R2": ".codex/eval/state/W5R2-wave-handoff.json",
     "W6": ".codex/eval/state/W6-wave-handoff.json"
   },
-  "ready_tickets": [],
+  "ready_tickets": ["TOOL-053-A"],
   "wave_open": {
     "wave": "W6R",
     "status": "open",
@@ -2837,6 +2881,29 @@
         "diff_check": "passed"
       },
       "checkpointed_at": "2026-07-23T13:27:43.8231281+08:00"
+    },
+    {
+      "wave": "W6R",
+      "batch": 2,
+      "accepted_tickets": ["EVAL-052-H"],
+      "canonical_head": "cb3907b2edb4ec5da6885f7cba74bb7eb3e6ca5f",
+      "dependency_commits_for_next_ticket": [
+        "cc5c18c8734301655dc1d0d841972067701c9c2e",
+        "d3f22239ef797a4e685790ed73584e0c582249ab"
+      ],
+      "config_locator_contract": {
+        "schema_version": "pico-native-provider-config-locator-v1",
+        "environment_variable": "PICO_NATIVE_PROVIDER_CONFIG",
+        "secret_config_path_persisted": false,
+        "secret_config_hash_persisted": false
+      },
+      "targeted_test_evidence": {
+        "ticket": "19 passed",
+        "adjacent_native_regressions": "53 passed",
+        "ruff": "passed",
+        "diff_check": "passed"
+      },
+      "checkpointed_at": "2026-07-23T13:43:56.7328793+08:00"
     }
   ],
   "wave_close": {
@@ -3019,5 +3086,5 @@
     "w7_started": false,
     "completed_at": "2026-07-23T11:47:50.4506038+08:00"
   },
-  "updated_at": "2026-07-23T13:29:52.8133998+08:00"
+  "updated_at": "2026-07-23T13:43:56.7328793+08:00"
 }
