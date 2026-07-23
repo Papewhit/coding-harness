@@ -302,6 +302,38 @@
       "gate": "WSL canonical preflight passes with symmetric dual-dialect evidence; Gate N1 selects at least one complete profile or all formal online lanes remain blocked; W7 requires explicit user approval after human smoke"
     },
     {
+      "id": "W6R3",
+      "name": "Oracle v2, Responses stateless transcript and deterministic recovery",
+      "serial": false,
+      "tickets": [
+        "EVAL-059-O",
+        "TEST-059-C",
+        "TOOL-059-O",
+        "EVAL-059-H",
+        "TOOL-059-R",
+        "AUDIT-059-A",
+        "TOOL-059-G"
+      ],
+      "dynamic_dependencies": [
+        "EVAL-059-O versions and freezes Oracle v2 before any product fix; W6R2 cases, rows, selection and smoke evidence remain immutable",
+        "TEST-059-C applies the accepted Oracle commit and records the Responses context-loss red baseline before TOOL-059-O",
+        "TOOL-059-O waits for TEST-059-C and changes only the OpenAI Responses Adapter",
+        "EVAL-059-H and TOOL-059-R may run in parallel after EVAL-059-O with disjoint ownership",
+        "AUDIT-059-A waits for every implementation and fixture ticket and remains read-only",
+        "TOOL-059-G waits for the audit, runs only WSL deterministic gates and emits a W6R4 recovery snapshot without provider HTTP"
+      ],
+      "integration_order": [
+        "EVAL-059-O",
+        "TEST-059-C",
+        "TOOL-059-O",
+        "EVAL-059-H",
+        "TOOL-059-R",
+        "AUDIT-059-A",
+        "TOOL-059-G"
+      ],
+      "gate": "Oracle v2 and historical adjudication are frozen; stateless Responses, smoke verifier and repetition regressions pass in a fresh WSL clone; W7 remains blocked pending W6R4 reselection and a new accepted human smoke"
+    },
+    {
       "id": "W7",
       "name": "Evaluation pilots and native Resume implementation",
       "serial": false,
@@ -315,7 +347,7 @@
         "EVAL-060"
       ],
       "dynamic_dependencies": [
-        "online shards require TOOL-050-S-R1 and explicit user approval after the authorized human smoke",
+        "TOOL-050-S-R1 no longer authorizes online shards after its selected-profile human smoke failed; online shards require a future W6R4 recovered selection and explicit user approval after the new human smoke",
         "TOOL-061-T and EVAL-060 wait for TOOL-060-R"
       ],
       "gate": "dream evidence and local pilot reviewed; native Resume deterministic contract and interruption runner ready"
@@ -2195,6 +2227,150 @@
       "forbidden_write_paths": [
         "W6 selection.json 与 W6 artifacts",
         "产品源码、raw rows、conformance cases、public profile manifests",
+        "STATUS.json、FREEZE.json"
+      ]
+    },
+    "EVAL-059-O": {
+      "title": "Native Provider Oracle v2 与历史证据审定",
+      "thread_type": "fixture_builder",
+      "wave": "W6R3",
+      "depends_on": [
+        "TOOL-050-S-R1"
+      ],
+      "ticket_file": "tickets/EVAL-059-O.md",
+      "allowed_write_paths": [
+        "benchmarks/v3/native-provider/cases-v2.json",
+        "pico/evaluation/native_provider.py",
+        "pico/evaluation/native_provider_live.py",
+        "tests/test_native_provider_evaluator.py",
+        "tests/test_native_provider_live.py",
+        "<ARTIFACT_ROOT>/native-provider-oracle-v2/**",
+        ".codex/eval/proposals/EVAL-059-O.freeze.json",
+        ".codex/eval/proposals/EVAL-059-O.status.json",
+        ".codex/eval/handoffs/EVAL-059-O.json"
+      ],
+      "forbidden_write_paths": [
+        "W6/W6R/W6R2 frozen inputs, rows, selection and artifacts",
+        "Provider adapters、Runtime/Core",
+        "STATUS.json、FREEZE.json"
+      ]
+    },
+    "TEST-059-C": {
+      "title": "Responses Stateless Transcript Red Tests",
+      "thread_type": "implementer",
+      "wave": "W6R3",
+      "depends_on": [
+        "EVAL-059-O"
+      ],
+      "ticket_file": "tickets/TEST-059-C.md",
+      "allowed_write_paths": [
+        "tests/test_openai_responses_tools.py",
+        "tests/test_native_runtime_integration.py",
+        "tests/test_native_stateless_transcript.py",
+        ".codex/eval/handoffs/TEST-059-C.json"
+      ],
+      "forbidden_write_paths": [
+        "pico/**",
+        "frozen cases/evaluator/metrics",
+        "STATUS.json、FREEZE.json"
+      ]
+    },
+    "TOOL-059-O": {
+      "title": "OpenAI Responses 完整无状态 Transcript 修复",
+      "thread_type": "implementer",
+      "wave": "W6R3",
+      "depends_on": [
+        "EVAL-059-O",
+        "TEST-059-C"
+      ],
+      "ticket_file": "tickets/TOOL-059-O.md",
+      "allowed_write_paths": [
+        "pico/providers/openai_responses.py",
+        ".codex/eval/handoffs/TOOL-059-O.json"
+      ],
+      "forbidden_write_paths": [
+        "Core/Runtime、Anthropic Adapter",
+        "Oracle v2、frozen cases 与 TEST-059-C tests",
+        "STATUS.json、FREEZE.json"
+      ]
+    },
+    "EVAL-059-H": {
+      "title": "Human-smoke v2 Manifest、Runner 与 Verifier",
+      "thread_type": "fixture_builder",
+      "wave": "W6R3",
+      "depends_on": [
+        "EVAL-059-O"
+      ],
+      "ticket_file": "tickets/EVAL-059-H.md",
+      "allowed_write_paths": [
+        "benchmarks/v3/native-provider/human-smoke-v2.json",
+        "scripts/run_v3_native_human_smoke.py",
+        "tests/test_v3_native_human_smoke.py",
+        "<ARTIFACT_ROOT>/native-provider-human-smoke-adjudication/**",
+        ".codex/eval/proposals/EVAL-059-H.freeze.json",
+        ".codex/eval/handoffs/EVAL-059-H.json"
+      ],
+      "forbidden_write_paths": [
+        "Provider adapters、Runtime/Core",
+        "W6R2 human-smoke 原始目录与 evidence",
+        "STATUS.json、FREEZE.json"
+      ]
+    },
+    "TOOL-059-R": {
+      "title": "Repetition Path Fingerprint 规范化",
+      "thread_type": "implementer",
+      "wave": "W6R3",
+      "depends_on": [
+        "EVAL-059-O"
+      ],
+      "ticket_file": "tickets/TOOL-059-R.md",
+      "allowed_write_paths": [
+        "pico/core/tool_repetition.py",
+        "pico/core/runtime.py",
+        "tests/test_native_tool_repetition.py",
+        ".codex/eval/handoffs/TOOL-059-R.json"
+      ],
+      "forbidden_write_paths": [
+        "Provider adapters、evaluation oracle/fixtures",
+        "permission、ToolPolicy 与 workspace containment 实现",
+        "STATUS.json、FREEZE.json"
+      ]
+    },
+    "AUDIT-059-A": {
+      "title": "Oracle v2 与 Responses Recovery 只读复审",
+      "thread_type": "reviewer",
+      "wave": "W6R3",
+      "depends_on": [
+        "EVAL-059-O",
+        "TEST-059-C",
+        "TOOL-059-O",
+        "EVAL-059-H",
+        "TOOL-059-R"
+      ],
+      "ticket_file": "tickets/AUDIT-059-A.md",
+      "allowed_write_paths": [
+        ".codex/eval/handoffs/AUDIT-059-A.json"
+      ],
+      "forbidden_write_paths": [
+        "除 handoff 外的所有路径"
+      ]
+    },
+    "TOOL-059-G": {
+      "title": "W6R3 Deterministic Recovery Gate",
+      "thread_type": "integrator",
+      "wave": "W6R3",
+      "depends_on": [
+        "AUDIT-059-A"
+      ],
+      "ticket_file": "tickets/TOOL-059-G.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-deterministic-gate/W6R3-TOOL-059-G-01/**",
+        ".codex/eval/proposals/TOOL-059-G.freeze.json",
+        ".codex/eval/proposals/TOOL-059-G.status.json",
+        ".codex/eval/handoffs/TOOL-059-G.json"
+      ],
+      "forbidden_write_paths": [
+        "所有产品源码、tests、Oracle、fixtures",
         "STATUS.json、FREEZE.json"
       ]
     },

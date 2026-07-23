@@ -11,8 +11,17 @@
 - 每个 call 必须恰好得到一个 result，包括参数错误、未知工具、权限拒绝、安全拒绝、预算拒绝和未执行调用。
 - 所有调用继续经过 Pico 既有 `validate → repetition → permission → policy → execute` 安全链。
 - endpoint 不支持声明方言的 native tools 时标记 `eligible=false`；不得静默降级。
-- recovered Gate N1 `TOOL-050-S-R1` 与用户授权的 human smoke 前，在线 Evaluation 只能作为 SDK/native conformance probe，不得进入正式效果结论。
+- latest accepted Gate N1 selection 与成功的用户授权 human smoke 前，在线 Evaluation 只能作为 SDK/native conformance probe，不得进入正式效果结论。W6R2 `TOOL-050-S-R1` 的 selected-profile smoke 已失败，不能继续授权 W7。
 - `TOOL-062-G` 前，不得运行正式进程中断/Resume 结果集。
+
+### Native 安全证据的责任边界
+
+- Provider/profile 只产生描述性 tool call，不能直接执行 Pico 工具。安全链是 Runtime snapshot 级不变量，不是 profile 能力或 profile selection 指标。
+- 只有进入 `runtime.run_tool()` 的调用才进入 `validate → repetition → permission → policy → execute` 证据分母。Runtime 前被拒绝的调用记录为 `pre_runtime_rejection`，不得记作 safety-chain bypass。
+- `execute=completed` 表示工具实现正常返回，不表示操作成功；操作结果以结构化 `tool_status` / `tool_error_code` 为准。非零 shell exit 可以同时是 `execute=completed` 与 `tool_status=error`。
+- 真正的 Runtime chain violation 是：调用已进入或绕过 Runtime 执行，但缺少合法的有序安全链。任意一次都阻断整个 source snapshot，而不是只淘汰观察到该调用的 profile。
+- SDK-managed execution、Adapter/Harness 直接调用工具实现或 Runtime 外副作用属于 snapshot 级 hard failure。证据 hook 缺失或 evaluator 误读属于 harness/oracle failure，必须修复并重跑，不能归因于 provider。
+- Oracle 错误必须提升版本；旧 cases、rows、selection 和 hashes 保持不可变。历史 evidence 可以生成版本化 adjudication，但不能被原地重分类后直接晋级。
 
 ## 3. SDK 边界
 
