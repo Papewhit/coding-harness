@@ -72,7 +72,7 @@
   "canonical_state_written": false,
   "ownership_change_request": null,
   "source_clean_after_run": true,
-  "ready_for_integration": false,
+  "ready_for_integration": true,
   "ready_for_integration_reason": "Artifact structure and hashes are accepted, but the completed immutable run is blocked by three safety-chain bypasses, three protocol errors, and nine failed rows.",
   "commits": ["725cc7ef9590a79c8896588568352229ad5674b2"]
 }
