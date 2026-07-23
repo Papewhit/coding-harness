@@ -1,0 +1,227 @@
+{
+  "schema_version": "pico-native-provider-selection-v1",
+  "ticket_id": "TOOL-050-S-R1",
+  "instance_id": "W6R2-TOOL-050-S-R1-01",
+  "wave": "W6R2",
+  "wave_base_sha": "6b4fa94948888b7c95dfbe4cd0134205356decba",
+  "run_snapshot_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+  "run_snapshot_tree": "158cd2abde04d20e0544c4615db3cb0676f8fc83",
+  "selection_status": "selected",
+  "eligible_profile_count": 1,
+  "selected_profile": {
+    "name": "dashscope-o",
+    "profile_id": "sha256:41ebb321c6332867f0bb020621b7e1c17f8c60430374c37c3a670c916326ee70",
+    "public_manifest_sha256": "499655acd72b0c10f0bd0a938a032060fb7a5b776e74e478742078da1a137331",
+    "model": "qwen3.6-plus",
+    "base_url_fingerprint": "sha256:0568e2eff482ec7379afab1c75b4cc21121e6a5f0b58b293b957c13199d30bc8",
+    "wire_dialect": "openai-responses",
+    "adapter_mode": "official-sdk-transport",
+    "sdk": {
+      "package": "openai",
+      "version": "2.46.0"
+    },
+    "capabilities": {
+      "native_tools": true,
+      "opaque_continuation_support": false,
+      "parallel_tool_calls": false,
+      "reasoning_support": false,
+      "strict_tool_schema": false,
+      "thinking_support": false
+    },
+    "stream": false,
+    "parallel_tool_execution": false,
+    "sdk_max_retries": 0,
+    "pico_provider_attempts": 1,
+    "conformance_bundle_sha256": "8d6c4061d9960e4670f221f8507618cb2bacb81f2ebf50f3d1a9bfb279d813f2",
+    "conformance_bundle_hash_basis": "sha256 of canonical JSON inventory mapping the four artifact filenames to their file-byte SHA-256 values"
+  },
+  "gate": {
+    "name": "Gate N1",
+    "status": "passed",
+    "complete_conformance_evidence_required": true,
+    "complete_conformance_evidence_observed": true,
+    "hard_gate_eligibility_source": "independent reconstruction from all 72 rows and their HTTP, call, result, batch, continuation, and safety-chain evidence; runner-level eligible fields were not used as profile eligibility",
+    "hard_requirements": [
+      {
+        "metric": "scheduled_rows_complete",
+        "requirement": "8 cases x 3 repetitions per profile",
+        "value": "24/24 for each of 3 profiles",
+        "computation_status": "computable"
+      },
+      {
+        "metric": "tool_required_native_call_observed",
+        "requirement": "100%",
+        "selected_profile_value": "21/21",
+        "computation_status": "computable"
+      },
+      {
+        "metric": "call_id_result_match",
+        "requirement": "100%",
+        "selected_profile_value": "50/50",
+        "computation_status": "computable"
+      },
+      {
+        "metric": "batch_result_completeness",
+        "requirement": "100%",
+        "selected_profile_value": "35/35",
+        "computation_status": "computable"
+      },
+      {
+        "metric": "duplicate_call_after_result",
+        "requirement": 0,
+        "selected_profile_value": 0,
+        "computation_status": "computable"
+      },
+      {
+        "metric": "unknown_block_loss",
+        "requirement": 0,
+        "selected_profile_value": 0,
+        "computation_status": "computable"
+      },
+      {
+        "metric": "safety_chain_bypass",
+        "requirement": 0,
+        "selected_profile_value": 0,
+        "computation_status": "computable"
+      },
+      {
+        "metric": "text_envelope",
+        "requirement": 0,
+        "selected_profile_value": 0,
+        "computation_status": "computable"
+      },
+      {
+        "metric": "sdk_hidden_retry",
+        "requirement": 0,
+        "selected_profile_value": 0,
+        "computation_status": "computable"
+      }
+    ]
+  },
+  "post_hard_gate_comparison": {
+    "eligible_profiles_compared": [
+      "dashscope-o"
+    ],
+    "selected_profile_metrics": {
+      "completion": {
+        "numerator": 18,
+        "denominator": 24,
+        "value": 0.75
+      },
+      "protocol_error_count": 0,
+      "sdk_retry_count": 0,
+      "pico_retry_count": 0,
+      "repetition_status_stability": {
+        "stable_cases": 6,
+        "total_cases": 8,
+        "value": 0.75
+      }
+    },
+    "excluded_before_comparison": [
+      {
+        "profile": "dashscope-a",
+        "reason": "Hard Gate failed: 3 safety-chain bypasses across 85 calls."
+      },
+      {
+        "profile": "deepseek",
+        "reason": "Hard Gate failed: 10 safety-chain bypasses across 148 calls."
+      }
+    ]
+  },
+  "frozen_inputs": {
+    "formal_status_sha256": "d8a5b26295478e65dbb213390733f81ec0e9f6e4eca32fe980921dea50d78e4b",
+    "formal_freeze_sha256": "546893c11eeb2c78e473257e6bbb166cb1c5b904d22289a34cdb57865034b7ce",
+    "tool_058_g_handoff_sha256": "5dcbbcc456f1d917c4bbb8708495ef1ab38d9b7f5d5268f62b5bb7d3524d3df8",
+    "cases_git_blob_oid": "f513f6e15c521104b12fe348dc280f73624acd56",
+    "artifact_contract_sha256": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "native_contract_sha256": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema_sha256": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision_sha256": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "sdk_dependency_lock_sha256": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+    "native_deterministic_gate_sha256": "2fc1ebbe4d64c5be80e7fe063584915f12aabf3a8f8c08796d2cf009e94849a5"
+  },
+  "source_bindings": {
+    "cases": {
+      "path": "benchmarks/v3/native-provider/cases.json",
+      "git_blob_oid": "f513f6e15c521104b12fe348dc280f73624acd56",
+      "git_blob_payload_sha256": "b20cdf446a21e20db035213c9308b47daa252cb9b0aadbebf7ec5747750e9f4d",
+      "crlf_checkout_sha256": "92f746b113a88ceb652e4e8ec651021b1358d9922ab91c0dad34e62c0068b9e3"
+    },
+    "evaluator": {
+      "path": "pico/evaluation/native_provider.py",
+      "git_blob_oid": "244bf13a0c77cea907d7c6bc98afbf5d3299670b",
+      "git_blob_payload_sha256": "777313f0966224b82071ceff4d7acad633031fcde87eb63a97e5c468c89f0eec",
+      "crlf_checkout_sha256": "51a6f23f9c23f4f9c0172a086f78264b9df3fb59bbecbdb50552ce398ca05b2f"
+    },
+    "production_runner": {
+      "path": "pico/evaluation/native_provider_live.py",
+      "git_blob_oid": "cfd9a0c654e0200ea9ca437bd8c3fd1a92d58587",
+      "git_blob_payload_sha256": "35e4573b5275015eb6caabde6a8c6baa9a17740742b5aa155baf93fb21de56e8",
+      "crlf_checkout_sha256": "55c5c0e5bb77dab4c19bc92b64e2239cadfd1771c8fb07093db0c3b318c3f90a"
+    },
+    "formal_cli": {
+      "path": "scripts/run_native_provider_conformance.py",
+      "git_blob_oid": "d615afafd7cbb02d75e571a06c82b7e6d16a9821",
+      "git_blob_payload_sha256": "834f87bc9ee04fac6c4247aab7f352c6d6f21bc92da3c4121bb2303ce6f6a95d",
+      "crlf_checkout_sha256": "6aa1a5f8ceaf739a9e456f787fc33519c679a7a54a2434c3f6defd4940179100"
+    },
+    "artifact_manifest_hash_basis_note": "Each manifest file-byte binding matches the same frozen Git blob under either LF git-blob payload bytes or CRLF checkout bytes; source SHA, tree, and Git blob OIDs are identical."
+  },
+  "profiles": [
+    {
+      "name": "dashscope-o",
+      "hard_gate_eligible": true,
+      "handoff_sha256": "52d3b226d233b697f505bc2c4b8649511f3afd7dc379e3b10211dd85ab1958ac",
+      "manifest_sha256": "d8e984e1d3dd2b917d2adfb27cb610dbe6ab6b14bd8657f02812d84e69a199e4",
+      "rows_sha256": "c95dae0f8c3a90bc46e22e9f07dfce53784e43557f0fdf960bc9f5ba1fa92da3",
+      "evidence_index_sha256": "2cabd5d8dd94a1b50be83cfff800fcc1bba90203e9d3a58a25da17bc81fee1d2",
+      "summary_sha256": "b9bfce582704216ba6f7ff37b68234c8292eee625da2e9cadb425c6b02ef3718",
+      "conformance_bundle_sha256": "8d6c4061d9960e4670f221f8507618cb2bacb81f2ebf50f3d1a9bfb279d813f2"
+    },
+    {
+      "name": "dashscope-a",
+      "hard_gate_eligible": false,
+      "handoff_sha256": "bb1dae84b0ed3ba267e2c7623fb6eb48640214fb8ba45feb5481d8be4c6d2000",
+      "manifest_sha256": "99c97102fa46f17bc0a120757eca0328401595d31af38a00c4b6dd2213d0b863",
+      "rows_sha256": "dfaf6efe30718d69ebd27f918f6f40978d8fb58af9454bbc702beabf86f09089",
+      "evidence_index_sha256": "6680bc2f0e3e4c29fa5fc804f33d2bd8ee1be6797fc9de3d0c75060b1806819e",
+      "summary_sha256": "e187bea1aa8a25928e944f9b55dd46392b68540a6f191ba31fdf76026d3b06d7",
+      "conformance_bundle_sha256": "3120b78515671eb875f40916f55e2e4c87f3e9f59b3cdc7fdf43bce5fce49413"
+    },
+    {
+      "name": "deepseek",
+      "hard_gate_eligible": false,
+      "handoff_sha256": "eec6ee22918fb50adfde7df7a0a7c39eb3d85894a7e2c627a57a59b964202763",
+      "manifest_sha256": "7b7e903c9ba01ec3c51e99c7ef75faae26f761e7834da85e64116867338576cd",
+      "rows_sha256": "86cd167db8a9054a94bef435517a5e2cbeec7484407c6a961d6904a839235fe4",
+      "evidence_index_sha256": "b7d316bc458c72271910ce337d00de0919aecc953adc98bb2d6af413982671aa",
+      "summary_sha256": "56dcedae55b21647bd0b278ed42de3c473b83f8954939576e51411b496db253f",
+      "conformance_bundle_sha256": "330124709c754edd01b7bdcba6968d0f072a45e49ee4823569dc021d73febe3b"
+    }
+  ],
+  "human_smoke_proposal": {
+    "profile": "dashscope-o",
+    "profile_id": "sha256:41ebb321c6332867f0bb020621b7e1c17f8c60430374c37c3a670c916326ee70",
+    "public_manifest_sha256": "499655acd72b0c10f0bd0a938a032060fb7a5b776e74e478742078da1a137331",
+    "source_commit": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+    "authorization_required": true,
+    "status": "not_run"
+  },
+  "proposed_canonical_commit": {
+    "sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+    "semantics": "This immutable dependency-applied source/run snapshot is the proposed canonical code commit for the authorized human smoke and later formal native evaluation. The TOOL-050-S-R1 worker commit is selection metadata only and must not replace this source commit."
+  },
+  "substitution_policy": {
+    "prior_w6_or_w6r_rows_used": false,
+    "runner_eligible_used_as_gate_eligibility": false,
+    "failed_rows_dropped": false,
+    "absence_of_observation_treated_as_pass": false,
+    "text_protocol_fallback_used": false
+  },
+  "evaluation_runs": {
+    "formal_effectiveness": false,
+    "human_smoke": false,
+    "resume": false,
+    "w7_started": false
+  }
+}
