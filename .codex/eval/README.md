@@ -38,6 +38,7 @@
 - 同一核心文件同一时刻只有一个 owner。
 - run shard 不修改源码，只写独占 artifact 目录。
 - fixture/oracle/metric 先冻结，产品修复独立提交，再用同版输入重跑。
+- Testing 与 Evaluation 以 Ubuntu WSL2/Python 3.12 fresh clone 为 canonical 环境；Windows 仅作 best-effort 开发兼容检查。
 
 ## 首次使用
 

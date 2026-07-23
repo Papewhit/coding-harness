@@ -1,7 +1,7 @@
 # TOOL-050-S-R1 — Recovered Native Provider Profile Selection（Gate N1）
 
 **Thread type:** `integrator`
-**Wave:** `W6R`
+**Wave:** `W6R2`
 **Base SHA:** 由 Integrator 填写；只聚合三个 R2 shard。
 
 ## Start conditions
@@ -12,11 +12,11 @@
 
 ## Goal
 
-只使用 repaired harness 的新 artifacts 执行 Gate N1，选择唯一正式 Evaluation profile；保留 W6 blocked selection，不覆盖或复用其 rows。
+只使用 W6R2 repaired harness 的新 artifacts 执行 Gate N1，选择唯一正式 Evaluation profile；保留 W6/W6R blocked 状态与证据，不覆盖或复用其 rows。
 
 ## Allowed write paths
 
-- `benchmarks/v3/native-provider/selection-w6r.json`
+- `benchmarks/v3/native-provider/selection-w6r2.json`
 - `<ARTIFACT_ROOT>/native-provider-conformance/<RUN_SHA>/selection/**`
 - `.codex/eval/proposals/TOOL-050-S-R1.freeze.json`
 - `.codex/eval/proposals/TOOL-050-S-R1.status.json`
@@ -24,7 +24,7 @@
 
 ## Forbidden write paths
 
-- W6 `selection.json` 与 W6 artifacts
+- W6 `selection.json`、W6/W6R artifacts
 - 产品源码、raw rows、conformance cases、public profile manifests
 - 正式 `STATUS.json`、`FREEZE.json`
 

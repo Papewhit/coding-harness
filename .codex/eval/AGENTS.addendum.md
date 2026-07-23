@@ -7,6 +7,7 @@
 - Provider SDK 只能位于 Adapter/transport 边界；禁止 SDK Tool Runner、Agents Runner 和自动执行 Pico 工具。
 - Core、Session、Checkpoint 不得保存 SDK 对象；只保存 Pico contract 与 JSON-safe opaque continuation。
 - 所有 native tool call/result 必须以 provider call ID 一一匹配，并继续经过现有安全链。
+- Testing 与 Evaluation 的 canonical 环境是 Ubuntu WSL2/Python 3.12 fresh clone；Windows 仅作 best-effort 开发兼容检查，不作为本计划 Gate，也不在评测期间补 Windows native 能力。
 - recovered Gate N1 `TOOL-050-S-R1` 与用户授权的 human smoke 前禁止正式在线效果评测；`TOOL-062-G` 前禁止正式 Resume 评测。
 - 每个写入 ticket 使用独立 worktree/branch，从不可变 base SHA 开始；共享文件只由指定 owner 修改。
 - fixture/oracle/metric 先冻结，产品修复独立提交；不得为了改善结果同步改题。

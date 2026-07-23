@@ -251,31 +251,55 @@
         "TOOL-051-L",
         "EVAL-052-H",
         "TOOL-053-A",
-        "TOOL-054-G",
+        "TOOL-054-G"
+      ],
+      "dynamic_dependencies": [
+        "TOOL-051-L implements the fixed production live runner and public-profile binding without changing frozen cases",
+        "EVAL-052-H waits for TOOL-051-L and aligns the harness CLI, repetition dimension and artifact bundle",
+        "TOOL-053-A performs a read-only safety and evidence audit after both implementation tickets",
+        "TOOL-054-G waits for the audit, reruns deterministic gates and either proposes a new immutable run snapshot or closes W6R as blocked"
+      ],
+      "integration_order": [
+        "TOOL-051-L",
+        "EVAL-052-H",
+        "TOOL-053-A",
+        "TOOL-054-G"
+      ],
+      "gate": "fixed live runner and versioned harness are implemented and audited; the preflight result is preserved even when the run snapshot is blocked"
+    },
+    {
+      "id": "W6R2",
+      "name": "WSL canonical native conformance evidence recovery",
+      "serial": false,
+      "tickets": [
+        "TOOL-055-E",
+        "EVAL-056-H",
+        "TOOL-057-A",
+        "TOOL-058-G",
         "TOOL-050-QO-R2",
         "TOOL-050-QA-R2",
         "TOOL-050-DA-R2",
         "TOOL-050-S-R1"
       ],
       "dynamic_dependencies": [
-        "TOOL-051-L implements the fixed production live runner and public-profile binding without changing frozen cases",
-        "EVAL-052-H waits for TOOL-051-L and aligns the harness CLI, repetition dimension and artifact bundle",
-        "TOOL-053-A performs a read-only safety and evidence audit after both implementation tickets",
-        "TOOL-054-G waits for the audit, reruns deterministic gates, emits sanitized public profile manifests and freezes a new immutable run snapshot",
-        "the three R2 provider shards start in parallel only after TOOL-054-G is accepted",
+        "TOOL-055-E makes repository-owned OpenAI Responses coverage as strict as Anthropic Messages and emits ordered safety-chain evidence",
+        "EVAL-056-H waits for TOOL-055-E and binds ordered evidence plus the private config locator into the harness contract",
+        "TOOL-057-A performs a read-only dual-dialect and evidence-closure audit",
+        "TOOL-058-G uses only an Ubuntu WSL2/Python 3.12 fresh clone as the canonical Gate; Windows is optional and non-blocking",
+        "the three R2 provider shards start in parallel only after TOOL-058-G is accepted and all run in WSL from one immutable snapshot",
         "TOOL-050-S-R1 waits for all configured R2 shards and stops before W7 for user-authorized human smoke"
       ],
       "integration_order": [
-        "TOOL-051-L",
-        "EVAL-052-H",
-        "TOOL-053-A",
-        "TOOL-054-G",
+        "TOOL-055-E",
+        "EVAL-056-H",
+        "TOOL-057-A",
+        "TOOL-058-G",
         "TOOL-050-QO-R2",
         "TOOL-050-QA-R2",
         "TOOL-050-DA-R2",
         "TOOL-050-S-R1"
       ],
-      "gate": "fixed live runner and versioned harness are frozen; Gate N1 selects at least one complete profile or all formal online lanes remain blocked; W7 requires explicit user approval after human smoke"
+      "gate": "WSL canonical preflight passes with symmetric dual-dialect evidence; Gate N1 selects at least one complete profile or all formal online lanes remain blocked; W7 requires explicit user approval after human smoke"
     },
     {
       "id": "W7",
@@ -2007,13 +2031,103 @@
         "STATUS.json、FREEZE.json"
       ]
     },
+    "TOOL-055-E": {
+      "title": "Dual-Dialect Runner Parity and Safety-chain Evidence",
+      "thread_type": "implementer",
+      "wave": "W6R2",
+      "depends_on": [
+        "TOOL-051-L",
+        "EVAL-052-H",
+        "TOOL-053-A"
+      ],
+      "ticket_file": "tickets/TOOL-055-E.md",
+      "allowed_write_paths": [
+        "pico/evaluation/native_provider_live.py",
+        "pico/core/tool_executor.py",
+        "tests/test_native_provider_live.py",
+        "tests/test_native_safety_chain_evidence.py",
+        ".codex/eval/handoffs/TOOL-055-E.json"
+      ],
+      "forbidden_write_paths": [
+        "benchmarks/v3/native-provider/cases.json",
+        "provider adapters、ToolPolicy 规则、permission 行为",
+        "pico/evaluation/native_provider.py 与正式 artifact writer",
+        "本地配置、public profile 与凭据"
+      ]
+    },
+    "EVAL-056-H": {
+      "title": "Native Harness Evidence and Private-config Contract",
+      "thread_type": "implementer",
+      "wave": "W6R2",
+      "depends_on": [
+        "TOOL-055-E",
+        "EVAL-052-H"
+      ],
+      "ticket_file": "tickets/EVAL-056-H.md",
+      "allowed_write_paths": [
+        "pico/evaluation/native_provider.py",
+        "scripts/run_native_provider_conformance.py",
+        "tests/test_native_provider_evaluator.py",
+        "tests/test_native_provider_cli.py",
+        ".codex/eval/handoffs/EVAL-056-H.json"
+      ],
+      "forbidden_write_paths": [
+        "benchmarks/v3/native-provider/cases.json",
+        "pico/cli.py、pico/config/**、provider adapters",
+        "动态 runner injection、SDK-managed tool execution",
+        "本地配置、credential、raw URL 或配置路径写入公开 artifact"
+      ]
+    },
+    "TOOL-057-A": {
+      "title": "Dual-Dialect Evidence Closure Audit",
+      "thread_type": "reviewer",
+      "wave": "W6R2",
+      "depends_on": [
+        "TOOL-055-E",
+        "EVAL-056-H"
+      ],
+      "ticket_file": "tickets/TOOL-057-A.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-provider-harness-audit/W6R2-TOOL-057-A-01/**",
+        ".codex/eval/handoffs/TOOL-057-A.json"
+      ],
+      "forbidden_write_paths": [
+        "所有产品、evaluator、tests 与 frozen inputs",
+        "STATUS.json、FREEZE.json",
+        "live provider HTTP"
+      ]
+    },
+    "TOOL-058-G": {
+      "title": "WSL Canonical Native Preflight and Run Snapshot Gate",
+      "thread_type": "integrator",
+      "wave": "W6R2",
+      "depends_on": [
+        "TOOL-042-G-R2",
+        "TOOL-055-E",
+        "EVAL-056-H",
+        "TOOL-057-A"
+      ],
+      "ticket_file": "tickets/TOOL-058-G.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-provider-preflight/W6R2-TOOL-058-G-01/**",
+        ".codex/eval/proposals/TOOL-058-G.freeze.json",
+        ".codex/eval/proposals/TOOL-058-G.status.json",
+        ".codex/eval/handoffs/TOOL-058-G.json"
+      ],
+      "forbidden_write_paths": [
+        "产品源码、tests、frozen cases",
+        "live provider HTTP",
+        "raw URL、credential、private config path",
+        "STATUS.json、FREEZE.json"
+      ]
+    },
     "TOOL-050-QO-R2": {
       "title": "Recovered Native Conformance：Qwen / OpenAI Responses",
       "thread_type": "run_shard",
-      "wave": "W6R",
+      "wave": "W6R2",
       "depends_on": [
-        "TOOL-054-G",
-        "EVAL-052-H",
+        "TOOL-058-G",
+        "EVAL-056-H",
         "TOOL-020-O"
       ],
       "ticket_file": "tickets/TOOL-050-QO-R2.md",
@@ -2028,10 +2142,10 @@
     "TOOL-050-QA-R2": {
       "title": "Recovered Native Conformance：Qwen / Anthropic Messages",
       "thread_type": "run_shard",
-      "wave": "W6R",
+      "wave": "W6R2",
       "depends_on": [
-        "TOOL-054-G",
-        "EVAL-052-H",
+        "TOOL-058-G",
+        "EVAL-056-H",
         "TOOL-020-A"
       ],
       "ticket_file": "tickets/TOOL-050-QA-R2.md",
@@ -2046,10 +2160,10 @@
     "TOOL-050-DA-R2": {
       "title": "Recovered Native Conformance：DeepSeek / Anthropic Messages",
       "thread_type": "run_shard",
-      "wave": "W6R",
+      "wave": "W6R2",
       "depends_on": [
-        "TOOL-054-G",
-        "EVAL-052-H",
+        "TOOL-058-G",
+        "EVAL-056-H",
         "TOOL-020-A"
       ],
       "ticket_file": "tickets/TOOL-050-DA-R2.md",
@@ -2064,7 +2178,7 @@
     "TOOL-050-S-R1": {
       "title": "Recovered Native Provider Profile Selection（Gate N1）",
       "thread_type": "integrator",
-      "wave": "W6R",
+      "wave": "W6R2",
       "depends_on": [
         "TOOL-050-QO-R2",
         "TOOL-050-QA-R2",
@@ -2072,7 +2186,7 @@
       ],
       "ticket_file": "tickets/TOOL-050-S-R1.md",
       "allowed_write_paths": [
-        "benchmarks/v3/native-provider/selection-w6r.json",
+        "benchmarks/v3/native-provider/selection-w6r2.json",
         "<ARTIFACT_ROOT>/native-provider-conformance/<RUN_SHA>/selection/**",
         ".codex/eval/proposals/TOOL-050-S-R1.freeze.json",
         ".codex/eval/proposals/TOOL-050-S-R1.status.json",

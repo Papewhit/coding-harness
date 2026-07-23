@@ -102,6 +102,14 @@ Pico provider attempts = 1（除非 selection artifact 明确冻结其他值）
 
 Opaque reasoning/thinking 只保存在 private continuation；公开 trace/report 只记录 type/count/hash/token usage，不记录内容。任何需要继续回传的 block 不得被摘要、裁剪或原地脱敏；若本地策略不允许保存，应禁用该能力而不是篡改。
 
+### Canonical 环境
+
+- Ubuntu WSL2、Python 3.12、位于 `~/dev/` 的 fresh clone 是 Testing 与 Evaluation 的唯一 canonical 环境；使用用户级 `uv`，不得使用 `sudo`。
+- Windows 是暂时兼容的开发环境，只运行 best-effort 检查。Windows 检查未运行、失败或被环境终止均不阻断 Wave、run snapshot、Gate N1 或下游 Evaluation。
+- 评测期间不得为使 Windows Gate 通过而新增 Windows native 能力、弱化测试或改变冻结输入；发现的 Windows 产品/测试兼容问题写入 known issue，另行处理。
+- canonical Gate 必须使用 snapshot 自己的 WSL 环境，不得复用 Windows 或其他 worktree 的虚拟环境。
+- 公开 evidence 脱敏后必须保持原格式可解析；hash inventory 不能替代 JSON、JSONL、XML 等格式验证。
+
 ## 8. 冻结、修复与版本
 
 每项工作遵循：fixture/oracle/metric → baseline → hash freeze → 产品修复（可选）→ 同版重跑。产品修复不得修改 frozen 输入。Oracle 错误必须提升版本并保留旧结果。

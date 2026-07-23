@@ -101,6 +101,19 @@ for recovered_gate_consumer in (
             f"{recovered_gate_consumer}"
         )
 
+for wsl_conformance_consumer in (
+    "TOOL-050-QO-R2",
+    "TOOL-050-QA-R2",
+    "TOOL-050-DA-R2",
+):
+    if wsl_conformance_consumer in tickets and not depends_transitively(
+        wsl_conformance_consumer, "TOOL-058-G"
+    ):
+        errors.append(
+            f"W6R2 live shard lacks WSL canonical preflight dependency: "
+            f"{wsl_conformance_consumer}"
+        )
+
 if errors:
     print("INVALID")
     for error in errors:
