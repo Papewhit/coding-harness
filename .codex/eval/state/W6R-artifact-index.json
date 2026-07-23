@@ -1,0 +1,89 @@
+{
+  "schema_version": "pico-eval-artifact-index-v1",
+  "wave": "W6R",
+  "wave_base_sha": "48a39193580e48acee3fea5c3bfa107e46443d04",
+  "run_snapshot_sha": null,
+  "source_tickets": {
+    "TOOL-051-L": {
+      "handoff_path": ".codex/eval/handoffs/TOOL-051-L.json",
+      "handoff_sha256": "64d276287e7921a620e0e9e80e3e59b89c97be8f79ea97599767bbf93eb6c9d7",
+      "implementation_commit": "cc5c18c8734301655dc1d0d841972067701c9c2e",
+      "outcome": "accepted"
+    },
+    "EVAL-052-H": {
+      "handoff_path": ".codex/eval/handoffs/EVAL-052-H.json",
+      "handoff_sha256": "660d01fbdb45af6663d3a8f937a06acf92b7c78ff2d34f84ec4e8955c5e2b5db",
+      "implementation_commit": "d3f22239ef797a4e685790ed73584e0c582249ab",
+      "outcome": "accepted"
+    }
+  },
+  "audit": {
+    "ticket": "TOOL-053-A",
+    "root": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R-TOOL-053-A-01",
+    "handoff_path": ".codex/eval/handoffs/TOOL-053-A.json",
+    "handoff_sha256": "f6c0bc418876a9cbeb16d9617bd1cb724aa2a00736bcf5130324543cce5d8938",
+    "audit_report_sha256": "24e95f24f5bfcce771c22fd20f426ef2aa7da82bfffbcbb16a6f40180ba13f4c",
+    "artifact_inventory_sha256": "e6522711ca97e4c91d8f042451f6caeb35b51652b54d496dce6abf3698f6f88f",
+    "credential_scan_sha256": "136f05222b70a71db179cd7f9ab4d60d167f4de438192ee843eb323438cbcf85",
+    "inventory_file_count": 27,
+    "inventory_mismatch_count": 0,
+    "credential_match_count": 0,
+    "outcome": "passed"
+  },
+  "preflight_gate": {
+    "ticket": "TOOL-054-G",
+    "root": "F:/dev/llm/pico-eval-artifacts/native-provider-preflight/W6R-TOOL-054-G-01",
+    "handoff_path": ".codex/eval/handoffs/TOOL-054-G.json",
+    "handoff_sha256": "3f6cd3346dc19073e378cccb6d90e2a24a7cd7160cec508751b7c56647d531cd",
+    "status_proposal_path": ".codex/eval/proposals/TOOL-054-G.status.json",
+    "status_proposal_sha256": "d92c6ceed2f59c58ecdbab5387ecbbc89d10d7f2062f21126294d53ea4b4bd75",
+    "freeze_proposal_path": ".codex/eval/proposals/TOOL-054-G.freeze.json",
+    "freeze_proposal_sha256": "cf581557effcedc9c77caceb2542bdcaf30e9d12ef08d1878d0c19dc54309b49",
+    "gate_report_sha256": "8be0a1e8a1bee9e00448d0dfe97aacd1b83111f66ab4d4bc590ca976897d6333",
+    "artifact_inventory_sha256": "f3b66c381712857098a17c74b5aa5d1fcb79c30b48be7351ff93ba1aef765e5a",
+    "artifact_inventory_file_count": 56,
+    "artifact_inventory_aggregate_sha256": "e821475d4c6ecb3a729bda9042cbd4b41801dbf4efb6583cb03d20d883ac6b33",
+    "artifact_inventory_mismatch_count": 0,
+    "credential_scan_sha256": "50808c5bcb2b47009ccce06f6fad69e198bd8b2a1dd660aa8e96699d70587c97",
+    "credential_match_count": 0,
+    "bound_profile_count": 3,
+    "live_provider_http_attempt_count": 0,
+    "run_snapshot_approved": false,
+    "proposed_run_snapshot_sha": null,
+    "outcome": "blocked"
+  },
+  "hard_gate": {
+    "windows_targeted": "27 passed",
+    "windows_protected": "10 failed, 17 passed",
+    "windows_full_suite": "two attempts terminated with exit 137 at 14 percent",
+    "windows_ruff": "passed",
+    "windows_runtime_adapter": "53 passed",
+    "wsl_targeted": "27 passed",
+    "wsl_protected": "27 passed",
+    "wsl_full_suite": "507 passed, 2 skipped, 6 warnings",
+    "wsl_ruff": "passed",
+    "fake_transport_cli_smoke": "24/24 passed",
+    "preflight_failure_semantics": "0 rows and not_computable",
+    "all_required_tests_passed": false
+  },
+  "blocking_defects": [
+    "TOOL-054-G-WIN-PROTECTED-001",
+    "TOOL-054-G-WIN-FULL-002"
+  ],
+  "totals": {
+    "configured_profile_count": 3,
+    "bound_profile_count": 3,
+    "eligible_profile_count": 0,
+    "selected_profile": null,
+    "materialized_live_row_count": 0,
+    "http_attempt_count": 0,
+    "provider_observation_count": 0,
+    "protocol_metrics_status": "not_computable"
+  },
+  "credential_pattern_scan": "passed_no_matches",
+  "formal_effectiveness_evaluation_run": false,
+  "human_smoke_run": false,
+  "resume_evaluation_run": false,
+  "w7_started": false,
+  "updated_at": "2026-07-23T14:49:07.6349745+08:00"
+}
