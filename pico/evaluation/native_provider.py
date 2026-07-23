@@ -11,8 +11,12 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping, Sequence
 from copy import deepcopy
+import hashlib
 import json
+import os
 from pathlib import Path
+import shutil
+import tempfile
 from typing import Any
 
 from pico.evaluation.contracts import (
@@ -25,7 +29,7 @@ from pico.evaluation.contracts import (
 
 
 CASESET_SCHEMA_VERSION = "pico-native-provider-cases-v1"
-ARTIFACT_SCHEMA_VERSION = "pico-native-provider-conformance-v1"
+ARTIFACT_SCHEMA_VERSION = "pico-native-provider-conformance-bundle-v2"
 REQUIRED_SCENARIOS = (
     "final",
     "single_call",
@@ -64,44 +68,56 @@ def run_native_provider_conformance(
     profile: Mapping[str, Any],
     runner: CaseRunner,
     case_ids: Sequence[str] | None = None,
+    repetitions: int = 1,
+    bindings: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Run selected cases and return rows plus auditable aggregate inputs."""
 
     _validate_case_set(case_set)
     if not isinstance(profile, Mapping):
         raise TypeError("profile must be an object")
+    repetitions = _positive_int("repetitions", repetitions)
     selected = _select_cases(case_set["cases"], case_ids)
     rows: list[dict[str, Any]] = []
     for case in selected:
-        try:
-            observation = runner(deepcopy(case), deepcopy(dict(profile)))
-            if not isinstance(observation, Mapping):
-                raise TypeError("case runner must return an observation object")
-            rows.append(evaluate_native_provider_case(case, observation))
-        except Exception as exc:  # A failed transport must remain in the denominator.
-            rows.append(
-                evaluate_native_provider_case(
-                    case,
-                    {
-                        "eligible": True,
-                        "events": [],
-                        "infrastructure_failure": {
-                            "type": type(exc).__name__,
-                            "message": str(exc),
-                        },
-                    },
+        for repetition in range(1, repetitions + 1):
+            try:
+                observation = runner(deepcopy(case), deepcopy(dict(profile)))
+                if not isinstance(observation, Mapping):
+                    raise TypeError("case runner must return an observation object")
+                rows.append(
+                    evaluate_native_provider_case(
+                        case,
+                        observation,
+                        repetition=repetition,
+                    )
                 )
-            )
+            except Exception as exc:  # Case-start failures remain in the denominator.
+                rows.append(
+                    evaluate_native_provider_case(
+                        case,
+                        {
+                            "eligible": True,
+                            "events": [],
+                            "infrastructure_failure": _public_exception(exc),
+                        },
+                        repetition=repetition,
+                    )
+                )
     aggregate_input = [_aggregate_input(row) for row in rows]
     return {
         "schema_version": ARTIFACT_SCHEMA_VERSION,
         "artifact_contract_version": ARTIFACT_CONTRACT_VERSION,
+        "run_status": "complete",
+        "computability": "computable",
         "case_set": {
             "schema_version": case_set["schema_version"],
             "id": case_set["id"],
             "case_ids": [case["id"] for case in selected],
         },
+        "repetitions": repetitions,
         "frozen_hashes": deepcopy(case_set["frozen_hashes"]),
+        "bindings": sanitize_public_artifact(dict(bindings or {})),
         "profile": profile_identity(profile),
         "rows": rows,
         "aggregate_input": aggregate_input,
@@ -110,12 +126,16 @@ def run_native_provider_conformance(
 
 
 def evaluate_native_provider_case(
-    case: Mapping[str, Any], observation: Mapping[str, Any]
+    case: Mapping[str, Any],
+    observation: Mapping[str, Any],
+    *,
+    repetition: int = 1,
 ) -> dict[str, Any]:
     """Evaluate a single normalized event trace without provider-specific code."""
 
     case = deepcopy(dict(case))
     _validate_case(case)
+    repetition = _positive_int("repetition", repetition)
     eligible = _strict_bool("eligible", observation.get("eligible", True))
     events = observation.get("events", [])
     if not isinstance(events, list) or not all(isinstance(event, Mapping) for event in events):
@@ -302,7 +322,9 @@ def evaluate_native_provider_case(
         status = "passed"
     return sanitize_public_artifact(
         {
-            "row_id": case["id"],
+            "row_id": _row_id(case["id"], repetition),
+            "case_id": case["id"],
+            "repetition": repetition,
             "scenario": case["scenario"],
             "status": status,
             "eligible": eligible,
@@ -338,6 +360,7 @@ def aggregate_native_provider_rows(rows: Sequence[Mapping[str, Any]]) -> dict[st
         row["native_protocol"]["batch_completeness"]["denominator"] for row in eligible
     )
     return {
+        "computability": "computable" if rows else "not_computable",
         "total": len(rows),
         **counts,
         "eligible": len(eligible),
@@ -354,14 +377,100 @@ def aggregate_native_provider_rows(rows: Sequence[Mapping[str, Any]]) -> dict[st
     }
 
 
-def write_native_provider_artifact(path: str | Path, artifact: Mapping[str, Any]) -> None:
-    destination = Path(path)
+def preflight_failure_artifact(
+    *,
+    bindings: Mapping[str, Any],
+    error: BaseException,
+) -> dict[str, Any]:
+    """Build a zero-row, non-computable run artifact for preflight failure."""
+
+    return {
+        "schema_version": ARTIFACT_SCHEMA_VERSION,
+        "artifact_contract_version": ARTIFACT_CONTRACT_VERSION,
+        "run_status": "preflight_failure",
+        "computability": "not_computable",
+        "case_set": None,
+        "repetitions": None,
+        "frozen_hashes": {},
+        "bindings": sanitize_public_artifact(dict(bindings)),
+        "profile": None,
+        "rows": [],
+        "aggregate_input": [],
+        "summary": {
+            **aggregate_native_provider_rows([]),
+            "preflight_failure": _public_exception(error),
+        },
+    }
+
+
+def write_native_provider_bundle(
+    artifact_dir: str | Path,
+    artifact: Mapping[str, Any],
+) -> dict[str, str]:
+    """Atomically publish the versioned four-file conformance bundle."""
+
+    destination = Path(artifact_dir)
+    if destination.exists():
+        raise FileExistsError(f"artifact directory already exists: {destination}")
     destination.parent.mkdir(parents=True, exist_ok=True)
-    destination.write_text(
-        json.dumps(sanitize_public_artifact(artifact), indent=2, sort_keys=True, ensure_ascii=False)
-        + "\n",
-        encoding="utf-8",
+    staging = Path(
+        tempfile.mkdtemp(
+            prefix=f".{destination.name}.staging-",
+            dir=destination.parent,
+        )
     )
+    try:
+        public = sanitize_public_artifact(dict(artifact))
+        rows = public.get("rows")
+        if not isinstance(rows, list):
+            raise ValueError("artifact rows must be a list")
+        rows_bytes = b"".join(_canonical_json_bytes(row) for row in rows)
+        summary_bytes = _pretty_json_bytes(public.get("summary", {}))
+        evidence = {
+            "schema_version": ARTIFACT_SCHEMA_VERSION,
+            "rows": [
+                {
+                    "row_id": row["row_id"],
+                    "case_id": row["case_id"],
+                    "repetition": row["repetition"],
+                    "status": row["status"],
+                    "sha256": _sha256(_canonical_json_bytes(row)),
+                }
+                for row in rows
+            ],
+        }
+        evidence_bytes = _pretty_json_bytes(evidence)
+        manifest = {
+            "schema_version": ARTIFACT_SCHEMA_VERSION,
+            "artifact_contract_version": public.get("artifact_contract_version"),
+            "run_status": public.get("run_status"),
+            "computability": public.get("computability"),
+            "case_set": public.get("case_set"),
+            "repetitions": public.get("repetitions"),
+            "frozen_hashes": public.get("frozen_hashes"),
+            "bindings": public.get("bindings"),
+            "profile": public.get("profile"),
+            "row_count": len(rows),
+            "files": {
+                "rows.jsonl": _sha256(rows_bytes),
+                "evidence-index.json": _sha256(evidence_bytes),
+                "summary.json": _sha256(summary_bytes),
+            },
+        }
+        payloads = {
+            "manifest.json": _pretty_json_bytes(manifest),
+            "rows.jsonl": rows_bytes,
+            "evidence-index.json": evidence_bytes,
+            "summary.json": summary_bytes,
+        }
+        for name, content in payloads.items():
+            _write_bytes(staging / name, content)
+        os.rename(staging, destination)
+        return {name: _sha256(content) for name, content in payloads.items()}
+    except BaseException:
+        if staging.exists():
+            shutil.rmtree(staging)
+        raise
 
 
 def _validate_case_set(case_set: Mapping[str, Any]) -> None:
@@ -462,6 +571,8 @@ def _case_expectation_errors(
 def _aggregate_input(row: Mapping[str, Any]) -> dict[str, Any]:
     return {
         "row_id": row["row_id"],
+        "case_id": row["case_id"],
+        "repetition": row["repetition"],
         "status": row["status"],
         "eligible": row["eligible"],
         "native_protocol": deepcopy(row["native_protocol"]),
@@ -529,6 +640,60 @@ def _non_negative_int(name: str, value: Any) -> int:
     return value
 
 
+def _positive_int(name: str, value: Any) -> int:
+    if type(value) is not int or value <= 0:
+        raise ValueError(f"{name} must be a positive integer")
+    return value
+
+
+def _row_id(case_id: str, repetition: int) -> str:
+    return f"{case_id}::r{repetition:03d}"
+
+
+def _public_exception(error: BaseException) -> dict[str, str]:
+    return {
+        "type": type(error).__name__,
+        "code": "infrastructure_failure",
+    }
+
+
+def _canonical_json_bytes(value: Any) -> bytes:
+    return (
+        json.dumps(
+            sanitize_public_artifact(value),
+            ensure_ascii=False,
+            allow_nan=False,
+            separators=(",", ":"),
+            sort_keys=True,
+        )
+        + "\n"
+    ).encode("utf-8")
+
+
+def _pretty_json_bytes(value: Any) -> bytes:
+    return (
+        json.dumps(
+            sanitize_public_artifact(value),
+            ensure_ascii=False,
+            allow_nan=False,
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n"
+    ).encode("utf-8")
+
+
+def _sha256(value: bytes) -> str:
+    return hashlib.sha256(value).hexdigest()
+
+
+def _write_bytes(path: Path, content: bytes) -> None:
+    with path.open("xb") as stream:
+        stream.write(content)
+        stream.flush()
+        os.fsync(stream.fileno())
+
+
 __all__ = [
     "ARTIFACT_SCHEMA_VERSION",
     "CASESET_SCHEMA_VERSION",
@@ -537,6 +702,7 @@ __all__ = [
     "aggregate_native_provider_rows",
     "evaluate_native_provider_case",
     "load_case_set",
+    "preflight_failure_artifact",
     "run_native_provider_conformance",
-    "write_native_provider_artifact",
+    "write_native_provider_bundle",
 ]

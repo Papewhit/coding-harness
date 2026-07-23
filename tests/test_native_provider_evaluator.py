@@ -11,8 +11,9 @@ from pico.evaluation.native_provider import (
     aggregate_native_provider_rows,
     evaluate_native_provider_case,
     load_case_set,
+    preflight_failure_artifact,
     run_native_provider_conformance,
-    write_native_provider_artifact,
+    write_native_provider_bundle,
 )
 
 
@@ -133,6 +134,10 @@ def test_synthetic_eight_case_suite_emits_rows_and_aggregate_inputs():
     )
 
     assert len(artifact["rows"]) == len(artifact["aggregate_input"]) == 8
+    assert [row["row_id"] for row in artifact["rows"][:2]] == [
+        "NP01-final::r001",
+        "NP02-single-call::r001",
+    ]
     assert artifact["summary"]["passed"] == 8
     assert artifact["summary"]["failed"] == 0
     assert artifact["summary"]["infrastructure_failure"] == 0
@@ -207,9 +212,10 @@ def test_infrastructure_failures_and_runner_exceptions_remain_rows():
     ]
     assert artifact["summary"]["total"] == artifact["summary"]["eligible"] == 2
     assert artifact["summary"]["infrastructure_failure"] == 2
-    assert artifact["aggregate_input"][1]["infrastructure_failure"] == {
+    failure = artifact["aggregate_input"][1]["infrastructure_failure"]
+    assert failure == {
         "type": "ConnectionError",
-        "message": "fixture offline",
+        "code": "infrastructure_failure",
     }
 
 
@@ -225,20 +231,76 @@ def test_ineligible_row_is_excluded_but_not_deleted():
     assert summary["conformance"]["value"] is None
 
 
-def test_artifact_writer_preserves_public_rows_and_redacts_credentials(tmp_path):
+def test_repetition_is_case_major_and_row_ids_are_unique():
+    artifact = run_native_provider_conformance(
+        case_set=load_case_set(CASE_PATH),
+        profile=PROFILE,
+        case_ids=["NP01-final", "NP02-single-call"],
+        repetitions=3,
+        runner=synthetic_case_runner,
+    )
+
+    assert [
+        (row["case_id"], row["repetition"], row["row_id"])
+        for row in artifact["rows"]
+    ] == [
+        ("NP01-final", 1, "NP01-final::r001"),
+        ("NP01-final", 2, "NP01-final::r002"),
+        ("NP01-final", 3, "NP01-final::r003"),
+        ("NP02-single-call", 1, "NP02-single-call::r001"),
+        ("NP02-single-call", 2, "NP02-single-call::r002"),
+        ("NP02-single-call", 3, "NP02-single-call::r003"),
+    ]
+    assert len({row["row_id"] for row in artifact["rows"]}) == 6
+
+
+def test_atomic_bundle_preserves_public_rows_and_redacts_credentials(tmp_path):
     artifact = run_native_provider_conformance(
         case_set=load_case_set(CASE_PATH),
         profile={**PROFILE, "api_key": "sk-fixture-secret-value"},
         case_ids=["NP01-final"],
         runner=synthetic_case_runner,
     )
-    destination = tmp_path / "native.json"
+    destination = tmp_path / "native-bundle"
 
-    write_native_provider_artifact(destination, artifact)
-    written = destination.read_text(encoding="utf-8")
+    hashes = write_native_provider_bundle(destination, artifact)
+    files = {path.name for path in destination.iterdir()}
+    written = "\n".join(
+        path.read_text(encoding="utf-8") for path in destination.iterdir()
+    )
 
     assert "sk-fixture-secret-value" not in written
-    assert json.loads(written)["rows"][0]["row_id"] == "NP01-final"
+    assert files == {
+        "manifest.json",
+        "rows.jsonl",
+        "evidence-index.json",
+        "summary.json",
+    }
+    assert set(hashes) == files
+    row = json.loads((destination / "rows.jsonl").read_text(encoding="utf-8"))
+    assert row["row_id"] == "NP01-final::r001"
+    with pytest.raises(FileExistsError, match="already exists"):
+        write_native_provider_bundle(destination, artifact)
+
+
+def test_preflight_failure_bundle_has_zero_rows_and_is_not_computable(tmp_path):
+    artifact = preflight_failure_artifact(
+        bindings={"cases_sha256": "a" * 64},
+        error=ValueError("https://secret.example.test/path?api_key=hidden"),
+    )
+    destination = tmp_path / "preflight"
+
+    write_native_provider_bundle(destination, artifact)
+
+    assert (destination / "rows.jsonl").read_bytes() == b""
+    manifest = json.loads((destination / "manifest.json").read_text(encoding="utf-8"))
+    summary = json.loads((destination / "summary.json").read_text(encoding="utf-8"))
+    serialized = json.dumps([manifest, summary])
+    assert manifest["row_count"] == 0
+    assert manifest["computability"] == "not_computable"
+    assert summary["computability"] == "not_computable"
+    assert "secret.example.test" not in serialized
+    assert "api_key" not in serialized
 
 
 def test_manifest_rejects_restart_or_wrong_frozen_hash(tmp_path):
