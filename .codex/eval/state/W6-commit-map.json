@@ -1,0 +1,95 @@
+{
+  "schema_version": "pico-eval-commit-map-v1",
+  "wave": "W6",
+  "wave_base_sha": "365732ded80bd5af2fdb60bb4d52c7bae6792d3e",
+  "upstream_canonical_sha": "fc606a7d7a77b455b2331dfa307bc0920e3a9b80",
+  "control_overlay_commit_sha": "365732ded80bd5af2fdb60bb4d52c7bae6792d3e",
+  "run_snapshot_sha": "dd8a677782f90c749a422ee066daa1afcb36c516",
+  "integration_order": [
+    "TOOL-050-QO-R",
+    "TOOL-050-QA-R",
+    "TOOL-050-DA-R",
+    "TOOL-050-S"
+  ],
+  "entries": {
+    "TOOL-050-QO-R": {
+      "worker_thread_uuid": "019f8d06-2ef6-7423-8da6-1815a52413b7",
+      "prompt_sha256": "f3272ae02169146c9dfd4b096e58084199e7decf995400954ca8e945c5392b34",
+      "prompt_correction_sha256": "a9690b663cd6e654bcd946e2d8026111cd6f65978018aa53917686f643f1b35c",
+      "worker_head": "dd8a677782f90c749a422ee066daa1afcb36c516",
+      "worker_commits": [],
+      "canonical_checkpoint_commit": "a378bf21b2349d65ec803f2504e566195663fce0",
+      "handoff_sha256": "af2f24021009fa1b9ea9a294d6226ca3dba3316f595f9542d0ca45b554a4168e",
+      "manifest_sha256": "83e6c784cfcfe18354238f8238adf01f75ec57cb9ec0eff6c4255847d3d87bbd",
+      "rows_sha256": "641cfe9550e79441b064df1829debeb69c257e343a616d687fa75d8e19f511cb",
+      "row_count": 24,
+      "http_attempt_count": 0,
+      "outcome": "blocked_pre_http"
+    },
+    "TOOL-050-QA-R": {
+      "worker_thread_uuid": "019f8d06-2f19-7333-8888-94f710d7a0ef",
+      "prompt_sha256": "b06d859ccff6dbab8f45cabbe80417af14a2b8c21631553c18bd6f7247bf927f",
+      "prompt_correction_sha256": "c39873727e871f092888ab9049b8fca17e6a7424f7fb2d6ab19ef960ac1b7189",
+      "worker_head": "dd8a677782f90c749a422ee066daa1afcb36c516",
+      "worker_commits": [],
+      "canonical_checkpoint_commit": "a378bf21b2349d65ec803f2504e566195663fce0",
+      "handoff_sha256": "66cfb9a8a069075e313894cea600ba98f931d3a74ecd1d05c9d8d71afb6f75e7",
+      "manifest_sha256": "c4cde64ac86c344f3f4589507b02e2c96f9b044a6ffad3013759cb2df73641d1",
+      "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "row_count": 0,
+      "parser_stage_exclusion_count": 1,
+      "http_attempt_count": 0,
+      "outcome": "excluded_pre_http"
+    },
+    "TOOL-050-DA-R": {
+      "worker_thread_uuid": "019f8d06-2edf-7303-971e-8aec20594593",
+      "prompt_sha256": "228bc98523942bd7122238eadc7396aeffa385e458ef4b800336154aed934b24",
+      "prompt_correction_sha256": "c39873727e871f092888ab9049b8fca17e6a7424f7fb2d6ab19ef960ac1b7189",
+      "worker_head": "dd8a677782f90c749a422ee066daa1afcb36c516",
+      "worker_commits": [],
+      "canonical_checkpoint_commit": "a378bf21b2349d65ec803f2504e566195663fce0",
+      "handoff_sha256": "1f4e84cca8073d9708c968610e1d29c61f91d36710da88c1591706fd9428ed17",
+      "manifest_sha256": "9c806284b39051b2b7adfd30519798741a58c519434926961443f64cdee78ddb",
+      "rows_sha256": "b5f389e0f2e253094475202b4a581a244aca00e09d52f0ef7107af665d8ef977",
+      "row_count": 24,
+      "http_attempt_count": 0,
+      "outcome": "blocked_pre_http"
+    },
+    "TOOL-050-S": {
+      "worker_thread_uuid": "019f8d0c-5b66-7191-85ca-1971f0d261a0",
+      "prompt_sha256": "d84a4106dbdf39778ab61c270f2753eff682f1ed76bb69bebc1ceeda59cb3013",
+      "orchestration_followup_sha256": "37a057cb320a649664028772e49d0e2e1a30f5371a43007743cf21be2ae52048",
+      "worker_head": "87671ac03e0f33e0d1d85ccc168c3c3be1e53f06",
+      "worker_commits": [
+        "1785c45a84e5aa7ba0162aa158cd54be28301764",
+        "87671ac03e0f33e0d1d85ccc168c3c3be1e53f06"
+      ],
+      "canonical_commits": [
+        "79ced9e0962d923196fdb5008585c8cf0fc3f71e",
+        "a92b2fb109f08a76117be5609a99358cc853848d"
+      ],
+      "stable_patch_ids": [
+        "df228fff9f8c3600f4ba7772a4fb6e37cb4017cb",
+        "a0f93a46b3e778d97a311b5acb008ac2517f50be"
+      ],
+      "stable_patch_id_match": true,
+      "handoff_sha256": "e263d3d1a2e2efb1871a7f7af504b1a56ae7ab3bae30d86ac6f91ffd7a8da205",
+      "selection_sha256": "e51ec2b3fd45c6f22f87e1db619c1c2cfc3fdc2304821ca92540fd24479f71df",
+      "selection_hash_basis": "git_blob_bytes",
+      "freeze_proposal_sha256": "2d2a272378e3fa10c63ed36c39212fa931d7d8bfb784b3469341fa4fc83e389e",
+      "status_proposal_sha256": "58ac1ad0c8ecf19f419c3bb95c8169c155a132b1ae3393f6718d8b923ba102df",
+      "eligible_profile_count": 0,
+      "selected_profile": null,
+      "gate_status": "blocked",
+      "outcome": "accepted_aggregation_blocked_gate"
+    }
+  },
+  "worker_bundle": {
+    "path": "F:/dev/llm/pico-eval-artifacts/wave-bundles/W6-workers.bundle",
+    "sha256": "9dc6b9864b6dc25e2be0c083c77498b080039605289ac052f5ab16f313ad6278",
+    "size_bytes": 16515309,
+    "ref_count": 1,
+    "verified_complete_history": true
+  },
+  "updated_at": "2026-07-23T11:46:26.2550772+08:00"
+}

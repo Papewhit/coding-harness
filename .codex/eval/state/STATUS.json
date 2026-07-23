@@ -19,7 +19,7 @@
   "current_wave": "W6",
   "wave_base_sha": "365732ded80bd5af2fdb60bb4d52c7bae6792d3e",
   "gates": {
-    "native_eval_ready": "accepted",
+    "native_eval_ready": "blocked",
     "native_resume_ready": "pending"
   },
   "accepted_tickets": {
@@ -634,18 +634,27 @@
       "freeze_proposal_sha256": "2ed13f6b58b7b8486920453d58c587d5ec36dcf251e839d05bba3212078d3134",
       "status_proposal_sha256": "0823fecd62ea1796db2b8f9e4c19c00e5c3515b9c815d8c24f99cb48b004118d",
       "stable_patch_id": "534b0f836c8e30a15b5f7ac5484488e24a75fd1d"
-    }
-  },
-  "active_tickets": {
+    },
     "TOOL-050-S": {
       "instance_id": "W6-TOOL-050-S-01",
-      "status": "active",
-      "thread_id": "019f8d0c-5b66-7191-85ca-1971f0d261a0",
-      "branch": null,
-      "checkout_mode": "detached",
-      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\c868\\pico"
+      "status": "accepted",
+      "base_sha": "365732ded80bd5af2fdb60bb4d52c7bae6792d3e",
+      "head_sha": "87671ac03e0f33e0d1d85ccc168c3c3be1e53f06",
+      "run_snapshot_sha": "dd8a677782f90c749a422ee066daa1afcb36c516",
+      "own_commits": ["1785c45a84e5aa7ba0162aa158cd54be28301764", "87671ac03e0f33e0d1d85ccc168c3c3be1e53f06"],
+      "integration_commits": ["79ced9e0962d923196fdb5008585c8cf0fc3f71e", "a92b2fb109f08a76117be5609a99358cc853848d"],
+      "handoff_path": ".codex/eval/handoffs/TOOL-050-S.json",
+      "handoff_sha256": "e263d3d1a2e2efb1871a7f7af504b1a56ae7ab3bae30d86ac6f91ffd7a8da205",
+      "selection_sha256": "e51ec2b3fd45c6f22f87e1db619c1c2cfc3fdc2304821ca92540fd24479f71df",
+      "selection_hash_basis": "git_blob_bytes",
+      "freeze_proposal_sha256": "2d2a272378e3fa10c63ed36c39212fa931d7d8bfb784b3469341fa4fc83e389e",
+      "status_proposal_sha256": "58ac1ad0c8ecf19f419c3bb95c8169c155a132b1ae3393f6718d8b923ba102df",
+      "stable_patch_ids": ["df228fff9f8c3600f4ba7772a4fb6e37cb4017cb", "a0f93a46b3e778d97a311b5acb008ac2517f50be"],
+      "gate_status": "blocked",
+      "selected_profile": null
     }
   },
+  "active_tickets": {},
   "blocked_tickets": {
     "TOOL-050-QO-R": {
       "instance_id": "W6-TOOL-050-QO-R-01",
@@ -710,9 +719,22 @@
         ".codex/eval/handoffs/TOOL-050-S.json"
       ],
       "prompt_sha256": "d84a4106dbdf39778ab61c270f2753eff682f1ed76bb69bebc1ceeda59cb3013",
+      "orchestration_followup_sha256": "37a057cb320a649664028772e49d0e2e1a30f5371a43007743cf21be2ae52048",
       "model": "gpt-5.6-sol",
       "reasoning_effort": "xhigh",
-      "status": "active"
+      "head_sha": "87671ac03e0f33e0d1d85ccc168c3c3be1e53f06",
+      "own_commits": ["1785c45a84e5aa7ba0162aa158cd54be28301764", "87671ac03e0f33e0d1d85ccc168c3c3be1e53f06"],
+      "integration_commits": ["79ced9e0962d923196fdb5008585c8cf0fc3f71e", "a92b2fb109f08a76117be5609a99358cc853848d"],
+      "handoff_sha256": "e263d3d1a2e2efb1871a7f7af504b1a56ae7ab3bae30d86ac6f91ffd7a8da205",
+      "selection_sha256": "e51ec2b3fd45c6f22f87e1db619c1c2cfc3fdc2304821ca92540fd24479f71df",
+      "selection_hash_basis": "git_blob_bytes",
+      "freeze_proposal_sha256": "2d2a272378e3fa10c63ed36c39212fa931d7d8bfb784b3469341fa4fc83e389e",
+      "status_proposal_sha256": "58ac1ad0c8ecf19f419c3bb95c8169c155a132b1ae3393f6718d8b923ba102df",
+      "stable_patch_ids": ["df228fff9f8c3600f4ba7772a4fb6e37cb4017cb", "a0f93a46b3e778d97a311b5acb008ac2517f50be"],
+      "eligible_profile_count": 0,
+      "selected_profile": null,
+      "gate_status": "blocked",
+      "status": "accepted"
     },
     "W6-TOOL-050-QO-R-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -2653,7 +2675,7 @@
     "W5R": ".codex/eval/state/W5R-wave-handoff.json",
     "W5R2": ".codex/eval/state/W5R2-wave-handoff.json"
   },
-  "ready_tickets": ["TOOL-050-S"],
+  "ready_tickets": [],
   "wave_open": {
     "wave": "W6",
     "status": "open",
@@ -2685,22 +2707,42 @@
       "formal_effectiveness_evaluation_run": false,
       "resume_evaluation_run": false,
       "checkpointed_at": "2026-07-23T11:37:42.6009702+08:00"
+    },
+    {
+      "wave": "W6",
+      "batch": 2,
+      "ticket": "TOOL-050-S",
+      "worker_head": "87671ac03e0f33e0d1d85ccc168c3c3be1e53f06",
+      "canonical_commits": ["79ced9e0962d923196fdb5008585c8cf0fc3f71e", "a92b2fb109f08a76117be5609a99358cc853848d"],
+      "eligible_profile_count": 0,
+      "selected_profile": null,
+      "gate_n1": "blocked",
+      "protocol_metrics_status": "not_computable",
+      "formal_online_lanes": "blocked_not_run",
+      "stable_patch_ids_verified": true,
+      "checkpointed_at": "2026-07-23T11:47:50.4506038+08:00"
     }
   ],
   "wave_close": {
-    "wave": "W5R2",
-    "status": "complete",
-    "accepted_tickets": ["ARCH-046-T", "TEST-046-P", "TOOL-046-W", "TEST-046-T", "TOOL-042-G-R2"],
-    "blocked_tickets": [],
-    "native_eval_ready": true,
+    "wave": "W6",
+    "status": "blocked",
+    "accepted_tickets": ["TOOL-050-S"],
+    "blocked_tickets": ["TOOL-050-QO-R", "TOOL-050-QA-R", "TOOL-050-DA-R"],
+    "native_eval_ready": false,
     "native_resume_ready": false,
-    "w6_ready": true,
-    "next_wave_ready_tickets": ["TOOL-050-QO-R", "TOOL-050-QA-R", "TOOL-050-DA-R"],
+    "eligible_profile_count": 0,
+    "selected_profile": null,
+    "w7_ready": false,
+    "next_wave_ready_tickets": [],
     "freeze_changed": true,
     "freeze_proposals_promoted": true,
-    "worker_bundle_sha256": "610278de0ed0c895917e1e1f2d51546486215a99de04263be822b3a858ba0880",
-    "w6_started": false,
-    "closed_at": "2026-07-22T19:52:56.3146132+08:00"
+    "worker_bundle_sha256": "9dc6b9864b6dc25e2be0c083c77498b080039605289ac052f5ab16f313ad6278",
+    "formal_effectiveness_evaluation_run": false,
+    "auto_dream_pilot_run": false,
+    "local_task_pilot_run": false,
+    "resume_evaluation_run": false,
+    "w7_started": false,
+    "closed_at": "2026-07-23T11:47:50.4506038+08:00"
   },
   "prior_gate": {
     "wave": "W5",
@@ -2768,7 +2810,7 @@
     ],
     "blocked_at": "2026-07-22T12:57:04.6125953+08:00"
   },
-  "last_gate": {
+  "prior_gate_w5r2": {
     "wave": "W5R2",
     "status": "passed",
     "wave_integrator_thread": "019f8967-207e-7461-82aa-dcc2239049ab",
@@ -2818,5 +2860,48 @@
     "w6_started": false,
     "completed_at": "2026-07-22T19:52:56.3146132+08:00"
   },
-  "updated_at": "2026-07-23T11:37:42.6009702+08:00"
+  "last_gate": {
+    "wave": "W6",
+    "status": "blocked",
+    "wave_integrator_thread": "019f8d00-e62f-7f72-b825-18b9bc908a6c",
+    "gate_thread": "019f8d0c-5b66-7191-85ca-1971f0d261a0",
+    "wave_base_sha": "365732ded80bd5af2fdb60bb4d52c7bae6792d3e",
+    "run_snapshot_sha": "dd8a677782f90c749a422ee066daa1afcb36c516",
+    "ticket_integration_head": "a92b2fb109f08a76117be5609a99358cc853848d",
+    "integration_order": ["TOOL-050-QO-R", "TOOL-050-QA-R", "TOOL-050-DA-R", "TOOL-050-S"],
+    "accepted_ticket_count": 1,
+    "blocked_ticket_count": 3,
+    "plan_validation": "VALID: 74 ticket templates, 13 waves",
+    "initial_ready_set_match": true,
+    "stable_patch_ids_verified": true,
+    "worker_bundle_sha256": "9dc6b9864b6dc25e2be0c083c77498b080039605289ac052f5ab16f313ad6278",
+    "selection_sha256": "e51ec2b3fd45c6f22f87e1db619c1c2cfc3fdc2304821ca92540fd24479f71df",
+    "selection_hash_basis": "git_blob_bytes",
+    "summary_sha256": "f291706780d48f4d9c2a1ee113992f5bf7bcbe981f2ee6b9642b6203960e0368",
+    "configured_profile_count": 3,
+    "eligible_profile_count": 0,
+    "selected_profile": null,
+    "http_attempt_count": 0,
+    "provider_observation_count": 0,
+    "protocol_metrics_status": "not_computable",
+    "absence_of_observation_treated_as_pass": false,
+    "blocking_defects": [
+      "frozen_live_runner_inputs_missing",
+      "runner_invocation_contract_drift"
+    ],
+    "freeze_changed": true,
+    "freeze_proposals_promoted": true,
+    "native_eval_ready": false,
+    "gate_n1": "blocked",
+    "w6_exit_gate_satisfied": false,
+    "w7_ready": false,
+    "next_wave_ready_tickets": [],
+    "formal_effectiveness_evaluation_run": false,
+    "auto_dream_pilot_run": false,
+    "local_task_pilot_run": false,
+    "resume_evaluation_run": false,
+    "w7_started": false,
+    "completed_at": "2026-07-23T11:47:50.4506038+08:00"
+  },
+  "updated_at": "2026-07-23T11:47:50.4506038+08:00"
 }
