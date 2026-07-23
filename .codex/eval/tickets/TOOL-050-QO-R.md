@@ -6,7 +6,7 @@
 
 ## Start conditions
 
-- `TOOL-042-G`
+- `TOOL-042-G-R2`
 - `TOOL-049-I`
 - `TOOL-020-O`
 
