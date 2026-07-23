@@ -16,8 +16,14 @@
   "head_tree": "158cd2abde04d20e0544c4615db3cb0676f8fc83",
   "head_sha_semantics": "Audited dependency-applied source head before the metadata-only commit containing this handoff.",
   "metadata_commit_semantics": "The commit containing this corrected handoff is metadata-only; its self-referential SHA is intentionally not embedded in this file.",
-  "supersedes_metadata_commit": "a456edc41ece3bb3a28445d4cfd0fb5446b2fbd5",
-  "superseded_handoff_sha256": "768ce930a47e14e2fab6265b3c522ba4af92ed54dc9dab3674d0c346446ac526",
+  "supersedes_metadata_commits": [
+    "a456edc41ece3bb3a28445d4cfd0fb5446b2fbd5",
+    "55ec33b2971f81173bad077b5901f01773bb76e9"
+  ],
+  "superseded_handoff_sha256s": [
+    "768ce930a47e14e2fab6265b3c522ba4af92ed54dc9dab3674d0c346446ac526",
+    "7a452933ddc0f556deaf11d852a2b33d1a892a63e9f7c7c748d420c1121eebe8"
+  ],
   "dependency_commits": [
     "50f728ba824a142ba0d64a5f820c80bbc1942496",
     "c7a4a16cd124349448952063894f81d18c0b50c9"
@@ -37,7 +43,8 @@
     }
   ],
   "own_commits": [
-    "a456edc41ece3bb3a28445d4cfd0fb5446b2fbd5"
+    "a456edc41ece3bb3a28445d4cfd0fb5446b2fbd5",
+    "55ec33b2971f81173bad077b5901f01773bb76e9"
   ],
   "dependency_handoff_hashes": {
     "TOOL-055-E": "733e9488b787dc0bf07d6b5f8d51b2ec502e2682feed8e139baa8cedd0c033d4",
@@ -75,6 +82,25 @@
       "same_row_assertion_fields": true,
       "same_protocol_assertion_fields": true
     },
+    "three_repetition_control_matrix": {
+      "result": "passed",
+      "generation": "No-network fake transports driving production runner and OpenAI Responses/Anthropic Messages adapters from audited dependency source cf262e551ff948bc574adb574edd172635ab7877.",
+      "dialects": [
+        "openai-responses",
+        "anthropic-messages"
+      ],
+      "frozen_case_count_per_dialect": 8,
+      "repetitions_per_case": 3,
+      "rows_per_dialect": 24,
+      "passing_rows_per_dialect": "24/24",
+      "call_id_result_match_per_dialect": "36/36",
+      "batch_completeness_per_dialect": "33/33",
+      "safety_chain_completeness_per_dialect": "36/36",
+      "same_ordered_case_repetition_matrix": true,
+      "same_row_schema": true,
+      "same_assertion_fields": true,
+      "real_http_attempt_count": 0
+    },
     "independent_bundle_reconstruction": {
       "result": "passed",
       "verifier": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/verify_artifacts.py",
@@ -94,7 +120,24 @@
         "execute:completed": 20,
         "validate:rejected": 2,
         "permission:rejected": 2
+      },
+      "three_repetition_control": {
+        "calls_per_dialect": 36,
+        "results_per_dialect": 36,
+        "evidence_entries_per_dialect": 36,
+        "terminal_counts_per_dialect": {
+          "execute:completed": 30,
+          "validate:rejected": 3,
+          "permission:rejected": 3
+        }
       }
+    },
+    "negative_repetition_contract_controls": {
+      "result": "passed",
+      "same_read_only_verifier_code_path": true,
+      "missing_repetition_row": "rejected: frozen case/repetition matrix is incomplete or out of order",
+      "duplicate_row": "rejected: duplicate case/repetition row",
+      "dialect_repetition_mismatch": "rejected: dialect repetition sets differ"
     },
     "preflight_fail_closed": {
       "result": "passed",
@@ -122,8 +165,8 @@
     },
     "format_validation": {
       "result": "passed",
-      "json_files_parsed": 16,
-      "jsonl_files_parsed": 4,
+      "json_files_parsed": 22,
+      "jsonl_files_parsed": 6,
       "xml_files_parsed": 3,
       "post_redaction_parse_failures": 0
     },
@@ -132,12 +175,12 @@
       "command": "python -B verify_artifacts.py --root <audit-root> --repo <repo>",
       "run_count": 2,
       "writes_per_run": 0,
-      "artifact_file_count_including_inventory": 35,
-      "inventory_verified_file_count_excluding_self": 34,
+      "artifact_file_count_including_inventory": 44,
+      "inventory_verified_file_count_excluding_self": 43,
       "inventory_mismatch_count_per_run": 0,
-      "snapshot_fingerprint_before": "fa1b189f77b5d4eb651667662810ba0e92917fc8e1d765a9b020f28633f38aef",
-      "snapshot_fingerprint_after_first": "fa1b189f77b5d4eb651667662810ba0e92917fc8e1d765a9b020f28633f38aef",
-      "snapshot_fingerprint_after_second": "fa1b189f77b5d4eb651667662810ba0e92917fc8e1d765a9b020f28633f38aef",
+      "snapshot_fingerprint_before": "b48480d2af4233e2af5be44c9dca97d6420c9aa46df0165cd215f622b257bac7",
+      "snapshot_fingerprint_after_first": "b48480d2af4233e2af5be44c9dca97d6420c9aa46df0165cd215f622b257bac7",
+      "snapshot_fingerprint_after_second": "b48480d2af4233e2af5be44c9dca97d6420c9aa46df0165cd215f622b257bac7",
       "changed_file_count_first_run": 0,
       "changed_file_count_second_run": 0
     },
@@ -147,6 +190,12 @@
       "pre_fix_inventory_expected_report_sha256": "6b4b2cdc805e5f576165722eabcb788b40a577445b5696ede7980992eca3e42a",
       "pre_fix_inventory_mismatch_count": 1,
       "status": "resolved_and_superseded"
+    },
+    "repetition_contract_supersession": {
+      "defect_id": "TOOL-057-A-REPETITION-CONTRACT-002",
+      "pre_fix_verifier_sha256": "b6150d9583e893eb41b332f4adbd38cc8bed1576f05060a69867ab566d86d521",
+      "status": "resolved_and_superseded",
+      "correction": "The verifier now derives a positive continuous repetition set from each bundle, requires identical dialect sets, validates manifest binding, the complete ordered eight-case matrix, and unique row IDs without weakening byte/hash/safety/call-result/privacy checks."
     },
     "frozen_inputs_unchanged": true
   },
@@ -194,12 +243,17 @@
     {
       "command": "python -B verify_artifacts.py --root <audit-root> --repo <repo> run twice with full artifact hash snapshots before and after each run",
       "result": "passed",
-      "details": "Both runs reported passed=true, writes_performed=0, 34 verified inventory entries, and 0 mismatches. All three 35-file snapshot fingerprints were fa1b189f77b5d4eb651667662810ba0e92917fc8e1d765a9b020f28633f38aef; each run changed 0 files."
+      "details": "Both final runs reported passed=true, writes_performed=0, 43 verified inventory entries, and 0 mismatches. All three 44-file snapshot fingerprints were b48480d2af4233e2af5be44c9dca97d6420c9aa46df0165cd215f622b257bac7; each run changed 0 files."
     },
     {
       "command": "final JSON/JSONL/XML parse and credential/raw URL/config locator scan over all public artifact files",
       "result": "passed",
-      "details": "16 JSON, 4 JSONL, and 3 XML files parsed; credential/raw URL/private config locator scan found 0 matches."
+      "details": "22 JSON, 6 JSONL, and 3 XML files parsed; credential/raw URL/private config locator scan found 0 matches."
+    },
+    {
+      "command": "generate_three_repetition_controls.py through isolated artifact-root uv environment, then read-only verify_artifacts.py over both positive bundle groups and three in-memory negative variants",
+      "result": "passed",
+      "details": "Generated no-network production-runner/adapter controls: each dialect passed 24/24 rows, 36/36 call-result, 33/33 batch, and 36/36 safety. Missing repetition row, duplicate row, and dialect repetition mismatch were all rejected. Temporary environment, cache, private config, workspaces, and uv lock files were removed before final inventory."
     },
     {
       "command": "initial uv run --no-sync collection attempt before isolated environment creation",
@@ -211,15 +265,15 @@
   "outputs": [
     {
       "path": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/audit-report.json",
-      "sha256": "f230ddac6ad9abe2a37d2e5ce2daabd43f4405ee4c71ada66ff418ae71364daa"
+      "sha256": "0726c7daf6023322b7b1c3e3abfdab20209128c91d7940f915bec6df42f26482"
     },
     {
       "path": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/inventory.json",
-      "sha256": "a4f832c10ef86ebb5b52db40d25cf9be7affa1fcb5c0fac545d6037baf28b458",
+      "sha256": "7fa96fdcfa46dc1ed0f9d6a6e354614c5116a94b8963e27c057eace507046100",
       "inventory_self_excluded_paths": [
         "inventory.json"
       ],
-      "inventory_file_count_excluding_self": 34,
+      "inventory_file_count_excluding_self": 43,
       "inventory_mismatch_count": 0
     },
     {
@@ -228,7 +282,7 @@
     },
     {
       "path": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/verify_artifacts.py",
-      "sha256": "b6150d9583e893eb41b332f4adbd38cc8bed1576f05060a69867ab566d86d521"
+      "sha256": "a9cc6a85be6287bbf3fbd2c2eb0d16efc7f898a2140da01aa4f0edb47e16e27c"
     },
     {
       "path": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/generate_audit_report.py",
@@ -240,7 +294,27 @@
     },
     {
       "path": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/supersession.json",
-      "sha256": "e8161b16d0ae196b4b7060f92e228de431666e6321f24d2fc6a518bf62393efe"
+      "sha256": "027db259ae1170c1571587ce9d0b8da8f90a0f0f52d190b45757a01d317a5314"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/generate_three_repetition_controls.py",
+      "sha256": "96d109548b0a7e1b770c626928519803602e6a5269848c66515f71cd7f7e5c81"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/controls/three-repetitions/openai-responses/manifest.json",
+      "sha256": "b6a3a210d675728a90b151ddac06bd004945d65367d230554cfebbc6676cabc4"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/controls/three-repetitions/openai-responses/rows.jsonl",
+      "sha256": "37ba7ee6de99b83c2331b163a3f75ce0efd92e6aca1da76507548d82ae49f8c2"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/controls/three-repetitions/anthropic-messages/manifest.json",
+      "sha256": "953a93d4d45cf659821f904f025b672196eb984a4bb878fe790fcb3e431a1a30"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/controls/three-repetitions/anthropic-messages/rows.jsonl",
+      "sha256": "abcd614a33842effd92f09eccb324ca04b821fc4d49d023912d1ae9c21f348c4"
     }
   ],
   "frozen_hashes": {
@@ -269,6 +343,11 @@
     "call_id_result_match_per_dialect": "24/24",
     "batch_completeness_per_dialect": "22/22",
     "safety_chain_completeness_per_dialect": "24/24",
+    "three_repetition_control_rows_per_dialect": "24/24",
+    "three_repetition_control_call_id_result_match_per_dialect": "36/36",
+    "three_repetition_control_batch_completeness_per_dialect": "33/33",
+    "three_repetition_control_safety_chain_completeness_per_dialect": "36/36",
+    "three_repetition_control_fake_transport_http_attempt_evidence_per_dialect": 57,
     "fake_transport_http_attempt_evidence_per_dialect": 38,
     "text_envelope_seen_count": 0,
     "implicit_sdk_retry_seen": false,
@@ -290,6 +369,14 @@
       "status": "resolved_and_superseded",
       "description": "The original acceptance verifier rewrote audit-report.json and invalidated its own inventory entry.",
       "resolution": "Separated explicit report/inventory generation from a permanently read-only verifier, bound report source_head to source-provenance, rebuilt inventory with a single explicit self-exclusion, and proved two read-only runs changed no artifact hashes."
+    },
+    {
+      "id": "TOOL-057-A-REPETITION-CONTRACT-002",
+      "severity": "blocking",
+      "detected_by": "TOOL-058-G preflight review",
+      "status": "resolved_and_superseded",
+      "description": "The read-only verifier hard-coded [1, 2] and 16 rows, rejecting the required eight-case, three-repetition Gate bundle.",
+      "resolution": "Made repetitions manifest/row-derived and fail closed on non-positive, non-contiguous, incomplete, duplicated, or dialect-mismatched matrices; generated and verified 8x3 dual-dialect controls plus three negative variants."
     }
   ],
   "blocking_defects": [],
@@ -297,14 +384,15 @@
     "This is an offline Windows reviewer audit; canonical Ubuntu WSL2/Python 3.12 preflight remains owned by the separately authorized downstream gate.",
     "No real endpoint was contacted, so provider eligibility, selected profile, and recovered Gate N1 remain unresolved.",
     "The verifier proves the persisted fake-transport evidence closure and safety-chain semantics; it does not broaden the ticket into live conformance or effectiveness evaluation.",
-    "The original artifact self-mutation defect is retained in supersession.json for auditability; consumers must use the corrected hashes in this handoff and the read-only verify_artifacts.py entrypoint."
+    "Both prior artifact-only defects are retained in supersession.json for auditability; consumers must use the corrected hashes in this handoff and the read-only verify_artifacts.py entrypoint.",
+    "The verifier intentionally accepts any positive continuous repetition count that is identically bound by both dialect manifests and complete row matrices; this generality is constrained by the unchanged frozen eight-case IDs, row/assertion parity, byte hashes, safety chains, call/result matching, and privacy checks."
   ],
   "ownership_change_request": null,
   "status_proposal": {
     "ticket_id": "TOOL-057-A",
     "status": "complete",
     "head_sha": "cf262e551ff948bc574adb574edd172635ab7877",
-    "reason": "Both production dialects passed the same frozen eight-case, two-repetition assertion matrix; a stdlib-only verifier reconstructed every persisted call/result safety chain and all public evidence passed privacy, format, zero-row, and freeze checks."
+    "reason": "The read-only verifier now validates both eight-case x2 and x3 dual-dialect matrices through one manifest-bound fail-closed repetitions contract, reconstructs every persisted safety chain, rejects three malformed matrix controls, and leaves the complete artifact byte-identical across repeated acceptance runs."
   },
   "freeze_proposal": null,
   "formal_status_written": false,
