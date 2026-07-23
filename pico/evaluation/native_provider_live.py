@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import json
 from pathlib import Path
 import tempfile
@@ -22,6 +22,14 @@ from .native_provider_profiles import (
 
 
 WORKSPACE_FIXTURE_VERSION = "pico-native-provider-live-workspace-v1"
+NATIVE_SAFETY_EVIDENCE_VERSION = "pico-native-safety-chain-evidence-v1"
+NATIVE_SAFETY_STAGES = (
+    "validate",
+    "repetition",
+    "permission",
+    "policy",
+    "execute",
+)
 APPROVAL_POLICIES = {
     "final": "auto",
     "single_call": "auto",
@@ -32,12 +40,6 @@ APPROVAL_POLICIES = {
     "unexpected_multi_call": "auto",
     "opaque_block_roundtrip": "auto",
 }
-_EARLY_REJECTION_CODES = {
-    "invalid_arguments",
-    "repeated_identical_call",
-    "unknown_tool",
-}
-
 LiveModelClientFactory = Callable[[ProviderConfig, Mapping[str, Any]], Any]
 
 
@@ -54,10 +56,18 @@ class NativeProviderLiveRunner:
     config_path: str | None = None
     client_factory: LiveModelClientFactory | None = None
     workspace_parent: str | Path | None = None
+    _case_repetitions: dict[str, int] = field(
+        default_factory=dict,
+        init=False,
+        repr=False,
+    )
 
     def __call__(
         self, case: Mapping[str, Any], expected_profile: Mapping[str, Any]
     ) -> dict[str, Any]:
+        case_id = _case_id(case)
+        repetition = self._case_repetitions.get(case_id, 0) + 1
+        self._case_repetitions[case_id] = repetition
         return run_native_provider_live_case(
             case=case,
             expected_profile=expected_profile,
@@ -66,6 +76,7 @@ class NativeProviderLiveRunner:
             config_path=self.config_path,
             client_factory=self.client_factory,
             workspace_parent=self.workspace_parent,
+            repetition=repetition,
         )
 
 
@@ -78,9 +89,13 @@ def run_native_provider_live_case(
     config_path: str | None = None,
     client_factory: LiveModelClientFactory | None = None,
     workspace_parent: str | Path | None = None,
+    repetition: int = 1,
 ) -> dict[str, Any]:
     """Run one isolated case and return only structured, sanitized evidence."""
 
+    case_id = _case_id(case)
+    if type(repetition) is not int or repetition < 1:
+        raise ValueError("native provider live repetition must be a positive integer")
     scenario = str(case.get("scenario", ""))
     if scenario not in APPROVAL_POLICIES:
         raise ValueError(f"unsupported native provider live scenario: {scenario}")
@@ -121,11 +136,18 @@ def run_native_provider_live_case(
                 max_new_tokens=1024,
                 auto_dream=False,
             )
+            bind_native_safety_evidence(
+                agent,
+                case_id=case_id,
+                repetition=repetition,
+            )
             list(agent.engine.run_turn(prompt))
             observation = _build_observation(
                 agent=agent,
                 client=client,
                 scenario=scenario,
+                case_id=case_id,
+                repetition=repetition,
             )
             _assert_no_secret_material(observation, config)
             return observation
@@ -144,6 +166,66 @@ def _production_client(
         profile_id=config.public_identity()["profile_id"],
         max_retries=0,
     )
+
+
+def bind_native_safety_evidence(
+    agent: Pico,
+    *,
+    case_id: str,
+    repetition: int,
+) -> None:
+    """Bind structured native safety evidence to one production Runtime case."""
+
+    if not case_id:
+        raise ValueError("native safety evidence case_id must be non-empty")
+    if type(repetition) is not int or repetition < 1:
+        raise ValueError("native safety evidence repetition must be positive")
+    sequence = 0
+
+    def emit(
+        tool_name: str,
+        stage: str,
+        outcome: str,
+        reason: str,
+    ) -> None:
+        nonlocal sequence
+        call_id = _executing_native_call_id(agent)
+        if not call_id:
+            return
+        sequence += 1
+        agent.session_event_bus.emit(
+            "native_safety_stage",
+            {
+                "schema_version": NATIVE_SAFETY_EVIDENCE_VERSION,
+                "case_id": case_id,
+                "repetition": repetition,
+                "call_id": call_id,
+                "tool_name": tool_name,
+                "stage": stage,
+                "stage_index": NATIVE_SAFETY_STAGES.index(stage) + 1,
+                "outcome": outcome,
+                "reason": reason,
+                "sequence": sequence,
+            },
+        )
+
+    agent._native_safety_evidence_hook = emit
+
+
+def _executing_native_call_id(agent: Pico) -> str:
+    native = agent.session.get("native_runtime", {})
+    active = native.get("active_batch") if isinstance(native, dict) else None
+    calls = active.get("calls", []) if isinstance(active, dict) else []
+    executing = [
+        call
+        for call in calls
+        if isinstance(call, dict) and call.get("status") == "executing"
+    ]
+    if len(executing) != 1:
+        return ""
+    call = executing[0].get("call", {})
+    call_id = call.get("call_id") if isinstance(call, dict) else None
+    return call_id if isinstance(call_id, str) else ""
 
 
 class _AuditedModelClient:
@@ -205,6 +287,8 @@ def _build_observation(
     agent: Pico,
     client: _AuditedModelClient,
     scenario: str,
+    case_id: str,
+    repetition: int,
 ) -> dict[str, Any]:
     session_events = _load_json_lines(agent.session_event_bus.path)
     exchange_events = list(
@@ -290,6 +374,13 @@ def _build_observation(
     safety_chain, bypass_count = _audit_safety_chain(
         exchange_events=exchange_events,
         session_events=session_events,
+        case_id=case_id,
+        repetition=repetition,
+    )
+    safety_evidence = _native_safety_evidence(
+        session_events,
+        case_id=case_id,
+        repetition=repetition,
     )
     pico_retry_count = sum(
         event.get("event") == "model_retry_scheduled" for event in session_events
@@ -315,6 +406,7 @@ def _build_observation(
             "unknown_block_loss_count": unknown_block_loss_count,
             "continuations": continuation_observed,
             "safety_chain": safety_chain,
+            "safety_chain_evidence": safety_evidence,
             "safety_chain_bypass_count": bypass_count,
             "sdk_tool_runner_used": False,
             "sdk_agent_runner_used": False,
@@ -405,6 +497,8 @@ def _audit_safety_chain(
     *,
     exchange_events: Sequence[Mapping[str, Any]],
     session_events: Sequence[Mapping[str, Any]],
+    case_id: str,
+    repetition: int,
 ) -> tuple[list[dict[str, Any]], int]:
     results = {
         str(event.get("call_id", "")): event
@@ -422,16 +516,14 @@ def _audit_safety_chain(
     bypass_count = 0
     for call in calls:
         call_id = str(call.get("call_id", ""))
-        start, finish, segment = _call_event_segment(session_events, call_id)
-        permissions = [
+        stages = [
             event
-            for event in segment
-            if event.get("event") == "permission_decision"
-        ]
-        policies = [
-            event
-            for event in segment
-            if event.get("event") == "tool_policy_decision"
+            for event in _native_safety_evidence(
+                session_events,
+                case_id=case_id,
+                repetition=repetition,
+            )
+            if event["call_id"] == call_id
         ]
         result = results.get(call_id, {})
         result_payload = result.get("result", {})
@@ -440,61 +532,88 @@ def _audit_safety_chain(
             if isinstance(result_payload, Mapping)
             else ""
         )
-        valid = start is not None and finish is not None and bool(result)
-        if valid and error_code not in _EARLY_REJECTION_CODES:
-            if permissions and permissions[-1].get("decision") == "deny":
-                valid = True
-            elif not permissions or permissions[-1].get("decision") != "allow":
-                valid = False
-            elif policies and policies[-1].get("decision") == "deny":
-                valid = True
-            elif not policies or policies[-1].get("decision") != "allow":
-                valid = False
+        valid = bool(result) and _valid_safety_stage_prefix(stages, error_code)
         bypass_count += int(not valid)
+        outcomes = {event["stage"]: event["outcome"] for event in stages}
         audit.append(
             {
                 "call_id": call_id,
+                "case_id": case_id,
+                "repetition": repetition,
                 "result_error_code": error_code,
-                "tool_started": start is not None,
-                "permission": (
-                    str(permissions[-1].get("decision")) if permissions else "not_reached"
-                ),
-                "policy": (
-                    str(policies[-1].get("decision")) if policies else "not_reached"
-                ),
-                "tool_finished": finish is not None,
+                "stages": stages,
+                "validate": outcomes.get("validate", "not_reached"),
+                "repetition_guard": outcomes.get("repetition", "not_reached"),
+                "permission": outcomes.get("permission", "not_reached"),
+                "policy": outcomes.get("policy", "not_reached"),
+                "execute": outcomes.get("execute", "not_reached"),
                 "bypass": not valid,
             }
         )
     return audit, bypass_count
 
 
-def _call_event_segment(
-    events: Sequence[Mapping[str, Any]], call_id: str
-) -> tuple[int | None, int | None, Sequence[Mapping[str, Any]]]:
-    start = next(
-        (
-            index
-            for index, event in enumerate(events)
-            if event.get("event") == "tool_started"
-            and event.get("call_id") == call_id
-        ),
-        None,
+def _native_safety_evidence(
+    events: Sequence[Mapping[str, Any]],
+    *,
+    case_id: str,
+    repetition: int,
+) -> list[dict[str, Any]]:
+    evidence = []
+    for event in events:
+        if (
+            event.get("event") != "native_safety_stage"
+            or event.get("schema_version") != NATIVE_SAFETY_EVIDENCE_VERSION
+            or event.get("case_id") != case_id
+            or event.get("repetition") != repetition
+        ):
+            continue
+        evidence.append(
+            {
+                "schema_version": NATIVE_SAFETY_EVIDENCE_VERSION,
+                "case_id": case_id,
+                "repetition": repetition,
+                "call_id": str(event.get("call_id", "")),
+                "tool_name": str(event.get("tool_name", "")),
+                "stage": str(event.get("stage", "")),
+                "stage_index": event.get("stage_index"),
+                "outcome": str(event.get("outcome", "")),
+                "reason": str(event.get("reason", "")),
+                "sequence": event.get("sequence"),
+            }
+        )
+    return sorted(
+        evidence,
+        key=lambda event: _non_negative_int(event["sequence"]),
     )
-    if start is None:
-        return None, None, ()
-    finish = next(
-        (
-            index
-            for index, event in enumerate(events[start + 1 :], start=start + 1)
-            if event.get("event") == "tool_finished"
-            and event.get("call_id") == call_id
-        ),
-        None,
-    )
-    if finish is None:
-        return start, None, events[start + 1 :]
-    return start, finish, events[start + 1 : finish]
+
+
+def _valid_safety_stage_prefix(
+    stages: Sequence[Mapping[str, Any]],
+    error_code: str,
+) -> bool:
+    if not stages:
+        return False
+    names = tuple(str(event.get("stage", "")) for event in stages)
+    if names != NATIVE_SAFETY_STAGES[: len(names)]:
+        return False
+    if [event.get("stage_index") for event in stages] != list(
+        range(1, len(stages) + 1)
+    ):
+        return False
+    sequences = [event.get("sequence") for event in stages]
+    if (
+        not all(type(sequence) is int for sequence in sequences)
+        or sequences != sorted(sequences)
+        or len(set(sequences)) != len(sequences)
+    ):
+        return False
+    if any(event.get("outcome") != "passed" for event in stages[:-1]):
+        return False
+    final_stage = stages[-1]
+    if final_stage["stage"] == "execute":
+        return final_stage["outcome"] in {"completed", "failed"}
+    return bool(error_code) and final_stage["outcome"] == "rejected"
 
 
 def _result_error_code(result: Mapping[str, Any]) -> str:
@@ -538,9 +657,19 @@ def _positive_int(value: Any, default: int) -> int:
     return value if type(value) is int and value > 0 else default
 
 
+def _case_id(case: Mapping[str, Any]) -> str:
+    case_id = case.get("id")
+    if not isinstance(case_id, str) or not case_id:
+        raise ValueError("native provider live case id must be a non-empty string")
+    return case_id
+
+
 __all__ = [
     "APPROVAL_POLICIES",
+    "NATIVE_SAFETY_EVIDENCE_VERSION",
+    "NATIVE_SAFETY_STAGES",
     "NativeProviderLiveRunner",
     "WORKSPACE_FIXTURE_VERSION",
+    "bind_native_safety_evidence",
     "run_native_provider_live_case",
 ]

@@ -31,6 +31,7 @@ from pico.providers.provider_transport import (
     HttpAttempt,
     ProviderTransportResponse,
 )
+from pico.providers.openai_responses import OpenAIResponsesAdapter
 from pico.testing import ScriptedNativeModelClient
 
 
@@ -41,10 +42,10 @@ RAW_URL = "https://secret-native.example.test/private/v1"
 
 
 class FakeNativeTransport:
-    """No-I/O wire transport consumed by the production Anthropic adapter."""
+    """No-I/O wire transport consumed by a production native adapter."""
 
     def __init__(self, config: ProviderConfig, responses: list[ModelResponse]) -> None:
-        self.payloads = [_anthropic_payload(config, response) for response in responses]
+        self.payloads = [_wire_payload(config, response) for response in responses]
         self.last_http_attempts: tuple[HttpAttempt, ...] = ()
         self.requests: list[dict] = []
 
@@ -78,11 +79,20 @@ class FakeAdapterClient:
         self.model = config.model
         self.base_url = config.base_url
         self._transport = FakeNativeTransport(config, responses)
-        self._adapter = AnthropicMessagesAdapter(
-            self._transport,
-            model=config.model,
-            profile_id=config.public_identity()["profile_id"],
-        )
+        if config.wire_dialect == "anthropic-messages":
+            self._adapter = AnthropicMessagesAdapter(
+                self._transport,
+                model=config.model,
+                profile_id=config.public_identity()["profile_id"],
+            )
+        elif config.wire_dialect == "openai-responses":
+            self._adapter = OpenAIResponsesAdapter(
+                transport=self._transport,
+                model=config.model,
+                profile_id=config.public_identity()["profile_id"],
+            )
+        else:  # pragma: no cover - constrained by the local test config
+            raise AssertionError(config.wire_dialect)
 
     def request(self, request):
         return self._adapter.request(request)
@@ -95,13 +105,16 @@ class AdverseScriptedClient(ScriptedNativeModelClient):
         self.base_url = config.base_url
 
 
-def _config(tmp_path: Path) -> Path:
-    path = tmp_path / "config.toml"
+def _config(
+    tmp_path: Path,
+    wire_dialect: str = "anthropic-messages",
+) -> Path:
+    path = tmp_path / f"{wire_dialect}.toml"
     path.write_text(
         "\n".join(
             [
                 "[providers.fixture]",
-                'wire_dialect = "anthropic-messages"',
+                f'wire_dialect = "{wire_dialect}"',
                 'model = "fixture-model"',
                 f'base_url = "{RAW_URL}"',
                 f'api_key = "{SECRET}"',
@@ -197,6 +210,54 @@ def _anthropic_payload(
         "stop_reason": "tool_use" if response.tool_calls else "end_turn",
         "usage": {"input_tokens": 1, "output_tokens": 1},
     }
+
+
+def _openai_payload(
+    config: ProviderConfig, response: ModelResponse
+) -> dict:
+    output = []
+    if response.text:
+        output.append(
+            {
+                "type": "message",
+                "id": "message-fixture",
+                "role": "assistant",
+                "content": [{"type": "output_text", "text": response.text}],
+            }
+        )
+    output.extend(
+        {
+            "type": "function_call",
+            "id": f"function-{call.call_id}",
+            "call_id": call.call_id,
+            "name": call.name,
+            "arguments": json.dumps(call.arguments, ensure_ascii=False),
+        }
+        for call in response.tool_calls
+    )
+    blocks = response.metadata.get("content_blocks", {})
+    if isinstance(blocks, dict) and "future_block" in blocks.get("unknown_types", []):
+        output.append(
+            {
+                "type": "future_block",
+                "opaque_fixture": "retained-without-interpretation",
+            }
+        )
+    return {
+        "id": "response-fixture",
+        "status": "completed",
+        "model": config.model,
+        "output": output,
+        "usage": {"input_tokens": 1, "output_tokens": 1},
+    }
+
+
+def _wire_payload(config: ProviderConfig, response: ModelResponse) -> dict:
+    if config.wire_dialect == "anthropic-messages":
+        return _anthropic_payload(config, response)
+    if config.wire_dialect == "openai-responses":
+        return _openai_payload(config, response)
+    raise AssertionError(config.wire_dialect)
 
 
 def _call(call_id: str, name: str, arguments: dict) -> ToolCall:
@@ -322,59 +383,114 @@ def _profile(config_path: Path) -> dict:
     )
 
 
-def test_fake_transport_covers_all_eight_cases_through_production_runtime(
+def test_both_dialects_cover_identical_eight_case_repetition_matrix(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     _clear_provider_overrides(monkeypatch)
-    config_path = _config(tmp_path)
-    profile = _profile(config_path)
-    runner = NativeProviderLiveRunner(
-        provider="fixture",
-        config_path=str(config_path),
-        client_factory=_factory,
-        workspace_parent=tmp_path,
-    )
+    case_set = load_case_set(CASE_PATH)
+    artifacts = {}
+    for dialect in ("openai-responses", "anthropic-messages"):
+        dialect_root = tmp_path / dialect
+        dialect_root.mkdir()
+        config_path = _config(dialect_root, dialect)
+        profile = _profile(config_path)
+        runner = NativeProviderLiveRunner(
+            provider="fixture",
+            config_path=str(config_path),
+            client_factory=_factory,
+            workspace_parent=dialect_root,
+        )
+        artifact = run_native_provider_conformance(
+            case_set=case_set,
+            profile=profile,
+            runner=runner,
+            repetitions=2,
+        )
+        artifacts[dialect] = artifact
 
-    artifact = run_native_provider_conformance(
-        case_set=load_case_set(CASE_PATH),
-        profile=profile,
-        runner=runner,
-    )
+        assert artifact["summary"]["passed"] == 16, [
+            {
+                "row_id": row["row_id"],
+                "case_errors": row["case_errors"],
+                "protocol_errors": row["native_protocol"]["protocol_errors"],
+                "received": row["continuation_received"],
+                "sent": row["continuation_sent"],
+            }
+            for row in artifact["rows"]
+            if row["status"] != "passed"
+        ]
+        assert artifact["summary"]["failed"] == 0
+        assert artifact["summary"]["infrastructure_failure"] == 0
+        assert artifact["summary"]["call_id_result_match"]["value"] == 1.0
+        assert artifact["summary"]["batch_completeness"]["value"] == 1.0
+        assert artifact["summary"]["text_envelope_seen_count"] == 0
+        assert artifact["summary"]["implicit_sdk_retry_seen"] is False
+        assert SECRET not in json.dumps(artifact)
+        assert RAW_URL not in json.dumps(artifact)
 
-    assert artifact["summary"]["passed"] == 8, [
-        {
-            "row_id": row["row_id"],
-            "case_errors": row["case_errors"],
-            "protocol_errors": row["native_protocol"]["protocol_errors"],
-            "received": row["continuation_received"],
-            "sent": row["continuation_sent"],
-        }
-        for row in artifact["rows"]
-        if row["status"] != "passed"
+        opaque = runner(case_set["cases"][-1], profile)
+        assert opaque["audit"]["unknown_blocks"] == [
+            {
+                "response_index": 0,
+                "dialect": dialect,
+                "type": "future_block",
+            }
+        ]
+        assert opaque["audit"]["unknown_block_loss_count"] == 0
+        assert opaque["audit"]["safety_chain_bypass_count"] == 0
+        evidence = opaque["audit"]["safety_chain_evidence"]
+        assert [(item["stage"], item["outcome"]) for item in evidence] == [
+            ("validate", "passed"),
+            ("repetition", "passed"),
+            ("permission", "passed"),
+            ("policy", "passed"),
+            ("execute", "completed"),
+        ]
+        assert {
+            (item["case_id"], item["repetition"], item["call_id"])
+            for item in evidence
+        } == {("NP08-opaque-block-roundtrip", 3, "opaque-read")}
+        assert opaque["pico_retry_count"] == 0
+
+    parity_fields = (
+        "row_id",
+        "case_id",
+        "repetition",
+        "status",
+        "case_errors",
+        "text_envelope_seen",
+        "implicit_sdk_retry_seen",
+    )
+    assert [
+        {field: row[field] for field in parity_fields}
+        for row in artifacts["openai-responses"]["rows"]
+    ] == [
+        {field: row[field] for field in parity_fields}
+        for row in artifacts["anthropic-messages"]["rows"]
     ]
-    assert artifact["summary"]["failed"] == 0
-    assert artifact["summary"]["infrastructure_failure"] == 0
-    assert artifact["summary"]["call_id_result_match"]["value"] == 1.0
-    assert artifact["summary"]["batch_completeness"]["value"] == 1.0
-    assert artifact["summary"]["text_envelope_seen_count"] == 0
-    assert artifact["summary"]["implicit_sdk_retry_seen"] is False
-    assert SECRET not in json.dumps(artifact)
-    assert RAW_URL not in json.dumps(artifact)
-
-    opaque = runner(
-        load_case_set(CASE_PATH)["cases"][-1],
-        profile,
+    protocol_parity_fields = (
+        "native_tool_call_observed",
+        "call_id_result_match",
+        "batch_completeness",
+        "duplicate_call_after_result",
+        "protocol_errors",
+        "http_attempts",
+        "sdk_retry_count",
+        "pico_retry_count",
     )
-    assert opaque["audit"]["unknown_blocks"] == [
+    assert [
         {
-            "response_index": 0,
-            "dialect": "anthropic-messages",
-            "type": "future_block",
+            field: row["native_protocol"][field]
+            for field in protocol_parity_fields
         }
+        for row in artifacts["openai-responses"]["rows"]
+    ] == [
+        {
+            field: row["native_protocol"][field]
+            for field in protocol_parity_fields
+        }
+        for row in artifacts["anthropic-messages"]["rows"]
     ]
-    assert opaque["audit"]["unknown_block_loss_count"] == 0
-    assert opaque["audit"]["safety_chain_bypass_count"] == 0
-    assert opaque["pico_retry_count"] == 0
 
 
 def test_profile_mismatch_stops_before_client_or_http(

@@ -18,8 +18,10 @@ INLINE_TOOL_OUTPUT_LIMIT = 1000
 
 
 def run_tool(agent: Pico, name: str, args: dict[str, Any]) -> str:
+    safety_stage = getattr(agent, "_native_safety_evidence_hook", lambda *_args: None)
     tool = agent.tools.get(name)
     if tool is None:
+        safety_stage(name, "validate", "rejected", "unknown_tool")
         agent._last_tool_result_metadata = {
             "tool_status": "rejected",
             "tool_error_code": "unknown_tool",
@@ -34,6 +36,7 @@ def run_tool(agent: Pico, name: str, args: dict[str, Any]) -> str:
     try:
         agent.validate_tool(name, args) # Schema checker
     except Exception as exc:
+        safety_stage(name, "validate", "rejected", "invalid_arguments")
         example = agent.tool_example(name)
         message = f"error: invalid arguments for {name}: {exc}"
         if example:
@@ -50,11 +53,15 @@ def run_tool(agent: Pico, name: str, args: dict[str, Any]) -> str:
             "diff_summary": [],
         }
         return message
+    safety_stage(name, "validate", "passed", "")
     if agent.repeated_tool_call(name, args): # Repeated tool call guardrail
+        safety_stage(name, "repetition", "rejected", "repeated_identical_call")
         agent._last_tool_result_metadata = repeated_tool_call_metadata(tool)
         return f"error: repeated identical tool call for {name}; choose a different tool or return a final answer"
+    safety_stage(name, "repetition", "passed", "")
     decision = agent.permission_checker.check(tool, args) # Permission checker
     _emit_permission_decision(agent, tool, args, decision)
+    safety_stage(name, "permission", "passed" if decision.allowed else "rejected", "" if decision.allowed else decision.reason)
     if not decision.allowed:
         agent._last_tool_result_metadata = {
             "tool_status": "rejected",
@@ -69,6 +76,7 @@ def run_tool(agent: Pico, name: str, args: dict[str, Any]) -> str:
         return _permission_error(agent, tool, decision)
     policy = ToolPolicyChecker(agent).check(tool, args) # ToolPolicy checker
     _emit_tool_policy_decision(agent, tool, args, policy)
+    safety_stage(name, "policy", "passed" if policy.allowed else "rejected", "" if policy.allowed else policy.reason)
     if not policy.allowed:
         agent._last_tool_result_metadata = {
             "tool_status": "rejected",
@@ -115,6 +123,7 @@ def run_tool(agent: Pico, name: str, args: dict[str, Any]) -> str:
             "full_output_artifact": full_output_artifact,
         }
         agent.record_process_note_for_tool(name, agent._last_tool_result_metadata)
+        safety_stage(name, "execute", "completed", "")
         return result
     except Exception as exc:
         after_snapshot = agent.capture_workspace_snapshot() if tool.risky else before_snapshot
@@ -133,6 +142,7 @@ def run_tool(agent: Pico, name: str, args: dict[str, Any]) -> str:
             "diff_summary": diff_summary,
         }
         agent.record_process_note_for_tool(name, agent._last_tool_result_metadata)
+        safety_stage(name, "execute", "failed", agent._last_tool_result_metadata["tool_error_code"])
         return f"error: tool {name} failed: {exc}"
 
 
