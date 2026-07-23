@@ -23,6 +23,24 @@
     "native_resume_ready": "pending"
   },
   "accepted_tickets": {
+    "TOOL-055-E": {
+      "instance_id": "W6R2-TOOL-055-E-01",
+      "status": "accepted",
+      "base_sha": "6b4fa94948888b7c95dfbe4cd0134205356decba",
+      "head_sha": "50f728ba824a142ba0d64a5f820c80bbc1942496",
+      "worker_branch_head": "43337909ea0a918a41b46e8babf33ea7e8bc09f7",
+      "own_commits": [
+        "50f728ba824a142ba0d64a5f820c80bbc1942496",
+        "43337909ea0a918a41b46e8babf33ea7e8bc09f7"
+      ],
+      "integration_commits": [
+        "8ab0f5f277a30bfd1ccaaedd82f4987b64073936",
+        "9637a7eca3bf34d0fc67670e1eb2736a0c01f5bc"
+      ],
+      "handoff_path": ".codex/eval/handoffs/TOOL-055-E.json",
+      "handoff_sha256": "733e9488b787dc0bf07d6b5f8d51b2ec502e2682feed8e139baa8cedd0c033d4",
+      "stable_patch_id": "86f900fa077405162cfa49435551f500cfb2c344"
+    },
     "TOOL-054-G": {
       "instance_id": "W6R-TOOL-054-G-01",
       "status": "accepted",
@@ -752,16 +770,7 @@
       "selected_profile": null
     }
   },
-  "active_tickets": {
-    "TOOL-055-E": {
-      "instance_id": "W6R2-TOOL-055-E-01",
-      "status": "active",
-      "thread_id": "019f8e29-1cab-7b51-888d-731f5dfa2845",
-      "base_sha": "6b4fa94948888b7c95dfbe4cd0134205356decba",
-      "branch": "codex/w6r2-tool-055-e",
-      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\63ff\\pico"
-    }
-  },
+  "active_tickets": {},
   "blocked_tickets": {
     "TOOL-050-QO-R": {
       "instance_id": "W6-TOOL-050-QO-R-01",
@@ -833,8 +842,27 @@
       "reasoning_effort": "high",
       "prompt_sha256": "0daf48864082609afd466af70779760c3f24523c60593bb3c547cf6899070d46",
       "prompt_hash_basis": "UTF-8 codexDelegation.input",
-      "status": "active",
-      "dispatched_at": "2026-07-23T16:56:11.0149016+08:00"
+      "head_sha": "50f728ba824a142ba0d64a5f820c80bbc1942496",
+      "worker_branch_head": "43337909ea0a918a41b46e8babf33ea7e8bc09f7",
+      "own_commits": [
+        "50f728ba824a142ba0d64a5f820c80bbc1942496",
+        "43337909ea0a918a41b46e8babf33ea7e8bc09f7"
+      ],
+      "integration_commits": [
+        "8ab0f5f277a30bfd1ccaaedd82f4987b64073936",
+        "9637a7eca3bf34d0fc67670e1eb2736a0c01f5bc"
+      ],
+      "handoff_sha256": "733e9488b787dc0bf07d6b5f8d51b2ec502e2682feed8e139baa8cedd0c033d4",
+      "stable_patch_id": "86f900fa077405162cfa49435551f500cfb2c344",
+      "tests": {
+        "ticket": "10 passed",
+        "adjacent_architecture_safety": "26 passed",
+        "ruff": "passed",
+        "diff_check": "passed"
+      },
+      "status": "accepted",
+      "dispatched_at": "2026-07-23T16:56:11.0149016+08:00",
+      "accepted_at": "2026-07-23T17:06:58.7794000+08:00"
     },
     "W6R-TOOL-054-G-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -3095,7 +3123,7 @@
     "W6": ".codex/eval/state/W6-wave-handoff.json",
     "W6R": ".codex/eval/state/W6R-wave-handoff.json"
   },
-  "ready_tickets": [],
+  "ready_tickets": ["EVAL-056-H"],
   "wave_open": {
     "wave": "W6R2",
     "status": "open",
@@ -3112,7 +3140,24 @@
     "w7_started": false,
     "opened_at": "2026-07-23T16:46:38.7440073+08:00"
   },
-  "batch_checkpoints": [],
+  "batch_checkpoints": [
+    {
+      "wave": "W6R2",
+      "batch": 1,
+      "accepted_tickets": ["TOOL-055-E"],
+      "canonical_head": "9637a7eca3bf34d0fc67670e1eb2736a0c01f5bc",
+      "dependency_commits_for_next_ticket": [
+        "50f728ba824a142ba0d64a5f820c80bbc1942496"
+      ],
+      "targeted_test_evidence": {
+        "ticket": "10 passed",
+        "adjacent_architecture_safety": "26 passed",
+        "ruff": "passed",
+        "diff_check": "passed"
+      },
+      "checkpointed_at": "2026-07-23T17:06:58.7794000+08:00"
+    }
+  ],
   "wave_close": {
     "wave": "W6R",
     "status": "blocked",
@@ -3362,5 +3407,5 @@
     "w7_started": false,
     "completed_at": "2026-07-23T15:16:48.5580598+08:00"
   },
-  "updated_at": "2026-07-23T16:56:11.0149016+08:00"
+  "updated_at": "2026-07-23T17:06:58.7794000+08:00"
 }
