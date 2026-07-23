@@ -1,0 +1,236 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-054-G",
+  "instance_id": "W6R-TOOL-054-G-01",
+  "wave": "W6R",
+  "role": "integrator_ticket/gate",
+  "status": "complete",
+  "gate_status": "blocked",
+  "source_thread_id": "019f8d54-adce-7be2-a422-a8ac0535307c",
+  "base_sha": "48a39193580e48acee3fea5c3bfa107e46443d04",
+  "dependency_applied_head_sha": "7eb736b3af73c5a82cb46ee3828b6e29a9ebb909",
+  "dependency_applied_tree": "08f05c340bb2caa65c8de5ced5200e4d0b6b1b78",
+  "head_sha_semantics": "The dependency-applied source head before the metadata-only commit containing this handoff. The final ticket commit is reported to the W6R Wave Integrator after commit.",
+  "branch": "codex/w6r-tool-054-g",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/fa2a/pico",
+  "wsl_fresh_clone": "/home/papewhit/dev/pico-w6r-tool-054-g-01",
+  "dependency_application_map": [
+    {
+      "ticket_id": "TOOL-051-L",
+      "order": 1,
+      "original_commit": "cc5c18c8734301655dc1d0d841972067701c9c2e",
+      "applied_commit": "54ea23c8d05fb8e9eea5e3a271066534c29ffa71",
+      "stable_patch_id": "084df602a69cc3dfe62423b164cafef0471f642f",
+      "content_equivalent": true
+    },
+    {
+      "ticket_id": "EVAL-052-H",
+      "order": 2,
+      "original_commit": "d3f22239ef797a4e685790ed73584e0c582249ab",
+      "applied_commit": "7eb736b3af73c5a82cb46ee3828b6e29a9ebb909",
+      "stable_patch_id": "97789245c812198324dae4d258f2e109db16ef85",
+      "content_equivalent": true
+    }
+  ],
+  "dependency_handoff_hashes": {
+    "TOOL-051-L": "64d276287e7921a620e0e9e80e3e59b89c97be8f79ea97599767bbf93eb6c9d7",
+    "EVAL-052-H": "660d01fbdb45af6663d3a8f937a06acf92b7c78ff2d34f84ec4e8955c5e2b5db",
+    "W6-wave-handoff": "6055eca111fe08ebd11448e41550402096b017b34d50e2efde1aea906de8fc4f"
+  },
+  "reviewer_audit": {
+    "handoff_sha256": "f6c0bc418876a9cbeb16d9617bd1cb724aa2a00736bcf5130324543cce5d8938",
+    "audit_report_sha256": "24e95f24f5bfcce771c22fd20f426ef2aa7da82bfffbcbb16a6f40180ba13f4c",
+    "audit_hashes_sha256": "e6522711ca97e4c91d8f042451f6caeb35b51652b54d496dce6abf3698f6f88f",
+    "reviewer_tree": "08f05c340bb2caa65c8de5ced5200e4d0b6b1b78",
+    "candidate_tree": "08f05c340bb2caa65c8de5ced5200e4d0b6b1b78",
+    "tree_exactly_equal": true,
+    "inventory_expected": 27,
+    "inventory_actual": 27,
+    "inventory_hash_mismatches": 0,
+    "independently_verified": true
+  },
+  "frozen_hashes": {
+    "formal_status": "ce0e69ce1bc6da75c4710459eb44bf35e6b75cd79df501e0885a9b66b3c9df3a",
+    "formal_freeze": "b4893c10887bb774dda860a5f4b13ec6fa9b8c014e0cb0257e409c0f27df6ba6",
+    "cases_git_blob_oid": "f513f6e15c521104b12fe348dc280f73624acd56",
+    "cases_windows_checkout_sha256": "92f746b113a88ceb652e4e8ec651021b1358d9922ab91c0dad34e62c0068b9e3",
+    "cases_git_blob_sha256": "b20cdf446a21e20db035213c9308b47daa252cb9b0aadbebf7ec5747750e9f4d",
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "sdk_dependency_lock": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657"
+  },
+  "source_bindings": {
+    "evaluator_git_blob_sha256": "6763e33078bb78c7065c5c5c530fda0f4882c0a216cb93ebf0a422be5d75bdf0",
+    "live_runner_git_blob_sha256": "afe17b8044da11802883311f01f5ad9819fb657fd3d042604e5d70c129eabcf2",
+    "formal_cli_git_blob_sha256": "834f87bc9ee04fac6c4247aab7f352c6d6f21bc92da3c4121bb2303ce6f6a95d",
+    "profile_builder_git_blob_sha256": "186c5cd950f7418c8a9fb0f80b3f06ce190f3b0ab1e5b54a4d042159ee991be5",
+    "profile_builder_cli_git_blob_sha256": "58e64b5321aee07b585fb78548434e4f7b7dbab59fd0d8452e34b7c599785005",
+    "bundle_schema_version": "pico-native-provider-conformance-bundle-v2",
+    "fixed_runner": "pico.evaluation.native_provider_live.NativeProviderLiveRunner"
+  },
+  "profile_binding": {
+    "configured_profile_count": 3,
+    "bound_profile_count": 3,
+    "profiles": [
+      {
+        "provider": "dashscope-o",
+        "status": "bound",
+        "profile_id": "sha256:41ebb321c6332867f0bb020621b7e1c17f8c60430374c37c3a670c916326ee70",
+        "canonical_sha256": "499655acd72b0c10f0bd0a938a032060fb7a5b776e74e478742078da1a137331",
+        "sdk": "openai 2.46.0",
+        "sdk_max_retries": 0,
+        "stream": false,
+        "parallel_tool_calls": false
+      },
+      {
+        "provider": "dashscope-a",
+        "status": "bound",
+        "profile_id": "sha256:fccbdcb07f4c3fff931d5c7540673ca8aafc1e57a8389b5042a377916d670fd9",
+        "canonical_sha256": "3ec252354cae811672d4af618be3cb2aa1911f6e766ae577db56189712a2574f",
+        "sdk": "anthropic 0.117.0",
+        "sdk_max_retries": 0,
+        "stream": false,
+        "parallel_tool_calls": false
+      },
+      {
+        "provider": "deepseek",
+        "status": "bound",
+        "profile_id": "sha256:d7f29754016394922b48edb3ac4211d3920c333e386e7cf4d76f0ff178beb4a5",
+        "canonical_sha256": "5e4a4c3af56f492ee066835b8657748ec430cc6f11f8f0aebe39d2ea4cfac2e6",
+        "sdk": "anthropic 0.117.0",
+        "sdk_max_retries": 0,
+        "stream": false,
+        "parallel_tool_calls": false
+      }
+    ],
+    "windows_wsl_manifest_content_equal": true,
+    "credential_material_absent": true,
+    "raw_provider_url_absent": true
+  },
+  "tests": {
+    "windows": [
+      {
+        "name": "targeted evaluator/live-runner/profile suite",
+        "exit_code": 0,
+        "result": "27 passed in 23.05s"
+      },
+      {
+        "name": "protected architecture/safety/permissions/tool-policy suite",
+        "exit_code": 1,
+        "result": "10 failed, 17 passed in 25.46s"
+      },
+      {
+        "name": "full suite attempt 1",
+        "exit_code": 137,
+        "result": "terminated at 14 percent without a complete result"
+      },
+      {
+        "name": "full suite attempt 2",
+        "exit_code": 137,
+        "result": "terminated at 14 percent without a complete result"
+      },
+      {
+        "name": "Ruff",
+        "exit_code": 0,
+        "result": "All checks passed"
+      },
+      {
+        "name": "Runtime/adapter adjacency",
+        "exit_code": 0,
+        "result": "53 passed in 38.08s"
+      }
+    ],
+    "wsl_fresh_clone": {
+      "user": "papewhit",
+      "uid": 1000,
+      "distribution": "Ubuntu 26.04 LTS",
+      "kernel": "Linux 6.18.33.2-microsoft-standard-WSL2 x86_64 GNU/Linux",
+      "python": "3.12.13",
+      "uv": "0.11.19",
+      "uv_scope": "user",
+      "source_sha": "7eb736b3af73c5a82cb46ee3828b6e29a9ebb909",
+      "source_tree": "08f05c340bb2caa65c8de5ced5200e4d0b6b1b78",
+      "targeted": "27 passed in 1.80s",
+      "protected": "27 passed in 1.46s",
+      "full_suite": "507 passed, 2 skipped, 6 warnings in 48.41s",
+      "ruff": "All checks passed",
+      "sudo_used": false
+    },
+    "formal_cli": {
+      "exact_required_options_verified": true,
+      "runner_injection_absent": true,
+      "fake_transport_smoke": "24/24 passed; 36/36 call-ID matches; 33/33 complete batches",
+      "preflight_failure": "exit 2; 0 rows; not_computable; not treated as 0/0 pass",
+      "real_http_attempt_count": 0
+    }
+  },
+  "artifact": {
+    "root": "F:/dev/llm/pico-eval-artifacts/native-provider-preflight/W6R-TOOL-054-G-01",
+    "gate_report_sha256": "8be0a1e8a1bee9e00448d0dfe97aacd1b83111f66ab4d4bc590ca976897d6333",
+    "artifact_inventory_sha256": "f3b66c381712857098a17c74b5aa5d1fcb79c30b48be7351ff93ba1aef765e5a",
+    "artifact_inventory_file_count": 56,
+    "artifact_inventory_aggregate_sha256": "e821475d4c6ecb3a729bda9042cbd4b41801dbf4efb6583cb03d20d883ac6b33",
+    "credential_scan_sha256": "50808c5bcb2b47009ccce06f6fad69e198bd8b2a1dd660aa8e96699d70587c97",
+    "dependency_application_sha256": "e54438c912592ab205cb79974e1283bb90211a9b49e9a6e35de9c09b743b574e",
+    "source_bindings_sha256": "7b1d57017822f0b596d65b8409d801897b40bf5e8710453c802c31592eb1f1cd",
+    "command_results_sha256": "d1001f8ad2199034fd0efbca208d1a3405dcfc4ff72bd8a8d2b5c838ae8209c9",
+    "profile_binding_sha256": "0878246f6984417608cd4883a9c7c9ab2f55e345ed6d4b4c7a08c9abfcbf166e",
+    "preflight_failure_verification_sha256": "08c6860d6fd9d6260d244818f245cbed7e8ad052c6f45ad7a1c7fd3108a4924f",
+    "fake_transport_cli_verification_sha256": "4f6e849c300ab9f571c8332b98060d7d67fdda5b38a72ae9cbfae6af438f0112",
+    "wsl_profile_binding_sha256": "2ec338ca351c89165e5428fb0da0274fa0ba11879fa2f838de8992bf19805756",
+    "wsl_fake_transport_cli_verification_sha256": "f7767b1fbf1740c2a27907ef253d3f96f304aba49d046fd5ea16f1fb62accd4e"
+  },
+  "outputs": [
+    {
+      "path": ".codex/eval/proposals/TOOL-054-G.freeze.json",
+      "sha256": "cf581557effcedc9c77caceb2542bdcaf30e9d12ef08d1878d0c19dc54309b49"
+    },
+    {
+      "path": ".codex/eval/proposals/TOOL-054-G.status.json",
+      "sha256": "d92c6ceed2f59c58ecdbab5387ecbbc89d10d7f2062f21126294d53ea4b4bd75"
+    },
+    {
+      "path": ".codex/eval/handoffs/TOOL-054-G.json",
+      "persistence": "The commit containing this handoff is intentionally not self-recorded."
+    }
+  ],
+  "blocking_defects": [
+    {
+      "id": "TOOL-054-G-WIN-PROTECTED-001",
+      "severity": "blocking",
+      "detail": "The required Windows protected suite exited 1 with 10 failures and 17 passes."
+    },
+    {
+      "id": "TOOL-054-G-WIN-FULL-002",
+      "severity": "blocking",
+      "detail": "The required Windows full suite terminated with exit 137 at 14 percent on two attempts; a focused diagnostic also terminated after collection."
+    }
+  ],
+  "gate_decision": {
+    "accepted": false,
+    "blocked": true,
+    "run_snapshot_approved_for_live_conformance": false,
+    "proposed_run_snapshot_sha": null,
+    "absence_of_observation_treated_as_pass": false
+  },
+  "evaluation_runs": {
+    "live_provider_http": false,
+    "formal_effectiveness": false,
+    "human_smoke": false,
+    "resume": false
+  },
+  "files_changed_by_ticket": [
+    ".codex/eval/proposals/TOOL-054-G.freeze.json",
+    ".codex/eval/proposals/TOOL-054-G.status.json",
+    ".codex/eval/handoffs/TOOL-054-G.json"
+  ],
+  "formal_status_written": false,
+  "formal_freeze_written": false,
+  "run_shards_started": false,
+  "TOOL-050-S-R1_started": false,
+  "w7_started": false,
+  "ready_for_wave_integrator_review": true,
+  "stop_after_handoff": true
+}
