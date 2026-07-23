@@ -1,0 +1,211 @@
+{
+  "schema_version": "pico-eval-wave-handoff-v1",
+  "wave": "W6R2",
+  "status": "passed_pending_authorized_human_smoke",
+  "wave_integrator_role": "non-ticket scheduler and sole formal STATUS/FREEZE writer",
+  "wave_integrator_thread": "019f8e25-2f02-73d0-9a55-3ce4ffa1bb1f",
+  "integration_branch": "eval/v3-integration",
+  "wave_base_sha": "6b4fa94948888b7c95dfbe4cd0134205356decba",
+  "upstream_wave": "W6R",
+  "upstream_metadata_head": "cecd1c7a733ab2da9fae88a252659b5c4fdc37cb",
+  "upstream_canonical_sha": "f4965ac634b8d0a66f455d99de1d85325b4a561e",
+  "upstream_canonical_tag": "eval-v3/w6r-canonical",
+  "upstream_handoff_sha256": "84e0e7f57fb52de5a9aa13ed2f94e6d8ea8dd73287efb9cf8eecef50c701eb5b",
+  "canonical_snapshot_sha": "62cf5a680edc05ae1d242638827178453163c71e",
+  "canonical_snapshot_tree": "70f3e755218580bb9752a838c07088e04c88c745",
+  "canonical_tag": "eval-v3/w6r2-canonical",
+  "canonical_tag_verified_target": "62cf5a680edc05ae1d242638827178453163c71e",
+  "canonical_snapshot_semantics": "Immutable W6R2 integration state after TOOL-050-S-R1 selection promotion and before this metadata-only wave handoff commit.",
+  "human_smoke_source_commit": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+  "human_smoke_source_tree": "158cd2abde04d20e0544c4615db3cb0676f8fc83",
+  "human_smoke_source_semantics": "Immutable dependency-applied runtime source used by all three R2 shards. The W6R2 canonical integration commit and later metadata commit must not replace this runtime source for human smoke.",
+  "formal_state_hashes": {
+    "status_sha256": "72b5405b0b1e1e095fcaa5ba4a88b9d87f631251a1c2f86e7191804116359564",
+    "freeze_sha256": "b15e4140c7bd8eed7e864531991eed6060c05ec53d376d677613ba6ef57d5b9e",
+    "commit_map_sha256": "c46de0e237a9db1724fb973097c33369993728efe305c8fe0db2ce703bd58e6f",
+    "artifact_index_sha256": "695061dd7e6026320d94f14c4bab4bc80ee250bc64b16b75455cb8e1ac77f211"
+  },
+  "plan_validation": {
+    "result": "VALID",
+    "ticket_template_count": 82,
+    "wave_count": 14,
+    "initial_ready_tickets": ["TOOL-055-E"],
+    "initial_ready_set_match": true
+  },
+  "integration_order": [
+    "TOOL-055-E",
+    "EVAL-056-H",
+    "TOOL-057-A",
+    "TOOL-058-G",
+    "TOOL-050-QO-R2",
+    "TOOL-050-QA-R2",
+    "TOOL-050-DA-R2",
+    "TOOL-050-S-R1"
+  ],
+  "accepted_tickets": [
+    {
+      "ticket_id": "TOOL-055-E",
+      "instance_id": "W6R2-TOOL-055-E-01",
+      "worker_thread_uuid": "019f8e2b-e815-7842-9d96-4409714ade90",
+      "worker_branch": "codex/w6r2-tool-055-e",
+      "worker_head": "43337909ea0a918a41b46e8babf33ea7e8bc09f7",
+      "canonical_commits": [
+        "8ab0f5f277a30bfd1ccaaedd82f4987b64073936",
+        "9637a7eca3bf34d0fc67670e1eb2736a0c01f5bc"
+      ],
+      "handoff_sha256": "733e9488b787dc0bf07d6b5f8d51b2ec502e2682feed8e139baa8cedd0c033d4",
+      "outcome": "accepted"
+    },
+    {
+      "ticket_id": "EVAL-056-H",
+      "instance_id": "W6R2-EVAL-056-H-01",
+      "worker_head": "08c7c348743207a29a951f59313bd25da5b8fe3d",
+      "canonical_commits": [
+        "1d16508a6f68ea33d3ecda0a84c63cf89db37606",
+        "3f8a5ac681611652571584e2b53c6e666fa14d28"
+      ],
+      "handoff_sha256": "88dd58e2a7a726c18bc584b92538de259b02e698d15c079830be858ccacc05f5",
+      "outcome": "accepted"
+    },
+    {
+      "ticket_id": "TOOL-057-A",
+      "instance_id": "W6R2-TOOL-057-A-01",
+      "worker_head": "81cf6c5bed6a3906c9d8240b71c3fb762b30263b",
+      "canonical_commits": [
+        "183f59e9afb506b7c3eeb96336803a1ea69c9c2a",
+        "ec3bab1fa1ad5ca09bd929ac5ee8dbb9c7283a13",
+        "d7475ce8a082b5f54ebe9a14cfd5705e8b9e88de"
+      ],
+      "handoff_sha256": "ccffc5d5c4450afe2e2d994ecc8dd37e4b9f709a6b6a740c2a662d917ccc893f",
+      "outcome": "accepted_audit_passed"
+    },
+    {
+      "ticket_id": "TOOL-058-G",
+      "instance_id": "W6R2-TOOL-058-G-01",
+      "worker_head": "79d610c4fdf8c70c56d546d09911af97e5504ccb",
+      "canonical_commit": "b90ed60ea15cd54ccb3f000015bfd9f93eb96de8",
+      "handoff_sha256": "5dcbbcc456f1d917c4bbb8708495ef1ab38d9b7f5d5268f62b5bb7d3524d3df8",
+      "outcome": "accepted_gate_passed"
+    },
+    {
+      "ticket_id": "TOOL-050-S-R1",
+      "instance_id": "W6R2-TOOL-050-S-R1-01",
+      "worker_thread_uuid": "019f8ea8-ab3a-7783-b405-e6958b3dcd59",
+      "worker_branch": "codex/w6r2-tool-050-s-r1",
+      "worker_head": "7fb9c4ac80d7447fff5fc1ff09cd316f7ef47190",
+      "canonical_commits": [
+        "ef15567e55a34253fb2e027c49041a08920060e4",
+        "5da1f9dcf5d4e4c180ff708241320ed2bc5c96e8"
+      ],
+      "handoff_sha256": "ada774641c62e871b00181090f1983a68e90d113380f0057f3f737bcf298c072",
+      "outcome": "accepted_gate_n1_passed"
+    }
+  ],
+  "blocked_tickets": [
+    {
+      "ticket_id": "TOOL-050-QO-R2",
+      "instance_id": "W6R2-TOOL-050-QO-R2-01",
+      "handoff_status": "blocked",
+      "handoff_sha256": "52d3b226d233b697f505bc2c4b8649511f3afd7dc379e3b10211dd85ab1958ac",
+      "gate_profile_eligibility": "eligible",
+      "distinction": "The shard's immutable status remains blocked because 6 of 24 rows failed, while the aggregator independently found the profile satisfies every Gate N1 hard requirement."
+    },
+    {
+      "ticket_id": "TOOL-050-QA-R2",
+      "instance_id": "W6R2-TOOL-050-QA-R2-01",
+      "handoff_status": "blocked",
+      "handoff_sha256": "bb1dae84b0ed3ba267e2c7623fb6eb48640214fb8ba45feb5481d8be4c6d2000",
+      "gate_profile_eligibility": "ineligible",
+      "reason": "safety_chain_bypass_count=3"
+    },
+    {
+      "ticket_id": "TOOL-050-DA-R2",
+      "instance_id": "W6R2-TOOL-050-DA-R2-01",
+      "handoff_status": "blocked",
+      "handoff_sha256": "eec6ee22918fb50adfde7df7a0a7c39eb3d85894a7e2c627a57a59b964202763",
+      "gate_profile_eligibility": "ineligible",
+      "reason": "safety_chain_bypass_count=10"
+    }
+  ],
+  "ticket_handoffs": {
+    "index_path": ".codex/eval/state/W6R2-artifact-index.json",
+    "index_sha256": "695061dd7e6026320d94f14c4bab4bc80ee250bc64b16b75455cb8e1ac77f211",
+    "ticket_count": 8
+  },
+  "commit_map": {
+    "path": ".codex/eval/state/W6R2-commit-map.json",
+    "sha256": "c46de0e237a9db1724fb973097c33369993728efe305c8fe0db2ce703bd58e6f"
+  },
+  "canonical_preflight_gate": {
+    "status": "passed",
+    "environment": "Ubuntu WSL2 fresh clone, Python 3.12.13, user-level uv, no sudo",
+    "run_snapshot_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+    "run_snapshot_tree": "158cd2abde04d20e0544c4615db3cb0676f8fc83",
+    "targeted": "36 passed",
+    "protected": "27 passed",
+    "deterministic": "97 passed",
+    "full_suite": "516 passed, 2 live-opt-in skipped",
+    "ruff": "passed",
+    "live_provider_http_attempt_count": 0
+  },
+  "gate_n1": {
+    "status": "passed",
+    "configured_profile_count": 3,
+    "eligible_profile_count": 1,
+    "selected_profile": "dashscope-o",
+    "selected_profile_id": "sha256:41ebb321c6332867f0bb020621b7e1c17f8c60430374c37c3a670c916326ee70",
+    "selected_profile_public_manifest_sha256": "499655acd72b0c10f0bd0a938a032060fb7a5b776e74e478742078da1a137331",
+    "selection_sha256": "e94483ef222373139b9f07173632d579416056248431deaafcf0bcaf0c7a1278",
+    "selection_inventory_sha256": "8521b66b2614a51872d721e62869ccd942e6d903dbf20924d677bd87ab357310",
+    "scheduled_rows": "72/72",
+    "tool_required_native_calls": "63/63",
+    "call_id_result_match": "283/283",
+    "batch_completeness": "200/200",
+    "selected_profile_safety_chain": "50/50",
+    "selected_profile_safety_chain_bypass_count": 0,
+    "duplicate_call_after_result_count": 0,
+    "unknown_block_loss_count": 0,
+    "text_envelope_seen_count": 0,
+    "sdk_retry_count": 0,
+    "prior_w6_and_w6r_blocked_evidence_preserved": true
+  },
+  "concurrent_duplicate_aggregator": {
+    "status": "stopped_audited_and_excluded",
+    "commit_count": 0,
+    "adopted_as_gate_input": false,
+    "adopted_as_output": false,
+    "no_post_recovery_drift_observed": true
+  },
+  "evaluation_scope": {
+    "human_smoke_run": false,
+    "formal_effectiveness_evaluation_run": false,
+    "resume_evaluation_run": false,
+    "w7_started": false
+  },
+  "human_smoke": {
+    "authorized": false,
+    "status": "awaiting_explicit_user_authorization",
+    "profile": "dashscope-o",
+    "profile_id": "sha256:41ebb321c6332867f0bb020621b7e1c17f8c60430374c37c3a670c916326ee70",
+    "public_manifest_sha256": "499655acd72b0c10f0bd0a938a032060fb7a5b776e74e478742078da1a137331",
+    "canonical_runtime_commit": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+    "verification_scope": "Selected-profile human smoke only; no formal effectiveness claim and no W7 start."
+  },
+  "pending_user_decisions": [
+    "Explicitly authorize the selected-profile human smoke for dashscope-o at canonical runtime commit 62e0a441b9321d96f50f2863f97ed7e96ace8c9d.",
+    "After reviewing the authorized human smoke, explicitly decide whether W7 may start."
+  ],
+  "next_wave": {
+    "ready": false,
+    "ready_tickets": [],
+    "w7_ready": false,
+    "w7_started": false,
+    "blocked_until": "Authorized human smoke is completed and the user explicitly approves W7."
+  },
+  "risks": [
+    "The selected profile completed 18 of 24 rows and had stable pass/fail status in 6 of 8 cases; these post-hard-Gate metrics remain visible for human review.",
+    "The three run-shard handoff statuses remain immutable and blocked even though the aggregator independently established Gate eligibility for dashscope-o."
+  ],
+  "worker_branches_and_worktrees_retained": true,
+  "completed_at": "2026-07-23T19:30:07.4329251+08:00"
+}
