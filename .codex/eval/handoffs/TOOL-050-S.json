@@ -1,0 +1,238 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-050-S",
+  "instance_id": "W6-TOOL-050-S-01",
+  "wave": "W6",
+  "role": "integrator_ticket_aggregator",
+  "status": "complete",
+  "gate_status": "blocked",
+  "base_sha": "365732ded80bd5af2fdb60bb4d52c7bae6792d3e",
+  "head_sha": "1785c45a84e5aa7ba0162aa158cd54be28301764",
+  "run_snapshot_sha": "dd8a677782f90c749a422ee066daa1afcb36c516",
+  "dependency_commits": [],
+  "own_commits": [
+    "1785c45a84e5aa7ba0162aa158cd54be28301764"
+  ],
+  "metadata_commit_policy": "The commit containing this handoff is intentionally not self-recorded; own_commits records the payload commit per the delegated two-stage convention.",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/c868/pico",
+  "branch": null,
+  "detached_head": true,
+  "files_changed": [
+    "benchmarks/v3/native-provider/selection.json",
+    ".codex/eval/proposals/TOOL-050-S.freeze.json",
+    ".codex/eval/proposals/TOOL-050-S.status.json",
+    ".codex/eval/handoffs/TOOL-050-S.json",
+    "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/summary.json",
+    "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/summary.md"
+  ],
+  "commands_run": [
+    {
+      "command": "git rev-parse HEAD; git status --short",
+      "exit_code": 0,
+      "result": "passed",
+      "details": "Initial HEAD exactly matched W6 wave_base_sha 365732ded80bd5af2fdb60bb4d52c7bae6792d3e and the worktree was clean."
+    },
+    {
+      "command": "SHA-256 verification and read of three canonical dependency handoffs plus their manifest/rows artifacts",
+      "exit_code": 0,
+      "result": "passed",
+      "details": "All delegated hashes matched; observed 48 infrastructure rows, one explicit parser-stage exclusion, zero HTTP attempts, and zero provider observations."
+    },
+    {
+      "command": "PowerShell JSON parse, required-field/schema, evidence-index, lane-state, and SHA-256 assertions",
+      "exit_code": 0,
+      "result": "passed",
+      "details": "selection, summary, status proposal, and freeze proposal passed affected JSON/schema and evidence-hash checks."
+    },
+    {
+      "command": "git diff --check; git diff --cached --check",
+      "exit_code": 0,
+      "result": "passed",
+      "details": "Payload diff passed whitespace checks before commit."
+    },
+    {
+      "command": "uv run ruff check .",
+      "exit_code": 0,
+      "result": "passed",
+      "details": "All Ruff checks passed; the generated ignored .venv was removed after the check to preserve allowed write-path scope."
+    },
+    {
+      "command": "git commit (payload)",
+      "exit_code": 0,
+      "result": "passed",
+      "details": "Created Conventional Commit 1785c45a84e5aa7ba0162aa158cd54be28301764 with Assisted-By: Codex footer."
+    }
+  ],
+  "tests": [
+    {
+      "command": "affected JSON/schema self-check",
+      "result": "passed",
+      "details": "All JSON parsed; selected_profile remained null; eligible_profile_count remained 0; Gate N1 and formal lanes remained blocked; all protocol metrics remained not_computable; every output indexed exactly three shard evidence triples."
+    },
+    {
+      "command": "source and output SHA-256 self-check",
+      "result": "passed",
+      "details": "All three canonical handoff/manifest/rows triples and selection/summary hashes matched their recorded values."
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed",
+      "details": "No whitespace errors in the payload."
+    },
+    {
+      "command": "uv run ruff check .",
+      "result": "passed",
+      "details": "All checks passed."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "benchmarks/v3/native-provider/selection.json",
+      "sha256": "e51ec2b3fd45c6f22f87e1db619c1c2cfc3fdc2304821ca92540fd24479f71df"
+    },
+    {
+      "path": ".codex/eval/proposals/TOOL-050-S.freeze.json",
+      "sha256": "2d2a272378e3fa10c63ed36c39212fa931d7d8bfb784b3469341fa4fc83e389e"
+    },
+    {
+      "path": ".codex/eval/proposals/TOOL-050-S.status.json",
+      "sha256": "58ac1ad0c8ecf19f419c3bb95c8169c155a132b1ae3393f6718d8b923ba102df"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/summary.json",
+      "sha256": "f291706780d48f4d9c2a1ee113992f5bf7bcbe981f2ee6b9642b6203960e0368"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/summary.md",
+      "sha256": "3d9b7d7a9d3778b9beacd8208061fe6949ee40606d3df7a5879ae5aa33188186"
+    }
+  ],
+  "dependency_evidence_index": [
+    {
+      "ticket_id": "TOOL-050-QO-R",
+      "profile": "dashscope-o",
+      "handoff_path": "F:/dev/llm/pico/.codex/eval/handoffs/TOOL-050-QO-R.json",
+      "handoff_sha256": "af2f24021009fa1b9ea9a294d6226ca3dba3316f595f9542d0ca45b554a4168e",
+      "manifest_sha256": "83e6c784cfcfe18354238f8238adf01f75ec57cb9ec0eff6c4255847d3d87bbd",
+      "rows_sha256": "641cfe9550e79441b064df1829debeb69c257e343a616d687fa75d8e19f511cb",
+      "raw_row_count": 24,
+      "http_attempt_count": 0,
+      "outcome": "blocked_pre_http",
+      "protocol_metrics": "not_computable"
+    },
+    {
+      "ticket_id": "TOOL-050-QA-R",
+      "profile": "dashscope-a",
+      "handoff_path": "F:/dev/llm/pico/.codex/eval/handoffs/TOOL-050-QA-R.json",
+      "handoff_sha256": "66cfb9a8a069075e313894cea600ba98f931d3a74ecd1d05c9d8d71afb6f75e7",
+      "manifest_sha256": "c4cde64ac86c344f3f4589507b02e2c96f9b044a6ffad3013759cb2df73641d1",
+      "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "raw_row_count": 0,
+      "parser_stage_exclusion_count": 1,
+      "http_attempt_count": 0,
+      "outcome": "excluded_pre_http",
+      "protocol_metrics": "not_computable"
+    },
+    {
+      "ticket_id": "TOOL-050-DA-R",
+      "profile": "deepseek",
+      "handoff_path": "F:/dev/llm/pico/.codex/eval/handoffs/TOOL-050-DA-R.json",
+      "handoff_sha256": "1f4e84cca8073d9708c968610e1d29c61f91d36710da88c1591706fd9428ed17",
+      "manifest_sha256": "9c806284b39051b2b7adfd30519798741a58c519434926961443f64cdee78ddb",
+      "rows_sha256": "b5f389e0f2e253094475202b4a581a244aca00e09d52f0ef7107af665d8ef977",
+      "raw_row_count": 24,
+      "http_attempt_count": 0,
+      "outcome": "blocked_pre_http",
+      "protocol_metrics": "not_computable"
+    }
+  ],
+  "frozen_hashes": {
+    "formal_freeze": "538f7644f91611abcbe4822a497490e0bb6d4ffa0d39286e871c92afdd81e70e",
+    "w5r2_handoff": "101e6006e0d67c693ebe439078cbbb82779810f54dee8a3cce51256c38a44f95",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "cases": "92f746b113a88ceb652e4e8ec651021b1358d9922ab91c0dad34e62c0068b9e3",
+    "native_gate_handoff": "c4b0dbd9549b33397e6377d421fd59193619cf655b10a3c78185ef34abdf3c1e",
+    "evaluator_handoff": "5eef3b00058eb07ec33527ff6e33ba628dea5ec27967a0ae0caf6b60e1cb2936",
+    "provider_selection": "e51ec2b3fd45c6f22f87e1db619c1c2cfc3fdc2304821ca92540fd24479f71df",
+    "selected_profile": null,
+    "complete_conformance": null,
+    "native_resume_gate": null
+  },
+  "selection": {
+    "selected_profile": null,
+    "selection_status": "none",
+    "eligible_profile_count": 0,
+    "gate_n1": "blocked",
+    "reason": "All candidates lack real, complete live conformance evidence because required frozen runner inputs were missing before HTTP."
+  },
+  "native_protocol_observations": {
+    "live_provider_run": false,
+    "http_attempt_count": 0,
+    "provider_observation_count": 0,
+    "computation_status": "not_computable",
+    "tool_required_native_call_observed": null,
+    "call_id_result_match": null,
+    "batch_result_completeness": null,
+    "duplicate_call_after_result_count": null,
+    "unknown_block_loss_count": null,
+    "safety_chain_bypass_count": null,
+    "text_envelope_seen_count": null,
+    "implicit_sdk_retry_seen": null,
+    "absence_of_observation_treated_as_pass": false,
+    "w2_sdk_probe_used_as_w6_conformance": false
+  },
+  "evaluation_runs": {
+    "formal_effectiveness": false,
+    "auto_dream": false,
+    "local_task": false,
+    "resume": false
+  },
+  "defects": [
+    {
+      "code": "frozen_live_runner_inputs_missing",
+      "detail": "The frozen runner requires a compatible external live runner plugin and public profile artifact, but those inputs were not supplied for any candidate."
+    },
+    {
+      "code": "runner_invocation_contract_drift",
+      "detail": "The delegated shard commands did not satisfy the frozen runner CLI contract; the shards stopped before HTTP and cannot supply protocol evidence."
+    }
+  ],
+  "risks": [
+    "Gate N1 and all formal online lanes remain blocked; no provider may be selected from these artifacts.",
+    "The 48 infrastructure rows and one parser-stage exclusion provide no protocol denominator and must not be reclassified as passing conformance.",
+    "Formal effectiveness, Auto-dream, local-task, and Resume evaluation have not run.",
+    "Reusing the W2 SDK probe, adding a text envelope fallback, or letting an SDK runner execute Pico tools would violate the frozen Gate."
+  ],
+  "status_proposal": {
+    "path": ".codex/eval/proposals/TOOL-050-S.status.json",
+    "sha256": "58ac1ad0c8ecf19f419c3bb95c8169c155a132b1ae3393f6718d8b923ba102df",
+    "ticket_status": "complete",
+    "gate_n1": "blocked",
+    "native_eval_ready": "blocked",
+    "selected_profile": null,
+    "promotion_owner": "W6 Wave Integrator"
+  },
+  "freeze_proposal": {
+    "path": ".codex/eval/proposals/TOOL-050-S.freeze.json",
+    "sha256": "2d2a272378e3fa10c63ed36c39212fa931d7d8bfb784b3469341fa4fc83e389e",
+    "provider_selection_status": "blocked",
+    "selected_profile": null,
+    "promotion_owner": "W6 Wave Integrator"
+  },
+  "ownership_change_request": {
+    "requested_owner": "W6 Wave Integrator to assign a new scoped evaluator/runner implementation and run owner",
+    "request": "Provide and freeze a reviewed native live runner plugin, sanitized complete public profile artifacts, and a corrected compatible invocation. Open fresh run shards from an authorized immutable snapshot and rerun TOOL-050-S; do not modify frozen cases or existing raw rows.",
+    "constraints": [
+      "Do not add or retain executable text-protocol fallback.",
+      "Do not use SDK Tool Runners, Agents Runners, or SDK-managed Pico tool execution.",
+      "Preserve the Pico validate, repetition, permission, policy, and execute safety chain.",
+      "Do not read or emit credentials."
+    ]
+  },
+  "formal_status_written": false,
+  "formal_freeze_written": false,
+  "w7_started": false,
+  "ready_for_integration": true
+}
