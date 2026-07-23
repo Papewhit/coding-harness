@@ -1,0 +1,87 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-050-DA-R2",
+  "instance_id": "W6R2-TOOL-050-DA-R2-01",
+  "role": "run_shard",
+  "status": "blocked",
+  "base_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+  "head_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+  "run_snapshot_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+  "source_tree": "158cd2abde04d20e0544c4615db3cb0676f8fc83",
+  "metadata_commit_semantics": "Any commit containing only this handoff is metadata-only and must not be used as a source or run snapshot SHA.",
+  "dependency_commits": [],
+  "own_commits": [],
+  "files_changed": [".codex/eval/handoffs/TOOL-050-DA-R2.json"],
+  "commands_run": [
+    {
+      "command": "WSL fresh-clone frozen preflight and uv sync --frozen --extra providers",
+      "exit_code": 0,
+      "result": "passed",
+      "details": "Ubuntu WSL2 fresh clone was clean at the exact source SHA/tree; project environment resolved to Python 3.12.13."
+    },
+    {
+      "command": "frozen deepseek native-provider conformance command (8 cases x 3 repetitions)",
+      "exit_code": 124,
+      "result": "interrupted",
+      "details": "The outer execution host terminated the command after approximately 64 seconds. No runner completion status was returned."
+    }
+  ],
+  "tests": [
+    {
+      "command": "frozen-input and canonical-environment preflight",
+      "result": "passed",
+      "details": "HEAD, tree, clean state, cases blob, formal FREEZE, TOOL-058-G/EVAL-056-H handoffs, public profile identity, and private-config locator existence were verified without recording the locator."
+    },
+    {
+      "command": "artifact presence check after interruption",
+      "result": "blocked",
+      "details": "No shard artifact directory existed after the host interruption; no bundle or rows can be validated."
+    }
+  ],
+  "outputs": [],
+  "expected_artifact_dir": "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/62e0a441b9321d96f50f2863f97ed7e96ace8c9d/TOOL-050-DA-R2",
+  "artifact_status": "absent_after_interruption",
+  "frozen_hashes": {
+    "formal_freeze": "546893c11eeb2c78e473257e6bbb166cb1c5b904d22289a34cdb57865034b7ce",
+    "cases_git_blob_oid": "f513f6e15c521104b12fe348dc280f73624acd56",
+    "tool_058_g_handoff": "5dcbbcc456f1d917c4bbb8708495ef1ab38d9b7f5d5268f62b5bb7d3524d3df8",
+    "eval_056_h_handoff": "88dd58e2a7a726c18bc584b92538de259b02e698d15c079830be858ccacc05f5",
+    "public_profile_manifest": "5e4a4c3af56f492ee066835b8657748ec430cc6f11f8f0aebe39d2ea4cfac2e6"
+  },
+  "profile": {
+    "name": "deepseek",
+    "profile_id": "sha256:d7f29754016394922b48edb3ac4211d3920c333e386e7cf4d76f0ff178beb4a5",
+    "wire_dialect": "anthropic-messages",
+    "stream": false,
+    "parallel": false,
+    "sdk_max_retries": 0,
+    "pico_attempts": 1
+  },
+  "native_protocol_observations": {
+    "http_attempt_count": "unknown_due_to_host_interruption",
+    "call_result_evidence": "unavailable",
+    "text_envelope_seen": "unavailable",
+    "implicit_sdk_retry_seen": "unavailable",
+    "unknown_block_loss": "unavailable",
+    "safety_chain_bypass": "unavailable"
+  },
+  "defects": [
+    {
+      "code": "outer_execution_timeout",
+      "detail": "The local execution host imposed a 64-second timeout before the frozen runner completed; no retry was performed."
+    }
+  ],
+  "risks": [
+    "No 24-row result set or 0-row preflight-failure manifest exists, so native conformance eligibility cannot be determined.",
+    "The interrupted process provides no auditable evidence for HTTP attempts, native call/result matching, retries, unknown blocks, or the safety chain."
+  ],
+  "formal_effectiveness_evaluation_run": false,
+  "resume_evaluation_run": false,
+  "status_proposal": null,
+  "freeze_proposal": null,
+  "ownership_change_request": {
+    "requested_owner": "Wave Integrator",
+    "request": "Provide a run environment without the outer 64-second command limit, then open a fresh authorized shard; do not reuse or fabricate this shard's artifact."
+  },
+  "ready_for_integration": true
+}
