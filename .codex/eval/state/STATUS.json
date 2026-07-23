@@ -18,11 +18,34 @@
   "bootstrap_sha": "9d6bfc4567b6c1dff45908a3ed00335b947a52f9",
   "current_wave": "W6R2",
   "wave_base_sha": "6b4fa94948888b7c95dfbe4cd0134205356decba",
+  "run_snapshot_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
   "gates": {
-    "native_eval_ready": "blocked",
+    "native_eval_ready": "preflight_passed_pending_conformance_shards",
     "native_resume_ready": "pending"
   },
   "accepted_tickets": {
+    "TOOL-058-G": {
+      "instance_id": "W6R2-TOOL-058-G-01",
+      "status": "accepted",
+      "gate_status": "passed",
+      "base_sha": "6b4fa94948888b7c95dfbe4cd0134205356decba",
+      "head_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+      "source_tree": "158cd2abde04d20e0544c4615db3cb0676f8fc83",
+      "worker_branch_head": "79d610c4fdf8c70c56d546d09911af97e5504ccb",
+      "own_commits": [
+        "79d610c4fdf8c70c56d546d09911af97e5504ccb"
+      ],
+      "integration_commits": [
+        "b90ed60ea15cd54ccb3f000015bfd9f93eb96de8"
+      ],
+      "handoff_path": ".codex/eval/handoffs/TOOL-058-G.json",
+      "handoff_sha256": "5dcbbcc456f1d917c4bbb8708495ef1ab38d9b7f5d5268f62b5bb7d3524d3df8",
+      "freeze_proposal_sha256": "61f697873cdd87d369bb743f28c8ad69a4af086cb72bc6a3c0dfa48c8bec728d",
+      "status_proposal_sha256": "21af875ae8e0c49c56bc557a1bf411b1336cd1d35f9c0f2e63e6f8080f55d80e",
+      "gate_report_sha256": "7d59bbfdce5eccc3ebc70691abb68b65e0c4536b71fd8158d0fd119dbf51afd9",
+      "artifact_inventory_sha256": "4e8df2eb9beb1cd8174b32442d936650df4d9b0806d5d13953e8134507055705",
+      "run_snapshot_approved_for_live_conformance": true
+    },
     "TOOL-057-A": {
       "instance_id": "W6R2-TOOL-057-A-01",
       "status": "accepted",
@@ -826,16 +849,7 @@
       "selected_profile": null
     }
   },
-  "active_tickets": {
-    "TOOL-058-G": {
-      "instance_id": "W6R2-TOOL-058-G-01",
-      "status": "active",
-      "thread_id": "019f8e64-be25-7492-bac9-f10c6876dff8",
-      "base_sha": "6b4fa94948888b7c95dfbe4cd0134205356decba",
-      "branch": "codex/w6r2-tool-058-g",
-      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\1fef\\pico"
-    }
-  },
+  "active_tickets": {},
   "blocked_tickets": {
     "TOOL-050-QO-R": {
       "instance_id": "W6-TOOL-050-QO-R-01",
@@ -915,8 +929,40 @@
       "reasoning_effort": "xhigh",
       "prompt_sha256": "38a983543517a8dbbaa56896cacc8efa3c498fd11088c427437ae93b37bae692",
       "prompt_hash_basis": "UTF-8 codexDelegation.input",
-      "status": "active",
-      "dispatched_at": "2026-07-23T17:54:04.0420752+08:00"
+      "applied_dependency_commits": [
+        {
+          "original_commit": "50f728ba824a142ba0d64a5f820c80bbc1942496",
+          "applied_commit": "28a200055a6595392a0d67065fb774ec12fcac12",
+          "stable_patch_id": "86f900fa077405162cfa49435551f500cfb2c344"
+        },
+        {
+          "original_commit": "c7a4a16cd124349448952063894f81d18c0b50c9",
+          "applied_commit": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+          "stable_patch_id": "cb8100e853515f99195e7a37f58cf690d6dc46f5"
+        }
+      ],
+      "head_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+      "source_tree": "158cd2abde04d20e0544c4615db3cb0676f8fc83",
+      "worker_branch_head": "79d610c4fdf8c70c56d546d09911af97e5504ccb",
+      "own_commits": [
+        "79d610c4fdf8c70c56d546d09911af97e5504ccb"
+      ],
+      "integration_commits": [
+        "b90ed60ea15cd54ccb3f000015bfd9f93eb96de8"
+      ],
+      "handoff_sha256": "5dcbbcc456f1d917c4bbb8708495ef1ab38d9b7f5d5268f62b5bb7d3524d3df8",
+      "freeze_proposal_sha256": "61f697873cdd87d369bb743f28c8ad69a4af086cb72bc6a3c0dfa48c8bec728d",
+      "status_proposal_sha256": "21af875ae8e0c49c56bc557a1bf411b1336cd1d35f9c0f2e63e6f8080f55d80e",
+      "gate_artifact_root": "F:\\dev\\llm\\pico-eval-artifacts\\native-provider-preflight\\W6R2-TOOL-058-G-01",
+      "gate_report_sha256": "7d59bbfdce5eccc3ebc70691abb68b65e0c4536b71fd8158d0fd119dbf51afd9",
+      "artifact_inventory_sha256": "4e8df2eb9beb1cd8174b32442d936650df4d9b0806d5d13953e8134507055705",
+      "integrator_read_only_reverification": "passed_twice_no_hash_drift",
+      "sensitive_exact_value_scan_matches": 0,
+      "run_snapshot_approved_for_live_conformance": true,
+      "status": "accepted",
+      "gate_status": "passed",
+      "dispatched_at": "2026-07-23T17:54:04.0420752+08:00",
+      "accepted_at": "2026-07-23T18:38:10.5419672+08:00"
     },
     "W6R2-TOOL-057-A-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -3384,7 +3430,11 @@
     "W6": ".codex/eval/state/W6-wave-handoff.json",
     "W6R": ".codex/eval/state/W6R-wave-handoff.json"
   },
-  "ready_tickets": [],
+  "ready_tickets": [
+    "TOOL-050-QO-R2",
+    "TOOL-050-QA-R2",
+    "TOOL-050-DA-R2"
+  ],
   "wave_open": {
     "wave": "W6R2",
     "status": "open",
@@ -3450,6 +3500,27 @@
       "credential_scan_passed": true,
       "blocking_defects": [],
       "checkpointed_at": "2026-07-23T17:51:47.8928118+08:00"
+    },
+    {
+      "wave": "W6R2",
+      "batch": 4,
+      "accepted_tickets": ["TOOL-058-G"],
+      "canonical_head": "b90ed60ea15cd54ccb3f000015bfd9f93eb96de8",
+      "gate_status": "passed",
+      "run_snapshot_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+      "run_snapshot_tree": "158cd2abde04d20e0544c4615db3cb0676f8fc83",
+      "gate_report_sha256": "7d59bbfdce5eccc3ebc70691abb68b65e0c4536b71fd8158d0fd119dbf51afd9",
+      "artifact_inventory_sha256": "4e8df2eb9beb1cd8174b32442d936650df4d9b0806d5d13953e8134507055705",
+      "canonical_wsl_tests": {
+        "ruff": "passed",
+        "targeted": "36 passed",
+        "protected": "27 passed",
+        "deterministic": "97 passed",
+        "full_suite": "516 passed, 2 live-opt-in skipped"
+      },
+      "dual_dialect_reverification": "24_rows_36_chains_each_passed_twice_no_writes",
+      "blocking_defects": [],
+      "checkpointed_at": "2026-07-23T18:38:10.5419672+08:00"
     }
   ],
   "wave_close": {
@@ -3701,5 +3772,5 @@
     "w7_started": false,
     "completed_at": "2026-07-23T15:16:48.5580598+08:00"
   },
-  "updated_at": "2026-07-23T18:10:46.0638281+08:00"
+  "updated_at": "2026-07-23T18:38:10.5419672+08:00"
 }
