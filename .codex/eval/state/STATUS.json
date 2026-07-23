@@ -671,7 +671,15 @@
       "selected_profile": null
     }
   },
-  "active_tickets": {},
+  "active_tickets": {
+    "EVAL-052-H": {
+      "instance_id": "W6R-EVAL-052-H-01",
+      "status": "running",
+      "thread_id": "019f8d73-2787-7c62-8a11-a2c68adf0b8c",
+      "base_sha": "48a39193580e48acee3fea5c3bfa107e46443d04",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\534a\\pico"
+    }
+  },
   "blocked_tickets": {
     "TOOL-050-QO-R": {
       "instance_id": "W6-TOOL-050-QO-R-01",
@@ -707,6 +715,45 @@
     }
   },
   "ticket_instances": {
+    "W6R-EVAL-052-H-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "EVAL-052-H",
+      "instance_id": "W6R-EVAL-052-H-01",
+      "wave": "W6R",
+      "role": "implementer/versioned-native-conformance-harness",
+      "thread_id": "019f8d73-2787-7c62-8a11-a2c68adf0b8c",
+      "wave_base_sha": "48a39193580e48acee3fea5c3bfa107e46443d04",
+      "base_sha": "48a39193580e48acee3fea5c3bfa107e46443d04",
+      "starting_ref": "codex/w6r-wave-base",
+      "branch": null,
+      "branch_requested": "codex/w6r-eval-052-h",
+      "checkout_mode": "detached_at_dispatch",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\534a\\pico",
+      "dependency_handoff_hashes": {
+        "TOOL-051-L": "64d276287e7921a620e0e9e80e3e59b89c97be8f79ea97599767bbf93eb6c9d7",
+        "W6-wave-handoff": "6055eca111fe08ebd11448e41550402096b017b34d50e2efde1aea906de8fc4f"
+      },
+      "dependency_commits": [
+        "cc5c18c8734301655dc1d0d841972067701c9c2e"
+      ],
+      "freeze_hashes": {
+        "formal_freeze": "b4893c10887bb774dda860a5f4b13ec6fa9b8c014e0cb0257e409c0f27df6ba6"
+      },
+      "frozen_cases_git_blob_oid": "f513f6e15c521104b12fe348dc280f73624acd56",
+      "allowed_write_paths": [
+        "pico/evaluation/native_provider.py",
+        "scripts/run_native_provider_conformance.py",
+        "tests/test_native_provider_evaluator.py",
+        "tests/test_native_provider_cli.py",
+        ".codex/eval/handoffs/EVAL-052-H.json"
+      ],
+      "prompt_sha256": "3c01b13d258b19f13282dcfb206bbd250c57a11f3ec71cab3e3627b98cf9e246",
+      "prompt_hash_basis": "UTF-8 dispatcher source text",
+      "model": "gpt-5.6-sol",
+      "reasoning_effort": "medium",
+      "status": "running",
+      "dispatched_at": "2026-07-23T13:29:52.8133998+08:00"
+    },
     "W6R-TOOL-051-L-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
       "ticket_id": "TOOL-051-L",
@@ -2757,7 +2804,7 @@
     "W5R2": ".codex/eval/state/W5R2-wave-handoff.json",
     "W6": ".codex/eval/state/W6-wave-handoff.json"
   },
-  "ready_tickets": ["EVAL-052-H"],
+  "ready_tickets": [],
   "wave_open": {
     "wave": "W6R",
     "status": "open",
@@ -2972,5 +3019,5 @@
     "w7_started": false,
     "completed_at": "2026-07-23T11:47:50.4506038+08:00"
   },
-  "updated_at": "2026-07-23T13:27:43.8231281+08:00"
+  "updated_at": "2026-07-23T13:29:52.8133998+08:00"
 }
