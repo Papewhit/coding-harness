@@ -137,10 +137,12 @@ def test_cli_resolves_profile_from_independent_worktree_without_config_option(
     monkeypatch.chdir(invocation_root)
     monkeypatch.setenv(CONFIG_LOCATOR_ENV, str(config_path))
     calls: list[tuple[str, str]] = []
+    repetitions: dict[str, int] = {}
 
     def fake_live_call(self, case, expected_profile):
         calls.append((self.provider, case["id"]))
-        return _passing_observation(case)
+        repetitions[case["id"]] = repetitions.get(case["id"], 0) + 1
+        return _passing_observation(case, repetitions[case["id"]])
 
     monkeypatch.setattr(
         "pico.evaluation.native_provider_live.NativeProviderLiveRunner.__call__",
@@ -162,6 +164,11 @@ def test_cli_resolves_profile_from_independent_worktree_without_config_option(
         ("fixture", "NP02-single-call"),
     ]
     assert len(rows) == 16
+    evidence = json.loads(
+        (artifact_dir / "evidence-index.json").read_text(encoding="utf-8")
+    )
+    assert evidence["entries"]
+    assert all(entry["complete"] and not entry["bypass"] for entry in evidence["entries"])
     manifest = json.loads((artifact_dir / "manifest.json").read_text(encoding="utf-8"))
     assert manifest["bindings"]["config_locator"]["schema_version"] == (
         CONFIG_LOCATOR_SCHEMA_VERSION
@@ -238,6 +245,32 @@ def test_missing_audited_config_locator_fails_before_case_start(
         "schema_version": CONFIG_LOCATOR_SCHEMA_VERSION,
         "environment_variable": CONFIG_LOCATOR_ENV,
     }
+
+
+def test_unreadable_audited_config_locator_fails_closed_with_zero_rows(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _clear_provider_overrides(monkeypatch)
+    _, profile_path, run_root = _workspace(tmp_path)
+    unreadable_locator = tmp_path / "config-is-a-directory"
+    unreadable_locator.mkdir()
+    artifact_dir = tmp_path / "unreadable-locator"
+    monkeypatch.chdir(run_root)
+    monkeypatch.setenv(CONFIG_LOCATOR_ENV, str(unreadable_locator))
+
+    assert main(_argv(profile_path, artifact_dir)) == 2
+
+    assert (artifact_dir / "rows.jsonl").read_bytes() == b""
+    manifest = json.loads((artifact_dir / "manifest.json").read_text(encoding="utf-8"))
+    summary = json.loads((artifact_dir / "summary.json").read_text(encoding="utf-8"))
+    serialized = "\n".join(
+        path.read_text(encoding="utf-8") for path in artifact_dir.iterdir()
+    )
+    assert manifest["row_count"] == 0
+    assert summary["computability"] == "not_computable"
+    assert str(unreadable_locator) not in serialized
+    assert unreadable_locator.name not in serialized
 
 
 def test_invalid_public_profile_never_hashes_secret_bearing_input(
