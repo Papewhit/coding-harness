@@ -23,6 +23,23 @@
     "native_resume_ready": "pending"
   },
   "accepted_tickets": {
+    "TOOL-051-L": {
+      "instance_id": "W6R-TOOL-051-L-01",
+      "status": "accepted",
+      "base_sha": "48a39193580e48acee3fea5c3bfa107e46443d04",
+      "head_sha": "cc5c18c8734301655dc1d0d841972067701c9c2e",
+      "worker_branch_head": "3ec41e77396137f24b7b420d8545f78d018db02d",
+      "own_commits": [
+        "cc5c18c8734301655dc1d0d841972067701c9c2e",
+        "3ec41e77396137f24b7b420d8545f78d018db02d"
+      ],
+      "integration_commits": [
+        "ee00ac7a356f12a1856d058209aa98e53856ea90",
+        "770f255bc19b9f89a45793d0bf3a8980710cad2b"
+      ],
+      "handoff_path": ".codex/eval/handoffs/TOOL-051-L.json",
+      "handoff_sha256": "64d276287e7921a620e0e9e80e3e59b89c97be8f79ea97599767bbf93eb6c9d7"
+    },
     "EVAL-000": {
       "instance_id": "W0-EVAL-000-01",
       "status": "accepted",
@@ -654,15 +671,7 @@
       "selected_profile": null
     }
   },
-  "active_tickets": {
-    "TOOL-051-L": {
-      "instance_id": "W6R-TOOL-051-L-01",
-      "status": "running",
-      "thread_id": "019f8d5a-2731-7e31-8059-6b2b6b627a32",
-      "base_sha": "48a39193580e48acee3fea5c3bfa107e46443d04",
-      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\a6ce\\pico"
-    }
-  },
+  "active_tickets": {},
   "blocked_tickets": {
     "TOOL-050-QO-R": {
       "instance_id": "W6-TOOL-050-QO-R-01",
@@ -708,9 +717,9 @@
       "wave_base_sha": "48a39193580e48acee3fea5c3bfa107e46443d04",
       "base_sha": "48a39193580e48acee3fea5c3bfa107e46443d04",
       "starting_ref": "codex/w6r-wave-base",
-      "branch": null,
+      "branch": "codex/w6r-tool-051-l",
       "branch_requested": "codex/w6r-tool-051-l",
-      "checkout_mode": "detached_at_dispatch",
+      "checkout_mode": "worker_branch_from_detached_base",
       "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\a6ce\\pico",
       "dependency_handoff_hashes": {
         "TOOL-042-G-R2": "c4b0dbd9549b33397e6377d421fd59193619cf655b10a3c78185ef34abdf3c1e",
@@ -737,8 +746,30 @@
       "prompt_hash_basis": "UTF-8 dispatcher source text",
       "model": "gpt-5.6-sol",
       "reasoning_effort": "high",
-      "status": "running",
-      "dispatched_at": "2026-07-23T13:03:01.0214223+08:00"
+      "head_sha": "cc5c18c8734301655dc1d0d841972067701c9c2e",
+      "worker_branch_head": "3ec41e77396137f24b7b420d8545f78d018db02d",
+      "own_commits": [
+        "cc5c18c8734301655dc1d0d841972067701c9c2e",
+        "3ec41e77396137f24b7b420d8545f78d018db02d"
+      ],
+      "integration_commits": [
+        "ee00ac7a356f12a1856d058209aa98e53856ea90",
+        "770f255bc19b9f89a45793d0bf3a8980710cad2b"
+      ],
+      "handoff_sha256": "64d276287e7921a620e0e9e80e3e59b89c97be8f79ea97599767bbf93eb6c9d7",
+      "stable_patch_ids": [
+        "084df602a69cc3dfe62423b164cafef0471f642f",
+        "8d7e7bf74f4d4115d7fec35ca2bf276c0ba4beee"
+      ],
+      "tests": {
+        "ticket": "8 passed",
+        "adjacent_native_regressions": "43 passed",
+        "ruff": "passed",
+        "diff_check": "passed"
+      },
+      "status": "accepted",
+      "dispatched_at": "2026-07-23T13:03:01.0214223+08:00",
+      "accepted_at": "2026-07-23T13:27:43.8231281+08:00"
     },
     "W6-TOOL-050-S-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -2726,7 +2757,7 @@
     "W5R2": ".codex/eval/state/W5R2-wave-handoff.json",
     "W6": ".codex/eval/state/W6-wave-handoff.json"
   },
-  "ready_tickets": [],
+  "ready_tickets": ["EVAL-052-H"],
   "wave_open": {
     "wave": "W6R",
     "status": "open",
@@ -2743,7 +2774,24 @@
     "w7_started": false,
     "opened_at": "2026-07-23T12:59:49.9430949+08:00"
   },
-  "batch_checkpoints": [],
+  "batch_checkpoints": [
+    {
+      "wave": "W6R",
+      "batch": 1,
+      "accepted_tickets": ["TOOL-051-L"],
+      "canonical_head": "770f255bc19b9f89a45793d0bf3a8980710cad2b",
+      "dependency_commits_for_next_ticket": [
+        "cc5c18c8734301655dc1d0d841972067701c9c2e"
+      ],
+      "targeted_test_evidence": {
+        "ticket": "8 passed",
+        "adjacent_native_regressions": "43 passed",
+        "ruff": "passed",
+        "diff_check": "passed"
+      },
+      "checkpointed_at": "2026-07-23T13:27:43.8231281+08:00"
+    }
+  ],
   "wave_close": {
     "wave": "W6",
     "status": "blocked",
@@ -2924,5 +2972,5 @@
     "w7_started": false,
     "completed_at": "2026-07-23T11:47:50.4506038+08:00"
   },
-  "updated_at": "2026-07-23T13:03:01.0214223+08:00"
+  "updated_at": "2026-07-23T13:27:43.8231281+08:00"
 }
