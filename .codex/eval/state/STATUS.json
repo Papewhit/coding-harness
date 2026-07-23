@@ -849,7 +849,16 @@
       "selected_profile": null
     }
   },
-  "active_tickets": {},
+  "active_tickets": {
+    "TOOL-050-S-R1": {
+      "instance_id": "W6R2-TOOL-050-S-R1-01",
+      "status": "active",
+      "thread_id": "019f8ea8-ab3a-7783-b405-e6958b3dcd59",
+      "base_sha": "6b4fa94948888b7c95dfbe4cd0134205356decba",
+      "branch": "codex/w6r2-tool-050-s-r1",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\5fb8\\pico"
+    }
+  },
   "blocked_tickets": {
     "TOOL-050-QO-R": {
       "instance_id": "W6-TOOL-050-QO-R-01",
@@ -906,6 +915,38 @@
     }
   },
   "ticket_instances": {
+    "W6R2-TOOL-050-S-R1-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "TOOL-050-S-R1",
+      "instance_id": "W6R2-TOOL-050-S-R1-01",
+      "wave": "W6R2",
+      "role": "aggregator/recovered-native-provider-selection-gate-n1",
+      "thread_id": "019f8ea8-ab3a-7783-b405-e6958b3dcd59",
+      "wave_base_sha": "6b4fa94948888b7c95dfbe4cd0134205356decba",
+      "base_sha": "6b4fa94948888b7c95dfbe4cd0134205356decba",
+      "run_snapshot_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+      "branch": "codex/w6r2-tool-050-s-r1",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\5fb8\\pico",
+      "dependency_handoff_hashes": {
+        "TOOL-050-QO-R2": "52d3b226d233b697f505bc2c4b8649511f3afd7dc379e3b10211dd85ab1958ac",
+        "TOOL-050-QA-R2": "bb1dae84b0ed3ba267e2c7623fb6eb48640214fb8ba45feb5481d8be4c6d2000",
+        "TOOL-050-DA-R2": "eec6ee22918fb50adfde7df7a0a7c39eb3d85894a7e2c627a57a59b964202763",
+        "TOOL-058-G": "5dcbbcc456f1d917c4bbb8708495ef1ab38d9b7f5d5268f62b5bb7d3524d3df8"
+      },
+      "formal_freeze_sha256": "546893c11eeb2c78e473257e6bbb166cb1c5b904d22289a34cdb57865034b7ce",
+      "source_status_sha256": "d8a5b26295478e65dbb213390733f81ec0e9f6e4eca32fe980921dea50d78e4b",
+      "allowed_write_paths": [
+        "benchmarks/v3/native-provider/selection-w6r2.json",
+        "F:\\dev\\llm\\pico-eval-artifacts\\native-provider-conformance\\62e0a441b9321d96f50f2863f97ed7e96ace8c9d\\selection\\**",
+        ".codex/eval/proposals/TOOL-050-S-R1.freeze.json",
+        ".codex/eval/proposals/TOOL-050-S-R1.status.json",
+        ".codex/eval/handoffs/TOOL-050-S-R1.json"
+      ],
+      "model": "gpt-5.6-sol",
+      "reasoning_effort": "high",
+      "status": "active",
+      "dispatched_at": "2026-07-23T19:08:47.9696303+08:00"
+    },
     "W6R2-TOOL-050-QO-R2-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
       "ticket_id": "TOOL-050-QO-R2",
@@ -3584,9 +3625,7 @@
     "W6": ".codex/eval/state/W6-wave-handoff.json",
     "W6R": ".codex/eval/state/W6R-wave-handoff.json"
   },
-  "ready_tickets": [
-    "TOOL-050-S-R1"
-  ],
+  "ready_tickets": [],
   "wave_open": {
     "wave": "W6R2",
     "status": "open",
@@ -3969,5 +4008,5 @@
     "w7_started": false,
     "completed_at": "2026-07-23T15:16:48.5580598+08:00"
   },
-  "updated_at": "2026-07-23T19:04:34.6071701+08:00"
+  "updated_at": "2026-07-23T19:08:47.9696303+08:00"
 }
