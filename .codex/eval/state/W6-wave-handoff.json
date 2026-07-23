@@ -1,0 +1,161 @@
+{
+  "schema_version": "pico-eval-wave-handoff-v1",
+  "wave": "W6",
+  "status": "blocked",
+  "wave_integrator_role": "non-ticket scheduler and sole canonical state writer",
+  "integration_branch": "eval/v3-integration",
+  "wave_base_sha": "365732ded80bd5af2fdb60bb4d52c7bae6792d3e",
+  "upstream_wave": "W5R2",
+  "upstream_metadata_head": "d56f06f4d81b967c9ced698c9270eb5c2436e89f",
+  "upstream_canonical_sha": "fc606a7d7a77b455b2331dfa307bc0920e3a9b80",
+  "upstream_canonical_tag": "eval-v3/w5r2-canonical",
+  "upstream_handoff_sha256": "101e6006e0d67c693ebe439078cbbb82779810f54dee8a3cce51256c38a44f95",
+  "canonical_snapshot_sha": "c0638104ae39994e648387243e474037bcfb967f",
+  "canonical_tag": "eval-v3/w6-canonical",
+  "canonical_tag_verified_target": "c0638104ae39994e648387243e474037bcfb967f",
+  "canonical_snapshot_semantics": "The immutable W6 source, aggregation outputs, formal STATUS/FREEZE, commit map, and artifact index before this metadata-only wave handoff commit.",
+  "formal_state_hashes": {
+    "status_sha256": "ce0e69ce1bc6da75c4710459eb44bf35e6b75cd79df501e0885a9b66b3c9df3a",
+    "freeze_sha256": "b4893c10887bb774dda860a5f4b13ec6fa9b8c014e0cb0257e409c0f27df6ba6",
+    "commit_map_sha256": "0c119e0759192114b8d5f42db05988e39417402890dd595d0ad34d29371b88a9",
+    "artifact_index_sha256": "923c7adbab376def709ccfa947d544471bb0afee28ac171e47adc31a3673afb3"
+  },
+  "plan_validation": {
+    "result": "VALID",
+    "ticket_template_count": 74,
+    "wave_count": 13,
+    "plan_sha256": "ca2514f9aa3a96be7b5456472b58055ea4a9b06ff8cc3b381ba65280b2eb9805",
+    "initial_ready_tickets": [
+      "TOOL-050-QO-R",
+      "TOOL-050-QA-R",
+      "TOOL-050-DA-R"
+    ],
+    "initial_ready_set_match": true
+  },
+  "frozen_run": {
+    "run_snapshot_sha": "dd8a677782f90c749a422ee066daa1afcb36c516",
+    "frozen_cases_sha256": "92f746b113a88ceb652e4e8ec651021b1358d9922ab91c0dad34e62c0068b9e3",
+    "approved_for_live_conformance": true,
+    "all_shards_checked_out_exact_snapshot": true,
+    "profiles": {
+      "TOOL-050-QO-R": "dashscope-o",
+      "TOOL-050-QA-R": "dashscope-a",
+      "TOOL-050-DA-R": "deepseek"
+    }
+  },
+  "integration_order": [
+    "TOOL-050-QO-R",
+    "TOOL-050-QA-R",
+    "TOOL-050-DA-R",
+    "TOOL-050-S"
+  ],
+  "accepted_tickets": [
+    "TOOL-050-S"
+  ],
+  "blocked_tickets": [
+    "TOOL-050-QO-R",
+    "TOOL-050-QA-R",
+    "TOOL-050-DA-R"
+  ],
+  "ticket_handoffs": {
+    "TOOL-050-QO-R": {
+      "path": ".codex/eval/handoffs/TOOL-050-QO-R.json",
+      "sha256": "af2f24021009fa1b9ea9a294d6226ca3dba3316f595f9542d0ca45b554a4168e",
+      "outcome": "blocked_pre_http"
+    },
+    "TOOL-050-QA-R": {
+      "path": ".codex/eval/handoffs/TOOL-050-QA-R.json",
+      "sha256": "66cfb9a8a069075e313894cea600ba98f931d3a74ecd1d05c9d8d71afb6f75e7",
+      "outcome": "excluded_pre_http"
+    },
+    "TOOL-050-DA-R": {
+      "path": ".codex/eval/handoffs/TOOL-050-DA-R.json",
+      "sha256": "1f4e84cca8073d9708c968610e1d29c61f91d36710da88c1591706fd9428ed17",
+      "outcome": "blocked_pre_http"
+    },
+    "TOOL-050-S": {
+      "path": ".codex/eval/handoffs/TOOL-050-S.json",
+      "sha256": "e263d3d1a2e2efb1871a7f7af504b1a56ae7ab3bae30d86ac6f91ffd7a8da205",
+      "outcome": "accepted_aggregation_blocked_gate"
+    }
+  },
+  "artifact_index": {
+    "path": ".codex/eval/state/W6-artifact-index.json",
+    "sha256": "923c7adbab376def709ccfa947d544471bb0afee28ac171e47adc31a3673afb3",
+    "materialized_row_count": 48,
+    "parser_stage_exclusion_count": 1,
+    "http_attempt_count": 0,
+    "provider_observation_count": 0,
+    "credential_pattern_scan": "passed_no_matches"
+  },
+  "aggregate": {
+    "selection_path": "benchmarks/v3/native-provider/selection.json",
+    "selection_sha256": "e51ec2b3fd45c6f22f87e1db619c1c2cfc3fdc2304821ca92540fd24479f71df",
+    "selection_hash_basis": "git_blob_bytes",
+    "summary_json_sha256": "f291706780d48f4d9c2a1ee113992f5bf7bcbe981f2ee6b9642b6203960e0368",
+    "summary_markdown_sha256": "3d9b7d7a9d3778b9beacd8208061fe6949ee40606d3df7a5879ae5aa33188186",
+    "status_proposal_sha256": "58ac1ad0c8ecf19f419c3bb95c8169c155a132b1ae3393f6718d8b923ba102df",
+    "freeze_proposal_sha256": "2d2a272378e3fa10c63ed36c39212fa931d7d8bfb784b3469341fa4fc83e389e"
+  },
+  "exit_gate": {
+    "ticket_id": "TOOL-050-S",
+    "status": "blocked",
+    "hard_gate": "N1",
+    "configured_profile_count": 3,
+    "eligible_profile_count": 0,
+    "selected_profile": null,
+    "protocol_metrics_status": "not_computable",
+    "zero_over_zero_treated_as_pass": false,
+    "prior_probe_substituted": false,
+    "reason": "The frozen snapshot has no complete sanitized public live profile artifact and no compliant frozen live runner plugin/profile binding; all shards stopped before provider HTTP.",
+    "gate_bypassed": false
+  },
+  "evaluation_scope": {
+    "live_native_conformance_attempted": true,
+    "formal_effectiveness_evaluation_run": false,
+    "auto_dream_pilot_run": false,
+    "local_task_pilot_run": false,
+    "resume_evaluation_run": false
+  },
+  "human_smoke": {
+    "authorized": false,
+    "profile": null,
+    "commit": null,
+    "evidence_snapshot_commit": "c0638104ae39994e648387243e474037bcfb967f",
+    "reason": "No provider profile passed the frozen hard Gate; naming a smoke profile or commit would bypass selection."
+  },
+  "worker_bundle": {
+    "path": "F:/dev/llm/pico-eval-artifacts/wave-bundles/W6-workers.bundle",
+    "sha256": "9dc6b9864b6dc25e2be0c083c77498b080039605289ac052f5ab16f313ad6278",
+    "size_bytes": 16515309,
+    "ref_count": 1,
+    "verified_complete_history": true
+  },
+  "commit_map": {
+    "path": ".codex/eval/state/W6-commit-map.json",
+    "sha256": "0c119e0759192114b8d5f42db05988e39417402890dd595d0ad34d29371b88a9"
+  },
+  "remediation_required": {
+    "required": true,
+    "scope": [
+      "Provide a frozen live runner plugin that binds the public profile contract without modifying frozen cases.",
+      "Provide complete sanitized public profile artifacts for the intended provider profiles.",
+      "Align the frozen ticket invocation with the committed CLI contract, then issue new scoped remediation/run tickets from an immutable base."
+    ],
+    "may_reuse_failed_rows_as_success": false,
+    "may_retry_to_beautify_results": false
+  },
+  "gates": {
+    "native_eval_ready": "blocked",
+    "native_resume_ready": "pending"
+  },
+  "next_wave": {
+    "wave": "W7",
+    "ready_tickets": [],
+    "started": false,
+    "blocked_by": "W6 native conformance hard Gate",
+    "requires_human_direction_after_remediation": true
+  },
+  "worker_branches_and_worktrees_retained": true,
+  "completed_at": "2026-07-23T11:51:11.7865971+08:00"
+}
