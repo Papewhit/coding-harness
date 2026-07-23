@@ -849,32 +849,7 @@
       "selected_profile": null
     }
   },
-  "active_tickets": {
-    "TOOL-050-QO-R2": {
-      "instance_id": "W6R2-TOOL-050-QO-R2-01",
-      "status": "active",
-      "thread_id": "019f8e8f-f3ea-7b82-b3c0-d773dbad7a76",
-      "base_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
-      "branch": "codex/w6r2-tool-050-qo-r2",
-      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\5929\\pico"
-    },
-    "TOOL-050-QA-R2": {
-      "instance_id": "W6R2-TOOL-050-QA-R2-01",
-      "status": "active",
-      "thread_id": "019f8e90-542b-77d0-99db-363a08763cd4",
-      "base_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
-      "branch": "codex/w6r2-tool-050-qa-r2",
-      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\dc81\\pico"
-    },
-    "TOOL-050-DA-R2": {
-      "instance_id": "W6R2-TOOL-050-DA-R2-01",
-      "status": "active",
-      "thread_id": "019f8e90-8f79-7521-8dbc-94963b7dd460",
-      "base_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
-      "branch": "codex/w6r2-tool-050-da-r2",
-      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\8042\\pico"
-    }
-  },
+  "active_tickets": {},
   "blocked_tickets": {
     "TOOL-050-QO-R": {
       "instance_id": "W6-TOOL-050-QO-R-01",
@@ -896,6 +871,27 @@
       "reason": "frozen_live_runner_unavailable",
       "handoff_path": ".codex/eval/handoffs/TOOL-050-DA-R.json",
       "handoff_sha256": "1f4e84cca8073d9708c968610e1d29c61f91d36710da88c1591706fd9428ed17"
+    },
+    "TOOL-050-QO-R2": {
+      "instance_id": "W6R2-TOOL-050-QO-R2-01",
+      "status": "blocked",
+      "reason": "completed_24_rows_but_only_18_conformed",
+      "handoff_path": ".codex/eval/handoffs/TOOL-050-QO-R2.json",
+      "handoff_sha256": "52d3b226d233b697f505bc2c4b8649511f3afd7dc379e3b10211dd85ab1958ac"
+    },
+    "TOOL-050-QA-R2": {
+      "instance_id": "W6R2-TOOL-050-QA-R2-01",
+      "status": "blocked",
+      "reason": "completed_24_rows_with_3_protocol_errors_and_3_safety_chain_bypasses",
+      "handoff_path": ".codex/eval/handoffs/TOOL-050-QA-R2.json",
+      "handoff_sha256": "bb1dae84b0ed3ba267e2c7623fb6eb48640214fb8ba45feb5481d8be4c6d2000"
+    },
+    "TOOL-050-DA-R2": {
+      "instance_id": "W6R2-TOOL-050-DA-R2-01",
+      "status": "blocked",
+      "reason": "completed_24_rows_with_10_protocol_errors_and_10_safety_chain_bypasses",
+      "handoff_path": ".codex/eval/handoffs/TOOL-050-DA-R2.json",
+      "handoff_sha256": "eec6ee22918fb50adfde7df7a0a7c39eb3d85894a7e2c627a57a59b964202763"
     }
   },
   "prior_wave_blocked_tickets": {
@@ -929,8 +925,29 @@
       "artifact_root": "F:\\dev\\llm\\pico-eval-artifacts\\native-provider-conformance\\62e0a441b9321d96f50f2863f97ed7e96ace8c9d\\TOOL-050-QO-R2",
       "model": "gpt-5.6-terra",
       "reasoning_effort": "medium",
-      "status": "active",
-      "dispatched_at": "2026-07-23T18:41:30.0511423+08:00"
+      "worker_branch_head": "12e8409e49cf54a670a863687de92e9749bdef18",
+      "integration_commits": [
+        "f93b3a3353da4ccfc06c2cf476a82cfff85a83f2"
+      ],
+      "handoff_sha256": "52d3b226d233b697f505bc2c4b8649511f3afd7dc379e3b10211dd85ab1958ac",
+      "artifact_hashes": {
+        "manifest": "d8e984e1d3dd2b917d2adfb27cb610dbe6ab6b14bd8657f02812d84e69a199e4",
+        "rows": "c95dae0f8c3a90bc46e22e9f07dfce53784e43557f0fdf960bc9f5ba1fa92da3",
+        "evidence_index": "2cabd5d8dd94a1b50be83cfff800fcc1bba90203e9d3a58a25da17bc81fee1d2",
+        "summary": "b9bfce582704216ba6f7ff37b68234c8292eee625da2e9cadb425c6b02ef3718"
+      },
+      "run_result": {
+        "rows": 24,
+        "passed": 18,
+        "failed": 6,
+        "http_attempts": 59,
+        "protocol_error_count": 0,
+        "safety_chain_bypass_count": 0,
+        "eligible_for_gate_n1": false
+      },
+      "status": "blocked",
+      "dispatched_at": "2026-07-23T18:41:30.0511423+08:00",
+      "completed_at": "2026-07-23T19:04:34.6071701+08:00"
     },
     "W6R2-TOOL-050-QA-R2-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -951,8 +968,31 @@
       "artifact_root": "F:\\dev\\llm\\pico-eval-artifacts\\native-provider-conformance\\62e0a441b9321d96f50f2863f97ed7e96ace8c9d\\TOOL-050-QA-R2",
       "model": "gpt-5.6-terra",
       "reasoning_effort": "medium",
-      "status": "active",
-      "dispatched_at": "2026-07-23T18:41:30.0511423+08:00"
+      "worker_branch_head": "f31ad612cf8652dccd9dd5996203e8f534ab9634",
+      "integration_commits": [
+        "1ca2102db6ecd487509c666c842f4bbfc43f5623",
+        "4939b654ff4cf302eec8ac7e437a616e37f8d15b",
+        "52c296c414cd0202b76347e292ac3ab60c222b98"
+      ],
+      "handoff_sha256": "bb1dae84b0ed3ba267e2c7623fb6eb48640214fb8ba45feb5481d8be4c6d2000",
+      "artifact_hashes": {
+        "manifest": "99c97102fa46f17bc0a120757eca0328401595d31af38a00c4b6dd2213d0b863",
+        "rows": "dfaf6efe30718d69ebd27f918f6f40978d8fb58af9454bbc702beabf86f09089",
+        "evidence_index": "6680bc2f0e3e4c29fa5fc804f33d2bd8ee1be6797fc9de3d0c75060b1806819e",
+        "summary": "e187bea1aa8a25928e944f9b55dd46392b68540a6f191ba31fdf76026d3b06d7"
+      },
+      "run_result": {
+        "rows": 24,
+        "passed": 15,
+        "failed": 9,
+        "http_attempts": 98,
+        "protocol_error_count": 3,
+        "safety_chain_bypass_count": 3,
+        "eligible_for_gate_n1": false
+      },
+      "status": "blocked",
+      "dispatched_at": "2026-07-23T18:41:30.0511423+08:00",
+      "completed_at": "2026-07-23T19:04:34.6071701+08:00"
     },
     "W6R2-TOOL-050-DA-R2-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -973,8 +1013,31 @@
       "artifact_root": "F:\\dev\\llm\\pico-eval-artifacts\\native-provider-conformance\\62e0a441b9321d96f50f2863f97ed7e96ace8c9d\\TOOL-050-DA-R2",
       "model": "gpt-5.6-terra",
       "reasoning_effort": "medium",
-      "status": "active",
-      "dispatched_at": "2026-07-23T18:41:30.0511423+08:00"
+      "worker_branch_head": "fba24a10b68b95413f9b168385eeb8a658e9982f",
+      "integration_commits": [
+        "bb1ff4506ff5361f31ed0a51af0b9c3ceb0f33cf",
+        "1641e3c44748b2ccfe8cbb6d89ca9729a0df0499"
+      ],
+      "handoff_sha256": "eec6ee22918fb50adfde7df7a0a7c39eb3d85894a7e2c627a57a59b964202763",
+      "artifact_hashes": {
+        "manifest": "7b7e903c9ba01ec3c51e99c7ef75faae26f761e7834da85e64116867338576cd",
+        "rows": "86cd167db8a9054a94bef435517a5e2cbeec7484407c6a961d6904a839235fe4",
+        "evidence_index": "b7d316bc458c72271910ce337d00de0919aecc953adc98bb2d6af413982671aa",
+        "summary": "56dcedae55b21647bd0b278ed42de3c473b83f8954939576e51411b496db253f"
+      },
+      "run_result": {
+        "rows": 24,
+        "passed": 13,
+        "failed": 11,
+        "http_attempts": 113,
+        "protocol_error_count": 10,
+        "safety_chain_bypass_count": 10,
+        "eligible_for_gate_n1": false,
+        "late_atomic_publication_after_outer_timeout": true
+      },
+      "status": "blocked",
+      "dispatched_at": "2026-07-23T18:41:30.0511423+08:00",
+      "completed_at": "2026-07-23T19:04:34.6071701+08:00"
     },
     "W6R2-TOOL-058-G-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -3521,7 +3584,9 @@
     "W6": ".codex/eval/state/W6-wave-handoff.json",
     "W6R": ".codex/eval/state/W6R-wave-handoff.json"
   },
-  "ready_tickets": [],
+  "ready_tickets": [
+    "TOOL-050-S-R1"
+  ],
   "wave_open": {
     "wave": "W6R2",
     "status": "open",
@@ -3608,6 +3673,51 @@
       "dual_dialect_reverification": "24_rows_36_chains_each_passed_twice_no_writes",
       "blocking_defects": [],
       "checkpointed_at": "2026-07-23T18:38:10.5419672+08:00"
+    },
+    {
+      "wave": "W6R2",
+      "batch": 5,
+      "completed_tickets": [
+        "TOOL-050-QO-R2",
+        "TOOL-050-QA-R2",
+        "TOOL-050-DA-R2"
+      ],
+      "blocked_tickets": [
+        "TOOL-050-QO-R2",
+        "TOOL-050-QA-R2",
+        "TOOL-050-DA-R2"
+      ],
+      "canonical_head": "1641e3c44748b2ccfe8cbb6d89ca9729a0df0499",
+      "run_snapshot_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+      "results": {
+        "dashscope-o": {
+          "rows": 24,
+          "passed": 18,
+          "failed": 6,
+          "protocol_errors": 0,
+          "safety_chain_bypasses": 0
+        },
+        "dashscope-a": {
+          "rows": 24,
+          "passed": 15,
+          "failed": 9,
+          "protocol_errors": 3,
+          "safety_chain_bypasses": 3
+        },
+        "deepseek": {
+          "rows": 24,
+          "passed": 13,
+          "failed": 11,
+          "protocol_errors": 10,
+          "safety_chain_bypasses": 10,
+          "late_atomic_publication_after_outer_timeout": true
+        }
+      },
+      "all_artifact_files_reparsed": true,
+      "all_case_repetition_pairs_unique": true,
+      "sensitive_exact_value_scan_matches": 0,
+      "ready_for_gate_n1_aggregation": true,
+      "checkpointed_at": "2026-07-23T19:04:34.6071701+08:00"
     }
   ],
   "wave_close": {
@@ -3859,5 +3969,5 @@
     "w7_started": false,
     "completed_at": "2026-07-23T15:16:48.5580598+08:00"
   },
-  "updated_at": "2026-07-23T18:41:30.0511423+08:00"
+  "updated_at": "2026-07-23T19:04:34.6071701+08:00"
 }
