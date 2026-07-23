@@ -1,0 +1,206 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-051-L",
+  "instance_id": "W6R-TOOL-051-L-01",
+  "wave": "W6R",
+  "role": "implementer/fixed-production-live-runner",
+  "status": "complete",
+  "source_thread_id": "019f8d54-adce-7be2-a422-a8ac0535307c",
+  "base_sha": "48a39193580e48acee3fea5c3bfa107e46443d04",
+  "wave_base_sha": "48a39193580e48acee3fea5c3bfa107e46443d04",
+  "starting_ref": "codex/w6r-wave-base",
+  "starting_ref_verified_target": "48a39193580e48acee3fea5c3bfa107e46443d04",
+  "head_sha": "cc5c18c8734301655dc1d0d841972067701c9c2e",
+  "head_sha_semantics": "Implementation-content head before the metadata-only commit containing this handoff; the containing commit is the final retained worker branch HEAD reported to the W6R Integrator.",
+  "branch": "codex/w6r-tool-051-l",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/a6ce/pico",
+  "dependency_commits": [],
+  "applied_dependency_commits": [],
+  "own_commits": [
+    "cc5c18c8734301655dc1d0d841972067701c9c2e"
+  ],
+  "dependency_handoff_hashes": {
+    "W6-wave-handoff": "6055eca111fe08ebd11448e41550402096b017b34d50e2efde1aea906de8fc4f",
+    "TOOL-042-G-R2": "c4b0dbd9549b33397e6377d421fd59193619cf655b10a3c78185ef34abdf3c1e",
+    "TOOL-040-I": "3ea08ab84d4bcdc632280bb8e65e572aa1a448b04781394f242880790faf0922",
+    "TOOL-049-I": "5eef3b00058eb07ec33527ff6e33ba628dea5ec27967a0ae0caf6b60e1cb2936",
+    "TOOL-050-S": "e263d3d1a2e2efb1871a7f7af504b1a56ae7ab3bae30d86ac6f91ffd7a8da205"
+  },
+  "allowed_write_paths": [
+    "pico/evaluation/native_provider_live.py",
+    "pico/evaluation/native_provider_profiles.py",
+    "scripts/build_native_provider_profile.py",
+    "tests/test_native_provider_live.py",
+    "tests/test_native_provider_profile_cli.py",
+    "benchmarks/v3/native-provider/profile.schema.json",
+    "benchmarks/v3/native-provider/profile.example.json",
+    ".codex/eval/handoffs/TOOL-051-L.json"
+  ],
+  "files_changed": [
+    "pico/evaluation/native_provider_live.py",
+    "pico/evaluation/native_provider_profiles.py",
+    "scripts/build_native_provider_profile.py",
+    "tests/test_native_provider_live.py",
+    "tests/test_native_provider_profile_cli.py",
+    "benchmarks/v3/native-provider/profile.schema.json",
+    "benchmarks/v3/native-provider/profile.example.json",
+    ".codex/eval/handoffs/TOOL-051-L.json"
+  ],
+  "implementation": {
+    "config_resolution": "The existing resolve_provider_config resolver loads one named local profile. API key and raw base URL remain only in the in-memory ProviderConfig and production client.",
+    "public_identity": "A strict versioned manifest exposes only the provider/profile identity, model, endpoint fingerprint, wire dialect, adapter mode, locked SDK, public capability booleans, and fixed retry/stream/parallel settings.",
+    "profile_binding": "Each case rebuilds the public identity from current local config and requires exact equality with the frozen expected manifest before constructing a client or allowing HTTP.",
+    "runtime_path": "Each case creates an isolated deterministic workspace and invokes production Pico and Engine. The SDK remains a one-operation wire transport and never executes Pico tools.",
+    "observation_sources": [
+      "provider-neutral ModelRequest and ModelResponse values",
+      "persisted session model_exchange assistant batches, tool results, and model final records",
+      "session tool_started, permission_decision, tool_policy_decision, and tool_finished events",
+      "sanitized provider transport HTTP-attempt and SDK retry metadata"
+    ],
+    "fixed_settings": {
+      "stream": false,
+      "parallel_tool_calls": false,
+      "sdk_max_retries": 0,
+      "pico_provider_attempts": 1
+    },
+    "approval_policy": {
+      "permission_denial": "never",
+      "all_other_frozen_cases": "auto"
+    }
+  },
+  "tests": [
+    {
+      "command": "uv run pytest tests/test_native_provider_live.py -q",
+      "result": "passed",
+      "details": "5 passed. The production Anthropic adapter consumed a no-network fake wire transport across all eight frozen scenarios, then production Pico/Engine executed the tool loop. Negative controls covered exact profile mismatch before client creation, secret/raw-URL sentinel exclusion, safety-chain bypass detection, text-envelope visibility, and implicit SDK retry visibility."
+    },
+    {
+      "command": "uv run pytest tests/test_native_provider_profile_cli.py -q",
+      "result": "passed",
+      "details": "3 passed. Covered named config resolution, canonical sanitized output, strict schema/example parity, exact profile comparison, invalid identity rejection, and absence of credential/raw endpoint material."
+    },
+    {
+      "command": "uv run python scripts/build_native_provider_profile.py --help",
+      "result": "passed",
+      "details": "Help completed successfully and exposes required --provider and --manifest-out arguments plus an optional local --config path."
+    },
+    {
+      "command": "uv run ruff check pico/evaluation/native_provider_live.py pico/evaluation/native_provider_profiles.py scripts/build_native_provider_profile.py tests/test_native_provider_live.py tests/test_native_provider_profile_cli.py",
+      "result": "passed",
+      "details": "All checks passed."
+    },
+    {
+      "command": "uv run pytest tests/test_native_provider_evaluator.py tests/test_native_runtime_integration.py tests/test_anthropic_messages_tools.py tests/test_openai_responses_tools.py -q",
+      "result": "passed",
+      "details": "43 passed; adjacent evaluator, active Runtime, and both native adapter contracts remain green."
+    },
+    {
+      "command": "uv run pytest tests/test_native_provider_evaluator.py tests/test_native_runtime_integration.py tests/test_anthropic_messages_tools.py tests/test_openai_responses_tools.py tests/test_safety_invariants.py -q",
+      "result": "baseline_failures_only",
+      "details": "46 passed and 7 failed only on documented Windows baseline conditions already recorded by TOOL-040-I: unavailable symlink privilege, Path.home() after tests clear home variables, and POSIX shell quoting under cmd.exe. TOOL-051-L did not modify those paths or tests."
+    },
+    {
+      "command": "git diff --check; git diff --cached --check; allowed-write-path audit",
+      "result": "passed",
+      "details": "No whitespace errors; all ticket changes are confined to the eight delegated paths. The generated workspace .venv was removed and subsequent uv commands used a temporary environment outside the worktree."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "pico/evaluation/native_provider_live.py",
+      "sha256": "afe17b8044da11802883311f01f5ad9819fb657fd3d042604e5d70c129eabcf2",
+      "hash_basis": "working_tree_file_bytes_at_implementation_head",
+      "coverage": "Fixed production Runtime case runner, isolated workspace, exact profile binding, structured observation assembly, HTTP/retry audit, unknown-block loss audit, and safety-chain bypass audit."
+    },
+    {
+      "path": "pico/evaluation/native_provider_profiles.py",
+      "sha256": "186c5cd950f7418c8a9fb0f80b3f06ce190f3b0ab1e5b54a4d042159ee991be5",
+      "hash_basis": "working_tree_file_bytes_at_implementation_head",
+      "coverage": "Versioned public profile construction, validation, exact comparison, canonical serialization, and sanitized file output."
+    },
+    {
+      "path": "scripts/build_native_provider_profile.py",
+      "sha256": "58e64b5321aee07b585fb78548434e4f7b7dbab59fd0d8452e34b7c599785005",
+      "hash_basis": "working_tree_file_bytes_at_implementation_head"
+    },
+    {
+      "path": "tests/test_native_provider_live.py",
+      "sha256": "038f43f0c14b5db0d7441bc5cbea69a15bb15edf1f66dfd2b976ec3d553a310e",
+      "hash_basis": "working_tree_file_bytes_at_implementation_head"
+    },
+    {
+      "path": "tests/test_native_provider_profile_cli.py",
+      "sha256": "002b893b8b8f8eae829fb4d160ec8bb40756ce5ad87f887cf849881ef2c51371",
+      "hash_basis": "working_tree_file_bytes_at_implementation_head"
+    },
+    {
+      "path": "benchmarks/v3/native-provider/profile.schema.json",
+      "sha256": "c664de9fc4ba4abfa1c5ee4450425e9ef5e3b638d990c2fc42e343d9a63a1625",
+      "hash_basis": "working_tree_file_bytes_at_implementation_head"
+    },
+    {
+      "path": "benchmarks/v3/native-provider/profile.example.json",
+      "sha256": "135095b602ffd386a4227bce817a5edd0242a8b2df68dc50ca42d44ec106de3f",
+      "hash_basis": "working_tree_file_bytes_at_implementation_head"
+    },
+    {
+      "path": ".codex/eval/handoffs/TOOL-051-L.json",
+      "persistence": "Metadata-only commit generated after the immutable implementation content commit."
+    }
+  ],
+  "frozen_hashes": {
+    "formal_freeze": "b4893c10887bb774dda860a5f4b13ec6fa9b8c014e0cb0257e409c0f27df6ba6",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "sdk_dependency_lock": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+    "public_profile_schema": "c664de9fc4ba4abfa1c5ee4450425e9ef5e3b638d990c2fc42e343d9a63a1625",
+    "public_profile_example": "135095b602ffd386a4227bce817a5edd0242a8b2df68dc50ca42d44ec106de3f",
+    "selected_provider_profile": null,
+    "native_deterministic_gate": "2fc1ebbe4d64c5be80e7fe063584915f12aabf3a8f8c08796d2cf009e94849a5",
+    "provider_selection": "e51ec2b3fd45c6f22f87e1db619c1c2cfc3fdc2304821ca92540fd24479f71df",
+    "native_resume_gate": null
+  },
+  "native_protocol_observations": {
+    "observation_scope": "Offline production Pico/Engine and production Anthropic adapter with a deterministic no-network fake wire transport. No real provider HTTP, formal effectiveness evaluation, human smoke, or Resume evaluation was run.",
+    "passing_frozen_cases": "8/8",
+    "passing_fake_http_attempt_evidence": 19,
+    "real_http_attempt_count": 0,
+    "call_id_result_match": "12/12",
+    "batch_completeness": "11/11",
+    "opaque_continuation_roundtrip": "1/1",
+    "unknown_block_observed_count": 1,
+    "unknown_block_loss_count": 0,
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "pico_retry_count": 0,
+    "safety_chain_bypass_count": 0,
+    "adverse_negative_controls": {
+      "text_envelope_seen_count": 1,
+      "implicit_sdk_retry_seen": true,
+      "safety_chain_bypass_count": 1,
+      "note": "Non-zero adverse counts are intentional detection fixtures; none occurred in the passing eight-case suite."
+    },
+    "sdk_tool_runner_used": false,
+    "sdk_agent_runner_used": false,
+    "sdk_managed_pico_tool_execution_used": false
+  },
+  "defects": [],
+  "risks": [
+    "No real endpoint was contacted, so provider eligibility, selected profile, and Gate N1 remain unresolved until fresh authorized run shards bind a generated public profile and execute this runner.",
+    "The wider Windows safety suite retains seven dependency-documented platform failures; ticket-owned tests and the adjacent provider/Runtime regressions are green.",
+    "Public capability keys use explicit *_support names for private-block-related booleans because the existing public artifact sanitizer reserves reasoning, thinking, and opaque_continuation as private payload keys; the profile_id still binds the complete original local capability set."
+  ],
+  "ownership_change_request": null,
+  "status_proposal": {
+    "ticket_id": "TOOL-051-L",
+    "status": "complete",
+    "head_sha": "cc5c18c8734301655dc1d0d841972067701c9c2e",
+    "reason": "A fixed, auditable, credential-safe runner now binds a strict public profile to local config and executes every isolated case through production Pico/Engine with structured native protocol and safety evidence."
+  },
+  "freeze_proposal": null,
+  "formal_status_written": false,
+  "formal_freeze_written": false,
+  "downstream_ticket_started": false,
+  "ready_for_integration": true
+}
