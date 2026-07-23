@@ -9,15 +9,15 @@
   "local_config_path": "F:\\dev\\llm\\pico\\.pico.toml",
   "artifact_root": "F:\\dev\\llm\\pico-eval-artifacts",
   "program_supervisor_thread": "current plan-level Codex task",
-  "current_wave_integrator_thread": "019f8d00-e62f-7f72-b825-18b9bc908a6c",
+  "current_wave_integrator_thread": "019f8d54-adce-7be2-a422-a8ac0535307c",
   "profiles": {
     "qwen_openai_responses": {"local_name": "dashscope-o", "configured": true},
     "qwen_anthropic_messages": {"local_name": "dashscope-a", "configured": true},
     "deepseek_anthropic_messages": {"local_name": "deepseek", "configured": true}
   },
   "bootstrap_sha": "9d6bfc4567b6c1dff45908a3ed00335b947a52f9",
-  "current_wave": "W6",
-  "wave_base_sha": "365732ded80bd5af2fdb60bb4d52c7bae6792d3e",
+  "current_wave": "W6R",
+  "wave_base_sha": "48a39193580e48acee3fea5c3bfa107e46443d04",
   "gates": {
     "native_eval_ready": "blocked",
     "native_resume_ready": "pending"
@@ -2673,56 +2673,27 @@
     "W4": ".codex/eval/state/W4-wave-handoff.json",
     "W5": ".codex/eval/state/W5-wave-handoff.json",
     "W5R": ".codex/eval/state/W5R-wave-handoff.json",
-    "W5R2": ".codex/eval/state/W5R2-wave-handoff.json"
+    "W5R2": ".codex/eval/state/W5R2-wave-handoff.json",
+    "W6": ".codex/eval/state/W6-wave-handoff.json"
   },
-  "ready_tickets": [],
+  "ready_tickets": ["TOOL-051-L"],
   "wave_open": {
-    "wave": "W6",
+    "wave": "W6R",
     "status": "open",
-    "wave_base_sha": "365732ded80bd5af2fdb60bb4d52c7bae6792d3e",
-    "control_overlay_commit_sha": "365732ded80bd5af2fdb60bb4d52c7bae6792d3e",
-    "control_plan_sha256": "ca2514f9aa3a96be7b5456472b58055ea4a9b06ff8cc3b381ba65280b2eb9805",
-    "upstream_canonical_sha": "fc606a7d7a77b455b2331dfa307bc0920e3a9b80",
-    "upstream_metadata_sha": "d56f06f4d81b967c9ced698c9270eb5c2436e89f",
-    "upstream_handoff_sha256": "101e6006e0d67c693ebe439078cbbb82779810f54dee8a3cce51256c38a44f95",
-    "run_snapshot_sha": "dd8a677782f90c749a422ee066daa1afcb36c516",
-    "run_snapshot_approved_for_live_conformance": true,
-    "initial_ready_tickets": ["TOOL-050-QO-R", "TOOL-050-QA-R", "TOOL-050-DA-R"],
+    "wave_base_sha": "48a39193580e48acee3fea5c3bfa107e46443d04",
+    "control_overlay_commit_sha": "48a39193580e48acee3fea5c3bfa107e46443d04",
+    "control_plan_sha256": "77f3c262b5f123d542f5d80043fb7d69edb84d2734815f6eadc21b14018d4590",
+    "upstream_canonical_sha": "c0638104ae39994e648387243e474037bcfb967f",
+    "upstream_metadata_sha": "8dc42e09b3582417bfec95a8092504dc16f81d3c",
+    "upstream_handoff_sha256": "6055eca111fe08ebd11448e41550402096b017b34d50e2efde1aea906de8fc4f",
+    "initial_ready_tickets": ["TOOL-051-L"],
     "initial_ready_set_match": true,
     "allowed_path_ownership_conflicts": [],
-    "opened_at": "2026-07-23T11:27:52.3124534+08:00"
+    "w6_status_preserved": "blocked",
+    "w7_started": false,
+    "opened_at": "2026-07-23T12:59:49.9430949+08:00"
   },
-  "batch_checkpoints": [
-    {
-      "wave": "W6",
-      "batch": 1,
-      "run_snapshot_sha": "dd8a677782f90c749a422ee066daa1afcb36c516",
-      "completed_or_excluded_tickets": ["TOOL-050-QO-R", "TOOL-050-QA-R", "TOOL-050-DA-R"],
-      "dispatched_tickets": ["TOOL-050-S"],
-      "profiles": ["dashscope-o", "dashscope-a", "deepseek"],
-      "total_materialized_rows": 48,
-      "explicit_zero_row_exclusions": ["TOOL-050-QA-R"],
-      "http_attempt_count": 0,
-      "live_provider_run": false,
-      "formal_effectiveness_evaluation_run": false,
-      "resume_evaluation_run": false,
-      "checkpointed_at": "2026-07-23T11:37:42.6009702+08:00"
-    },
-    {
-      "wave": "W6",
-      "batch": 2,
-      "ticket": "TOOL-050-S",
-      "worker_head": "87671ac03e0f33e0d1d85ccc168c3c3be1e53f06",
-      "canonical_commits": ["79ced9e0962d923196fdb5008585c8cf0fc3f71e", "a92b2fb109f08a76117be5609a99358cc853848d"],
-      "eligible_profile_count": 0,
-      "selected_profile": null,
-      "gate_n1": "blocked",
-      "protocol_metrics_status": "not_computable",
-      "formal_online_lanes": "blocked_not_run",
-      "stable_patch_ids_verified": true,
-      "checkpointed_at": "2026-07-23T11:47:50.4506038+08:00"
-    }
-  ],
+  "batch_checkpoints": [],
   "wave_close": {
     "wave": "W6",
     "status": "blocked",
@@ -2903,5 +2874,5 @@
     "w7_started": false,
     "completed_at": "2026-07-23T11:47:50.4506038+08:00"
   },
-  "updated_at": "2026-07-23T11:47:50.4506038+08:00"
+  "updated_at": "2026-07-23T12:59:49.9430949+08:00"
 }
