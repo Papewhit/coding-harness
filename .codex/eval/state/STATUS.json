@@ -36,19 +36,23 @@
         "cf262e551ff948bc574adb574edd172635ab7877"
       ],
       "head_sha": "cf262e551ff948bc574adb574edd172635ab7877",
-      "worker_branch_head": "55ec33b2971f81173bad077b5901f01773bb76e9",
+      "worker_branch_head": "81cf6c5bed6a3906c9d8240b71c3fb762b30263b",
       "own_commits": [
         "a456edc41ece3bb3a28445d4cfd0fb5446b2fbd5",
-        "55ec33b2971f81173bad077b5901f01773bb76e9"
+        "55ec33b2971f81173bad077b5901f01773bb76e9",
+        "81cf6c5bed6a3906c9d8240b71c3fb762b30263b"
       ],
       "integration_commits": [
         "183f59e9afb506b7c3eeb96336803a1ea69c9c2a",
-        "ec3bab1fa1ad5ca09bd929ac5ee8dbb9c7283a13"
+        "ec3bab1fa1ad5ca09bd929ac5ee8dbb9c7283a13",
+        "d7475ce8a082b5f54ebe9a14cfd5705e8b9e88de"
       ],
       "handoff_path": ".codex/eval/handoffs/TOOL-057-A.json",
-      "handoff_sha256": "7a452933ddc0f556deaf11d852a2b33d1a892a63e9f7c7c748d420c1121eebe8",
-      "audit_report_sha256": "f230ddac6ad9abe2a37d2e5ce2daabd43f4405ee4c71ada66ff418ae71364daa",
-      "audit_inventory_sha256": "a4f832c10ef86ebb5b52db40d25cf9be7affa1fcb5c0fac545d6037baf28b458",
+      "handoff_sha256": "ccffc5d5c4450afe2e2d994ecc8dd37e4b9f709a6b6a740c2a662d917ccc893f",
+      "audit_report_sha256": "0726c7daf6023322b7b1c3e3abfdab20209128c91d7940f915bec6df42f26482",
+      "audit_inventory_sha256": "7fa96fdcfa46dc1ed0f9d6a6e354614c5116a94b8963e27c057eace507046100",
+      "read_only_verifier_sha256": "a9cc6a85be6287bbf3fbd2c2eb0d16efc7f898a2140da01aa4f0edb47e16e27c",
+      "repetition_contract": "8_cases_x_3_repetitions_per_dialect_fail_closed",
       "ready_for_wsl_preflight_gate": true
     },
     "EVAL-056-H": {
@@ -885,7 +889,7 @@
         "TOOL-042-G-R2": "c4b0dbd9549b33397e6377d421fd59193619cf655b10a3c78185ef34abdf3c1e",
         "TOOL-055-E": "733e9488b787dc0bf07d6b5f8d51b2ec502e2682feed8e139baa8cedd0c033d4",
         "EVAL-056-H": "88dd58e2a7a726c18bc584b92538de259b02e698d15c079830be858ccacc05f5",
-        "TOOL-057-A": "7a452933ddc0f556deaf11d852a2b33d1a892a63e9f7c7c748d420c1121eebe8",
+        "TOOL-057-A": "ccffc5d5c4450afe2e2d994ecc8dd37e4b9f709a6b6a740c2a662d917ccc893f",
         "W6R-wave-handoff": "84e0e7f57fb52de5a9aa13ed2f94e6d8ea8dd73287efb9cf8eecef50c701eb5b"
       },
       "dependency_commits": [
@@ -897,9 +901,9 @@
       },
       "frozen_cases_git_blob_oid": "f513f6e15c521104b12fe348dc280f73624acd56",
       "audit_hashes": {
-        "report": "f230ddac6ad9abe2a37d2e5ce2daabd43f4405ee4c71ada66ff418ae71364daa",
-        "inventory": "a4f832c10ef86ebb5b52db40d25cf9be7affa1fcb5c0fac545d6037baf28b458",
-        "read_only_verifier": "b6150d9583e893eb41b332f4adbd38cc8bed1576f05060a69867ab566d86d521"
+        "report": "0726c7daf6023322b7b1c3e3abfdab20209128c91d7940f915bec6df42f26482",
+        "inventory": "7fa96fdcfa46dc1ed0f9d6a6e354614c5116a94b8963e27c057eace507046100",
+        "read_only_verifier": "a9cc6a85be6287bbf3fbd2c2eb0d16efc7f898a2140da01aa4f0edb47e16e27c"
       },
       "allowed_write_paths": [
         "F:\\dev\\llm\\pico-eval-artifacts\\native-provider-preflight\\W6R2-TOOL-058-G-01\\**",
@@ -962,21 +966,34 @@
         }
       ],
       "head_sha": "cf262e551ff948bc574adb574edd172635ab7877",
-      "worker_branch_head": "55ec33b2971f81173bad077b5901f01773bb76e9",
+      "worker_branch_head": "81cf6c5bed6a3906c9d8240b71c3fb762b30263b",
       "own_commits": [
         "a456edc41ece3bb3a28445d4cfd0fb5446b2fbd5",
-        "55ec33b2971f81173bad077b5901f01773bb76e9"
+        "55ec33b2971f81173bad077b5901f01773bb76e9",
+        "81cf6c5bed6a3906c9d8240b71c3fb762b30263b"
       ],
       "integration_commits": [
         "183f59e9afb506b7c3eeb96336803a1ea69c9c2a",
-        "ec3bab1fa1ad5ca09bd929ac5ee8dbb9c7283a13"
+        "ec3bab1fa1ad5ca09bd929ac5ee8dbb9c7283a13",
+        "d7475ce8a082b5f54ebe9a14cfd5705e8b9e88de"
       ],
-      "handoff_sha256": "7a452933ddc0f556deaf11d852a2b33d1a892a63e9f7c7c748d420c1121eebe8",
+      "handoff_sha256": "ccffc5d5c4450afe2e2d994ecc8dd37e4b9f709a6b6a740c2a662d917ccc893f",
       "audit_artifact_root": "F:\\dev\\llm\\pico-eval-artifacts\\native-provider-harness-audit\\W6R2-TOOL-057-A-01",
-      "audit_report_sha256": "f230ddac6ad9abe2a37d2e5ce2daabd43f4405ee4c71ada66ff418ae71364daa",
-      "audit_inventory_sha256": "a4f832c10ef86ebb5b52db40d25cf9be7affa1fcb5c0fac545d6037baf28b458",
-      "read_only_verifier_sha256": "b6150d9583e893eb41b332f4adbd38cc8bed1576f05060a69867ab566d86d521",
+      "audit_report_sha256": "0726c7daf6023322b7b1c3e3abfdab20209128c91d7940f915bec6df42f26482",
+      "audit_inventory_sha256": "7fa96fdcfa46dc1ed0f9d6a6e354614c5116a94b8963e27c057eace507046100",
+      "read_only_verifier_sha256": "a9cc6a85be6287bbf3fbd2c2eb0d16efc7f898a2140da01aa4f0edb47e16e27c",
       "read_only_verifier_twice": "passed_no_hash_changes",
+      "repetition_contract": {
+        "cases_per_dialect": 8,
+        "repetitions": 3,
+        "rows_per_dialect": 24,
+        "negative_controls": [
+          "missing_repetition_row",
+          "duplicate_row",
+          "dialect_repetition_mismatch"
+        ],
+        "fail_closed": true
+      },
       "credential_scan_passed": true,
       "ready_for_wsl_preflight_gate": true,
       "status": "accepted",
@@ -3423,12 +3440,13 @@
       "wave": "W6R2",
       "batch": 3,
       "accepted_tickets": ["TOOL-057-A"],
-      "canonical_head": "ec3bab1fa1ad5ca09bd929ac5ee8dbb9c7283a13",
+      "canonical_head": "d7475ce8a082b5f54ebe9a14cfd5705e8b9e88de",
       "audit_outcome": "passed",
       "ready_for_wsl_preflight_gate": true,
-      "audit_report_sha256": "f230ddac6ad9abe2a37d2e5ce2daabd43f4405ee4c71ada66ff418ae71364daa",
-      "audit_inventory_sha256": "a4f832c10ef86ebb5b52db40d25cf9be7affa1fcb5c0fac545d6037baf28b458",
+      "audit_report_sha256": "0726c7daf6023322b7b1c3e3abfdab20209128c91d7940f915bec6df42f26482",
+      "audit_inventory_sha256": "7fa96fdcfa46dc1ed0f9d6a6e354614c5116a94b8963e27c057eace507046100",
       "read_only_verifier_twice": "passed_no_hash_changes",
+      "repetition_contract": "8_cases_x_3_repetitions_per_dialect_fail_closed",
       "credential_scan_passed": true,
       "blocking_defects": [],
       "checkpointed_at": "2026-07-23T17:51:47.8928118+08:00"
@@ -3683,5 +3701,5 @@
     "w7_started": false,
     "completed_at": "2026-07-23T15:16:48.5580598+08:00"
   },
-  "updated_at": "2026-07-23T17:54:04.0420752+08:00"
+  "updated_at": "2026-07-23T18:10:46.0638281+08:00"
 }
