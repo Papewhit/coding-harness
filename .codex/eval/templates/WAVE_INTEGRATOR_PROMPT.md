@@ -14,4 +14,6 @@
 
 每个 ticket thread 只完成一个 ticket。所有 ticket（包括 `thread_type=integrator`）不得直接写正式 `STATUS.json` 或 `FREEZE.json`，只能输出 proposal。你按 `integration_order` 验证 base/head、修改路径、测试、handoff 与 artifact hash，验收后 cherry-pick，并作为本 Wave 唯一写入者更新正式状态。
 
-完成 Exit Gate 后生成 `wave-handoff.json`，其中必须包含 integration SHA、STATUS/FREEZE hash、accepted/blocked tickets、artifact/handoff 索引、Gate 结果、风险和待用户决策。随后停止；不要启动下一 Wave。
+Canonical history 必须遵循 `CONTROL.md` 的可读性规则：ticket payload 归一化、stable patch-id、commit map、worker bundle、cleanup candidates 与 verified annotated canonical tag。不得生成逐 ticket dispatch/accept commits。
+
+完成 Exit Gate 后生成 `wave-handoff.json`，其中必须包含 integration SHA、STATUS/FREEZE hash、accepted/blocked tickets、artifact/handoff 索引、commit map、worker bundle、canonical tag、Gate 结果、风险和待用户决策。随后停止；不要启动下一 Wave。

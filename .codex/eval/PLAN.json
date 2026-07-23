@@ -320,7 +320,8 @@
         "TOOL-059-O waits for TEST-059-C and changes only the OpenAI Responses Adapter",
         "EVAL-059-H and TOOL-059-R may run in parallel after EVAL-059-O with disjoint ownership",
         "AUDIT-059-A waits for every implementation and fixture ticket and remains read-only",
-        "TOOL-059-G waits for the audit, runs only WSL deterministic gates and emits a W6R4 recovery snapshot without provider HTTP"
+        "TOOL-059-G waits for the audit, runs only WSL deterministic gates and emits a W6R4 recovery snapshot without provider HTTP",
+        "Wave close verifies W6R3-commit-map.json, W6R3-workers.bundle and annotated tag eval-v3/w6r3-canonical under the permanent readable-history rules"
       ],
       "integration_order": [
         "EVAL-059-O",
@@ -331,7 +332,7 @@
         "AUDIT-059-A",
         "TOOL-059-G"
       ],
-      "gate": "Oracle v2 and historical adjudication are frozen; stateless Responses, smoke verifier and repetition regressions pass in a fresh WSL clone; W7 remains blocked pending W6R4 reselection and a new accepted human smoke"
+      "gate": "Oracle v2 and historical adjudication are frozen; stateless Responses, smoke verifier and repetition regressions pass in a fresh WSL clone; readable commit map, worker bundle and canonical tag verify; W7 remains blocked pending W6R4 reselection and a new accepted human smoke"
     },
     {
       "id": "W7",

@@ -76,6 +76,17 @@ W0 必须保留当前 `pico/core/runtime_checkpoints.py` 既有工作区修改�
 
 每个 ticket instance 必须在启动 handoff/manifest 中记录 ticket ID、instance ID、role、base SHA、branch/worktree、dependency handoff/freeze hash、allowed paths 与 prompt hash。重复 shard 必须使用唯一 instance ID。
 
+### Canonical history 可读性
+
+- 每个包含源码、测试、fixture 或 evaluator 变更的 ticket，在 canonical integration history 中最多对应一个归一化提交；subject 必须包含 `[TICKET-ID]`。
+- Worker 的多个自有提交使用 `git cherry-pick --no-commit` 汇总。Canonical commit body 必须记录 worker head/commits、dependency commits、handoff SHA-256、tests 与 stable patch-id 验证；不得把 dependency patch 错归为 ticket 自有改动。
+- 禁止逐 ticket 的 dispatch/accept control commits。控制历史只使用 Wave open、必要的 batch checkpoint、Wave close 与 Wave handoff。
+- 每个 Wave 必须生成 `.codex/eval/state/<WAVE>-commit-map.json`，逐一映射 worker commits、stable patch ID 与 canonical commit；run/reviewer 的无源码结果也要映射 handoff/metadata integration。
+- Wave close 必须创建包含所有保留 worker refs 的 Git bundle，运行 `git bundle verify`，并在 commit map 与 wave handoff 中记录路径和 SHA-256。
+- 未经用户批准，不得删除 worker branch/worktree；只报告已验证 clean 的 cleanup candidates。
+- 每个 canonical snapshot 必须创建并验证 annotated tag `eval-v3/<wave-lower>-canonical`。Tag 指向 source/integration snapshot；后续 metadata commits 不得悄悄改变其语义。
+- 若历史归一化与可重建 patch 身份冲突，先保留 worker refs/bundle 并停止，不得通过丢弃 commits 换取表面整洁。
+
 ## 6. 核心文件所有权
 
 并行时以下路径为单 owner：
