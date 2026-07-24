@@ -717,7 +717,7 @@
       "w7_started": false
     }
   },
-  "w6r3_deterministic_recovery_gate": {
+  "w6r3_deterministic_recovery_gate_r1_superseded": {
     "version": "pico-native-deterministic-recovery-gate-v1",
     "status": "superseded_needs_remediation",
     "gate_status": "invalidated_by_upper_review",
@@ -862,9 +862,145 @@
     },
     "blocking_defects": []
   },
+  "w6r3_deterministic_recovery_gate": {
+    "version": "pico-native-deterministic-recovery-gate-v2",
+    "status": "complete",
+    "gate_status": "passed",
+    "source": {
+      "sha": "cffe1bd0344eb66d218c2e24cae19fca63b2cbf0",
+      "tree": "5ebb6a2cd62e96753fe3502a3b5846319db7386f",
+      "ref": "codex/w6r3-remediation-r2-gate-source",
+      "clean": true
+    },
+    "bindings": {
+      "oracle_v2_cases": {
+        "path": "benchmarks/v3/native-provider/cases-v2.json",
+        "git_blob_oid": "82c50bc318617c6556f82cbf4ec779fcbe4a1993",
+        "sha256": "dca7a585c2264a12187dd00344c63c225b966937bf9df8a53ed5a5341417defc"
+      },
+      "openai_responses_adapter": {
+        "path": "pico/providers/openai_responses.py",
+        "git_blob_oid": "ce80c279d0d762d9c9a813b881898959405bf4f6",
+        "sha256": "65a085bddee05eb98814f40b42f425390746a540f31153d7f4ca8a0e3a4dfb7b"
+      },
+      "anthropic_messages_adapter": {
+        "path": "pico/providers/anthropic_messages.py",
+        "git_blob_oid": "2dcdac9ff3cedda57177ba21ed1ebf7a991039d8",
+        "sha256": "7ffb1a0cbd1f0448e28d989e8ac7274996cfb5e11bf815981c409432b632abd0"
+      },
+      "human_smoke_v3_manifest": {
+        "path": "benchmarks/v3/native-provider/human-smoke-v3.json",
+        "git_blob_oid": "7d567d28d76a5e88fc93067fa63331a90adaf3fe",
+        "sha256": "4a513c285ada8d3fc5a3f694e7286dba0f2bf579685c73e4d5720b51ea756f41"
+      },
+      "human_smoke_v3_runner": {
+        "path": "scripts/run_v3_native_human_smoke_v3.py",
+        "git_blob_oid": "147b7cadb26be3c5e00d0458cc2f377e658d54ec",
+        "sha256": "8dd71824e89f85fd559f5491d4b195f80d3ff7e8d8e90340881db2d69bdc500b"
+      },
+      "human_smoke_v3_tests": {
+        "path": "tests/test_v3_native_human_smoke_v3.py",
+        "git_blob_oid": "47be129f44b5a6bd10cbb246f9f79651e46ca81d",
+        "sha256": "ca00686922b95590581519bf1e383e98fc1ec0d690578790e9f0eafe8dd50857"
+      },
+      "human_smoke_v3_r3_artifact": {
+        "root": "F:/dev/llm/pico-eval-artifacts/native-provider-human-smoke-v3/W6R3-EVAL-059-H-01-R3",
+        "summary_sha256": "4dfc48928e3bb94f773383776519b2538b9bba9a13eb29cab0748c360083aae4",
+        "result_a_sha256": "f96e4a4fa1000d362a6d7c0ca03ad2131318ab4aeb3a119f8024054750a6bfcc",
+        "result_b_sha256": "88b0a1b42553142d45d0ae0420f0ac980127c2af6fdc385eca214fd07f5973cb",
+        "inventory_file_count": 11,
+        "inventory_sha256": "ab09409b8b1435177738d45640bda29f6755aab44070246796f8d08ecbe2337e",
+        "execution_mode": "fake_provider",
+        "top_level_profile_non_empty": true,
+        "profile_equals_each_scenario_profile": true,
+        "provider_http_attempts": 0
+      }
+    },
+    "audit_binding": {
+      "revision": 3,
+      "remediation_round": 2,
+      "canonical_commit": "cffe1bd0344eb66d218c2e24cae19fca63b2cbf0",
+      "worker_commit": "4926a40b591f382ae865aafa6707c11bdc5b9ba9",
+      "handoff_sha256": "4285766c60bac6774cb2a25bed6335e3d53989218705f25fc7c9456a360ffde9",
+      "verdict": "accepted",
+      "open_p1": 0,
+      "open_p2": 0
+    },
+    "gate_result": {
+      "eval_revision_3_targeted": "10 passed",
+      "targeted_recovery": "97 passed",
+      "protected": "27 passed",
+      "deterministic": "138 passed",
+      "full_suite": "553 passed, 2 live-provider opt-in skipped, 6 warnings",
+      "scoped_ruff": "passed",
+      "full_ruff": "passed",
+      "compileall": "passed",
+      "plan_validation": "VALID: 94 ticket templates, 16 waves",
+      "provider_http_attempts": 0,
+      "acceptance_socket_attempt_records": 0,
+      "credential_private_locator_raw_url_scan_hits": 0,
+      "all_required_final_commands_passed": true
+    },
+    "artifact": {
+      "root": "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate/W6R3-TOOL-059-G-02",
+      "manifest_sha256": "9d7ba536e26231b55c69512724e266bbc23a1895e64d74d5c3a63adb1ce78996",
+      "inventory_aggregate_sha256": "ddb5d1d2792b993d3bb2abad1081f08f3774c96fe6311821a8afbb52160da251",
+      "file_count_excluding_manifest": 183,
+      "gate_report_sha256": "e85b36f50ff314d2bdceb18727d006f30f0cd7de2f00b7f7a0bd715efc63e7ea",
+      "environment_manifest_sha256": "65cefe71cb4ac468ebee853d9b5d2f4505b14e6b2b4e8ce366c43096a9ac67ac",
+      "command_results_sha256": "893a51127b5e8487494965486988848b9faf9689e2ccffe309586b1d2b52b125",
+      "junit_summary_sha256": "b7b0449cf83222eb48aee80e06e2fb51cb71e691fbd2b127a952c725cc9314ea",
+      "invariant_verification_sha256": "7dbc777afe0c38685f4a1ad8c55213648eb26ae0d52e1de3f90019b54b720eec",
+      "sensitive_scan_sha256": "d0bf3b05e8104267fb228cd8ef55d5eeab58d726bd122ae30e4ea305ba32dc93",
+      "all_member_hashes_sizes_matched": true,
+      "all_json_jsonl_xml_reparsed": true
+    },
+    "historical_immutability": {
+      "oracle_v2": true,
+      "w6r2_cases_rows_selection_and_smoke": true,
+      "human_smoke_v2": true,
+      "historical_w6r3_r1_handoff_sha256": "ce1a548022a05e94e4cd2bab0cbd9fe15a3d52214bc21a9556504d5020169d82",
+      "historical_w6r3_r1_commit_map_sha256": "55418a09c6b06c580648e79508e56cf00bbe04fa783816dfca909ec5a29f3435",
+      "historical_w6r3_r1_worker_bundle_sha256": "f6e9ff52a8ed3c39180d54aceea0822cb484b03e0c4834fda2bd8e878ef2db09",
+      "historical_w6r3_r1_tag_object": "565e937df275c6215661623564c70492cc0b306f",
+      "historical_w6r3_r1_tag_target": "b5a18cedde2f5897ad261afb286c4e123f54509f",
+      "preserved": true
+    },
+    "ambient_commit_map_obligation": {
+      "commit": "0775f65083fa53b532b78132e7ab1162f98231c5",
+      "path": "docs/known-issues/codex-task-sandbox-permission-downgrade.md",
+      "required_final_map": ".codex/eval/state/W6R3-r2-commit-map.json",
+      "recorded": true
+    },
+    "execution_constraints": {
+      "provider_http_attempts": 0,
+      "formal_human_smoke_run": false,
+      "profile_reselection_run": false,
+      "formal_effectiveness_run": false,
+      "resume_evaluation_run": false,
+      "w6r4_started": false,
+      "w7_started": false
+    },
+    "w6r4_ready_set": {
+      "status": "proposed_ready",
+      "ticket_ids": [],
+      "ticket_ids_reason": "The current PLAN has no W6R4 ticket templates; dispatch remains a Program Supervisor and Wave Integrator responsibility.",
+      "required_scope": [
+        "reselect profiles from the immutable recovery snapshot",
+        "run a newly user-authorized human smoke only after recovered selection"
+      ],
+      "started": false
+    },
+    "w7": {
+      "status": "blocked",
+      "blocked_until": "W6R4 profile reselection completes and the user accepts a new human smoke",
+      "started": false
+    },
+    "blocking_defects": []
+  },
   "w6r3_remediation_cycle_2": {
     "version": "pico-w6r3-remediation-cycle-v2",
-    "status": "review_candidate_frozen_pending_audit",
+    "status": "passed",
     "remediation_round": 2,
     "resume_control_head": "d514ae3c1185111ee92e88c400e4c0176bf66d4c",
     "candidate_ref": "codex/w6r3-remediation-r2-candidate",
@@ -933,7 +1069,30 @@
           "top_level_profile_binding_verified": true,
           "sensitive_scan_hits": 0
         }
+      },
+      "AUDIT-059-A": {
+        "revision": 3,
+        "worker_head": "4926a40b591f382ae865aafa6707c11bdc5b9ba9",
+        "handoff_sha256": "4285766c60bac6774cb2a25bed6335e3d53989218705f25fc7c9456a360ffde9",
+        "canonical_commit": "cffe1bd0344eb66d218c2e24cae19fca63b2cbf0",
+        "stable_patch_id": "3a29844dd686a611d81c383a0bcaaa85b0d668c8",
+        "verdict": "accepted",
+        "open_p1_findings": 0,
+        "open_p2_findings": 0
+      },
+      "TOOL-059-G": {
+        "revision": 2,
+        "worker_head": "2ee5a2607dc430604ef9039e436e2fd6feb1bcb0",
+        "handoff_sha256": "67a825b2107a32ee5830ea465cb8cff989bac3b6f47494df520200312f975b57",
+        "canonical_commit": "9a5d07fcd9f03f73023059cd1c8b8dc3eee2fad6",
+        "stable_patch_id": "7e44e650d692519de865adcff668f90fe3bce9be",
+        "gate_status": "passed",
+        "provider_http_attempts": 0
       }
+    },
+    "immutable_recovery_snapshot": {
+      "sha": "cffe1bd0344eb66d218c2e24cae19fca63b2cbf0",
+      "tree": "5ebb6a2cd62e96753fe3502a3b5846319db7386f"
     },
     "historical_r1_close": {
       "handoff_sha256": "ce1a548022a05e94e4cd2bab0cbd9fe15a3d52214bc21a9556504d5020169d82",

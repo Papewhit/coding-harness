@@ -18,9 +18,9 @@
   "bootstrap_sha": "9d6bfc4567b6c1dff45908a3ed00335b947a52f9",
   "current_wave": "W6R3",
   "wave_base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
-  "run_snapshot_sha": "24bebf8ac67095775856883db7b84a7dcf6ec7d1",
+  "run_snapshot_sha": "cffe1bd0344eb66d218c2e24cae19fca63b2cbf0",
   "gates": {
-    "native_eval_ready": "needs_remediation",
+    "native_eval_ready": "deterministic_recovery_passed_pending_w6r4_reselection_and_new_accepted_human_smoke",
     "native_resume_ready": "pending"
   },
   "accepted_tickets": {
@@ -112,28 +112,33 @@
     },
     "AUDIT-059-A": {
       "instance_id": "W6R3-AUDIT-059-A-01",
-      "status": "needs_remediation_revision_3",
-      "revision": 2,
-      "base_sha": "7650029a1d8894a7f2cee111ac67b6487fa7ca29",
-      "worker_branch_head": "f0d8acef98c0d2f770f5734d783808b6847e5e9d",
-      "integration_commits": ["24bebf8ac67095775856883db7b84a7dcf6ec7d1"],
+      "status": "accepted",
+      "revision": 3,
+      "remediation_round": 2,
+      "base_sha": "068dc31f41be32a3c3b2a253e137ecb53ddd2757",
+      "worker_branch_head": "4926a40b591f382ae865aafa6707c11bdc5b9ba9",
+      "integration_commits": ["cffe1bd0344eb66d218c2e24cae19fca63b2cbf0"],
       "handoff_path": ".codex/eval/handoffs/AUDIT-059-A.json",
-      "handoff_sha256": "d93f2131d082128dccea53fb223ab5dd8447a5f13f06e34a337ca89633783f3d",
-      "stable_patch_id": "89c4fae15704e809daadd1b4247f08ac0623b074",
+      "handoff_sha256": "4285766c60bac6774cb2a25bed6335e3d53989218705f25fc7c9456a360ffde9",
+      "stable_patch_id": "3a29844dd686a611d81c383a0bcaaa85b0d668c8",
       "open_p1_findings": 0,
+      "open_p2_findings": 0,
       "provider_http_attempts": 0
     },
     "TOOL-059-G": {
-      "instance_id": "W6R3-TOOL-059-G-01",
-      "status": "not_dispatched_revision_2",
-      "gate_status": "superseded_needs_remediation",
-      "revision": 1,
-      "base_sha": "24bebf8ac67095775856883db7b84a7dcf6ec7d1",
-      "worker_branch_head": "3b415776a28f2a0a0bd21f41c438ed946400743b",
-      "integration_commits": ["1126bb1cd8405d730c60888de4d60adf9e6f6b2a"],
+      "instance_id": "W6R3-TOOL-059-G-02",
+      "status": "accepted",
+      "gate_status": "passed",
+      "revision": 2,
+      "remediation_round": 2,
+      "base_sha": "cffe1bd0344eb66d218c2e24cae19fca63b2cbf0",
+      "worker_branch_head": "2ee5a2607dc430604ef9039e436e2fd6feb1bcb0",
+      "integration_commits": ["9a5d07fcd9f03f73023059cd1c8b8dc3eee2fad6"],
       "handoff_path": ".codex/eval/handoffs/TOOL-059-G.json",
-      "handoff_sha256": "4cef39dc80f56610c1a5ee32145e2abbd294f7a5fe6a1fea0fba8c545b5a7e90",
-      "stable_patch_id": "e684e79286dfcbce4f600e1b8b644b8bbeb4bff3",
+      "handoff_sha256": "67a825b2107a32ee5830ea465cb8cff989bac3b6f47494df520200312f975b57",
+      "freeze_proposal_sha256": "03c79d29ab68c0b8a04983dc32333b88c28a8a4fe33af69ae66345e8f20350d0",
+      "status_proposal_sha256": "398c44f18d0a741d3eae6f38745cc2fc66b8c610ca20b2aade14ff8cdcc98eaf",
+      "stable_patch_id": "7e44e650d692519de865adcff668f90fe3bce9be",
       "provider_http_attempts": 0
     },
     "TOOL-050-S-R1": {
@@ -4487,7 +4492,7 @@
     "w7_started": false
   },
   "w6r3_remediation_cycle_2": {
-    "status": "review_ready",
+    "status": "passed",
     "remediation_round": 2,
     "resume_control_head": "d514ae3c1185111ee92e88c400e4c0176bf66d4c",
     "candidate_ref": "codex/w6r3-remediation-r2-candidate",
@@ -4524,8 +4529,8 @@
     },
     "dispatch": {
       "EVAL-059-H": "revision_3_accepted",
-      "AUDIT-059-A": "revision_3_after_repaired_candidate",
-      "TOOL-059-G": "revision_2_after_accepted_audit"
+      "AUDIT-059-A": "revision_3_accepted",
+      "TOOL-059-G": "revision_2_passed"
     },
     "source_integration_head_before_review_checkpoint": "9c78ec5622ea114a51348898fbce45787d71f127",
     "review_candidate_ref": "codex/w6r3-remediation-r2-review-candidate",
@@ -4552,7 +4557,45 @@
           "profile_binding_verified": true,
           "sensitive_scan_hits": 0
         }
+      },
+      "AUDIT-059-A": {
+        "revision": 3,
+        "worker_head": "4926a40b591f382ae865aafa6707c11bdc5b9ba9",
+        "handoff_sha256": "4285766c60bac6774cb2a25bed6335e3d53989218705f25fc7c9456a360ffde9",
+        "canonical_commit": "cffe1bd0344eb66d218c2e24cae19fca63b2cbf0",
+        "stable_patch_id": "3a29844dd686a611d81c383a0bcaaa85b0d668c8",
+        "verdict": "accepted",
+        "open_p1_findings": 0,
+        "open_p2_findings": 0
+      },
+      "TOOL-059-G": {
+        "revision": 2,
+        "worker_head": "2ee5a2607dc430604ef9039e436e2fd6feb1bcb0",
+        "handoff_sha256": "67a825b2107a32ee5830ea465cb8cff989bac3b6f47494df520200312f975b57",
+        "canonical_commit": "9a5d07fcd9f03f73023059cd1c8b8dc3eee2fad6",
+        "stable_patch_id": "7e44e650d692519de865adcff668f90fe3bce9be",
+        "gate_status": "passed",
+        "full_suite": "553 passed, 2 live-provider opt-in skipped, 6 warnings",
+        "provider_http_attempts": 0,
+        "acceptance_socket_attempt_records": 0,
+        "artifact_manifest_sha256": "9d7ba536e26231b55c69512724e266bbc23a1895e64d74d5c3a63adb1ce78996",
+        "artifact_inventory_sha256": "ddb5d1d2792b993d3bb2abad1081f08f3774c96fe6311821a8afbb52160da251"
       }
+    },
+    "immutable_recovery_snapshot": {
+      "sha": "cffe1bd0344eb66d218c2e24cae19fca63b2cbf0",
+      "tree": "5ebb6a2cd62e96753fe3502a3b5846319db7386f"
+    },
+    "ambient_commit_map_obligation": {
+      "commit": "0775f65083fa53b532b78132e7ab1162f98231c5",
+      "path": "docs/known-issues/codex-task-sandbox-permission-downgrade.md",
+      "commit_map_path": ".codex/eval/state/W6R3-r2-commit-map.json",
+      "recorded": true
+    },
+    "close_result": {
+      "native_eval_ready": "deterministic_recovery_passed_pending_w6r4_reselection_and_new_accepted_human_smoke",
+      "w6r4_started": false,
+      "w7_status": "blocked_pending_w6r4_reselection_and_new_user_accepted_human_smoke"
     },
     "historical_r1_close": {
       "handoff_path": ".codex/eval/state/W6R3-wave-handoff-r1.json",
