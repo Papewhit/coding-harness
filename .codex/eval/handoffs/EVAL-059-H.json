@@ -2,26 +2,25 @@
   "schema_version": "pico-eval-ticket-handoff-v1",
   "ticket_id": "EVAL-059-H",
   "instance_id": "W6R3-EVAL-059-H-01",
-  "revision": 2,
-  "supersedes_handoff_sha256": "456d89a6d81b909551b9e687a70d48625d0fd814bbbbd519b9fd347b0c45f123",
+  "revision": 3,
+  "supersedes_handoff_sha256": "1c4969142164ec6d0975e1bdbe331636082548dcfb0752b66b3be6e928c07973",
   "finding_ids": [
-    "AUDIT-059-A-P1-003",
-    "PLAN-HSMOKE-V3-SEMANTIC-ORDER",
-    "PLAN-HSMOKE-V3-LIVE-GUARD",
-    "PLAN-HSMOKE-V3-PROVENANCE"
+    "UPPER-AUDIT-059-A-P1-003-CALL-ID-BINDING",
+    "UPPER-AUDIT-059-A-P1-003-FAKE-LIVE-FAIL-CLOSED",
+    "UPPER-AUDIT-059-A-P2-001-TOP-LEVEL-PROFILE"
   ],
   "wave": "W6R3",
   "role": "fixture_builder/human-smoke-v3-manifest-runner-verifier",
   "status": "complete",
-  "base_sha": "ed287daaf9e88d59b5a027e759032e022a138d27",
+  "base_sha": "30252bc1d215b18f20340e1503fde489312e9f94",
   "wave_base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
-  "branch": "codex/w6r3-eval-059-h-r2",
-  "source_head_sha": "176f0efb13236e3c236faa2a9d96f17130d1033d",
-  "source_head_semantics": "Revision 2 v3 harness commit before the metadata-only Integrator commit that adds this updated proposal and handoff.",
+  "branch": "codex/w6r3-eval-059-h-r3",
+  "source_head_sha": "2fbf9b38ecf0be7ecf33121fdedff5b0efd7aee9",
+  "source_head_semantics": "Revision 3 source commit accepted by Integrator before this metadata-only handoff update.",
   "remediation_candidate": {
-    "sha": "ed287daaf9e88d59b5a027e759032e022a138d27",
-    "tree": "72f68c764b26830fb8c86f6bd11f95c3b452b9c4",
-    "ref": "codex/w6r3-remediation-r1-candidate"
+    "sha": "30252bc1d215b18f20340e1503fde489312e9f94",
+    "tree": "f9a8ee28f45b6b02984195a7dbe9123f048e85dd",
+    "ref": "codex/w6r3-remediation-r2-candidate"
   },
   "prior_revision": {
     "branch": "codex/w6r3-eval-059-h",
@@ -43,9 +42,10 @@
       "handoff_sha256": "849b687163b77e8957529d72e0111edb08625a76a1276c87799e68b595bef00f"
     }
   ],
-  "own_commits": ["176f0efb13236e3c236faa2a9d96f17130d1033d"],
+  "own_commits": ["176f0efb13236e3c236faa2a9d96f17130d1033d", "2fbf9b38ecf0be7ecf33121fdedff5b0efd7aee9"],
   "own_stable_patch_ids": {
-    "176f0efb13236e3c236faa2a9d96f17130d1033d": "d8ca9ea8384e433df0a34cc4d124ab009c178c48"
+    "176f0efb13236e3c236faa2a9d96f17130d1033d": "d8ca9ea8384e433df0a34cc4d124ab009c178c48",
+    "2fbf9b38ecf0be7ecf33121fdedff5b0efd7aee9": "f58b39d9c13bf3528ae3b29e2957c0c1acba247c"
   },
   "files_changed": [
     "benchmarks/v3/native-provider/human-smoke-v3.json",
@@ -131,6 +131,7 @@
   "authorized_live_supported": true,
   "authorized_live_guard": "requires --authorized-live plus --provider, --config, and --frozen-profile; exact profile/config binding happens before provider construction and fake fallback is forbidden",
   "authorized_live_run": false,
+  "revision_3": {"candidate": {"sha": "30252bc1d215b18f20340e1503fde489312e9f94", "tree": "f9a8ee28f45b6b02984195a7dbe9123f048e85dd", "ref": "codex/w6r3-remediation-r2-candidate"}, "prior_revision": {"branch": "codex/w6r3-eval-059-h-r2", "handoff_sha256": "1c4969142164ec6d0975e1bdbe331636082548dcfb0752b66b3be6e928c07973", "preserved": true}, "source": {"branch": "codex/w6r3-eval-059-h-r3", "commit": "2fbf9b38ecf0be7ecf33121fdedff5b0efd7aee9", "tree": "065aa54ccf9ddb0327308bdd1ae8103dd2d77c63", "stable_patch_id": "f58b39d9c13bf3528ae3b29e2957c0c1acba247c", "runner_sha256": "8dd71824e89f85fd559f5491d4b195f80d3ff7e8d8e90340881db2d69bdc500b", "tests_sha256": "ca00686922b95590581519bf1e383e98fc1ec0d690578790e9f0eafe8dd50857"}, "finding_ids": ["UPPER-AUDIT-059-A-P1-003-CALL-ID-BINDING", "UPPER-AUDIT-059-A-P1-003-FAKE-LIVE-FAIL-CLOSED", "UPPER-AUDIT-059-A-P2-001-TOP-LEVEL-PROFILE"], "tests": [{"command": "uv run pytest tests/test_v3_native_human_smoke_v3.py -q -p no:cacheprovider", "result": "passed", "details": "10 passed; fake/stub only"}, {"command": "uv run ruff check scripts/run_v3_native_human_smoke_v3.py tests/test_v3_native_human_smoke_v3.py", "result": "passed"}], "r3_artifact": {"root": "F:/dev/llm/pico-eval-artifacts/native-provider-human-smoke-v3/W6R3-EVAL-059-H-01-R3", "status": "verified_PASS_integrator_acceptance_run", "summary_sha256": "4dfc48928e3bb94f773383776519b2538b9bba9a13eb29cab0748c360083aae4", "result_sha256": {"HSMOKE-V3-A": "f96e4a4fa1000d362a6d7c0ca03ad2131318ab4aeb3a119f8024054750a6bfcc", "HSMOKE-V3-B": "88b0a1b42553142d45d0ae0420f0ac980127c2af6fdc385eca214fd07f5973cb"}, "inventory_file_count": 11, "inventory_sha256": "ab09409b8b1435177738d45640bda29f6755aab44070246796f8d08ecbe2337e", "execution_mode": "fake_provider", "provider_http_attempts": 0, "top_level_profile_non_empty": true, "profile_equals_each_scenario_redacted_profile": true, "sensitive_scan_hits": 0, "formal_human_smoke": false}, "v2_immutable": {"manifest_sha256": "5a73a009a5c367db7946af487609a48024605682026d2c9a5f758017883f5853", "runner_sha256": "69e9001e6090c21d6e2701e54ce908cfe514036386d5b0dfee78217559e9f20c", "tests_sha256": "2acecaa74c8d6dad87171262c715f93c27dd7222cbcb1b5e5ef22968058e7c62"}, "formal_human_smoke_run": false, "authorized_live_run": false, "profile_reselection_run": false, "w6r4_started": false, "w7_started": false},
   "provider_http_attempts": 0,
   "profile_reselection_run": false,
   "w6r4_started": false,

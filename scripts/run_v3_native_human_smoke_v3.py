@@ -129,11 +129,21 @@ def _observed_calls(agent: Pico, events: list[dict[str, Any]]) -> list[dict[str,
     model_calls = [call for exchange in exchanges if exchange.get("event") == "assistant_tool_batch" for call in exchange.get("tool_calls", [])]
     finished = [event for event in events if event.get("event") == "tool_finished"]
     safety = [event for event in events if event.get("event") == "native_safety_stage"]
+    runtime_by_id = {event.get("call_id"): event for event in finished}
+    model_ids = [call.get("call_id") for call in model_calls]
+    runtime_ids = [event.get("call_id") for event in finished]
+    if any(not isinstance(call_id, str) or not call_id for call_id in runtime_ids):
+        raise ValueError("tool_finished missing call_id")
+    if len(set(runtime_ids)) != len(runtime_ids) or set(runtime_ids) != set(model_ids):
+        raise ValueError("tool_finished call_id mapping is not one-to-one")
     observed = []
-    for index, call in enumerate(model_calls):
+    for call in model_calls:
         call_id = call.get("call_id")
         matching_safety = [entry for entry in safety if entry.get("call_id") == call_id]
-        observed.append({"call_id": call_id, "name": call.get("name"), "arguments": call.get("arguments"), "runtime": finished[index] if index < len(finished) else None, "safety": matching_safety})
+        runtime = runtime_by_id[call_id]
+        if runtime.get("tool_name") != call.get("name"):
+            raise ValueError("tool_finished call_id/tool name mismatch")
+        observed.append({"call_id": call_id, "name": call.get("name"), "arguments": call.get("arguments"), "runtime": runtime, "safety": matching_safety})
     return observed
 
 
@@ -175,6 +185,8 @@ def verify_scenario(scenario: Mapping[str, Any], workspace: Path, agent: Pico, e
 
 def run_manifest(manifest_path: Path, output_dir: Path, *, provider_factory: ProviderFactory | None = None, execution_mode: str = "fake_provider", profile: Mapping[str, Any] | None = None) -> dict[str, Any]:
     manifest = load_manifest(manifest_path)
+    if execution_mode == "fake_provider" and (provider_factory is not None or profile is not None):
+        raise ValueError("fake_provider rejects provider_factory and profile")
     if execution_mode == "authorized_live" and (provider_factory is None or profile is None):
         raise ValueError("authorized-live requires an injected bound provider factory and sanitized frozen profile")
     if execution_mode != "fake_provider" and execution_mode != "authorized_live":
@@ -197,8 +209,12 @@ def run_manifest(manifest_path: Path, output_dir: Path, *, provider_factory: Pro
                 stdout = agent.ask(scenario["prompt"])
             except Exception as exc:  # preserve all verifier evidence on Runtime failure.
                 exit_code, stderr = 1, f"{type(exc).__name__}: {exc}"
-            verification = verify_scenario(scenario, workspace, agent, _events(agent), before)
-            record = {"scenario_id": scenario["id"], "pico_exit": exit_code, "verifier_exit": 0 if verification["status"] == "PASS" else 1, "stdout": stdout, "stderr": stderr, "http_attempts": int(getattr(provider, "http_attempts", 0)), "runtime_source": {"commit": _git_head(), "manifest_sha256": _sha256(manifest_path), "profile": dict(profile or provider._pico_profile_identity)}, "verification": verification}
+            events = _events(agent)
+            verification = verify_scenario(scenario, workspace, agent, events, before)
+            attempts = int(getattr(provider, "http_attempts", 0))
+            if execution_mode == "fake_provider" and attempts != 0:
+                raise ValueError("fake_provider observed nonzero http_attempts")
+            record = {"scenario_id": scenario["id"], "pico_exit": exit_code, "verifier_exit": 0 if verification["status"] == "PASS" else 1, "stdout": stdout, "stderr": stderr, "http_attempts": attempts, "runtime_source": {"commit": _git_head(), "manifest_sha256": _sha256(manifest_path), "profile": dict(profile or provider._pico_profile_identity)}, "verification": verification}
             (target / "result.json").write_text(json.dumps(record, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
             for name, content in {"pico.stdout.txt": stdout, "pico.stderr.txt": stderr, "pico.exit.txt": f"{exit_code}\n", "verifier.exit.txt": f"{record['verifier_exit']}\n"}.items():
                 (target / name).write_text(content, encoding="utf-8")
@@ -206,7 +222,10 @@ def run_manifest(manifest_path: Path, output_dir: Path, *, provider_factory: Pro
             close = getattr(provider, "close", None)
             if callable(close):
                 close()
-    summary = {"schema_version": "pico-native-human-smoke-v3-artifact", "execution_mode": execution_mode, "manifest_sha256": _sha256(manifest_path), "profile": dict(profile or {}), "http_attempts": sum(record["http_attempts"] for record in records), "scenarios": records, "status": "PASS" if all(record["pico_exit"] == 0 and record["verifier_exit"] == 0 for record in records) else "FAIL"}
+    summary_profile = dict(profile or records[0]["runtime_source"]["profile"])
+    if not summary_profile:
+        raise ValueError("summary profile identity must be non-empty")
+    summary = {"schema_version": "pico-native-human-smoke-v3-artifact", "execution_mode": execution_mode, "manifest_sha256": _sha256(manifest_path), "profile": summary_profile, "http_attempts": sum(record["http_attempts"] for record in records), "scenarios": records, "status": "PASS" if all(record["pico_exit"] == 0 and record["verifier_exit"] == 0 for record in records) else "FAIL"}
     (output_dir / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return summary
 
@@ -231,6 +250,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--config")
     parser.add_argument("--frozen-profile", type=Path)
     args = parser.parse_args(argv)
+    if args.fake_provider and (args.provider or args.config or args.frozen_profile is not None):
+        parser.error("--fake-provider rejects live-only provider, config, and frozen-profile options")
     if args.authorized_live:
         if not args.provider or not args.config or args.frozen_profile is None:
             parser.error("--authorized-live requires --provider, --config, and --frozen-profile")
