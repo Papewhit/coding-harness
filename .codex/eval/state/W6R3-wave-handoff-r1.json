@@ -1,0 +1,211 @@
+{
+  "schema_version": "pico-eval-wave-handoff-v2",
+  "wave": "W6R3",
+  "status": "passed",
+  "remediation_round": 1,
+  "integrator_thread_id": "019f91dc-1940-7b31-9e6f-086f4941922b",
+  "canonical_history_rule_reference": ".codex/eval/CONTROL.md",
+  "wave_base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+  "resume_checkpoint_sha": "ed287daaf9e88d59b5a027e759032e022a138d27",
+  "review_candidate": {
+    "sha": "7650029a1d8894a7f2cee111ac67b6487fa7ca29",
+    "tree": "1bbe88286078646afb05dee4210d3fb8f59f298e",
+    "ref": "codex/w6r3-remediation-r1-review-candidate"
+  },
+  "canonical_close": {
+    "commit": "b5a18cedde2f5897ad261afb286c4e123f54509f",
+    "tree": "6cdc7735dbbb6312cb3adb3b5944a0944e1f6c1b",
+    "tag": "eval-v3/w6r3-canonical-r1",
+    "tag_object_sha": "565e937df275c6215661623564c70492cc0b306f",
+    "tag_target": "b5a18cedde2f5897ad261afb286c4e123f54509f",
+    "annotated": true,
+    "verified": true
+  },
+  "immutable_recovery_snapshot": {
+    "sha": "24bebf8ac67095775856883db7b84a7dcf6ec7d1",
+    "tree": "45106ea2c0b70713065e59381172c3d267e6bdde",
+    "ref": "codex/w6r3-remediation-r1-gate-source",
+    "source_clean": true
+  },
+  "formal_state": {
+    "status_path": ".codex/eval/state/STATUS.json",
+    "status_sha256": "98468d7b85956028eac87b57fe747044c1c0a5d81e6f23ba13890ed89fecd4fb",
+    "freeze_path": ".codex/eval/state/FREEZE.json",
+    "freeze_sha256": "477659670e4710f0deb3c9d7010eb79bdbfebbb35ffe4d50e868a51097b163bf",
+    "commit_map_path": ".codex/eval/state/W6R3-r1-commit-map.json",
+    "commit_map_sha256": "55418a09c6b06c580648e79508e56cf00bbe04fa783816dfca909ec5a29f3435",
+    "plan_validation": "VALID: 94 ticket templates, 16 waves"
+  },
+  "worker_bundle": {
+    "path": "F:\\dev\\llm\\pico-eval-artifacts\\wave-bundles\\W6R3-r1-workers.bundle",
+    "sha256": "f6e9ff52a8ed3c39180d54aceea0822cb484b03e0c4834fda2bd8e878ef2db09",
+    "size_bytes": 16877284,
+    "ref_count": 13,
+    "complete_history": true,
+    "verified": true
+  },
+  "accepted_tickets": {
+    "EVAL-059-O": {
+      "revision": 1,
+      "thread_id": "019f91df-c283-7f70-87af-88d42cd35e54",
+      "branch": "codex/w6r3-eval-059-o",
+      "worker_head": "a642a7d223d392b34f78692fa2bffe0feb5c5b4e",
+      "canonical_commit": "b90fb5297aceef3eb137ae8104888974e96e7141",
+      "stable_patch_id": "06e7e986f6b99b5969dd23f00aebd71f61badef2",
+      "handoff_sha256": "849b687163b77e8957529d72e0111edb08625a76a1276c87799e68b595bef00f"
+    },
+    "TEST-059-C": {
+      "revision": 2,
+      "thread_id": "019f91f6-81c6-75b1-8347-bc996798f993",
+      "branch": "codex/w6r3-test-059-c-r2",
+      "worker_head": "9aa8e023db764788fdbba8a2f4b3765d8ea1cce4",
+      "canonical_commit": "e076fb0c616d900b3445f9ddb93103bdd2243a7b",
+      "stable_patch_id": "6af75813f31d2b16992f4d35b13e8637edd463e0",
+      "handoff_sha256": "2f806adbce6e29e8161ef5039a9be0cc2fc74eb66fca3f17a4dcda054bf3e75e"
+    },
+    "TOOL-059-O": {
+      "revision": 2,
+      "thread_id": "019f91fc-3623-7321-aef9-0e2fe37a3212",
+      "branch": "codex/w6r3-tool-059-o-r2",
+      "worker_head": "c8731f804bbb737ae19e84d582aafad32451923d",
+      "canonical_commit": "909b62046a26bac333972dd102d1cf29937f3b55",
+      "stable_patch_id": "469b0415da4e2e79b5013cc113b77caa6503ced2",
+      "handoff_sha256": "ee3a39d1df80845304ceac5c6547f1aca7fb02c2911904c97f5e79901e78e48d"
+    },
+    "EVAL-059-H": {
+      "revision": 2,
+      "thread_id": "019f91f6-ecd6-76a3-a724-482c21cda42a",
+      "branch": "codex/w6r3-eval-059-h-r2",
+      "worker_head": "b583ac24687093aa8b296ccbb5400530546df11d",
+      "canonical_commit": "532d3f7c2b8f40915dc8b64138f282a1fa0e9a25",
+      "stable_patch_id": "5b8d0b3f0f08d002dc91c68799a550e7755a0fc8",
+      "handoff_sha256": "1c4969142164ec6d0975e1bdbe331636082548dcfb0752b66b3be6e928c07973"
+    },
+    "TOOL-059-R": {
+      "revision": 1,
+      "thread_id": "019f91f7-4836-7580-a509-0b355f6089b8",
+      "branch": "codex/w6r3-tool-059-r",
+      "worker_head": "8bcf1e5f1241cc19c7ea2590572dbc08c93cb9f6",
+      "canonical_commit": "d07950a5ee94d90658f28c4b52bafc4916a0097e",
+      "stable_patch_id": "8ec7e62d11a8d1cde9e1c24eadd58003b8f9819c",
+      "handoff_sha256": "03c6ade0282d6f2c0a0a2af28c75f1a76c34a5be5358ba67e5cea0b41f5c0fd6"
+    },
+    "TOOL-059-A-R1": {
+      "revision": 1,
+      "thread_id": "019f92ab-af7f-7e22-8aed-6c5d383fbb07",
+      "branch": "codex/w6r3-tool-059-a-r1",
+      "worker_head": "ab1a07621a12b7f3e2438f7643dd86322c571182",
+      "canonical_commit": "264e67df2380fc0218e28a3f7a5412dcdc065bc1",
+      "stable_patch_id": "334af7a422ce11662921c38763381e350736acb0",
+      "handoff_sha256": "d6956ba6821528fa64c0b8e425a1878ff079aaf996d1a0acedb12e2421b7004f"
+    },
+    "AUDIT-059-A": {
+      "revision": 2,
+      "thread_id": "019f920c-0e98-7943-bc78-8479f9a51723",
+      "branch": "codex/w6r3-audit-059-a-r2",
+      "worker_head": "f0d8acef98c0d2f770f5734d783808b6847e5e9d",
+      "canonical_commit": "24bebf8ac67095775856883db7b84a7dcf6ec7d1",
+      "stable_patch_id": "89c4fae15704e809daadd1b4247f08ac0623b074",
+      "handoff_sha256": "d93f2131d082128dccea53fb223ab5dd8447a5f13f06e34a337ca89633783f3d",
+      "verdict": "accepted",
+      "open_p1_findings": 0,
+      "targeted_tests": "86 passed"
+    },
+    "TOOL-059-G": {
+      "revision": 1,
+      "thread_id": "019f92ef-7ab6-7443-941a-f3fc3a67e30b",
+      "branch": "codex/w6r3-tool-059-g",
+      "worker_head": "3b415776a28f2a0a0bd21f41c438ed946400743b",
+      "canonical_commit": "1126bb1cd8405d730c60888de4d60adf9e6f6b2a",
+      "stable_patch_id": "e684e79286dfcbce4f600e1b8b644b8bbeb4bff3",
+      "handoff_sha256": "4cef39dc80f56610c1a5ee32145e2abbd294f7a5fe6a1fea0fba8c545b5a7e90",
+      "gate_status": "passed"
+    }
+  },
+  "deterministic_gate": {
+    "environment": "Ubuntu 26.04 LTS WSL2 fresh ext4 clone, user papewhit, Python 3.12.13, uv 0.11.31 user-level, no sudo",
+    "tests": {
+      "targeted_recovery": "90 passed",
+      "protected": "27 passed",
+      "deterministic": "131 passed",
+      "full_suite": "546 passed, 2 live-provider opt-in skipped, 6 warnings",
+      "ruff_scoped_and_full": "passed",
+      "compileall": "passed",
+      "plan_validation": "VALID: 94 ticket templates, 16 waves"
+    },
+    "network": {
+      "provider_http_attempts": 0,
+      "acceptance_socket_attempt_records": 0
+    },
+    "artifact": {
+      "root": "F:\\dev\\llm\\pico-eval-artifacts\\native-deterministic-gate\\W6R3-TOOL-059-G-01",
+      "manifest_sha256": "836692c1caa4df087981e7016f3768e5f1359c7d8753e2ee7f10f1884e776afe",
+      "inventory_aggregate_sha256": "312b3fd7d840077d2f0f89b63f17f453a8a3af33c56d6be3cbb7ea5ba7c548c1",
+      "file_count_excluding_manifest": 205,
+      "all_manifest_hashes_and_sizes_matched": true
+    }
+  },
+  "stable_patch_identity_verification": {
+    "all_final_canonical_patch_ids_matched": true,
+    "ticket_count": 8
+  },
+  "historical_attempt": {
+    "handoff_path": ".codex/eval/state/W6R3-wave-handoff.json",
+    "handoff_sha256": "827560dac112f1b813212699d91cca474b5a68dd07d7523d459b04e5f005676d",
+    "commit_map_path": ".codex/eval/state/W6R3-commit-map.json",
+    "commit_map_sha256": "b57b018a73f045e6cdab668f6ec6a44e757aedbc32f6a4263c95a33bc12667bc",
+    "worker_bundle_path": "F:\\dev\\llm\\pico-eval-artifacts\\wave-bundles\\W6R3-workers.bundle",
+    "worker_bundle_sha256": "98474e9e8b3a6812b1bf0208bd8f32e9a500339771a1f9fbd7343118a1ed495e",
+    "canonical_tag": "eval-v3/w6r3-canonical",
+    "canonical_tag_object_sha": "15d09fecc52af7b6e0750f044484b3c0b2cf4a02",
+    "canonical_tag_target": "9d35e7d22eca9ff89c7920dd3a7fa479185c75d5",
+    "preserved_immutable": true
+  },
+  "downstream": {
+    "native_eval_ready": "deterministic_recovery_passed_pending_w6r4_reselection_and_new_accepted_human_smoke",
+    "w6r4_status": "proposed_ready_but_not_started",
+    "w6r4_plan_ticket_count": 0,
+    "w7_status": "blocked_pending_w6r4_reselection_and_new_user_accepted_human_smoke",
+    "w7_ready": false
+  },
+  "execution_constraints": {
+    "provider_http_attempts": 0,
+    "human_smoke_run": false,
+    "profile_reselection_run": false,
+    "formal_online_evaluation_run": false,
+    "resume_evaluation_run": false,
+    "w6r4_started": false,
+    "w7_started": false
+  },
+  "cleanup_candidates": {
+    "preserve_all": true,
+    "deleted": [],
+    "worker_worktrees": [
+      "C:\\Users\\Papewhit\\.codex\\worktrees\\65e4\\pico",
+      "C:\\Users\\Papewhit\\.codex\\worktrees\\7a4a\\pico",
+      "C:\\Users\\Papewhit\\.codex\\worktrees\\4b6c\\pico",
+      "C:\\Users\\Papewhit\\.codex\\worktrees\\0f69\\pico",
+      "C:\\Users\\Papewhit\\.codex\\worktrees\\e6a1\\pico",
+      "C:\\Users\\Papewhit\\.codex\\worktrees\\f8c2\\pico",
+      "C:\\Users\\Papewhit\\.codex\\worktrees\\24a9\\pico",
+      "C:\\Users\\Papewhit\\.codex\\worktrees\\efe3\\pico"
+    ],
+    "historical_and_revision_branches": [
+      "codex/w6r3-eval-059-o",
+      "codex/w6r3-test-059-c",
+      "codex/w6r3-test-059-c-r2",
+      "codex/w6r3-tool-059-o",
+      "codex/w6r3-tool-059-o-r2",
+      "codex/w6r3-eval-059-h",
+      "codex/w6r3-eval-059-h-r2",
+      "codex/w6r3-tool-059-r",
+      "codex/w6r3-tool-059-a-r1",
+      "codex/w6r3-audit-059-a",
+      "codex/w6r3-audit-059-a-r2",
+      "codex/w6r3-tool-059-g"
+    ],
+    "wsl_fresh_clone": "/home/papewhit/dev/pico-w6r3-tool-059-g-01-24bebf8-20260724-001"
+  },
+  "completed_at": "2026-07-24T15:42:21.1153244+08:00",
+  "stop_after_handoff": true
+}
