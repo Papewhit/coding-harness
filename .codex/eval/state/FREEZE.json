@@ -624,11 +624,14 @@
   },
   "w6r3_remediation_cycle_1": {
     "version": "pico-w6r3-remediation-cycle-v1",
-    "status": "needs_remediation",
+    "status": "review_candidate_frozen_pending_audit",
     "remediation_round": 1,
     "resume_control_head": "647437bda4be4652f089b93ecf67d99914c45122",
     "candidate_ref": "codex/w6r3-remediation-r1-candidate",
     "candidate_semantics": "The commit containing the formal resume checkpoint is the common immutable remediation candidate.",
+    "review_candidate_ref": "codex/w6r3-remediation-r1-review-candidate",
+    "review_candidate_semantics": "The commit containing this formal review checkpoint is the immutable AUDIT-059-A revision-2 candidate.",
+    "source_integration_head_before_review_checkpoint": "909b62046a26bac333972dd102d1cf29937f3b55",
     "frozen_inputs_preserved": {
       "oracle_v2": true,
       "human_smoke_v2_bytes": true,
@@ -648,6 +651,40 @@
       "TOOL-059-A-R1": "new scoped Anthropic owner",
       "TOOL-059-O": "revision 2 after TEST-059-C",
       "AUDIT-059-A": "revision 2 read-only re-review"
+    },
+    "integrated_payloads": {
+      "TOOL-059-A-R1": {
+        "revision": 1,
+        "worker_head": "ab1a07621a12b7f3e2438f7643dd86322c571182",
+        "handoff_sha256": "d6956ba6821528fa64c0b8e425a1878ff079aaf996d1a0acedb12e2421b7004f",
+        "canonical_commit": "264e67df2380fc0218e28a3f7a5412dcdc065bc1",
+        "stable_patch_id": "334af7a422ce11662921c38763381e350736acb0"
+      },
+      "TEST-059-C": {
+        "revision": 2,
+        "worker_head": "9aa8e023db764788fdbba8a2f4b3765d8ea1cce4",
+        "handoff_sha256": "2f806adbce6e29e8161ef5039a9be0cc2fc74eb66fca3f17a4dcda054bf3e75e",
+        "canonical_commit": "e076fb0c616d900b3445f9ddb93103bdd2243a7b",
+        "stable_patch_id": "6af75813f31d2b16992f4d35b13e8637edd463e0"
+      },
+      "EVAL-059-H": {
+        "revision": 2,
+        "worker_head": "b583ac24687093aa8b296ccbb5400530546df11d",
+        "handoff_sha256": "1c4969142164ec6d0975e1bdbe331636082548dcfb0752b66b3be6e928c07973",
+        "canonical_commit": "532d3f7c2b8f40915dc8b64138f282a1fa0e9a25",
+        "stable_patch_id": "5b8d0b3f0f08d002dc91c68799a550e7755a0fc8"
+      },
+      "TOOL-059-O": {
+        "revision": 2,
+        "worker_head": "c8731f804bbb737ae19e84d582aafad32451923d",
+        "handoff_sha256": "ee3a39d1df80845304ceac5c6547f1aca7fb02c2911904c97f5e79901e78e48d",
+        "canonical_commit": "909b62046a26bac333972dd102d1cf29937f3b55",
+        "stable_patch_id": "469b0415da4e2e79b5013cc113b77caa6503ced2"
+      }
+    },
+    "audit_revision_2": {
+      "status": "ready_to_dispatch",
+      "supersedes_handoff_sha256": "659d898a96fab1514b6a78027f886fcefedcff859a2e29f22dc87e293ec06d5b"
     },
     "execution_constraints": {
       "provider_http_attempts": 0,
