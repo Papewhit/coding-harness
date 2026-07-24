@@ -864,7 +864,7 @@
   },
   "w6r3_remediation_cycle_2": {
     "version": "pico-w6r3-remediation-cycle-v2",
-    "status": "needs_remediation",
+    "status": "review_candidate_frozen_pending_audit",
     "remediation_round": 2,
     "resume_control_head": "d514ae3c1185111ee92e88c400e4c0176bf66d4c",
     "candidate_ref": "codex/w6r3-remediation-r2-candidate",
@@ -906,6 +906,34 @@
       "AUDIT-059-A": "revision 3 read-only review after repaired candidate",
       "TOOL-059-G": "revision 2 only after accepted audit",
       "W6R3 Wave Integrator": "formal state and final cycle-2 commit map ambient history record"
+    },
+    "source_integration_head_before_review_checkpoint": "9c78ec5622ea114a51348898fbce45787d71f127",
+    "review_candidate_ref": "codex/w6r3-remediation-r2-review-candidate",
+    "review_candidate_semantics": "The commit containing this formal review checkpoint is the immutable AUDIT-059-A revision-3 candidate.",
+    "integrated_payloads": {
+      "EVAL-059-H": {
+        "revision": 3,
+        "worker_head": "a12e4f7d074bf087c15cba087e6a48022e1b5cdd",
+        "handoff_sha256": "14135b5bfe06a728281fb9f7946329b1563feb365d4c3fdc60ea5c08ebe81e15",
+        "freeze_proposal_sha256": "ff09cf642cfb15f00db3f013d76e4b182421e1eb369e7e0ee018c2c41e0cd444",
+        "canonical_commit": "9c78ec5622ea114a51348898fbce45787d71f127",
+        "stable_patch_id": "d61b2c7a21b5a4b1a5cdeeb5288b5968cfdc2bfb",
+        "runner_sha256": "8dd71824e89f85fd559f5491d4b195f80d3ff7e8d8e90340881db2d69bdc500b",
+        "tests_sha256": "ca00686922b95590581519bf1e383e98fc1ec0d690578790e9f0eafe8dd50857",
+        "tests": "10 passed; scoped Ruff passed",
+        "artifact": {
+          "root": "F:\\dev\\llm\\pico-eval-artifacts\\native-provider-human-smoke-v3\\W6R3-EVAL-059-H-01-R3",
+          "summary_sha256": "4dfc48928e3bb94f773383776519b2538b9bba9a13eb29cab0748c360083aae4",
+          "result_a_sha256": "f96e4a4fa1000d362a6d7c0ca03ad2131318ab4aeb3a119f8024054750a6bfcc",
+          "result_b_sha256": "88b0a1b42553142d45d0ae0420f0ac980127c2af6fdc385eca214fd07f5973cb",
+          "inventory_file_count": 11,
+          "inventory_sha256": "ab09409b8b1435177738d45640bda29f6755aab44070246796f8d08ecbe2337e",
+          "execution_mode": "fake_provider",
+          "provider_http_attempts": 0,
+          "top_level_profile_binding_verified": true,
+          "sensitive_scan_hits": 0
+        }
+      }
     },
     "historical_r1_close": {
       "handoff_sha256": "ce1a548022a05e94e4cd2bab0cbd9fe15a3d52214bc21a9556504d5020169d82",

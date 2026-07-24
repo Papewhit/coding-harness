@@ -41,14 +41,15 @@
     },
     "EVAL-059-H": {
       "instance_id": "W6R3-EVAL-059-H-01",
-      "status": "needs_remediation_revision_3",
-      "revision": 2,
+      "status": "accepted",
+      "revision": 3,
       "base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
-      "worker_branch_head": "b583ac24687093aa8b296ccbb5400530546df11d",
-      "integration_commits": ["532d3f7c2b8f40915dc8b64138f282a1fa0e9a25"],
+      "worker_branch_head": "a12e4f7d074bf087c15cba087e6a48022e1b5cdd",
+      "integration_commits": ["9c78ec5622ea114a51348898fbce45787d71f127"],
       "handoff_path": ".codex/eval/handoffs/EVAL-059-H.json",
-      "handoff_sha256": "1c4969142164ec6d0975e1bdbe331636082548dcfb0752b66b3be6e928c07973",
-      "stable_patch_id": "5b8d0b3f0f08d002dc91c68799a550e7755a0fc8",
+      "handoff_sha256": "14135b5bfe06a728281fb9f7946329b1563feb365d4c3fdc60ea5c08ebe81e15",
+      "freeze_proposal_sha256": "ff09cf642cfb15f00db3f013d76e4b182421e1eb369e7e0ee018c2c41e0cd444",
+      "stable_patch_id": "d61b2c7a21b5a4b1a5cdeeb5288b5968cfdc2bfb",
       "provider_http_attempts": 0
     },
     "TOOL-059-O": {
@@ -1103,7 +1104,7 @@
       "wave_base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
       "base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
       "starting_ref": "codex/w6r3-wave-base",
-      "branch": "codex/w6r3-eval-059-h-r2",
+      "branch": "codex/w6r3-eval-059-h-r3",
       "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\0f69\\pico",
       "dependency_commits": ["b90fb5297aceef3eb137ae8104888974e96e7141"],
       "applied_dependency_commits": [
@@ -1125,13 +1126,14 @@
       "reasoning_effort": "medium",
       "prompt_sha256": "8d9f39b667caa971e94af246b67b1bf4787e0d5f9378e7f4af321d0fc45b6a75",
       "prompt_hash_basis": "UTF-8 codexDelegation.input",
-      "worker_branch_head": "b583ac24687093aa8b296ccbb5400530546df11d",
-      "integration_commits": ["532d3f7c2b8f40915dc8b64138f282a1fa0e9a25"],
-      "handoff_sha256": "1c4969142164ec6d0975e1bdbe331636082548dcfb0752b66b3be6e928c07973",
-      "stable_patch_id": "5b8d0b3f0f08d002dc91c68799a550e7755a0fc8",
-      "revision": 2,
+      "worker_branch_head": "a12e4f7d074bf087c15cba087e6a48022e1b5cdd",
+      "integration_commits": ["9c78ec5622ea114a51348898fbce45787d71f127"],
+      "handoff_sha256": "14135b5bfe06a728281fb9f7946329b1563feb365d4c3fdc60ea5c08ebe81e15",
+      "freeze_proposal_sha256": "ff09cf642cfb15f00db3f013d76e4b182421e1eb369e7e0ee018c2c41e0cd444",
+      "stable_patch_id": "d61b2c7a21b5a4b1a5cdeeb5288b5968cfdc2bfb",
+      "revision": 3,
       "provider_http_attempts": 0,
-      "status": "needs_remediation_revision_3"
+      "status": "accepted"
     },
     "W6R3-TOOL-059-O-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -4338,7 +4340,7 @@
     "accepted_tickets": ["EVAL-059-O", "TEST-059-C", "TOOL-059-O", "TOOL-059-R", "TOOL-059-A-R1"],
     "blocked_tickets": [],
     "needs_remediation_tickets": ["EVAL-059-H", "AUDIT-059-A"],
-    "remediation_payloads_ready_for_review": [],
+    "remediation_payloads_ready_for_review": ["EVAL-059-H"],
     "not_dispatched_tickets": ["TOOL-059-G"],
     "source_integration_head_before_close_metadata": "1126bb1cd8405d730c60888de4d60adf9e6f6b2a",
     "source_integration_tree_before_close_metadata": "0e3c23e838f6c81b7647afc774750bbca5eddb4e",
@@ -4485,7 +4487,7 @@
     "w7_started": false
   },
   "w6r3_remediation_cycle_2": {
-    "status": "needs_remediation",
+    "status": "review_ready",
     "remediation_round": 2,
     "resume_control_head": "d514ae3c1185111ee92e88c400e4c0176bf66d4c",
     "candidate_ref": "codex/w6r3-remediation-r2-candidate",
@@ -4521,9 +4523,36 @@
       }
     },
     "dispatch": {
-      "EVAL-059-H": "revision_3_pending",
+      "EVAL-059-H": "revision_3_accepted",
       "AUDIT-059-A": "revision_3_after_repaired_candidate",
       "TOOL-059-G": "revision_2_after_accepted_audit"
+    },
+    "source_integration_head_before_review_checkpoint": "9c78ec5622ea114a51348898fbce45787d71f127",
+    "review_candidate_ref": "codex/w6r3-remediation-r2-review-candidate",
+    "review_candidate_semantics": "The commit containing the formal review checkpoint is the immutable AUDIT-059-A revision-3 candidate.",
+    "integrated_payloads": {
+      "EVAL-059-H": {
+        "revision": 3,
+        "worker_head": "a12e4f7d074bf087c15cba087e6a48022e1b5cdd",
+        "worker_commits": [
+          "2fbf9b38ecf0be7ecf33121fdedff5b0efd7aee9",
+          "a12e4f7d074bf087c15cba087e6a48022e1b5cdd"
+        ],
+        "handoff_sha256": "14135b5bfe06a728281fb9f7946329b1563feb365d4c3fdc60ea5c08ebe81e15",
+        "freeze_proposal_sha256": "ff09cf642cfb15f00db3f013d76e4b182421e1eb369e7e0ee018c2c41e0cd444",
+        "canonical_commit": "9c78ec5622ea114a51348898fbce45787d71f127",
+        "stable_patch_id": "d61b2c7a21b5a4b1a5cdeeb5288b5968cfdc2bfb",
+        "tests": "10 passed; scoped Ruff passed",
+        "artifact": {
+          "root": "F:\\dev\\llm\\pico-eval-artifacts\\native-provider-human-smoke-v3\\W6R3-EVAL-059-H-01-R3",
+          "summary_sha256": "4dfc48928e3bb94f773383776519b2538b9bba9a13eb29cab0748c360083aae4",
+          "inventory_file_count": 11,
+          "inventory_sha256": "ab09409b8b1435177738d45640bda29f6755aab44070246796f8d08ecbe2337e",
+          "provider_http_attempts": 0,
+          "profile_binding_verified": true,
+          "sensitive_scan_hits": 0
+        }
+      }
     },
     "historical_r1_close": {
       "handoff_path": ".codex/eval/state/W6R3-wave-handoff-r1.json",
