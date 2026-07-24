@@ -516,7 +516,7 @@
   },
   "native_human_smoke_v2": {
     "version": "pico-native-human-smoke-v2",
-    "status": "complete",
+    "status": "frozen_but_audit_blocked",
     "manifest": {
       "path": "benchmarks/v3/native-provider/human-smoke-v2.json",
       "schema_version": "pico-native-human-smoke-v2",
@@ -559,6 +559,8 @@
     },
     "not_a_formal_human_smoke": true,
     "authorized_live_not_run": true,
+    "authorized_live_operational": false,
+    "audit_blocker": "AUDIT-059-A-P1-003: verifier binds future live evidence to fake-provider call IDs",
     "profile_reselection_run": false,
     "w6r4_started": false,
     "w7_started": false,
@@ -569,6 +571,53 @@
     "source_proposal": {
       "path": ".codex/eval/proposals/EVAL-059-H.freeze.json",
       "sha256": "4457fb73dff6391622322b0521db17fa4d39d12318bce7afabce1a448e0c9ab3"
+    }
+  },
+  "w6r3_recovery_audit": {
+    "version": "pico-w6r3-recovery-audit-v1",
+    "status": "blocked",
+    "source_integration_head_before_close_metadata": "8b0abb22e394206c6e03276a0bb71e309e7efa4b",
+    "source_integration_tree_before_close_metadata": "b48a6ebcbade67eb4984eef7c39497fd6a126acf",
+    "audit": {
+      "ticket": "AUDIT-059-A",
+      "instance_id": "W6R3-AUDIT-059-A-01",
+      "worker_head": "99b3052774721b1469b254abae665496f5c3678d",
+      "canonical_commit": "8b0abb22e394206c6e03276a0bb71e309e7efa4b",
+      "handoff_sha256": "659d898a96fab1514b6a78027f886fcefedcff859a2e29f22dc87e293ec06d5b",
+      "open_p1_findings": [
+        {
+          "id": "AUDIT-059-A-P1-001",
+          "classification": "multiround_context_loss_and_asymmetric_test_coverage"
+        },
+        {
+          "id": "AUDIT-059-A-P1-002",
+          "classification": "responses_call_result_cardinality_not_fail_closed"
+        },
+        {
+          "id": "AUDIT-059-A-P1-003",
+          "classification": "authorized_live_verifier_bound_to_fake_call_ids"
+        }
+      ]
+    },
+    "deterministic_gate": {
+      "ticket": "TOOL-059-G",
+      "status": "not_dispatched",
+      "start_condition_met": false,
+      "artifact_created": false,
+      "recovery_snapshot_approved": false
+    },
+    "preserved_snapshot": {
+      "run_snapshot_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+      "semantics": "Prior W6R2 runtime snapshot remains historical only; W6R3 did not approve a replacement recovery snapshot."
+    },
+    "execution_constraints": {
+      "provider_http_attempts": 0,
+      "human_smoke_run": false,
+      "profile_reselection_run": false,
+      "formal_effectiveness_run": false,
+      "resume_run": false,
+      "w6r4_started": false,
+      "w7_started": false
     }
   },
   "native_resume_contract": null,
