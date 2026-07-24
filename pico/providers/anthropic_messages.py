@@ -28,7 +28,8 @@ from .contracts import (
 from .provider_transport import AnthropicMessagesTransport, ProviderTransportResponse
 
 
-_CONTINUATION_VERSION = "pico-anthropic-messages-continuation-v1"
+_LEGACY_CONTINUATION_VERSION = "pico-anthropic-messages-continuation-v1"
+_CONTINUATION_VERSION = "pico-anthropic-messages-continuation-v2"
 _PRIVATE_BLOCK_TYPES = frozenset({"thinking", "redacted_thinking"})
 _PUBLIC_BLOCK_TYPES = frozenset({"text", "tool_use"})
 
@@ -68,9 +69,25 @@ class AnthropicMessagesAdapter:
     def request(self, request: ModelRequest) -> ModelResponse:
         """Perform exactly one raw Messages operation and parse its JSON."""
 
+        if not isinstance(request, ModelRequest):
+            raise TypeError("request must be a ModelRequest")
+        self._require_complete_request_continuation(request.continuation)
         wire_request = self.compile_request(request)
         transport_response = self._transport.create(wire_request)
-        return self.parse_response(transport_response)
+        parsed = self.parse_response(transport_response)
+        if parsed.continuation is None:  # pragma: no cover - parser always retains blocks
+            return parsed
+        return ModelResponse(
+            text=parsed.text,
+            tool_calls=parsed.tool_calls,
+            stop_reason=parsed.stop_reason,
+            continuation=self._complete_continuation(
+                request=request,
+                wire_messages=wire_request["messages"],
+                response_continuation=parsed.continuation,
+            ),
+            metadata=parsed.metadata,
+        )
 
     def compile_request(self, request: ModelRequest) -> dict[str, JSONValue]:
         """Compile a provider-neutral request into an Anthropic JSON payload."""
@@ -215,38 +232,106 @@ class AnthropicMessagesAdapter:
                 "Anthropic continuation profile_id does not match this adapter"
             )
 
-        assistant_blocks = _continuation_blocks(continuation)
-        call_ids = [
-            _required_string("Anthropic tool_use id", block.get("id"))
-            for block in assistant_blocks
-            if block.get("type") == "tool_use"
-        ]
-        if len(call_ids) != len(set(call_ids)):
-            raise AnthropicMessagesProtocolError(
-                "Anthropic continuation contains duplicate tool_use IDs"
+        original_prompt, transcript, assistant_blocks = _continuation_state(continuation)
+        if transcript is not None:
+            if original_prompt is None:  # pragma: no cover - normalized by helper
+                raise AnthropicMessagesProtocolError(
+                    "Anthropic transcript continuation requires an original prompt"
+                )
+            if request.prompt != original_prompt:
+                raise AnthropicMessagesProtocolError(
+                    "Anthropic continuation prompt does not match the original Runtime prompt"
+                )
+            messages = list(transcript)
+            call_ids = _validate_transcript(
+                messages,
+                original_prompt=original_prompt,
+                allow_unresolved_final=True,
             )
-        result_by_id = {result.call_id: result for result in request.tool_results}
-        if set(call_ids) != set(result_by_id) or len(call_ids) != len(result_by_id):
-            raise AnthropicMessagesProtocolError(
-                "each Anthropic tool_use_id must have exactly one tool result"
+        else:
+            if assistant_blocks is None:  # pragma: no cover - normalized by helper
+                raise AnthropicMessagesProtocolError(
+                    "Anthropic continuation has no replayable assistant content"
+                )
+            messages = [
+                prompt_message,
+                {"role": "assistant", "content": assistant_blocks},
+            ]
+            call_ids = _assistant_call_ids(
+                assistant_blocks,
+                location="Anthropic continuation assistant_content",
             )
+        result_blocks = _result_blocks(call_ids, request)
+        messages.append({"role": "user", "content": result_blocks})
+        _validate_transcript(
+            messages,
+            original_prompt=original_prompt if original_prompt is not None else request.prompt,
+            allow_unresolved_final=False,
+        )
+        return messages
 
-        result_blocks: list[JSONValue] = []
-        for call_id in call_ids:
-            result = result_by_id[call_id]
-            result_blocks.append(
-                {
-                    "type": "tool_result",
-                    "tool_use_id": call_id,
-                    "content": _result_content(result.output),
-                    "is_error": result.is_error,
-                }
+    def _require_complete_request_continuation(
+        self,
+        continuation: ProviderContinuation | None,
+    ) -> None:
+        if continuation is None:
+            return
+        if continuation.profile_id != self.profile_id:
+            raise AnthropicMessagesProtocolError(
+                "Anthropic continuation profile_id does not match this adapter"
             )
-        return [
-            prompt_message,
-            {"role": "assistant", "content": assistant_blocks},
-            {"role": "user", "content": result_blocks},
-        ]
+        original_prompt, transcript, _ = _continuation_state(continuation)
+        if original_prompt is None or transcript is None:
+            raise AnthropicMessagesProtocolError(
+                "Anthropic request continuation lacks a complete stateless transcript"
+            )
+        _validate_transcript(
+            transcript,
+            original_prompt=original_prompt,
+            allow_unresolved_final=True,
+        )
+
+    def _complete_continuation(
+        self,
+        *,
+        request: ModelRequest,
+        wire_messages: JSONValue,
+        response_continuation: ProviderContinuation,
+    ) -> ProviderContinuation:
+        response_prompt, response_transcript, assistant_blocks = _continuation_state(
+            response_continuation
+        )
+        if response_prompt is not None or response_transcript is not None:
+            raise AnthropicMessagesProtocolError(
+                "Anthropic parser returned an unexpected complete continuation"
+            )
+        if assistant_blocks is None:  # pragma: no cover - normalized by helper
+            raise AnthropicMessagesProtocolError(
+                "Anthropic parser continuation has no assistant content"
+            )
+        messages = _message_list(wire_messages, location="request messages")
+        messages.append({"role": "assistant", "content": assistant_blocks})
+        if request.continuation is None:
+            original_prompt = request.prompt
+        else:
+            original_prompt, prior_transcript, _ = _continuation_state(request.continuation)
+            if original_prompt is None or prior_transcript is None:  # pragma: no cover
+                raise AnthropicMessagesProtocolError(
+                    "Anthropic request continuation lacks an original Runtime prompt"
+                )
+        _validate_transcript(
+            messages,
+            original_prompt=original_prompt,
+            allow_unresolved_final=True,
+        )
+        return ProviderContinuation(
+            self.profile_id,
+            {
+                "version": _CONTINUATION_VERSION,
+                "original_prompt": original_prompt,
+                "messages": messages,
+            },
+        )
 
     def _tool_choice(self, request: ModelRequest) -> dict[str, JSONValue]:
         mode = request.tool_choice.mode
@@ -288,18 +373,189 @@ def _tool_call(block: Mapping[str, Any], *, index: int) -> ToolCall:
         ) from exc
 
 
-def _continuation_blocks(continuation: ProviderContinuation) -> list[dict[str, JSONValue]]:
+def _continuation_state(
+    continuation: ProviderContinuation,
+) -> tuple[
+    str | None,
+    list[dict[str, JSONValue]] | None,
+    list[dict[str, JSONValue]] | None,
+]:
     payload = continuation.payload
-    if not isinstance(payload, Mapping) or payload.get("version") != _CONTINUATION_VERSION:
-        raise AnthropicMessagesProtocolError("unsupported Anthropic continuation payload")
-    values = payload.get("assistant_content")
+    if not isinstance(payload, Mapping):
+        raise AnthropicMessagesProtocolError("Anthropic continuation must be a JSON object")
+    version = payload.get("version")
+    if version == _LEGACY_CONTINUATION_VERSION:
+        raise AnthropicMessagesProtocolError(
+            "Anthropic continuation v1 is incomplete for stateless replay; "
+            "restart the model turn to create a v2 transcript"
+        )
+    if version != _CONTINUATION_VERSION:
+        raise AnthropicMessagesProtocolError("unsupported Anthropic continuation version")
+    assistant_content = payload.get("assistant_content")
+    messages = payload.get("messages")
+    if assistant_content is not None and messages is not None:
+        raise AnthropicMessagesProtocolError(
+            "Anthropic continuation cannot contain both messages and assistant_content"
+        )
+    if messages is not None:
+        original_prompt = payload.get("original_prompt")
+        if not isinstance(original_prompt, str):
+            raise AnthropicMessagesProtocolError(
+                "Anthropic transcript continuation requires an original_prompt string"
+            )
+        transcript = _message_list(messages, location="continuation messages")
+        _validate_transcript(
+            transcript,
+            original_prompt=original_prompt,
+            allow_unresolved_final=True,
+        )
+        return original_prompt, transcript, None
+    values = assistant_content
     if not isinstance(values, list):
         raise AnthropicMessagesProtocolError(
             "Anthropic continuation assistant_content must be a list"
         )
-    return [
+    blocks = [
         _json_object(f"Anthropic continuation assistant_content[{index}]", value)
         for index, value in enumerate(values)
+    ]
+    _assistant_call_ids(blocks, location="Anthropic continuation assistant_content")
+    return None, None, blocks
+
+
+def _message_list(value: Any, *, location: str) -> list[dict[str, JSONValue]]:
+    if not isinstance(value, list):
+        raise AnthropicMessagesProtocolError(f"Anthropic {location} must be a list")
+    return [
+        _json_object(f"Anthropic {location}[{index}]", message)
+        for index, message in enumerate(value)
+    ]
+
+
+def _validate_transcript(
+    messages: Sequence[Mapping[str, Any]],
+    *,
+    original_prompt: str,
+    allow_unresolved_final: bool,
+) -> list[str]:
+    if not messages or messages[0] != {
+        "role": "user",
+        "content": original_prompt,
+    }:
+        raise AnthropicMessagesProtocolError(
+            "Anthropic transcript must begin with the original Runtime prompt"
+        )
+    seen_call_ids: set[str] = set()
+    seen_result_ids: set[str] = set()
+    unresolved: list[str] = []
+    for index, message in enumerate(messages):
+        expected_role = "user" if index % 2 == 0 else "assistant"
+        if message.get("role") != expected_role:
+            raise AnthropicMessagesProtocolError(
+                f"Anthropic transcript message {index} must have role {expected_role}"
+            )
+        if index == 0:
+            continue
+        content = message.get("content")
+        if not isinstance(content, list):
+            raise AnthropicMessagesProtocolError(
+                f"Anthropic transcript message {index} content must be a list"
+            )
+        blocks = [
+            _json_object(f"Anthropic transcript message {index} content[{block_index}]", block)
+            for block_index, block in enumerate(content)
+        ]
+        if expected_role == "assistant":
+            call_ids = _assistant_call_ids(
+                blocks,
+                location=f"Anthropic transcript assistant message {index}",
+            )
+            duplicate = next((call_id for call_id in call_ids if call_id in seen_call_ids), None)
+            if duplicate is not None:
+                raise AnthropicMessagesProtocolError(
+                    f"Anthropic transcript repeats tool_use ID {duplicate!r}"
+                )
+            seen_call_ids.update(call_ids)
+            unresolved = call_ids
+            if index < len(messages) - 1 and not call_ids:
+                raise AnthropicMessagesProtocolError(
+                    "Anthropic transcript cannot continue after an assistant message "
+                    "without tool_use blocks"
+                )
+        else:
+            result_ids = _tool_result_ids(
+                blocks,
+                location=f"Anthropic transcript user message {index}",
+            )
+            duplicate = next(
+                (result_id for result_id in result_ids if result_id in seen_result_ids),
+                None,
+            )
+            if duplicate is not None:
+                raise AnthropicMessagesProtocolError(
+                    f"Anthropic transcript repeats tool_result ID {duplicate!r}"
+                )
+            if result_ids != unresolved:
+                raise AnthropicMessagesProtocolError(
+                    "each Anthropic tool_use_id must have exactly one ordered tool result"
+                )
+            seen_result_ids.update(result_ids)
+            unresolved = []
+    if unresolved and not allow_unresolved_final:
+        raise AnthropicMessagesProtocolError(
+            "each Anthropic tool_use_id must have exactly one tool result"
+        )
+    return unresolved
+
+
+def _assistant_call_ids(
+    blocks: Sequence[Mapping[str, Any]],
+    *,
+    location: str,
+) -> list[str]:
+    call_ids = [
+        _required_string("Anthropic tool_use id", block.get("id"))
+        for block in blocks
+        if block.get("type") == "tool_use"
+    ]
+    if len(call_ids) != len(set(call_ids)):
+        raise AnthropicMessagesProtocolError(f"{location} contains duplicate tool_use IDs")
+    return call_ids
+
+
+def _tool_result_ids(
+    blocks: Sequence[Mapping[str, Any]],
+    *,
+    location: str,
+) -> list[str]:
+    result_ids: list[str] = []
+    for block in blocks:
+        if block.get("type") != "tool_result":
+            raise AnthropicMessagesProtocolError(
+                f"{location} may contain only tool_result blocks"
+            )
+        result_ids.append(
+            _required_string("Anthropic tool_result tool_use_id", block.get("tool_use_id"))
+        )
+    if len(result_ids) != len(set(result_ids)):
+        raise AnthropicMessagesProtocolError(f"{location} contains duplicate tool_result IDs")
+    return result_ids
+
+
+def _result_blocks(call_ids: Sequence[str], request: ModelRequest) -> list[JSONValue]:
+    result_by_id = {result.call_id: result for result in request.tool_results}
+    if set(call_ids) != set(result_by_id) or len(call_ids) != len(result_by_id):
+        raise AnthropicMessagesProtocolError(
+            "each Anthropic tool_use_id must have exactly one tool result"
+        )
+    return [
+        {
+            "type": "tool_result",
+            "tool_use_id": call_id,
+            "content": _result_content(result_by_id[call_id].output),
+            "is_error": result_by_id[call_id].is_error,
+        }
+        for call_id in call_ids
     ]
 
 
