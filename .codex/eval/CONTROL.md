@@ -71,8 +71,9 @@ manifest 必须包含 source/evaluator/taskset/provider profile/native conforman
 ### Wave 内 remediation
 
 - Review 或 Gate 发现实现、测试、fixture、verifier、artifact wiring 没有满足既有 contract、freeze 或 Wave Exit Gate 时，正式状态记为 `needs_remediation`，不自动记为 `blocked`。
-- Wave Integrator 不亲自实现修复。它为每个可独立归属的问题创建精确 scoped remediation ticket，沿用普通 ticket 的 PLAN 结构、独立 thread/worktree/branch、allowed paths、commit、tests 与 per-ticket handoff。
-- 新 remediation ticket 必须引用 finding ID 和既有验收依据。若正确结果可由现有约定唯一确定，Integrator 可在必要的 batch checkpoint 中把 ticket 加入本 Wave 的 PLAN 并分配为满足既有 Wave 目标所需的最小 owner；这不属于跨 Wave scope expansion。
+- Wave Integrator 不亲自实现修复，也不默认创建新 ticket。它先按当前 Wave 的 contract/path ownership 将 finding 退回造成偏差或本来负责该约定的既有 worker thread；同一 thread 继续完成同一 ticket。
+- Worker 在原 branch/worktree 上应用 Integrator 给出的精确 candidate/dependency commits，提交修订并更新同一路径的 per-ticket handoff。更新后的 handoff 必须增加 `revision`、`supersedes_handoff_sha256`、finding IDs、candidate SHA、新 commits 与 tests；旧版本由 Git 历史保留，不得静默抹除。
+- 若 finding 没有当前 Wave owner、修复超出原 ticket goal/allowed paths，或需要改变 frozen 语义，Integrator 只能提交 ownership/change request。Program Supervisor 负责决定是否扩展原 owner 或增加 scoped remediation ticket；等待期间 Wave 保持 `needs_remediation`，不因 ownership 请求自动最终 blocked。
 - 每轮 remediation 从不可变 `candidate_sha` 启动。并行 ticket 使用同一 candidate；有依赖的 ticket 在共同 candidate 上应用精确 dependency commits。修复集成后生成新的 candidate，并重新分发只读 review。
 - 保留现有每-ticket handoff，remediation ticket 使用相同格式。修复轮次只记录在正式 `STATUS.json` 与最终 Wave handoff 中；不得为 dispatch、accept 或一次 review 额外创建旁路 artifact。Reviewer ticket 自己的 handoff 仍是该 ticket 的唯一交付物。
 - 只有现有约定不能唯一决定修复、必须改变 frozen Oracle/验收语义、发生实质性跨 Wave 架构或责任漂移、需要新的用户授权/外部权限，或可重建性冲突无法在本 Wave 内解决时，才进入真正的 `blocked`。
@@ -88,7 +89,7 @@ W0 必须保留当前 `pico/core/runtime_checkpoints.py` 既有工作区修改�
 
 ### Canonical history 可读性
 
-- 每个包含源码、测试、fixture 或 evaluator 变更的 ticket，在 canonical integration history 中最多对应一个归一化提交；subject 必须包含 `[TICKET-ID]`。
+- 每个包含源码、测试、fixture 或 evaluator 变更的 ticket，每次验收 revision 在 canonical integration history 中最多对应一个归一化提交；subject 必须包含 `[TICKET-ID]`，review-return revision 追加 `[R<n>]`。不得为维持单提交表象而重写已经共享的 canonical history。
 - Worker 的多个自有提交使用 `git cherry-pick --no-commit` 汇总。Canonical commit body 必须记录 worker head/commits、dependency commits、handoff SHA-256、tests 与 stable patch-id 验证；不得把 dependency patch 错归为 ticket 自有改动。
 - 禁止逐 ticket 的 dispatch/accept control commits。控制历史只使用 Wave open、必要的 batch checkpoint、Wave close 与 Wave handoff。
 - 每个 Wave 必须生成 `.codex/eval/state/<WAVE>-commit-map.json`，逐一映射 worker commits、stable patch ID 与 canonical commit；run/reviewer 的无源码结果也要映射 handoff/metadata integration。

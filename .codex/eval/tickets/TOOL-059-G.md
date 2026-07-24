@@ -5,7 +5,7 @@
 
 ## Start conditions
 
-- `AUDIT-059-A-R1`
+- `AUDIT-059-A` 的最新 handoff revision 已 accepted
 - W6R3 所有实现与 fixture tickets 已验收
 
 ## Goal

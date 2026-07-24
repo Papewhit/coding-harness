@@ -18,7 +18,11 @@
 - `benchmarks/v3/native-provider/human-smoke-v2.json`
 - `scripts/run_v3_native_human_smoke.py`
 - `tests/test_v3_native_human_smoke.py`
+- `benchmarks/v3/native-provider/human-smoke-v3.json`
+- `scripts/run_v3_native_human_smoke_v3.py`
+- `tests/test_v3_native_human_smoke_v3.py`
 - `<ARTIFACT_ROOT>/native-provider-human-smoke-adjudication/**`
+- `<ARTIFACT_ROOT>/native-provider-human-smoke-v3/**`
 - `.codex/eval/proposals/EVAL-059-H.freeze.json`
 - `.codex/eval/handoffs/EVAL-059-H.json`
 
@@ -40,3 +44,15 @@
 ## Stop rule
 
 提交 versioned harness、tests、freeze proposal 与 handoff 后停止。不得执行正式 human smoke。
+
+## Review-return revision
+
+`AUDIT-059-A-P1-003` 与 plan-level harness findings 退回本 ticket 的原 worker thread。Revision 2 必须保留 human-smoke v2 原字节与历史 evidence，使用新增 v3 paths 发布修订：
+
+- live verifier 从观察到的 model exchange 与 Runtime events 绑定真实 call ID，不要求 fake literal；
+- 场景 A 使用 semantic `read → edit → verify` 偏序与文件后置条件，允许无害辅助调用；
+- 场景 B 明确给出待执行命令但不泄露拒绝/测试意图；
+- `run_manifest` API 与 CLI 均 fail closed，authorized-live 不得回落 fake；
+- artifact 绑定 runtime/source、manifest、脱敏 profile、HTTP attempts 与可人工复核的前后文件 hash/diff。
+
+只运行 fake/stub tests，不发 live HTTP。更新原 freeze proposal 与同一路径 handoff；handoff 必须记录 `revision=2`、superseded hash、finding IDs、candidate SHA、新 commits 与 tests。

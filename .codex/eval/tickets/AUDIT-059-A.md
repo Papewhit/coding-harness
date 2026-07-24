@@ -36,3 +36,14 @@
 ## Stop rule
 
 提交 review handoff 后停止；发现缺陷只报告，不直接修复。
+
+## Remediation re-review
+
+W6R3 修复集成后，Integrator 将新的 immutable candidate 退回本 reviewer thread。Reviewer 继续同一 ticket，复审：
+
+- Anthropic 三轮 stateless transcript；
+- Responses unresolved call/result 精确闭合；
+- human-smoke v3 semantic verifier、live guard 与 artifact provenance；
+- v2/Oracle/历史 evidence 不变性。
+
+更新同一路径 handoff并记录递增 revision、`supersedes_handoff_sha256`、candidate SHA 与复审 tests。发现明确实现偏差时仍只报告 finding，由 Integrator 退回对应 owner；不得创建额外 review artifact。

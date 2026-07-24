@@ -14,11 +14,18 @@ W6R3 从 W6R2 handoff 与两次 human smoke 的新事实恢复。W6R2 Gate N1 se
 
 `AUDIT-059-A` 的三个 finding 以及 plan-level 复审补充的 human-smoke harness 问题，都可由既有 native call/result、双 dialect 对称性和 semantic smoke 约定唯一决定，不构成真正 blocked。W6R3 按新的同 Wave remediation 规则继续：
 
-1. `TEST-059-A-R1` 冻结 Anthropic 三轮 stateless transcript red baseline；`TOOL-059-A-R1` 在其后修复完整累计 transcript。
-2. `TEST-059-O-R1` 冻结 Responses 未闭合 call/result batch red baseline；`TOOL-059-O-R1` 在 transport 前强制精确一一对应。
-3. `EVAL-059-H-R1` 发布 human-smoke v3，不修改已冻结 v2；修复 live call ID 绑定、semantic tool ordering、场景 B 命令缺失、programmatic live fail-closed 与 artifact provenance。
-4. `AUDIT-059-A-R1` 只读复审所有 remediation。只有它通过后，现有 `TOOL-059-G` 才可执行。
+1. 将 `AUDIT-059-A-P1-002` 退回现有 `TEST-059-C` 与 `TOOL-059-O` worker threads。前者先更新 red tests，后者在其 revision commit 上修复 Responses unresolved call/result closure；两者更新原 handoff。
+2. 将 `AUDIT-059-A-P1-003` 及 plan-level harness findings 退回现有 `EVAL-059-H` worker thread。它发布 human-smoke v3，不修改已冻结 v2，并更新原 handoff。
+3. `AUDIT-059-A-P1-001` 在当前 W6R3 没有 Anthropic owner，因此由 Program Supervisor 预先增加唯一的新 ticket `TOOL-059-A-R1`。该 ticket 在同一 thread 内先记录三轮 stateless transcript red baseline，再修复完整累计 transcript。
+4. 修复集成后，将新的 immutable candidate 退回现有 `AUDIT-059-A` reviewer thread，更新同一 review handoff。只有最新 handoff revision 通过后，现有 `TOOL-059-G` 才可执行。
 
-前三个 red-test/fixture tickets 可从同一 immutable remediation candidate 并行启动；两个产品修复分别等待自己的 red baseline。不得发 live HTTP、执行 human smoke、重新 selection 或启动 W6R4/W7。
+`TEST-059-C` revision、`EVAL-059-H` revision 与 `TOOL-059-A-R1` 可从同一 immutable remediation candidate 并行启动；`TOOL-059-O` revision 等待更新后的 `TEST-059-C` handoff/commit。不得发 live HTTP、执行 human smoke、重新 selection 或启动 W6R4/W7。
+
+原 handoff bindings：
+
+- `TEST-059-C`: `498887b31ca34d7f347b984f8011162802dc6100ffd9f04f8166845ce3d8316f`
+- `TOOL-059-O`: `ad18b730148979e5f46149432484072c1414fb4dc39f90ad074a0539bfdb49cd`
+- `EVAL-059-H`: `456d89a6d81b909551b9e687a70d48625d0fd814bbbbd519b9fd347b0c45f123`
+- `AUDIT-059-A`: `659d898a96fab1514b6a78027f886fcefedcff859a2e29f22dc87e293ec06d5b`
 
 旧流程已经生成的 `W6R3-wave-handoff.json`、`W6R3-workers.bundle` 与 `eval-v3/w6r3-canonical` 保持不变，作为采用 remediation 规则前的历史 blocked attempt。恢复时不得移动或覆盖这些对象。W6R3 最终通过或真正 blocked 后，使用 `W6R3-wave-handoff-r1.json`、`W6R3-r1-commit-map.json`、`W6R3-r1-workers.bundle` 与 `eval-v3/w6r3-canonical-r1` 记录最终结果；修复过程不生成其他 Wave 级 handoff、bundle 或 tag。

@@ -16,10 +16,11 @@
 
 Review 或 Gate 未通过时，先依据 `CONTROL.md` 判断：
 
-- 既有约定能唯一决定正确修复：将本 Wave 记为 `needs_remediation`，创建同 Wave remediation tickets，集成后重新 review；
+- finding 属于当前 Wave 既有 ticket 的 goal/allowed paths：将本 Wave 记为 `needs_remediation`，退回原 worker thread 更新同一 ticket/handoff，集成后重新 review；
+- finding 没有当前 owner 或超出原 scope：提交 ownership/change request，由 Program Supervisor 决定扩展原 owner或增加 remediation ticket；
 - 必须改变 frozen 语义、发生实质性跨 Wave 漂移、约定矛盾或需要新授权：才将 Wave 记为 `blocked` 并停止。
 
-你不得亲自实现 remediation。Remediation ticket 沿用普通 ticket 的 PLAN 结构和 per-ticket handoff；修复轮次记录在正式 STATUS 与最终 Wave handoff。不得为 dispatch、accept 或每次 review 创建额外旁路 artifact。
+你不得亲自实现 remediation，也不得擅自扩展 PLAN/ownership。原 worker 的 handoff revision 必须记录 superseded hash、finding、candidate、新 commits 与 tests。修复轮次记录在正式 STATUS 与最终 Wave handoff；不得为 dispatch、accept 或每次 review 创建额外旁路 artifact。
 
 Canonical history 必须遵循 `CONTROL.md` 的可读性规则：ticket payload 归一化、stable patch-id、commit map、worker bundle、cleanup candidates 与 verified annotated canonical tag。不得生成逐 ticket dispatch/accept commits。
 

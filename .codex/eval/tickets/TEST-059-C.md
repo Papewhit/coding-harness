@@ -36,3 +36,14 @@
 ## Stop rule
 
 提交 red tests 与 handoff 后停止；测试失败是本 ticket 的预期 baseline，不得顺手修改产品代码。
+
+## Review-return revision
+
+`AUDIT-059-A-P1-002` 退回本 ticket 的原 worker thread。Revision 2 在现有 allowed paths 内补充：
+
+- 两个 unresolved calls 只有一个 result 时，必须在 transport 前拒绝；
+- extra、unknown 或 duplicate result ID 必须在 transport 前拒绝；
+- 重排的合法 results 应按原 call order 规范化，不机械误拒绝；
+- 历史已闭合 calls 不得误算为当前 batch。
+
+先在 W6R3 remediation candidate 上记录精确 red baseline，再更新同一路径 handoff。Handoff 必须包含 `revision=2`、`supersedes_handoff_sha256`、finding ID、candidate SHA、新 commits 与 tests；不得创建新的 ticket handoff。

@@ -35,3 +35,9 @@
 ## Stop rule
 
 提交单一产品修复与 handoff 后停止；不得修改 Oracle、fixture 或 Anthropic Adapter。
+
+## Review-return revision
+
+`AUDIT-059-A-P1-002` 退回本 ticket 的原 worker thread。Revision 2 必须先应用更新后的 `TEST-059-C` revision commit，然后在 transport 前验证当前 unresolved function calls 与本次 tool results 精确一一对应，并按原 call order 生成 outputs。
+
+不得破坏已经修复的完整累计 transcript、`store=false`、无 `previous_response_id`、legacy v1 fail-closed 与 SDK boundary。更新同一路径 handoff并记录 `revision=2`、superseded hash、finding、candidate、dependency/new commits 与 tests；不得创建新的 ticket handoff。
