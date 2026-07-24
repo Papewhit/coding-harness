@@ -1,0 +1,54 @@
+{
+  "schema_version": "pico-eval-freeze-proposal-v1",
+  "ticket_id": "EVAL-059-H",
+  "instance_id": "W6R3-EVAL-059-H-01",
+  "status": "complete",
+  "proposal_only": true,
+  "formal_freeze_written": false,
+  "formal_freeze_sha256": "b1bdc9755e612d5118bf08793b111f91f3dfa4feb27e43ff83933bb08566c0e4",
+  "dependency": {
+    "ticket_id": "EVAL-059-O",
+    "original_commit": "b90fb5297aceef3eb137ae8104888974e96e7141",
+    "applied_commit": "27c6de12b57a7668181c558e215a3415f251bf5d",
+    "stable_patch_id": "06e7e986f6b99b5969dd23f00aebd71f61badef2",
+    "handoff_sha256": "849b687163b77e8957529d72e0111edb08625a76a1276c87799e68b595bef00f"
+  },
+  "human_smoke_v2": {
+    "manifest": {
+      "path": "benchmarks/v3/native-provider/human-smoke-v2.json",
+      "schema_version": "pico-native-human-smoke-v2",
+      "sha256": "5a73a009a5c367db7946af487609a48024605682026d2c9a5f758017883f5853"
+    },
+    "runner": {
+      "path": "scripts/run_v3_native_human_smoke.py",
+      "sha256": "69e9001e6090c21d6e2701e54ce908cfe514036386d5b0dfee78217559e9f20c",
+      "default": "fail_closed",
+      "fake_provider": "no HTTP",
+      "authorized_live": "requires explicit flag, frozen public profile, provider name, and config before client construction"
+    },
+    "tests": {
+      "path": "tests/test_v3_native_human_smoke.py",
+      "sha256": "2acecaa74c8d6dad87171262c715f93c27dd7222cbcb1b5e5ef22968058e7c62",
+      "result": "6 passed; all fake-provider only"
+    },
+    "scenarios": ["HSMOKE-V2-A", "HSMOKE-V2-B"],
+    "historical_adjudication": {
+      "source_ticket": "EVAL-059-O",
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-oracle-v2/W6R3-EVAL-059-O-01/human-smoke-adjudication.json",
+      "sha256": "fbfe414f7c87218608754b4e807cc114bd2a90b06d8fb622d138b4942c0ed7f9",
+      "read_only": true
+    }
+  },
+  "fake_provider_adjudication": {
+    "root": "F:/dev/llm/pico-eval-artifacts/native-provider-human-smoke-adjudication/W6R3-EVAL-059-H-01-correction",
+    "summary_sha256": "041e5178fd397f5247103b2da2a53a6a61a746cbe4584f6af5522d64b1130999",
+    "status": "PASS",
+    "provider_http_attempts": 0,
+    "sensitive_scan_hits": 0
+  },
+  "not_a_formal_human_smoke": true,
+  "authorized_live_not_run": true,
+  "profile_reselection_run": false,
+  "w6r4_started": false,
+  "w7_started": false
+}

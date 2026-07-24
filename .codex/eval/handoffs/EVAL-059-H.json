@@ -1,0 +1,86 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "EVAL-059-H",
+  "instance_id": "W6R3-EVAL-059-H-01",
+  "wave": "W6R3",
+  "role": "fixture_builder/human-smoke-v2-manifest-runner-verifier",
+  "status": "complete",
+  "base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+  "wave_base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+  "branch": "codex/w6r3-eval-059-h",
+  "source_head_sha": "83ec770a448cf1f45f6d56878ff237a53eeef0e5",
+  "source_head_semantics": "Corrected harness commit; the following handoff/proposal-only commit cannot self-record its own SHA.",
+  "dependency_commits": [
+    {
+      "ticket_id": "EVAL-059-O",
+      "original": "b90fb5297aceef3eb137ae8104888974e96e7141",
+      "applied": "27c6de12b57a7668181c558e215a3415f251bf5d",
+      "stable_patch_id": "06e7e986f6b99b5969dd23f00aebd71f61badef2",
+      "handoff_sha256": "849b687163b77e8957529d72e0111edb08625a76a1276c87799e68b595bef00f"
+    }
+  ],
+  "own_commits": ["1a9a4af7da401cdb838359ad265516e590a953f7", "83ec770a448cf1f45f6d56878ff237a53eeef0e5"],
+  "own_stable_patch_ids": {
+    "1a9a4af7da401cdb838359ad265516e590a953f7": "f0b486f52858fbc63a2ffc8013ecb4ef49eeac07",
+    "83ec770a448cf1f45f6d56878ff237a53eeef0e5": "4c7f7a2956714c3416ba397408ae358c48628fbf"
+  },
+  "files_changed": [
+    "benchmarks/v3/native-provider/human-smoke-v2.json",
+    "scripts/run_v3_native_human_smoke.py",
+    "tests/test_v3_native_human_smoke.py",
+    ".codex/eval/proposals/EVAL-059-H.freeze.json",
+    ".codex/eval/handoffs/EVAL-059-H.json"
+  ],
+  "manifest_contract": {
+    "path": "benchmarks/v3/native-provider/human-smoke-v2.json",
+    "sha256": "5a73a009a5c367db7946af487609a48024605682026d2c9a5f758017883f5853",
+    "single_source_for": ["prompt", "fixture", "expected_postcondition", "verifier"],
+    "scenario_a": "Natural Markdown edit with backticks and read → edit → verify.",
+    "scenario_b": "Repository fixture contains neither tests, refusal hints, nor high-level instructions; Runtime approval denial and safe continuation are verifier evidence."
+  },
+  "historical_adjudication": {
+    "source_ticket": "EVAL-059-O",
+    "path": "F:/dev/llm/pico-eval-artifacts/native-provider-oracle-v2/W6R3-EVAL-059-O-01/human-smoke-adjudication.json",
+    "sha256": "fbfe414f7c87218608754b4e807cc114bd2a90b06d8fb622d138b4942c0ed7f9",
+    "read_only": true,
+    "w6r2_evidence_mutated": false
+  },
+  "artifact_inventory": {
+    "root": "F:/dev/llm/pico-eval-artifacts/native-provider-human-smoke-adjudication/W6R3-EVAL-059-H-01-correction",
+    "summary_sha256": "041e5178fd397f5247103b2da2a53a6a61a746cbe4584f6af5522d64b1130999",
+    "result_hashes": {
+      "HSMOKE-V2-A": "3a35511ddd02803a62f418cd197a0c23c60938f8bb03283f512be508752a06e5",
+      "HSMOKE-V2-B": "929c27bc0b21cd3b7e84d202ff6195746bc2d32394d643d9a97d220c86d8111f"
+    },
+    "status": "PASS",
+    "provider_http_attempts": 0,
+    "persisted": ["pico exit", "verifier exit", "stdout", "stderr", "structured PASS/FAIL artifact"]
+  },
+  "proposal": {
+    "path": ".codex/eval/proposals/EVAL-059-H.freeze.json",
+    "sha256": "4457fb73dff6391622322b0521db17fa4d39d12318bce7afabce1a448e0c9ab3"
+  },
+  "tests": [
+    {"command": "uv run pytest tests/test_v3_native_human_smoke.py -q", "result": "passed", "details": "6 passed; all fake-provider only"},
+    {"command": "uv run ruff check scripts/run_v3_native_human_smoke.py tests/test_v3_native_human_smoke.py", "result": "passed"},
+    {"command": "uv run python scripts/run_v3_native_human_smoke.py --fake-provider --output-dir <artifact>", "result": "passed", "details": "fake-provider only; provider HTTP attempts=0"},
+    {"command": "git diff --check", "result": "passed"}
+  ],
+  "sensitive_scan": {"patterns": ["credential-like API keys", "api_key assignments", "URLs"], "hits": 0},
+  "formal_status_written": false,
+  "formal_freeze_written": false,
+  "formal_human_smoke_run": false,
+  "authorized_live_supported": true,
+  "authorized_live_guard": "requires --authorized-live plus --provider, --config, and --frozen-profile; exact profile/config binding happens before provider construction",
+  "authorized_live_run": false,
+  "provider_http_attempts": 0,
+  "profile_reselection_run": false,
+  "w6r4_started": false,
+  "w7_started": false,
+  "risks": [
+    "This ticket proves only deterministic fake-provider Runtime behavior; it is not user authorization for a live human smoke.",
+    "A future authorized smoke must use --authorized-live with an exact frozen public profile and provider config, then independently persist real provider evidence."
+  ],
+  "ready_for_integration": true,
+  "stop_after_handoff": true
+}
