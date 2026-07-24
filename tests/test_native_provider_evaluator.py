@@ -7,10 +7,14 @@ from pathlib import Path
 import pytest
 
 from pico.evaluation.native_provider import (
+    ADJUDICATION_SCHEMA_VERSION_V2,
     FROZEN_INPUT_HASHES,
     NATIVE_SAFETY_EVIDENCE_VERSION,
     NATIVE_SAFETY_STAGES,
+    ORACLE_SCHEMA_VERSION_V2,
     REQUIRED_SCENARIOS,
+    STOCHASTIC_LIVE_PREDICATES,
+    adjudicate_native_provider_rows_v2,
     aggregate_native_provider_rows,
     evaluate_native_provider_case,
     load_case_set,
@@ -22,6 +26,7 @@ from pico.evaluation.native_provider import (
 
 ROOT = Path(__file__).resolve().parents[1]
 CASE_PATH = ROOT / "benchmarks" / "v3" / "native-provider" / "cases.json"
+CASE_V2_PATH = ROOT / "benchmarks" / "v3" / "native-provider" / "cases-v2.json"
 PROFILE = {
     "provider": "synthetic",
     "model": "fixture",
@@ -196,6 +201,21 @@ def test_frozen_manifest_has_exactly_the_eight_required_non_restart_cases():
     assert "restart" not in json.dumps(case_set).lower()
 
 
+def test_oracle_v2_manifest_freezes_ownership_denominator_and_hash_basis():
+    case_set = load_case_set(CASE_V2_PATH)
+
+    assert case_set["oracle"]["version"] == ORACLE_SCHEMA_VERSION_V2
+    assert case_set["oracle"]["execution_denominator"] == "calls entering runtime.run_tool"
+    assert case_set["oracle"]["safety_owner"] == "runtime_snapshot"
+    assert case_set["oracle"]["hash_basis"] == "UTF-8 file bytes"
+    assert case_set["oracle"]["stochastic_live_predicates"] == list(
+        STOCHASTIC_LIVE_PREDICATES
+    )
+    assert case_set["oracle"]["stochastic_live_predicates_are_hard_eligibility"] is False
+    assert case_set["oracle"]["historical_adjudication_can_promote_profile"] is False
+    assert case_set["source_v1"]["immutable"] is True
+
+
 def test_synthetic_eight_case_suite_emits_rows_and_aggregate_inputs():
     case_set = load_case_set(CASE_PATH)
 
@@ -334,6 +354,153 @@ def test_missing_reordered_and_unbound_safety_evidence_are_bypasses():
         "safety_chain_bypass",
         "unbound_safety_chain_evidence",
     }
+
+
+def test_oracle_v2_excludes_pre_runtime_rejection_and_accepts_nonzero_execute():
+    case = load_case_set(CASE_PATH)["cases"][1]
+    completed_error = _passing_observation(case)
+    result = completed_error["events"][2]["results"][0]
+    result.update(
+        {
+            "is_error": True,
+            "error_code": "tool_failed",
+            "tool_status": "error",
+            "tool_error_code": "tool_failed",
+        }
+    )
+    completed_error["audit"]["safety_chain_evidence"][-1]["outcome"] = "completed"
+    completed_error_row = evaluate_native_provider_case(case, completed_error)
+    assert completed_error_row["safety_chain_bypass_count"] == 1
+
+    pre_runtime = _passing_observation(case)
+    pre_runtime_result = pre_runtime["events"][2]["results"][0]
+    pre_runtime_result.update(
+        {
+            "is_error": True,
+            "error_code": "tool_choice_none_violation",
+            "tool_status": "rejected",
+            "tool_error_code": "tool_choice_none_violation",
+        }
+    )
+    pre_runtime["audit"]["safety_chain_evidence"] = []
+    pre_runtime_row = evaluate_native_provider_case(case, pre_runtime)
+
+    adjudication = adjudicate_native_provider_rows_v2(
+        [completed_error_row, pre_runtime_row],
+        source_snapshot_sha="a" * 40,
+    )
+
+    assert adjudication["schema_version"] == ADJUDICATION_SCHEMA_VERSION_V2
+    assert adjudication["runtime_snapshot"] == {
+        "status": "passed",
+        "execution_denominator": 1,
+        "complete_execution_chains": 1,
+        "pre_runtime_rejection_count": 1,
+        "runtime_chain_violation_count": 0,
+        "sdk_managed_execution_violation_count": 0,
+        "sdk_managed_execution_evidence": "rows",
+        "execute_completed_semantics": (
+            "tool implementation returned; operation outcome is read from "
+            "tool_status/tool_error_code"
+        ),
+    }
+    first_call = adjudication["rows"][0]["safety_calls"][0]
+    assert first_call["runtime_chain_complete"] is True
+    assert first_call["tool_status"] == "error"
+    assert first_call["tool_error_code"] == "tool_failed"
+    assert adjudication["profile_metrics"]["status"] == "eligible"
+    assert adjudication["reselection_or_promotion_permitted"] is False
+
+
+def test_oracle_v2_true_runtime_chain_violation_blocks_snapshot_not_profile():
+    case = load_case_set(CASE_PATH)["cases"][1]
+    observation = _passing_observation(case)
+    observation["audit"]["safety_chain_evidence"] = []
+    row = evaluate_native_provider_case(case, observation)
+
+    adjudication = adjudicate_native_provider_rows_v2(
+        [row],
+        source_snapshot_sha="b" * 40,
+    )
+
+    assert adjudication["runtime_snapshot"]["status"] == "blocked"
+    assert adjudication["runtime_snapshot"]["runtime_chain_violation_count"] == 1
+    assert adjudication["profile_metrics"]["status"] == "eligible"
+
+
+def test_oracle_v2_sdk_managed_execution_is_snapshot_hard_failure():
+    case = load_case_set(CASE_PATH)["cases"][1]
+    observation = _passing_observation(case)
+    observation["audit"]["sdk_managed_pico_tool_execution_used"] = True
+    row = evaluate_native_provider_case(case, observation)
+
+    adjudication = adjudicate_native_provider_rows_v2(
+        [row],
+        source_snapshot_sha="d" * 40,
+    )
+
+    assert adjudication["runtime_snapshot"]["status"] == "blocked"
+    assert (
+        adjudication["runtime_snapshot"][
+            "sdk_managed_execution_violation_count"
+        ]
+        == 1
+    )
+    assert adjudication["profile_metrics"]["status"] == "eligible"
+
+
+def test_oracle_v2_stochastic_case_predicates_are_descriptive_only():
+    case = load_case_set(CASE_PATH)["cases"][3]
+    observation = _passing_observation(case)
+    observation["events"] = [
+        observation["events"][0],
+        _assistant(text="done"),
+    ]
+    observation["audit"]["safety_chain_evidence"] = []
+    row = evaluate_native_provider_case(case, observation)
+    assert {error["code"] for error in row["case_errors"]} >= {
+        "too_few_calls",
+        "missing_expected_error",
+        "missing_successful_repair",
+    }
+
+    adjudication = adjudicate_native_provider_rows_v2(
+        [row],
+        source_snapshot_sha="c" * 40,
+    )
+
+    assert adjudication["profile_metrics"]["status"] == "eligible"
+    assert adjudication["rows"][0]["source_case_errors_retained_descriptive"]
+
+
+def test_oracle_v2_never_treats_missing_metric_evidence_as_zero():
+    case = load_case_set(CASE_PATH)["cases"][1]
+    row = evaluate_native_provider_case(case, _passing_observation(case))
+    row.pop("unknown_block_loss_count")
+    row.pop("sdk_managed_execution_seen")
+
+    missing = adjudicate_native_provider_rows_v2(
+        [row],
+        source_snapshot_sha="e" * 40,
+    )
+    assert missing["profile_metrics"]["status"] == "not_computable"
+    assert missing["profile_metrics"]["unknown_block_loss_count"] is None
+    assert missing["runtime_snapshot"]["status"] == "not_computable"
+
+    bound = adjudicate_native_provider_rows_v2(
+        [row],
+        source_snapshot_sha="e" * 40,
+        source_bindings={
+            "unknown_block_loss_count_from_accepted_handoff": 0,
+            "sdk_managed_execution_from_accepted_handoff": False,
+        },
+    )
+    assert bound["profile_metrics"]["status"] == "eligible"
+    assert (
+        bound["profile_metrics"]["unknown_block_loss_evidence"]
+        == "accepted_handoff_binding"
+    )
+    assert bound["runtime_snapshot"]["status"] == "passed"
 
 
 def test_repetition_is_case_major_and_row_ids_are_unique():

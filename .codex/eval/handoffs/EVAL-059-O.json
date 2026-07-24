@@ -1,0 +1,211 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "EVAL-059-O",
+  "instance_id": "W6R3-EVAL-059-O-01",
+  "wave": "W6R3",
+  "role": "fixture_builder/oracle-v2-and-historical-adjudication",
+  "status": "complete",
+  "source_thread_id": "019f91dc-1940-7b31-9e6f-086f4941922b",
+  "base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+  "wave_base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+  "source_head_sha": "531bece4d144f7aa34910a3c41c04183b56f561b",
+  "source_head_semantics": "Oracle v2 implementation, tests, cases and proposals after requiring explicit row or accepted-handoff evidence for every absence metric. The later handoff-only metadata commit intentionally cannot self-record its own SHA.",
+  "branch": "codex/w6r3-eval-059-o",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/65e4/pico",
+  "dependency_commits": [],
+  "own_commits": [
+    "ee656bce32311013c1d637568a4bd472f6010245",
+    "531bece4d144f7aa34910a3c41c04183b56f561b"
+  ],
+  "prior_handoff_only_commit": "ae9edddc94d8a57894386080f31bbe35d7457cf1",
+  "stable_patch_ids": {
+    "ee656bce32311013c1d637568a4bd472f6010245": "97200142bbecbb8fe137e8353236ba7dd354e0c1",
+    "531bece4d144f7aa34910a3c41c04183b56f561b": "bb57b2874e4662d7e8afd0ff305443c5a97417e5"
+  },
+  "dependency_hashes": {
+    "W6R2-wave-handoff": "031f0cf629f60fead1b82e239c69a2e55660a5829a45f5d2d24862e83df6cbd7",
+    "TOOL-050-S-R1": "ada774641c62e871b00181090f1983a68e90d113380f0057f3f737bcf298c072",
+    "formal_FREEZE": "b15e4140c7bd8eed7e864531991eed6060c05ec53d376d677613ba6ef57d5b9e",
+    "W6R3-wave-open": "644ece1666c8d89f702252bfad1827007594a52f00270ed693f75cdec6881659"
+  },
+  "frozen_contract_hashes": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "sdk_dependency_lock": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+    "native_deterministic_gate": "2fc1ebbe4d64c5be80e7fe063584915f12aabf3a8f8c08796d2cf009e94849a5",
+    "provider_selection_w6r2_lf_bytes": "e94483ef222373139b9f07173632d579416056248431deaafcf0bcaf0c7a1278"
+  },
+  "oracle_v2": {
+    "version": "pico-native-provider-oracle-v2",
+    "cases": {
+      "path": "benchmarks/v3/native-provider/cases-v2.json",
+      "git_blob_oid": "82c50bc318617c6556f82cbf4ec779fcbe4a1993",
+      "sha256": "dca7a585c2264a12187dd00344c63c225b966937bf9df8a53ed5a5341417defc",
+      "hash_basis": "UTF-8 file bytes"
+    },
+    "responsibility_boundary": {
+      "safety_owner": "runtime_snapshot",
+      "execution_denominator": "calls entering runtime.run_tool",
+      "pre_runtime_rejection_excluded": true,
+      "execute_completed_is_tool_implementation_returned": true,
+      "operation_outcome_fields": [
+        "tool_status",
+        "tool_error_code"
+      ],
+      "true_runtime_chain_violation_blocks_snapshot": true,
+      "stochastic_invalid_args_or_multi_call_is_live_hard_requirement": false
+    },
+    "historical_results": {
+      "dashscope-o": {
+        "profile_status_v2": "eligible",
+        "call_id_result_match": "50/50",
+        "batch_completeness": "35/35",
+        "runtime_execution_chains": "50/50",
+        "pre_runtime_rejections": 0,
+        "human_smoke": "failed"
+      },
+      "dashscope-a": {
+        "profile_status_v2": "eligible",
+        "call_id_result_match": "85/85",
+        "batch_completeness": "76/76",
+        "runtime_execution_chains": "83/83",
+        "pre_runtime_rejections": 2,
+        "human_smoke": "semantic_pass_oracle_false_negative"
+      },
+      "historical_fact_reinterpretation_only": true,
+      "formal_reselection_run": false,
+      "direct_profile_promotion_permitted": false
+    }
+  },
+  "v1_immutability": {
+    "cases": {
+      "working_tree_sha256": "92f746b113a88ceb652e4e8ec651021b1358d9922ab91c0dad34e62c0068b9e3",
+      "lf_bytes_sha256": "b20cdf446a21e20db035213c9308b47daa252cb9b0aadbebf7ec5747750e9f4d",
+      "git_blob_oid": "f513f6e15c521104b12fe348dc280f73624acd56"
+    },
+    "selection_w6r2": {
+      "working_tree_sha256": "2d9251860395276ab03d623b7fee3d7477140d74d7ee6e8f35a008375b79a6cc",
+      "lf_bytes_sha256": "e94483ef222373139b9f07173632d579416056248431deaafcf0bcaf0c7a1278",
+      "git_blob_oid": "6649c651c09e7e65936dadea0efee901e6f12d61"
+    },
+    "dashscope_o_rows_sha256": "c95dae0f8c3a90bc46e22e9f07dfce53784e43557f0fdf960bc9f5ba1fa92da3",
+    "dashscope_a_rows_sha256": "dfaf6efe30718d69ebd27f918f6f40978d8fb58af9454bbc702beabf86f09089",
+    "rows_cases_selection_mutated": false
+  },
+  "files_changed": [
+    ".codex/eval/proposals/EVAL-059-O.freeze.json",
+    ".codex/eval/proposals/EVAL-059-O.status.json",
+    "benchmarks/v3/native-provider/cases-v2.json",
+    "pico/evaluation/native_provider.py",
+    "pico/evaluation/native_provider_live.py",
+    "tests/test_native_provider_evaluator.py",
+    "tests/test_native_provider_live.py",
+    ".codex/eval/handoffs/EVAL-059-O.json"
+  ],
+  "git_blob_bindings": {
+    "pico/evaluation/native_provider.py": {
+      "oid": "38bb94bcc8397fb42daa353085cc182e4af72c3c",
+      "sha256": "a0b3c2802fc35227c18828fd1875dbe401fc31dca662005bd1eab744e1da5a5f"
+    },
+    "pico/evaluation/native_provider_live.py": {
+      "oid": "024506d99a942d6691b47bbee0fcb432fd46e313",
+      "sha256": "dc6d0b8e6f98d7c714a7a0780ac9f623caee7abdc19977301cc4a4cfc8877e5f"
+    },
+    "tests/test_native_provider_evaluator.py": {
+      "oid": "aaaf86e51aa7a2ceb33075eec5b2ab0b50d7553f",
+      "sha256": "b3e1dbb534b5461fe0e893462ad0141ae44e5320e63ecdded669a3dd0cf9ff58"
+    },
+    "tests/test_native_provider_live.py": {
+      "oid": "a3b962cc1df9dcfb1dcbc0fca46bb8bfc86169de",
+      "sha256": "cf7cca2e8719e6195f1b57a44d82b785b9b0d91641c83528b273dfa1015ed293"
+    }
+  },
+  "artifact_inventory": {
+    "root": "F:/dev/llm/pico-eval-artifacts/native-provider-oracle-v2/W6R3-EVAL-059-O-01",
+    "conformance-adjudication.json": "d78bec13744cff83edda12e67e5fc151765d0ce41211b381e56778287bcad291",
+    "human-smoke-adjudication.json": "fbfe414f7c87218608754b4e807cc114bd2a90b06d8fb622d138b4942c0ed7f9",
+    "manifest.json": "87fa6898bfb7297a4f0244e0e177c1f66e4090b1c43ee544ce59309dc12806b7",
+    "inventory.json": "7cb7fa26e3c4347b3461123e925197c7d44f06b22a5cfc56adda49ab51a63138",
+    "historical_dashscope_o_file_count": 28,
+    "historical_dashscope_a_file_count": 11,
+    "all_historical_files_sha256_bound": true,
+    "all_json_reparsed": true,
+    "sensitive_scan_hits": 0
+  },
+  "proposals": {
+    "freeze": {
+      "path": ".codex/eval/proposals/EVAL-059-O.freeze.json",
+      "sha256": "12a6f9b3ae756e6f4f6a2ae380f2926252bb814400a0c994062af3f68f4e9cc9"
+    },
+    "status": {
+      "path": ".codex/eval/proposals/EVAL-059-O.status.json",
+      "sha256": "a78c1fecf64baa763c818f5d7ab2816f4ee032ae00ea19c2b7847d92b49b5f45"
+    }
+  },
+  "tests": [
+    {
+      "command": "uv run pytest tests/test_native_provider_evaluator.py tests/test_native_provider_live.py -q",
+      "result": "passed",
+      "details": "23 passed in 64.22s"
+    },
+    {
+      "command": "uv run ruff check pico/evaluation/native_provider.py pico/evaluation/native_provider_live.py tests/test_native_provider_evaluator.py tests/test_native_provider_live.py",
+      "result": "passed"
+    },
+    {
+      "command": "JSON parse, SHA-256 inventory verification and public sensitive-data scan",
+      "result": "passed",
+      "details": "4 artifact JSON files parsed; 39 historical evidence files hash-bound; credential/config-locator/raw-URL pattern hits=0"
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed"
+    }
+  ],
+  "observations": {
+    "text_envelope_observed": false,
+    "implicit_sdk_retry_observed": false,
+    "unknown_block_loss_observed": false,
+    "source_v1_safety_bypass_reports": {
+      "dashscope-o": 0,
+      "dashscope-a": 3
+    },
+    "oracle_v2_true_runtime_safety_bypass": {
+      "dashscope-o": 0,
+      "dashscope-a": 0
+    },
+    "dashscope_a_reclassified_pre_runtime_rejections": 2,
+    "dashscope_a_nonzero_execute_completed_reclassified_as_valid_chain": 1,
+    "sdk_or_harness_managed_tool_execution_observed": false
+  },
+  "defects": [
+    {
+      "id": "openai-responses-stateless-transcript-loss",
+      "evidence": "dashscope-o historical edit smoke emitted only read/list operations, never patch_file, and left README byte-identical",
+      "downstream_owner": "TOOL-059-O"
+    },
+    {
+      "id": "legacy-human-smoke-verifier-markdown-literal-false-negative",
+      "evidence": "dashscope-a request and patch both used the same backtick-delimited literal; read/patch/read all completed and the final file contains both backticks",
+      "downstream_owner": "EVAL-059-H"
+    }
+  ],
+  "risks": [
+    "Historical v1 rows do not carry Oracle v2 execution_scope/tool_status fields; adjudication uses immutable structured is_error/error_code plus the frozen tool_choice_none_violation pre-Runtime code. New live rows carry the explicit fields.",
+    "Historical adjudication makes no formal profile promotion or reselection claim; W7 remains blocked pending future recovery gates and authorized human smoke.",
+    "External artifact persistence at the recorded F: path is required for downstream audit."
+  ],
+  "ownership_change_request": null,
+  "provider_http_attempts": 0,
+  "formal_status_written": false,
+  "formal_freeze_written": false,
+  "formal_effectiveness_run": false,
+  "human_smoke_run": false,
+  "profile_reselection_run": false,
+  "w6r4_started": false,
+  "w7_started": false,
+  "ready_for_integration": true,
+  "stop_after_handoff": true
+}

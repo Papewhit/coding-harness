@@ -1,0 +1,39 @@
+{
+  "schema_version": "pico-eval-status-proposal-v1",
+  "ticket_id": "EVAL-059-O",
+  "instance_id": "W6R3-EVAL-059-O-01",
+  "wave": "W6R3",
+  "wave_base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+  "run_snapshot_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+  "promotion_owner": "W6R3 Wave Integrator",
+  "proposal": {
+    "ticket_status": "complete",
+    "oracle_v2": "ready_for_freeze",
+    "historical_adjudication": "complete",
+    "provider_http_attempts": 0,
+    "profile_reselection": "not_run",
+    "formal_human_smoke": "not_run",
+    "formal_online_evaluation": "blocked",
+    "w6r4": "not_started",
+    "w7": "blocked",
+    "reason": "Oracle v2 corrects responsibility ownership without mutating v1 evidence. The selected dashscope-o historical human smoke failed, and the supplemental dashscope-a smoke is a semantic pass with a legacy verifier false negative; neither fact permits direct promotion or reselection."
+  },
+  "historical_adjudication": {
+    "dashscope-o": {
+      "conformance_profile_status_v2": "eligible",
+      "runtime_snapshot_status_v2": "passed",
+      "human_smoke": "failed"
+    },
+    "dashscope-a": {
+      "conformance_profile_status_v2": "eligible",
+      "runtime_snapshot_status_v2": "passed",
+      "pre_runtime_rejections_excluded": 2,
+      "human_smoke": "semantic_pass_oracle_false_negative"
+    },
+    "fact_reinterpretation_only": true,
+    "direct_profile_promotion": false
+  },
+  "formal_state_written_by_ticket": false,
+  "formal_freeze_written_by_ticket": false,
+  "w7_started": false
+}

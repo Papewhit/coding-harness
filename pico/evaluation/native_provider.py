@@ -29,6 +29,9 @@ from pico.evaluation.contracts import (
 
 
 CASESET_SCHEMA_VERSION = "pico-native-provider-cases-v1"
+CASESET_SCHEMA_VERSION_V2 = "pico-native-provider-cases-v2"
+ORACLE_SCHEMA_VERSION_V2 = "pico-native-provider-oracle-v2"
+ADJUDICATION_SCHEMA_VERSION_V2 = "pico-native-provider-adjudication-v2"
 ARTIFACT_SCHEMA_VERSION = "pico-native-provider-conformance-bundle-v2"
 REQUIRED_SCENARIOS = (
     "final",
@@ -54,6 +57,19 @@ NATIVE_SAFETY_STAGES = (
     "permission",
     "policy",
     "execute",
+)
+PRE_RUNTIME_REJECTION_ERROR_CODES = frozenset({"tool_choice_none_violation"})
+SAFETY_ORACLE_ERROR_CODES = frozenset(
+    {
+        "safety_chain_bypass",
+        "malformed_safety_chain_evidence",
+        "unbound_safety_chain_evidence",
+    }
+)
+STOCHASTIC_LIVE_PREDICATES = (
+    "invalid_arguments_observed",
+    "repair_after_invalid_arguments",
+    "unexpected_multi_call_observed",
 )
 
 CaseRunner = Callable[[Mapping[str, Any], Mapping[str, Any]], Mapping[str, Any]]
@@ -248,6 +264,9 @@ def evaluate_native_provider_case(
                     "call_id": call_id,
                     "is_error": _strict_bool("tool result is_error", item.get("is_error", False)),
                     "error_code": _error_code(item),
+                    "tool_status": _tool_status(item),
+                    "tool_error_code": _error_code(item),
+                    "execution_scope": _execution_scope(item),
                     "event_index": event_index,
                 }
                 results.append(result)
@@ -286,6 +305,22 @@ def evaluate_native_provider_case(
         audit=observation.get("audit"),
     )
     protocol_errors.extend(safety_errors)
+    audit = observation.get("audit")
+    audit_value = dict(audit) if isinstance(audit, Mapping) else {}
+    unknown_block_loss_count = _non_negative_int(
+        "unknown_block_loss_count",
+        audit_value.get("unknown_block_loss_count", 0),
+    )
+    sdk_managed_execution_seen = any(
+        audit_value.get(key) is True
+        for key in (
+            "sdk_tool_runner_used",
+            "sdk_agent_runner_used",
+            "sdk_managed_pico_tool_execution_used",
+        )
+    )
+    if unknown_block_loss_count:
+        protocol_errors.append(_error(None, "unknown_block_loss"))
 
     complete_batches = 0
     batch_evidence: list[dict[str, Any]] = []
@@ -357,6 +392,8 @@ def evaluate_native_provider_case(
             ),
             "text_envelope_seen": text_envelope_seen,
             "implicit_sdk_retry_seen": sdk_retry_count > 0,
+            "unknown_block_loss_count": unknown_block_loss_count,
+            "sdk_managed_execution_seen": sdk_managed_execution_seen,
             "continuation_received": continuation_received,
             "continuation_sent": continuation_sent,
             "case_errors": case_errors,
@@ -400,11 +437,328 @@ def aggregate_native_provider_rows(rows: Sequence[Mapping[str, Any]]) -> dict[st
         "http_attempts": sum(row["native_protocol"]["http_attempts"] for row in rows),
         "text_envelope_seen_count": sum(bool(row["text_envelope_seen"]) for row in rows),
         "implicit_sdk_retry_seen": any(bool(row["implicit_sdk_retry_seen"]) for row in rows),
+        "unknown_block_loss_count": sum(
+            row.get("unknown_block_loss_count", 0) for row in rows
+        ),
+        "sdk_managed_execution_seen": any(
+            bool(row.get("sdk_managed_execution_seen")) for row in rows
+        ),
         "safety_chain_completeness": ratio(
             safety_total - safety_bypasses, safety_total
         ),
         "safety_chain_bypass_count": safety_bypasses,
     }
+
+
+def adjudicate_native_provider_rows_v2(
+    rows: Sequence[Mapping[str, Any]],
+    *,
+    source_snapshot_sha: str,
+    source_bindings: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Reinterpret immutable v1 rows under the Oracle v2 responsibility boundary.
+
+    The returned object is an adjudication, never a replacement row set or a
+    profile promotion. Runtime safety is computed once for the source snapshot;
+    profile metrics exclude Runtime/oracle-owned evidence and stochastic case
+    predicates.
+    """
+
+    if not isinstance(source_snapshot_sha, str) or not source_snapshot_sha:
+        raise ValueError("source_snapshot_sha must be a non-empty string")
+    if not isinstance(rows, Sequence) or isinstance(rows, (str, bytes)):
+        raise TypeError("rows must be a sequence of objects")
+
+    adjudicated_rows: list[dict[str, Any]] = []
+    execution_denominator = 0
+    execution_complete = 0
+    pre_runtime_rejections = 0
+    runtime_chain_violations = 0
+    sdk_managed_execution_violations = 0
+    profile_failed_rows = 0
+    eligible_rows = 0
+    call_num = 0
+    call_den = 0
+    batch_num = 0
+    batch_den = 0
+    unknown_block_loss_values: list[int] = []
+    sdk_managed_execution_values: list[bool] = []
+    binding_value = dict(source_bindings or {})
+
+    for row_value in rows:
+        if not isinstance(row_value, Mapping):
+            raise ValueError("each native provider row must be an object")
+        row = dict(row_value)
+        native_protocol = row.get("native_protocol", {})
+        if not isinstance(native_protocol, Mapping):
+            raise ValueError("row native_protocol must be an object")
+        eligible = row.get("eligible") is True
+        eligible_rows += int(eligible)
+
+        profile_errors = [
+            sanitize_public_artifact(dict(error))
+            for error in native_protocol.get("protocol_errors", [])
+            if isinstance(error, Mapping)
+            and error.get("code") not in SAFETY_ORACLE_ERROR_CODES
+        ]
+        profile_status = (
+            "excluded"
+            if not eligible
+            else "failed"
+            if profile_errors
+            else "passed"
+        )
+        profile_failed_rows += int(profile_status == "failed")
+        if "unknown_block_loss_count" in row:
+            unknown_block_loss_values.append(
+                _non_negative_int(
+                    "unknown_block_loss_count",
+                    row.get("unknown_block_loss_count"),
+                )
+            )
+        if "sdk_managed_execution_seen" in row:
+            sdk_managed_execution_values.append(
+                row.get("sdk_managed_execution_seen") is True
+            )
+        if eligible:
+            call_metric = native_protocol.get("call_id_result_match", {})
+            batch_metric = native_protocol.get("batch_completeness", {})
+            if isinstance(call_metric, Mapping):
+                call_num += _non_negative_int(
+                    "call match numerator", call_metric.get("numerator", 0)
+                )
+                call_den += _non_negative_int(
+                    "call match denominator", call_metric.get("denominator", 0)
+                )
+            if isinstance(batch_metric, Mapping):
+                batch_num += _non_negative_int(
+                    "batch numerator", batch_metric.get("numerator", 0)
+                )
+                batch_den += _non_negative_int(
+                    "batch denominator", batch_metric.get("denominator", 0)
+                )
+
+        calls = row.get("call_evidence", [])
+        results = row.get("result_evidence", [])
+        chains = row.get("safety_chain", [])
+        evidence = row.get("safety_chain_evidence", [])
+        if not all(
+            isinstance(value, list) for value in (calls, results, chains, evidence)
+        ):
+            raise ValueError("row safety evidence fields must be lists")
+        result_by_call = {
+            str(result.get("call_id", "")): result
+            for result in results
+            if isinstance(result, Mapping)
+        }
+        chain_by_call = {
+            str(chain.get("call_id", "")): chain
+            for chain in chains
+            if isinstance(chain, Mapping)
+        }
+        safety_calls: list[dict[str, Any]] = []
+        for call in calls:
+            if not isinstance(call, Mapping):
+                raise ValueError("call evidence entries must be objects")
+            call_id = str(call.get("call_id", ""))
+            tool_name = str(call.get("name", ""))
+            result = result_by_call.get(call_id)
+            chain = chain_by_call.get(call_id, {})
+            stages = chain.get("stages", []) if isinstance(chain, Mapping) else []
+            if not isinstance(stages, list):
+                stages = []
+            error_code = _historical_tool_error_code(result)
+            tool_status = _historical_tool_status(result)
+            execution_scope = (
+                result.get("execution_scope")
+                if isinstance(result, Mapping)
+                else None
+            )
+            is_pre_runtime = (
+                execution_scope == "pre_runtime_rejection"
+                or (
+                    execution_scope is None
+                    and not stages
+                    and error_code in PRE_RUNTIME_REJECTION_ERROR_CODES
+                )
+            )
+            if is_pre_runtime:
+                classification = "pre_runtime_rejection"
+                pre_runtime_rejections += 1
+                complete = None
+            else:
+                classification = "runtime_execution"
+                execution_denominator += 1
+                complete = _valid_safety_chain_v2(
+                    stages,
+                    case_id=str(row.get("case_id", "")),
+                    repetition=row.get("repetition"),
+                    call_id=call_id,
+                    tool_name=tool_name,
+                    result=result,
+                )
+                execution_complete += int(complete)
+                runtime_chain_violations += int(not complete)
+            safety_calls.append(
+                {
+                    "call_id": call_id,
+                    "tool_name": tool_name,
+                    "classification": classification,
+                    "runtime_chain_complete": complete,
+                    "tool_status": tool_status,
+                    "tool_error_code": error_code,
+                }
+            )
+
+        adjudicated_rows.append(
+            sanitize_public_artifact(
+                {
+                    "row_id": row.get("row_id"),
+                    "case_id": row.get("case_id"),
+                    "scenario": row.get("scenario"),
+                    "source_status": row.get("status"),
+                    "profile_status_v2": profile_status,
+                    "profile_error_codes": [
+                        error.get("code", "") for error in profile_errors
+                    ],
+                    "source_case_errors_retained_descriptive": deepcopy(
+                        row.get("case_errors", [])
+                    ),
+                    "safety_calls": safety_calls,
+                }
+            )
+        )
+
+    if len(unknown_block_loss_values) == len(rows):
+        unknown_block_loss_count: int | None = sum(
+            unknown_block_loss_values
+        )
+        unknown_block_loss_evidence = "rows"
+    elif type(
+        binding_value.get("unknown_block_loss_count_from_accepted_handoff")
+    ) is int:
+        unknown_block_loss_count = _non_negative_int(
+            "unknown_block_loss_count_from_accepted_handoff",
+            binding_value["unknown_block_loss_count_from_accepted_handoff"],
+        )
+        unknown_block_loss_evidence = "accepted_handoff_binding"
+    else:
+        unknown_block_loss_count = None
+        unknown_block_loss_evidence = "missing"
+
+    if len(sdk_managed_execution_values) == len(rows):
+        sdk_managed_execution_seen: bool | None = any(
+            sdk_managed_execution_values
+        )
+        sdk_managed_execution_evidence = "rows"
+    elif type(
+        binding_value.get("sdk_managed_execution_from_accepted_handoff")
+    ) is bool:
+        sdk_managed_execution_seen = binding_value[
+            "sdk_managed_execution_from_accepted_handoff"
+        ]
+        sdk_managed_execution_evidence = "accepted_handoff_binding"
+    else:
+        sdk_managed_execution_seen = None
+        sdk_managed_execution_evidence = "missing"
+    sdk_managed_execution_violations = int(
+        sdk_managed_execution_seen is True
+    )
+
+    snapshot_status = (
+        "not_computable"
+        if sdk_managed_execution_seen is None
+        else
+        "blocked"
+        if runtime_chain_violations or sdk_managed_execution_violations
+        else "passed"
+    )
+    profile_status = (
+        "not_computable"
+        if (
+            not rows
+            or not eligible_rows
+            or unknown_block_loss_count is None
+        )
+        else "ineligible"
+        if profile_failed_rows or unknown_block_loss_count
+        else "eligible"
+    )
+    return sanitize_public_artifact(
+        {
+            "schema_version": ADJUDICATION_SCHEMA_VERSION_V2,
+            "oracle_version": ORACLE_SCHEMA_VERSION_V2,
+            "source_snapshot_sha": source_snapshot_sha,
+            "source_bindings": dict(source_bindings or {}),
+            "historical_adjudication_only": True,
+            "reselection_or_promotion_permitted": False,
+            "metric_ownership": {
+                "runtime_snapshot": [
+                    "safety_chain_order_and_completeness",
+                    "runtime_execution_bypass",
+                    "sdk_or_harness_managed_tool_execution",
+                ],
+                "live_profile": [
+                    "native_wire",
+                    "call_result_cardinality",
+                    "batch_completeness_if_observed",
+                    "opaque_continuation_roundtrip",
+                    "retry_counts",
+                    "text_protocol_envelope",
+                    "unknown_block_loss",
+                ],
+                "deterministic_only": list(STOCHASTIC_LIVE_PREDICATES),
+            },
+            "runtime_snapshot": {
+                "status": snapshot_status,
+                "execution_denominator": execution_denominator,
+                "complete_execution_chains": execution_complete,
+                "pre_runtime_rejection_count": pre_runtime_rejections,
+                "runtime_chain_violation_count": runtime_chain_violations,
+                "sdk_managed_execution_violation_count": (
+                    sdk_managed_execution_violations
+                ),
+                "sdk_managed_execution_evidence": (
+                    sdk_managed_execution_evidence
+                ),
+                "execute_completed_semantics": (
+                    "tool implementation returned; operation outcome is read from "
+                    "tool_status/tool_error_code"
+                ),
+            },
+            "profile_metrics": {
+                "status": profile_status,
+                "eligible_rows": eligible_rows,
+                "failed_rows": profile_failed_rows,
+                "call_id_result_match": ratio(call_num, call_den),
+                "batch_completeness": ratio(batch_num, batch_den),
+                "duplicate_call_after_result_count": sum(
+                    row.get("native_protocol", {}).get(
+                        "duplicate_call_after_result", 0
+                    )
+                    for row in rows
+                    if isinstance(row, Mapping)
+                    and isinstance(row.get("native_protocol"), Mapping)
+                ),
+                "text_envelope_seen_count": sum(
+                    bool(row.get("text_envelope_seen"))
+                    for row in rows
+                    if isinstance(row, Mapping)
+                ),
+                "implicit_sdk_retry_seen": any(
+                    bool(row.get("implicit_sdk_retry_seen"))
+                    for row in rows
+                    if isinstance(row, Mapping)
+                ),
+                "unknown_block_loss_count": unknown_block_loss_count,
+                "unknown_block_loss_evidence": (
+                    unknown_block_loss_evidence
+                ),
+                "stochastic_predicates_required": False,
+            },
+            "rows": adjudicated_rows,
+        }
+    )
 
 
 def preflight_failure_artifact(
@@ -524,7 +878,8 @@ def write_native_provider_bundle(
 
 
 def _validate_case_set(case_set: Mapping[str, Any]) -> None:
-    if case_set.get("schema_version") != CASESET_SCHEMA_VERSION:
+    schema_version = case_set.get("schema_version")
+    if schema_version not in (CASESET_SCHEMA_VERSION, CASESET_SCHEMA_VERSION_V2):
         raise ValueError("unsupported native provider case-set schema")
     if not isinstance(case_set.get("id"), str) or not case_set["id"]:
         raise ValueError("case set id must be a non-empty string")
@@ -543,6 +898,22 @@ def _validate_case_set(case_set: Mapping[str, Any]) -> None:
         raise ValueError("native provider cases must contain the frozen ordered scenario set")
     if case_set.get("frozen_hashes") != FROZEN_INPUT_HASHES:
         raise ValueError("native provider case set has incompatible frozen input hashes")
+    if schema_version == CASESET_SCHEMA_VERSION_V2:
+        oracle = case_set.get("oracle")
+        if not isinstance(oracle, Mapping):
+            raise ValueError("Oracle v2 case set requires an oracle object")
+        if oracle.get("version") != ORACLE_SCHEMA_VERSION_V2:
+            raise ValueError("unsupported native provider oracle version")
+        if oracle.get("pre_runtime_rejection_error_codes") != sorted(
+            PRE_RUNTIME_REJECTION_ERROR_CODES
+        ):
+            raise ValueError("Oracle v2 pre-Runtime rejection codes changed")
+        if oracle.get("stochastic_live_predicates") != list(
+            STOCHASTIC_LIVE_PREDICATES
+        ):
+            raise ValueError("Oracle v2 stochastic live predicates changed")
+        if oracle.get("hash_basis") != "UTF-8 file bytes":
+            raise ValueError("Oracle v2 hash basis must be explicit")
 
 
 def _validate_case(case: Mapping[str, Any]) -> None:
@@ -628,6 +999,10 @@ def _aggregate_input(row: Mapping[str, Any]) -> dict[str, Any]:
         "native_protocol": deepcopy(row["native_protocol"]),
         "text_envelope_seen": row["text_envelope_seen"],
         "implicit_sdk_retry_seen": row["implicit_sdk_retry_seen"],
+        "unknown_block_loss_count": row.get("unknown_block_loss_count", 0),
+        "sdk_managed_execution_seen": row.get(
+            "sdk_managed_execution_seen", False
+        ),
         "safety_chain_bypass_count": row["safety_chain_bypass_count"],
         "infrastructure_failure": deepcopy(row["infrastructure_failure"]),
     }
@@ -803,6 +1178,88 @@ def _error_code(item: Mapping[str, Any]) -> str:
         if isinstance(error, Mapping):
             value = error.get("code")
     return value if isinstance(value, str) else ""
+
+
+def _tool_status(item: Mapping[str, Any]) -> str:
+    value = item.get("tool_status")
+    if isinstance(value, str) and value:
+        return value
+    return "error" if item.get("is_error") is True else "ok"
+
+
+def _execution_scope(item: Mapping[str, Any]) -> str:
+    value = item.get("execution_scope")
+    if value in {"runtime_execution", "pre_runtime_rejection"}:
+        return str(value)
+    if _error_code(item) in PRE_RUNTIME_REJECTION_ERROR_CODES:
+        return "pre_runtime_rejection"
+    return "runtime_execution"
+
+
+def _historical_tool_error_code(result: Mapping[str, Any] | None) -> str:
+    if not isinstance(result, Mapping):
+        return ""
+    value = result.get("tool_error_code", result.get("error_code", ""))
+    return value if isinstance(value, str) else ""
+
+
+def _historical_tool_status(result: Mapping[str, Any] | None) -> str:
+    if not isinstance(result, Mapping):
+        return "missing"
+    value = result.get("tool_status")
+    if isinstance(value, str) and value:
+        return value
+    return "error" if result.get("is_error") is True else "ok"
+
+
+def _valid_safety_chain_v2(
+    stages: Sequence[Mapping[str, Any]],
+    *,
+    case_id: str,
+    repetition: Any,
+    call_id: str,
+    tool_name: str,
+    result: Mapping[str, Any] | None,
+) -> bool:
+    if not stages or result is None:
+        return False
+    if any(
+        item.get("schema_version") != NATIVE_SAFETY_EVIDENCE_VERSION
+        or item.get("case_id") != case_id
+        or item.get("repetition") != repetition
+        or item.get("call_id") != call_id
+        or item.get("tool_name") != tool_name
+        for item in stages
+    ):
+        return False
+    names = tuple(str(item.get("stage", "")) for item in stages)
+    if names != NATIVE_SAFETY_STAGES[: len(names)]:
+        return False
+    if [item.get("stage_index") for item in stages] != list(
+        range(1, len(stages) + 1)
+    ):
+        return False
+    sequences = [item.get("sequence") for item in stages]
+    if (
+        not all(type(sequence) is int and sequence >= 0 for sequence in sequences)
+        or sequences != sorted(sequences)
+        or len(sequences) != len(set(sequences))
+    ):
+        return False
+    if any(item.get("outcome") != "passed" for item in stages[:-1]):
+        return False
+    final = stages[-1]
+    if final["stage"] == "execute":
+        return (
+            len(stages) == len(NATIVE_SAFETY_STAGES)
+            and final.get("outcome") in {"completed", "failed"}
+        )
+    return (
+        len(stages) < len(NATIVE_SAFETY_STAGES)
+        and final.get("outcome") == "rejected"
+        and result.get("is_error") is True
+        and bool(_historical_tool_error_code(result))
+    )
 
 
 def _continuation_descriptor(value: Any, event_index: int) -> dict[str, Any]:
@@ -1020,12 +1477,18 @@ def _verify_row_safety_chain(row: Mapping[str, Any]) -> None:
 
 
 __all__ = [
+    "ADJUDICATION_SCHEMA_VERSION_V2",
     "ARTIFACT_SCHEMA_VERSION",
     "CASESET_SCHEMA_VERSION",
+    "CASESET_SCHEMA_VERSION_V2",
     "FROZEN_INPUT_HASHES",
     "NATIVE_SAFETY_EVIDENCE_VERSION",
     "NATIVE_SAFETY_STAGES",
+    "ORACLE_SCHEMA_VERSION_V2",
+    "PRE_RUNTIME_REJECTION_ERROR_CODES",
     "REQUIRED_SCENARIOS",
+    "STOCHASTIC_LIVE_PREDICATES",
+    "adjudicate_native_provider_rows_v2",
     "aggregate_native_provider_rows",
     "evaluate_native_provider_case",
     "load_case_set",

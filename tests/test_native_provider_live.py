@@ -425,6 +425,14 @@ def test_both_dialects_cover_identical_eight_case_repetition_matrix(
         assert artifact["summary"]["batch_completeness"]["value"] == 1.0
         assert artifact["summary"]["text_envelope_seen_count"] == 0
         assert artifact["summary"]["implicit_sdk_retry_seen"] is False
+        assert all(
+            result["tool_status"] in {"ok", "rejected"}
+            and "tool_error_code" in result
+            and result["execution_scope"]
+            in {"runtime_execution", "pre_runtime_rejection"}
+            for row in artifact["rows"]
+            for result in row["result_evidence"]
+        )
         assert SECRET not in json.dumps(artifact)
         assert RAW_URL not in json.dumps(artifact)
 

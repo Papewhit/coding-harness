@@ -299,6 +299,11 @@ def _build_observation(
         for event in exchange_events
         if event.get("event") == "tool_result"
     }
+    finished_by_call = {
+        str(event.get("call_id", "")): event
+        for event in session_events
+        if event.get("event") == "tool_finished"
+    }
 
     events: list[dict[str, Any]] = []
     unknown_blocks: list[dict[str, Any]] = []
@@ -357,11 +362,30 @@ def _build_observation(
                 if journal is None:
                     continue
                 result = dict(journal.get("result", {}))
+                finished = finished_by_call.get(call.call_id, {})
                 results.append(
                     {
                         "call_id": call.call_id,
                         "is_error": bool(result.get("is_error", False)),
                         "error_code": _result_error_code(result),
+                        "tool_status": str(
+                            finished.get(
+                                "status",
+                                "error" if result.get("is_error") else "ok",
+                            )
+                        ),
+                        "tool_error_code": str(
+                            finished.get(
+                                "tool_error_code",
+                                _result_error_code(result),
+                            )
+                        ),
+                        "execution_scope": (
+                            "pre_runtime_rejection"
+                            if _result_error_code(result)
+                            == "tool_choice_none_violation"
+                            else "runtime_execution"
+                        ),
                         "output": result.get("output"),
                     }
                 )
