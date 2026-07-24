@@ -27,7 +27,8 @@ from .provider_transport import ProviderTransportResponse
 
 
 OPENAI_RESPONSES_DIALECT = "openai-responses"
-CONTINUATION_VERSION = "pico-openai-responses-continuation-v1"
+LEGACY_CONTINUATION_VERSION = "pico-openai-responses-continuation-v1"
+CONTINUATION_VERSION = "pico-openai-responses-continuation-v2"
 
 PROTOCOL_ERROR_CODES = frozenset(
     {
@@ -85,8 +86,22 @@ class OpenAIResponsesAdapter:
 
         if not isinstance(model_request, ModelRequest):
             raise TypeError("OpenAI Responses adapter requires a ModelRequest")
+        self._require_complete_request_continuation(model_request.continuation)
         wire_request = self.compile_request(model_request)
-        return self.parse_response(self._transport.create(wire_request))
+        parsed = self.parse_response(self._transport.create(wire_request))
+        if parsed.continuation is None:
+            return parsed
+        return ModelResponse(
+            text=parsed.text,
+            tool_calls=parsed.tool_calls,
+            stop_reason=parsed.stop_reason,
+            continuation=self._complete_continuation(
+                request=model_request,
+                wire_input=wire_request["input"],
+                response_continuation=parsed.continuation,
+            ),
+            metadata=parsed.metadata,
+        )
 
     def compile_request(self, request: ModelRequest) -> dict[str, Any]:
         """Compile a provider-neutral request to Responses API keyword arguments."""
@@ -173,7 +188,19 @@ class OpenAIResponsesAdapter:
         )
 
     def _input(self, request: ModelRequest) -> str | list[dict[str, Any]]:
-        replay_items = self._continuation_items(request.continuation)
+        replay_items, original_prompt = self._continuation_items(request.continuation)
+        if original_prompt is not None:
+            input_items = list(replay_items)
+            if request.tool_results:
+                outputs = [_function_output(result) for result in request.tool_results]
+                _validate_transcript(
+                    [*input_items, *outputs],
+                    original_prompt=original_prompt,
+                )
+                input_items.extend(outputs)
+            if request.prompt != original_prompt:
+                input_items.append({"role": "user", "content": request.prompt})
+            return input_items
         if request.tool_results:
             return [*replay_items, *(_function_output(result) for result in request.tool_results)]
         if replay_items:
@@ -187,9 +214,9 @@ class OpenAIResponsesAdapter:
 
     def _continuation_items(
         self, continuation: ProviderContinuation | None
-    ) -> list[dict[str, Any]]:
+    ) -> tuple[list[dict[str, Any]], str | None]:
         if continuation is None:
-            return []
+            return [], None
         if continuation.profile_id != self.profile_id:
             raise OpenAIResponsesProtocolError(
                 "profile_mismatch",
@@ -197,18 +224,158 @@ class OpenAIResponsesAdapter:
             )
         payload = continuation.payload
         if not isinstance(payload, Mapping) or payload.get("version") != CONTINUATION_VERSION:
+            version = payload.get("version") if isinstance(payload, Mapping) else None
+            if version == LEGACY_CONTINUATION_VERSION:
+                message = (
+                    "OpenAI Responses continuation v1 is incomplete for stateless replay; "
+                    "restart the model turn to create a v2 transcript"
+                )
+            else:
+                message = "OpenAI Responses continuation has an invalid version"
             raise OpenAIResponsesProtocolError(
-                "invalid_continuation", "OpenAI Responses continuation has an invalid version"
+                "invalid_continuation", message
             )
-        items = payload.get("output_items")
+        transcript = payload.get("transcript")
+        output_items = payload.get("output_items")
+        if transcript is not None and output_items is not None:
+            raise OpenAIResponsesProtocolError(
+                "invalid_continuation",
+                "OpenAI Responses continuation cannot contain both transcript and output_items",
+            )
+        if transcript is not None:
+            original_prompt = payload.get("original_prompt")
+            if not isinstance(original_prompt, str):
+                raise OpenAIResponsesProtocolError(
+                    "invalid_continuation",
+                    "OpenAI Responses transcript continuation original_prompt must be text",
+                )
+            items = _continuation_item_list(transcript, location="transcript")
+            _validate_transcript(items, original_prompt=original_prompt)
+            return items, original_prompt
+        items = output_items
         if not isinstance(items, list):
             raise OpenAIResponsesProtocolError(
                 "invalid_continuation", "OpenAI Responses continuation output_items must be a list"
             )
-        return [
-            _json_object(item, code="invalid_continuation", location=f"output_items[{index}]")
-            for index, item in enumerate(items)
-        ]
+        return _continuation_item_list(items, location="output_items"), None
+
+    def _require_complete_request_continuation(
+        self, continuation: ProviderContinuation | None
+    ) -> None:
+        if continuation is None:
+            return
+        _, original_prompt = self._continuation_items(continuation)
+        if original_prompt is None:
+            raise OpenAIResponsesProtocolError(
+                "invalid_continuation",
+                "OpenAI Responses request continuation lacks a complete stateless transcript",
+            )
+
+    def _complete_continuation(
+        self,
+        *,
+        request: ModelRequest,
+        wire_input: str | list[dict[str, Any]],
+        response_continuation: ProviderContinuation,
+    ) -> ProviderContinuation:
+        response_items, response_prompt = self._continuation_items(response_continuation)
+        if response_prompt is not None:
+            raise OpenAIResponsesProtocolError(
+                "invalid_continuation",
+                "OpenAI Responses parser returned an unexpected complete continuation",
+            )
+        if isinstance(wire_input, str):
+            transcript = [{"role": "user", "content": wire_input}]
+        else:
+            transcript = [
+                _json_object(item, code="invalid_continuation", location=f"input[{index}]")
+                for index, item in enumerate(wire_input)
+            ]
+        transcript.extend(response_items)
+        if request.continuation is None:
+            original_prompt = request.prompt
+        else:
+            _, original_prompt = self._continuation_items(request.continuation)
+            if original_prompt is None:  # pragma: no cover - rejected before transport
+                raise OpenAIResponsesProtocolError(
+                    "invalid_continuation",
+                    "OpenAI Responses request continuation lacks an original prompt",
+                )
+        _validate_transcript(transcript, original_prompt=original_prompt)
+        return ProviderContinuation(
+            profile_id=self.profile_id,
+            payload={
+                "version": CONTINUATION_VERSION,
+                "original_prompt": original_prompt,
+                "transcript": transcript,
+            },
+        )
+
+
+def _continuation_item_list(value: Any, *, location: str) -> list[dict[str, Any]]:
+    if not isinstance(value, list):
+        raise OpenAIResponsesProtocolError(
+            "invalid_continuation",
+            f"OpenAI Responses continuation {location} must be a list",
+        )
+    return [
+        _json_object(
+            item,
+            code="invalid_continuation",
+            location=f"{location}[{index}]",
+        )
+        for index, item in enumerate(value)
+    ]
+
+
+def _validate_transcript(
+    transcript: Sequence[Mapping[str, Any]],
+    *,
+    original_prompt: str,
+) -> None:
+    if not transcript or transcript[0] != {
+        "role": "user",
+        "content": original_prompt,
+    }:
+        raise OpenAIResponsesProtocolError(
+            "invalid_continuation",
+            "OpenAI Responses transcript must begin with the original Runtime prompt",
+        )
+    call_ids: set[str] = set()
+    result_ids: set[str] = set()
+    for index, item in enumerate(transcript):
+        item_type = item.get("type")
+        if item_type == "function_call":
+            call_id = item.get("call_id")
+            if not isinstance(call_id, str) or not call_id.strip():
+                raise OpenAIResponsesProtocolError(
+                    "invalid_continuation",
+                    f"OpenAI Responses transcript[{index}] function_call has no call_id",
+                )
+            if call_id in call_ids:
+                raise OpenAIResponsesProtocolError(
+                    "invalid_continuation",
+                    f"OpenAI Responses transcript repeats function_call {call_id!r}",
+                )
+            call_ids.add(call_id)
+        elif item_type == "function_call_output":
+            call_id = item.get("call_id")
+            if not isinstance(call_id, str) or not call_id.strip():
+                raise OpenAIResponsesProtocolError(
+                    "invalid_continuation",
+                    f"OpenAI Responses transcript[{index}] function_call_output has no call_id",
+                )
+            if call_id not in call_ids:
+                raise OpenAIResponsesProtocolError(
+                    "invalid_continuation",
+                    f"OpenAI Responses transcript result has no prior call {call_id!r}",
+                )
+            if call_id in result_ids:
+                raise OpenAIResponsesProtocolError(
+                    "invalid_continuation",
+                    f"OpenAI Responses transcript repeats function result {call_id!r}",
+                )
+            result_ids.add(call_id)
 
 
 def _function_tool(tool: ToolDefinition) -> dict[str, Any]:

@@ -1,0 +1,185 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-059-O",
+  "instance_id": "W6R3-TOOL-059-O-01",
+  "wave": "W6R3",
+  "role": "adapter_implementer/openai-responses-stateless-transcript",
+  "status": "complete",
+  "source_thread_id": "019f91dc-1940-7b31-9e6f-086f4941922b",
+  "base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+  "wave_base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+  "source_head_sha": "eaae2ea8be115a44fccd948d9dfd05528aad77e6",
+  "source_head_semantics": "Product implementation head before the metadata-only commit that adds this handoff; the handoff commit intentionally cannot self-record its own SHA.",
+  "branch": "codex/w6r3-tool-059-o",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/4b6c/pico",
+  "dependency_commits": [
+    {
+      "ticket_id": "EVAL-059-O",
+      "original": "b90fb5297aceef3eb137ae8104888974e96e7141",
+      "applied": "f78719ba155969919c0797b8362a284e1792922f",
+      "stable_patch_id": "06e7e986f6b99b5969dd23f00aebd71f61badef2"
+    },
+    {
+      "ticket_id": "TEST-059-C",
+      "original": "49cc1cc2ff72d61b8cdce871e352803ed68b79b5",
+      "applied": "bcd94fe8622a33d27a0254e556cde291e27d13a6",
+      "stable_patch_id": "16272167e55eb106a2b78b830f6fd67407ec5c75"
+    }
+  ],
+  "dependency_hashes": {
+    "EVAL-059-O_handoff": "849b687163b77e8957529d72e0111edb08625a76a1276c87799e68b595bef00f",
+    "TEST-059-C_handoff": "498887b31ca34d7f347b984f8011162802dc6100ffd9f04f8166845ce3d8316f",
+    "formal_FREEZE": "b1bdc9755e612d5118bf08793b111f91f3dfa4feb27e43ff83933bb08566c0e4"
+  },
+  "own_commits": [
+    "eaae2ea8be115a44fccd948d9dfd05528aad77e6"
+  ],
+  "own_stable_patch_ids": {
+    "eaae2ea8be115a44fccd948d9dfd05528aad77e6": "80d74dbe11a82bc183b1cc810494daed60f3cd9b"
+  },
+  "files_changed": [
+    "pico/providers/openai_responses.py",
+    ".codex/eval/handoffs/TOOL-059-O.json"
+  ],
+  "git_blob_bindings": {
+    "pico/providers/openai_responses.py": {
+      "oid": "a05260b0017ae954ec9cc03bc619e20cc2a92fa4",
+      "windows_worktree_sha256": "fffcf14ee5cb462b6a496be576aef83c4d400020d553cd6f56826285a7cca01f"
+    }
+  },
+  "implementation": {
+    "wire_state": {
+      "store": false,
+      "previous_response_id_used": false,
+      "sdk_managed_tool_execution": false,
+      "provider_sdk_objects_persisted": false
+    },
+    "transcript": {
+      "continuation_version": "pico-openai-responses-continuation-v2",
+      "ordered_contents": [
+        "original Runtime prompt as the first user item",
+        "all replay-required provider response output items",
+        "one function_call_output for each completed provider call ID"
+      ],
+      "prompt_repeated_per_followup": false,
+      "call_repeated_per_followup": false,
+      "result_repeated_per_followup": false,
+      "call_result_cardinality_validation": "Every function_call call_id is unique across the accumulated transcript; every function_call_output follows a prior call and appears at most once.",
+      "json_safe_contract_only": true
+    },
+    "continuation_compatibility": {
+      "legacy_version": "pico-openai-responses-continuation-v1",
+      "decision": "fail_closed",
+      "reason": "v1 retained only the latest output_items and cannot reconstruct a complete stateless transcript.",
+      "failure_code": "invalid_continuation",
+      "recovery": "Restart the model turn so the adapter can create a v2 transcript.",
+      "response_fragment_handling": "parse_response may expose a v2 output_items fragment for parser-only callers, but request rejects any fragment lacking the complete transcript before transport."
+    }
+  },
+  "tests": [
+    {
+      "environment": "Windows / CPython 3.12.13",
+      "command": "uv run pytest tests/test_native_stateless_transcript.py -q",
+      "result": "expected_red_baseline",
+      "details": "2 failed in 2.61s before the product fix; both failures were missing accumulated stateless context."
+    },
+    {
+      "environment": "Windows / CPython 3.12.13",
+      "command": "uv run pytest tests/test_native_stateless_transcript.py tests/test_openai_responses_tools.py tests/test_native_runtime_integration.py -q",
+      "result": "passed",
+      "details": "21 passed in 5.47s; the two unchanged TEST-059-C cases and all 19 adjacent tests are green."
+    },
+    {
+      "environment": "Windows / CPython 3.12.13",
+      "command": "uv run pytest tests/test_provider_contracts.py tests/test_provider_protocol.py tests/test_provider_transport.py tests/test_native_worker_profile.py -q",
+      "result": "passed",
+      "details": "31 passed in 44.42s after installing the locked providers extra; transport tests used only httpx.MockTransport."
+    },
+    {
+      "environment": "Windows / CPython 3.12.13",
+      "command": "uv run pytest tests/test_native_tool_loop.py tests/test_native_session_exchange.py tests/test_native_request_context.py -q",
+      "result": "passed",
+      "details": "25 passed in 14.74s."
+    },
+    {
+      "environment": "Windows / CPython 3.12.13",
+      "command": "uv run pytest tests/test_architecture_boundaries.py tests/test_permissions_acceptance.py -q",
+      "result": "passed",
+      "details": "9 passed in 12.98s."
+    },
+    {
+      "environment": "Windows / CPython 3.12.13 best-effort lane",
+      "command": "uv run pytest tests/test_architecture_boundaries.py tests/test_safety_invariants.py tests/test_permissions_acceptance.py tests/test_tool_policy_acceptance.py -q",
+      "result": "platform_failures",
+      "details": "17 passed, 10 failed in 29.41s. Failures are unrelated pre-existing Windows conditions: unavailable symlink privilege, Path.home failure inside tests that clear all environment variables, POSIX shell quoting/commands, and slash rendering differences. No failure references the OpenAI Responses adapter."
+    },
+    {
+      "environment": "Windows / CPython 3.12.13",
+      "command": "uv run ruff check pico/providers/openai_responses.py",
+      "result": "passed",
+      "details": "All checks passed."
+    },
+    {
+      "environment": "Windows",
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "environment": "Windows / CPython 3.12.13",
+      "command": "Inline legacy continuation verification",
+      "result": "passed",
+      "details": "Literal v1 continuation failed closed with invalid_continuation before transport."
+    }
+  ],
+  "hashes": {
+    "formal_freeze": "b1bdc9755e612d5118bf08793b111f91f3dfa4feb27e43ff83933bb08566c0e4",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "sdk_dependency_lock": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+    "native_deterministic_gate": "2fc1ebbe4d64c5be80e7fe063584915f12aabf3a8f8c08796d2cf009e94849a5"
+  },
+  "native_protocol_observations": {
+    "provider_http_attempts": 0,
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "duplicate_function_output_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0,
+    "sdk_tool_runner_used": false,
+    "sdk_agent_runner_used": false,
+    "sdk_managed_pico_tool_execution_used": false
+  },
+  "acceptance_checklist": {
+    "test_059_c_green_unchanged": true,
+    "adjacent_19_green": true,
+    "original_prompt_preserved": true,
+    "all_prior_call_result_pairs_preserved": true,
+    "each_function_output_exactly_once": true,
+    "provider_call_ids_preserved": true,
+    "store_false": true,
+    "previous_response_id_absent": true,
+    "continuation_json_safe": true,
+    "legacy_continuation_fail_closed": true,
+    "production_scope_only": true,
+    "formal_status_or_freeze_written": false
+  },
+  "defects": [],
+  "risks": [
+    "Persisted v1 OpenAI Responses continuations cannot be resumed and require restarting the current model turn; this is intentional fail-closed behavior because v1 lacks the original transcript.",
+    "The complete architecture/safety/tool-policy command remains non-green on Windows for unrelated platform assumptions. Canonical Ubuntu WSL2 validation remains the Wave gate responsibility.",
+    "Parser-only parse_response callers receive an output-items fragment; the production request path upgrades parser output to a complete transcript and rejects incomplete fragments before transport."
+  ],
+  "ownership_change_request": null,
+  "provider_http_attempts": 0,
+  "formal_effectiveness_run": false,
+  "human_smoke_run": false,
+  "profile_reselection_run": false,
+  "w6r4_started": false,
+  "w7_started": false,
+  "formal_status_written": false,
+  "formal_freeze_written": false,
+  "ready_for_integration": true,
+  "stop_after_handoff": true
+}
