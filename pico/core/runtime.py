@@ -829,7 +829,12 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         return tool_executor.run_tool(self, name, args)
 
     def repeated_tool_call(self, name: str, args: dict[str, Any]) -> bool:
-        return is_repeated_tool_call(self.session["history"], name, args)
+        return is_repeated_tool_call(
+            self.session["history"],
+            name,
+            args,
+            workspace_root=self.root,
+        )
 
     @staticmethod
     def new_task_id() -> str:

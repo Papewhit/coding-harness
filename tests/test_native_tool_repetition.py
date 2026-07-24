@@ -4,6 +4,7 @@ from types import SimpleNamespace
 
 import pytest
 
+from pico.core.runtime import Pico
 from pico.core.session_lifecycle import NativeSessionRecorder
 from pico.core.tool_repetition import is_repeated_tool_call
 from pico.providers.contracts import ToolCall
@@ -53,6 +54,109 @@ def test_prior_read_required_retry_is_unlocked_by_successful_same_path_read() ->
     ]
 
     assert not is_repeated_tool_call(history, "patch_file", PATCH_ARGS)
+
+
+def test_workspace_path_aliases_share_repetition_fingerprint(tmp_path) -> None:
+    target = tmp_path / "docs" / "guide.md"
+    relative_args = {**PATCH_ARGS, "path": "docs/guide.md"}
+    dotted_args = {**PATCH_ARGS, "path": "docs/./guide.md"}
+    absolute_args = {**PATCH_ARGS, "path": str(target)}
+    history = [
+        _tool_event("patch_file", relative_args, status="ok"),
+    ]
+
+    assert is_repeated_tool_call(
+        history,
+        "patch_file",
+        dotted_args,
+        workspace_root=tmp_path,
+    )
+    assert is_repeated_tool_call(
+        history,
+        "patch_file",
+        absolute_args,
+        workspace_root=tmp_path,
+    )
+
+
+def test_read_path_aliases_count_toward_same_repetition_limit(tmp_path) -> None:
+    target = tmp_path / "docs" / "guide.md"
+    history = [
+        _tool_event("read_file", {"path": "docs/guide.md"}, status="ok"),
+        _tool_event("read_file", {"path": "docs/./guide.md"}, status="ok"),
+    ]
+
+    assert is_repeated_tool_call(
+        history,
+        "read_file",
+        {"path": str(target)},
+        workspace_root=tmp_path,
+    )
+
+
+def test_runtime_anchors_repetition_fingerprint_to_workspace_root(tmp_path) -> None:
+    history = [
+        _tool_event(
+            "patch_file",
+            {**PATCH_ARGS, "path": "docs/guide.md"},
+            status="ok",
+        ),
+    ]
+    agent = SimpleNamespace(
+        root=tmp_path,
+        session={"history": history},
+    )
+
+    assert Pico.repeated_tool_call(
+        agent,
+        "patch_file",
+        {**PATCH_ARGS, "path": str(tmp_path / "docs" / "guide.md")},
+    )
+
+
+def test_distinct_workspace_paths_do_not_share_repetition_fingerprint(
+    tmp_path,
+) -> None:
+    history = [
+        _tool_event(
+            "patch_file",
+            {**PATCH_ARGS, "path": "docs/first.md"},
+            status="ok",
+        ),
+    ]
+
+    assert not is_repeated_tool_call(
+        history,
+        "patch_file",
+        {**PATCH_ARGS, "path": str(tmp_path / "docs" / "second.md")},
+        workspace_root=tmp_path,
+    )
+
+
+def test_retry_after_read_accepts_same_path_alias_with_structured_metadata(
+    tmp_path,
+) -> None:
+    target = tmp_path / "docs" / "guide.md"
+    history = [
+        _tool_event(
+            "patch_file",
+            {**PATCH_ARGS, "path": str(target)},
+            status="rejected",
+            error_code="prior_read_required",
+        ),
+        _tool_event(
+            "read_file",
+            {"path": "docs/./guide.md"},
+            status="ok",
+        ),
+    ]
+
+    assert not is_repeated_tool_call(
+        history,
+        "patch_file",
+        {**PATCH_ARGS, "path": "docs/guide.md"},
+        workspace_root=tmp_path,
+    )
 
 
 @pytest.mark.parametrize(

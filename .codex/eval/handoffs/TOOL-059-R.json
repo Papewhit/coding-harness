@@ -1,0 +1,151 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-059-R",
+  "instance_id": "W6R3-TOOL-059-R-01",
+  "wave": "W6R3",
+  "role": "core_implementer/repetition-path-fingerprint-normalization",
+  "status": "complete",
+  "source_thread_id": "019f91dc-1940-7b31-9e6f-086f4941922b",
+  "base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+  "wave_base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+  "starting_ref": "codex/w6r3-wave-base",
+  "starting_ref_verified_target": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+  "branch": "codex/w6r3-tool-059-r",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/e6a1/pico",
+  "source_head_sha": "a80339c0aa1c294c7f0b44eea0e7a4024767a68c",
+  "source_tree": "ecb78292fc5e34a263a36287c2abd7f390285583",
+  "source_head_semantics": "Immutable dependency-applied implementation and test head verified in the canonical WSL2 fresh-clone lane before the metadata-only commit containing this handoff.",
+  "metadata_commit_semantics": "The later commit containing this handoff is metadata-only; its self-referential SHA is intentionally not embedded in this file.",
+  "dependency_commits": [
+    "b90fb5297aceef3eb137ae8104888974e96e7141"
+  ],
+  "applied_dependency_commits": [
+    {
+      "ticket_id": "EVAL-059-O",
+      "original_commit": "b90fb5297aceef3eb137ae8104888974e96e7141",
+      "applied_commit": "0a8fd2af56400647c4a5edb9279436729ffa1dde",
+      "stable_patch_id": "06e7e986f6b99b5969dd23f00aebd71f61badef2"
+    }
+  ],
+  "own_commits": [
+    "a80339c0aa1c294c7f0b44eea0e7a4024767a68c"
+  ],
+  "own_stable_patch_ids": {
+    "a80339c0aa1c294c7f0b44eea0e7a4024767a68c": "3b3952f4d91412b000c7b9c72e3aa81f674ec99c"
+  },
+  "dependency_hashes": {
+    "EVAL-059-O_handoff": "849b687163b77e8957529d72e0111edb08625a76a1276c87799e68b595bef00f",
+    "formal_FREEZE": "b1bdc9755e612d5118bf08793b111f91f3dfa4feb27e43ff83933bb08566c0e4"
+  },
+  "allowed_write_paths": [
+    "pico/core/tool_repetition.py",
+    "pico/core/runtime.py",
+    "tests/test_native_tool_repetition.py",
+    ".codex/eval/handoffs/TOOL-059-R.json"
+  ],
+  "files_changed": [
+    "pico/core/tool_repetition.py",
+    "pico/core/runtime.py",
+    "tests/test_native_tool_repetition.py",
+    ".codex/eval/handoffs/TOOL-059-R.json"
+  ],
+  "behavior": {
+    "fingerprint_scope": "Only the path argument of workspace file tools (list_files, read_file, search, write_file, patch_file) is normalized for repetition identity.",
+    "path_identity": "Paths are resolved from the runtime workspace root with host-native Path semantics and normalized for host case semantics. Absolute, relative, and dotted aliases of the same resolved path therefore share a fingerprint; different resolved paths remain distinct.",
+    "runtime_wiring": "Pico.repeated_tool_call passes self.root into the repetition helper. The existing tool executor order remains validate, repetition, permission, policy, execute.",
+    "containment_boundary": "Fingerprint normalization makes no containment decision. Pico.path and tool validation remain the sole workspace containment owners and still execute before repetition; permission and ToolPolicy checks remain unchanged.",
+    "retry_after_read": "A prior_read_required mutation retry is unlocked only by a successful same-resolved-path read whose structured tool_status is ok and whose structured tool_error_code is empty. Rendered display text is not interpreted as status.",
+    "platform_boundary": "Uses existing host-native pathlib/os semantics only. No Windows-native capability was added and the Ubuntu WSL2/Python 3.12 canonical gate is unchanged."
+  },
+  "tests": [
+    {
+      "environment": "Ubuntu 26.04 WSL2 fresh clone / Python 3.12.13",
+      "source_sha": "a80339c0aa1c294c7f0b44eea0e7a4024767a68c",
+      "clone": "/home/papewhit/dev/pico-tool-059-r-a80339c",
+      "command": "uv run --python 3.12 pytest tests/test_native_tool_repetition.py tests/test_native_safety_chain_evidence.py tests/test_safety_invariants.py tests/test_permissions_acceptance.py tests/test_tool_policy_acceptance.py tests/test_architecture_boundaries.py -q",
+      "result": "passed",
+      "details": "45 passed in 2.03s; fresh clone remained clean."
+    },
+    {
+      "environment": "Ubuntu 26.04 WSL2 fresh clone / Python 3.12.13",
+      "command": "uv run --python 3.12 ruff check pico/core/tool_repetition.py pico/core/runtime.py tests/test_native_tool_repetition.py; git diff --check",
+      "result": "passed",
+      "details": "All checks passed; no whitespace errors."
+    },
+    {
+      "environment": "Windows best-effort / Python 3.12.13",
+      "command": "uv run pytest tests/test_native_tool_repetition.py tests/test_native_safety_chain_evidence.py -q",
+      "result": "passed",
+      "details": "18 passed in 4.65s."
+    },
+    {
+      "environment": "Windows best-effort / Python 3.12.13",
+      "command": "scoped containment/risky safety, permissions, ToolPolicy, architecture, Ruff, and git diff checks",
+      "result": "passed",
+      "details": "Safety 3 passed; permissions 8 passed; ToolPolicy 5 passed with 3 POSIX-dependent cases deselected; architecture 1 passed; scoped Ruff and git diff --check passed."
+    },
+    {
+      "environment": "Windows best-effort / Python 3.12.13",
+      "command": "full requested adjacency collection before canonical WSL2 rerun",
+      "result": "environment_failure_superseded",
+      "details": "34 passed and 10 failed only for pre-existing Windows lane differences: symlink privilege, home discovery after tests clear the environment, POSIX shell commands/quoting, and Windows path rendering. The same complete collection subsequently passed 45/45 in the canonical WSL2 fresh clone."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "pico/core/tool_repetition.py",
+      "sha256": "e43a431de2610b676a8225ff776b3b69c0bd7a36a7d31955337f2c0a2062aff5",
+      "git_blob_oid": "454e413210bbd78ce1bb95099a9be3afb0a7e545",
+      "hash_basis": "source_head_file_bytes"
+    },
+    {
+      "path": "pico/core/runtime.py",
+      "sha256": "0b3bc32217126da85ea9778412cdbdd7aaada864d43d05b21fc30f85a177829c",
+      "git_blob_oid": "dbfc098d6f3800b4ea51a9ec2d70dd7ec254f5b4",
+      "hash_basis": "source_head_file_bytes"
+    },
+    {
+      "path": "tests/test_native_tool_repetition.py",
+      "sha256": "db4d62f2f53ad469c4aead4b98b767222a57d3bc9f9fefd4647ad963bb4c4587",
+      "git_blob_oid": "82ca273e8514b886abca393f4da332eab7dac15a",
+      "hash_basis": "source_head_file_bytes"
+    },
+    {
+      "path": ".codex/eval/handoffs/TOOL-059-R.json",
+      "persistence": "Metadata-only commit generated after the immutable implementation content commit."
+    }
+  ],
+  "native_protocol_observations": {
+    "text_envelope_observed": false,
+    "implicit_sdk_retry_observed": false,
+    "unknown_block_loss_observed": false,
+    "safety_chain_bypass_observed": false,
+    "sdk_tool_runner_used": false,
+    "sdk_agent_runner_used": false,
+    "sdk_managed_pico_tool_execution_used": false,
+    "provider_http_attempts": 0
+  },
+  "defects": [],
+  "risks": [
+    "Path identity follows host-native resolution, including resolving an existing symlink to its target for fingerprint purposes; containment still rejects a symlink target outside the workspace during validation.",
+    "The Windows full adjacency command remains a best-effort lane with documented platform/environment failures. Canonical Ubuntu WSL2/Python 3.12 fresh-clone coverage passed completely."
+  ],
+  "ownership_change_request": null,
+  "status_proposal": {
+    "ticket_id": "TOOL-059-R",
+    "status": "complete",
+    "source_head_sha": "a80339c0aa1c294c7f0b44eea0e7a4024767a68c",
+    "reason": "Workspace path aliases now share repetition identity without changing containment, permission, ToolPolicy, or structured retry-after-read semantics."
+  },
+  "freeze_proposal": null,
+  "provider_http_attempts": 0,
+  "formal_status_written": false,
+  "formal_freeze_written": false,
+  "formal_effectiveness_run": false,
+  "human_smoke_run": false,
+  "profile_reselection_run": false,
+  "w6r4_started": false,
+  "w7_started": false,
+  "ready_for_integration": true,
+  "stop_after_handoff": true
+}
