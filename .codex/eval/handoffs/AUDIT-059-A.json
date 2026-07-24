@@ -2,9 +2,9 @@
   "schema_version": "pico-eval-ticket-handoff-v1",
   "ticket_id": "AUDIT-059-A",
   "instance_id": "W6R3-AUDIT-059-A-01",
-  "revision": 2,
-  "remediation_round": 1,
-  "supersedes_handoff_sha256": "659d898a96fab1514b6a78027f886fcefedcff859a2e29f22dc87e293ec06d5b",
+  "revision": 3,
+  "remediation_round": 2,
+  "supersedes_handoff_sha256": "d93f2131d082128dccea53fb223ab5dd8447a5f13f06e34a337ca89633783f3d",
   "wave": "W6R3",
   "role": "reviewer/oracle-v2-responses-recovery-evidence-closure",
   "status": "accepted",
@@ -16,26 +16,29 @@
   "worktree": "C:/Users/Papewhit/.codex/worktrees/24a9/pico",
   "metadata_commit_semantics": "The commit containing this handoff is metadata-only and cannot self-record its own SHA.",
   "prior_review": {
-    "branch": "codex/w6r3-audit-059-a",
-    "head": "99b3052774721b1469b254abae665496f5c3678d",
-    "handoff_sha256": "659d898a96fab1514b6a78027f886fcefedcff859a2e29f22dc87e293ec06d5b",
-    "tracked_clean_before_revision": true,
+    "revision": 2,
+    "branch": "codex/w6r3-audit-059-a-r2",
+    "head": "f0d8acef98c0d2f770f5734d783808b6847e5e9d",
+    "handoff_sha256": "d93f2131d082128dccea53fb223ab5dd8447a5f13f06e34a337ca89633783f3d",
     "preserved": true
   },
   "review_candidate": {
-    "sha": "7650029a1d8894a7f2cee111ac67b6487fa7ca29",
-    "tree": "1bbe88286078646afb05dee4210d3fb8f59f298e",
-    "ref": "codex/w6r3-remediation-r1-review-candidate",
-    "branch": "codex/w6r3-audit-059-a-r2",
-    "created_from_exact_candidate": true,
+    "sha": "068dc31f41be32a3c3b2a253e137ecb53ddd2757",
+    "tree": "dd30873853c93fc5227f87c5c48e9d94bd669d3a",
+    "ref": "codex/w6r3-remediation-r2-review-candidate",
+    "branch": "codex/w6r3-audit-059-a-r3",
+    "parent": "9c78ec5622ea114a51348898fbce45787d71f127",
+    "tracked_clean_before_review": true,
+    "created_by_integrator_dispatch": true,
+    "reviewer_branch_switch_performed": false,
     "merge_performed": false,
     "rebase_performed": false,
     "cherry_pick_performed": false
   },
   "formal_state_verification": {
     "source": "review candidate tree",
-    "STATUS_sha256": "7861b114f9d385a58f5379862d0844a5a2741bcde8e5eaafabb17030a10b6f91",
-    "FREEZE_sha256": "90ee36eb13bcc53eff7e48ee4722aa4e14c2fbab916de5e318e7eea0666a942e",
+    "STATUS_sha256": "30f27b04229e6cd231679637bfe29fd6fe521f414b6fc17010668055b7a48916",
+    "FREEZE_sha256": "9d996bea4e6802256b06953fa8d81191aea31cefdc6b35114c875931539460b5",
     "matched_revision_manifest": true,
     "formal_status_written": false,
     "formal_freeze_written": false
@@ -118,6 +121,24 @@
       "disposition": "closed_verified"
     }
   ],
+  "eval_059_h_revision_3": {
+    "worker_head": "a12e4f7d074bf087c15cba087e6a48022e1b5cdd",
+    "worker_source_commit": "2fbf9b38ecf0be7ecf33121fdedff5b0efd7aee9",
+    "canonical_commit": "9c78ec5622ea114a51348898fbce45787d71f127",
+    "stable_patch_id": "d61b2c7a21b5a4b1a5cdeeb5288b5968cfdc2bfb",
+    "handoff_sha256": "14135b5bfe06a728281fb9f7946329b1563feb365d4c3fdc60ea5c08ebe81e15",
+    "freeze_proposal_sha256": "ff09cf642cfb15f00db3f013d76e4b182421e1eb369e7e0ee018c2c41e0cd444",
+    "runner_git_blob_sha256": "8dd71824e89f85fd559f5491d4b195f80d3ff7e8d8e90340881db2d69bdc500b",
+    "tests_git_blob_sha256": "ca00686922b95590581519bf1e383e98fc1ec0d690578790e9f0eafe8dd50857",
+    "source_blobs_match_worker_canonical_candidate": true,
+    "canonical_paths": [
+      ".codex/eval/handoffs/EVAL-059-H.json",
+      ".codex/eval/proposals/EVAL-059-H.freeze.json",
+      "scripts/run_v3_native_human_smoke_v3.py",
+      "tests/test_v3_native_human_smoke_v3.py"
+    ],
+    "unexpected_paths": []
+  },
   "allowed_write_paths": [
     ".codex/eval/handoffs/AUDIT-059-A.json"
   ],
@@ -125,148 +146,215 @@
     ".codex/eval/handoffs/AUDIT-059-A.json"
   ],
   "audit_method": [
-    "Re-read AGENTS.md, CONTROL.md, PLAN AUDIT-059-A, ticket, thread template, W6R3 wave files, candidate formal STATUS/FREEZE, and all relevant handoffs without relying on chat memory.",
-    "Verified the preserved prior branch/head and superseded handoff hash, then created the revision branch directly from the immutable candidate without merge, rebase, or cherry-pick.",
-    "Recomputed every remediation canonical stable patch-id and compared ticket-owned source blobs across worker source, canonical commit, and review candidate.",
-    "Reviewed Anthropic and OpenAI continuation construction, strict result closure, Runtime safety evidence, Oracle v2 adjudication rules, human-smoke v3 manifest/runner/artifacts, and repetition ownership boundaries.",
-    "Compared Oracle v2, human-smoke v2, cases, cases-v2, W6R2 selection, and evaluator Git blobs against the pre-remediation W6R3 canonical snapshot.",
-    "Parsed and hash-verified persisted Oracle v2 and human-smoke v3 artifacts read-only; no human smoke or provider operation was executed.",
-    "Ran targeted deterministic tests with fake/stub transports and static scans for SDK-managed execution, text fallbacks, credential exposure, and forbidden HTTP paths."
+    "Re-read AGENTS.md, CONTROL.md, PLAN AUDIT-059-A, the ticket, THREAD_PROMPT, W6R3 wave record, candidate formal STATUS/FREEZE, latest EVAL-059-H handoff/proposal, runner, tests, manifest, and R3 artifacts without relying on chat conclusions.",
+    "Verified the Integrator-dispatched branch, candidate SHA/tree/ref, candidate parent, and clean tracked state through the exact linked-worktree Git metadata; the reviewer did not switch branches, merge, rebase, or cherry-pick.",
+    "Recomputed the EVAL-059-H R3 canonical stable patch-id, inspected its exact path diff, and compared runner/test Git blobs across worker source, canonical commit, and review candidate.",
+    "Inspected _events and _observed_calls and exercised direct call-ID controls, including reversed same-name calls plus missing, duplicate, unknown/extra, missing-ID, and tool-name-mismatch failures.",
+    "Exercised fake and authorized-live API/CLI binding guards with deterministic fake/stub inputs only; no provider client, provider HTTP, or formal human smoke was invoked.",
+    "Reparsed the R3 artifact inventory, recomputed individual SHA-256 values and the sorted aggregate, compared top-level/scenario profile identities, and scanned persisted bytes for sensitive material.",
+    "Reverified the prior Oracle v2, Responses Recovery, Anthropic transcript, human-smoke v2, W6R2 artifacts, repetition ownership, and no-SDK-managed-execution conclusions from the immutable candidate.",
+    "Verified the ambient documentation commit and the formal cycle-2 requirement assigning its final commit-map entry to the W6R3 Wave Integrator; the reviewer did not modify the future map."
   ],
   "tests": [
     {
-      "command": ".venv/Scripts/python.exe -m pytest -p no:cacheprovider tests/test_anthropic_stateless_transcript.py tests/test_anthropic_messages_tools.py tests/test_openai_responses_tools.py tests/test_native_stateless_transcript.py -q",
+      "command": ".venv/Scripts/python.exe -m pytest -p no:cacheprovider tests/test_v3_native_human_smoke_v3.py -q",
+      "result": "environment_limited",
+      "details": "9 passed and 1 failed only because the unchanged runner's _git_head subprocess used default Git, which returned dubious-ownership exit 128 under the reviewer task SID. The failed assertion was not a product, verifier, binding, or HTTP failure."
+    },
+    {
+      "command": "In-process deterministic fake end-to-end runner with _git_head bound to candidate SHA",
       "result": "passed",
-      "details": "43 passed in 1.28s."
+      "details": "PASS for both scenarios; execution_mode=fake_provider and provider_http_attempts=0. This was not a formal human smoke."
     },
     {
-      "command": ".venv/Scripts/python.exe -m pytest -p no:cacheprovider tests/test_native_provider_evaluator.py tests/test_native_safety_chain_evidence.py tests/test_native_tool_repetition.py -q",
+      "command": "Direct _events/_observed_calls controls over temporary Runtime JSONL",
       "result": "passed",
-      "details": "36 passed in 4.53s."
+      "details": "Reversed same-name read_file calls stayed bound to their real call IDs; missing, duplicate, unknown/extra, missing-ID, and tool-name mismatch all failed closed."
     },
     {
-      "command": ".venv/Scripts/python.exe -m pytest -p no:cacheprovider tests/test_native_runtime_integration.py -q",
+      "command": "Direct run()/CLI binding-matrix controls",
       "result": "passed",
-      "details": "3 passed in 3.90s."
+      "details": "Fake API rejected provider_factory/profile; fake CLI rejected every live-only parameter; authorized-live API/CLI failed when any required provider/config/profile binding was absent, without fake fallback."
     },
     {
-      "command": ".venv/Scripts/python.exe -m pytest -p no:cacheprovider tests/test_native_provider_live.py -q -k 'not both_dialects_cover_identical_eight_case_repetition_matrix'",
-      "result": "passed",
-      "details": "4 passed, 1 deselected in 10.46s; deterministic fake/stub providers only."
-    },
-    {
-      "command": "Combined deterministic suite attempts",
-      "result": "review_timeout_split_and_retried",
-      "details": "Two combined invocations exceeded the 60-second reviewer command window and produced no verdict; all constituent tests except the long eight-case repetition matrix were rerun in bounded groups. The unchanged matrix had already passed in TOOL-059-A-R1 evidence (78 passed suite)."
-    },
-    {
-      "command": ".venv/Scripts/ruff.exe check --no-cache <remediation implementation and test paths>",
+      "command": ".venv/Scripts/ruff.exe check --no-cache scripts/run_v3_native_human_smoke_v3.py tests/test_v3_native_human_smoke_v3.py",
       "result": "passed",
       "details": "All checks passed."
     },
     {
-      "command": "git diff --check",
+      "command": ".venv/Scripts/python.exe -m json.tool on EVAL handoff, proposal, R3 summary, and updated AUDIT handoff",
       "result": "passed"
     },
     {
-      "command": "Read-only SHA-256 and JSON verification of Oracle v2 and human-smoke v3 artifact inventories",
+      "command": "Read-only Git SHA/tree/ref/diff/blob/patch-id checks and SHA-256 artifact inventory verification",
       "result": "passed",
-      "details": "All recorded hashes matched; human-smoke v3 artifact is fake_provider, PASS, provider_http_attempts=0."
+      "details": "Candidate, formal state, canonical payload, persisted artifacts, aggregate inventory, and historical close materials matched their frozen identities."
     }
   ],
   "verdicts": {
+    "runtime_jsonl_call_id_source": {
+      "result": "passed",
+      "evidence": "_events only reads lines and applies json.loads; it does not create, overwrite, or positionally infer call_id."
+    },
+    "runtime_call_id_bijection": {
+      "result": "passed",
+      "evidence": "_observed_calls maps unique tool_finished events directly by their real call_id, checks exact model/runtime ID sets and tool names, and preserves reversed same-name binding."
+    },
+    "fake_and_authorized_live_fail_closed": {
+      "result": "passed",
+      "evidence": "Fake API/CLI reject live bindings, authorized-live requires every binding before construction and cannot fall back to fake, and fake artifacts reject nonzero HTTP attempts."
+    },
+    "r3_profile_and_http_provenance": {
+      "result": "passed",
+      "evidence": "The R3 summary profile is non-empty, sanitized, and identical to each scenario runtime_source.profile; execution mode is fake_provider and all summary/scenario HTTP-attempt counters are zero."
+    },
     "pre_runtime_rejection_excluded_from_execution_denominator": {
       "result": "passed",
-      "evidence": "Oracle v2 increments execution_denominator only for runtime_execution and records pre_runtime_rejection separately."
+      "evidence": "Oracle v2 increments the execution denominator only for runtime_execution and records pre_runtime_rejection separately."
     },
     "execute_completed_semantics_preserved": {
       "result": "passed",
-      "evidence": "The adjudicator accepts execute=completed as evidence that Runtime returned, including structured nonzero tool failures, without rewriting it to failed."
+      "evidence": "The evaluator keeps execute=completed as Runtime-return evidence, including structured nonzero tool results, without rewriting the event."
     },
     "runtime_chain_violation_blocks_source_snapshot": {
       "result": "passed",
-      "evidence": "Missing/malformed Runtime chains and SDK-managed execution block the source snapshot while remaining separate from profile metrics."
+      "evidence": "Missing or malformed Runtime chains and SDK-managed execution block the source snapshot."
     },
     "stochastic_invalid_or_multi_call_not_live_eligibility": {
       "result": "passed",
-      "evidence": "Invalid-argument repair and unexpected multi-call stochastic predicates remain deterministic/descriptive and are not hard live-profile eligibility."
+      "evidence": "Random invalid-argument repair and unexpected multi-call predicates remain deterministic/descriptive and do not enter hard live eligibility."
     },
-    "openai_anthropic_multiround_context_test_symmetry": {
+    "openai_anthropic_multiround_context_symmetry": {
       "result": "passed",
-      "evidence": "Anthropic v2 now preserves the original prompt and all assistant/tool-result rounds through a strict three-round stateless transcript test; OpenAI retains equivalent accumulated-transcript coverage."
+      "evidence": "OpenAI retains accumulated transcript coverage and Anthropic preserves the original prompt and complete ordered three-round stateless transcript."
     },
-    "responses_original_prompt_order_uniqueness_and_v1_fail_closed": {
+    "responses_result_closure_and_v1_fail_closed": {
       "result": "passed",
-      "evidence": "OpenAI rejects missing, unknown, extra-closed, and duplicate result IDs before transport; complete reversed results are emitted in original call order; v1 remains fail closed."
+      "evidence": "Missing, unknown, extra-closed, and duplicate result IDs fail before transport; a legal reversed complete batch is replayed in original call order; v1 fails closed."
     },
-    "anthropic_full_transcript_and_v1_fail_closed": {
+    "human_smoke_manifest_semantics_and_scenario_b": {
       "result": "passed",
-      "evidence": "Anthropic validates alternating roles, unique call/result IDs, exact ordered result batches, original prompt equality, full replay, and rejects v1 before transport."
+      "evidence": "The manifest is the single scenario source, no fake call IDs are frozen, and scenario B accepts only approval_denied tied to the observed run_shell call ID without leaking the intended judgment."
     },
-    "human_smoke_v3_semantic_verifier_and_live_guard": {
+    "historical_evidence_immutable": {
       "result": "passed",
-      "evidence": "The v3 manifest is the single scenario source, no fake call IDs are frozen, model_exchange call IDs bind Runtime and safety evidence, scenario B requires approval_denied on the observed run_shell call ID, and authorized-live fails closed without explicit bound inputs."
-    },
-    "historical_adjudication_immutability_and_no_promotion": {
-      "result": "passed",
-      "evidence": "Oracle v2, human-smoke v2, cases, W6R2 selection, and evaluator blobs are unchanged; historical adjudication remains read-only and cannot reselect or promote."
+      "evidence": "Oracle v2, human-smoke v2 bytes, W6R2 cases/rows/selection/smoke evidence, adjudication, R1 handoff/map/bundle/tag, and historical no-promotion semantics remain unchanged."
     },
     "repetition_normalization_preserves_safety_owners": {
       "result": "passed",
-      "evidence": "Path normalization affects only repetition identity; validation/containment, permission, policy, and execute ownership remain distinct and ordered."
+      "evidence": "Repetition normalization does not replace validation/containment, permission, policy, or execute ownership."
     },
-    "no_sdk_execution_credentials_text_fallback_or_live_http": {
+    "no_forbidden_execution_or_disclosure": {
       "result": "passed",
-      "evidence": "No SDK Tool/Agent Runner, SDK-managed Pico execution, credential leak, executable text fallback, live HTTP, human smoke, or profile reselection was observed."
+      "evidence": "No live/provider HTTP, formal human smoke, profile reselection, SDK Tool/Agent Runner, SDK-managed Pico execution, credential leak, executable text fallback, W6R4, or W7 occurred."
     }
   },
   "finding_dispositions": [
     {
+      "id": "UPPER-AUDIT-059-A-P1-003-CALL-ID-BINDING",
+      "severity": "P1",
+      "owner": "EVAL-059-H",
+      "disposition": "closed_verified",
+      "evidence": "Source inspection and adversarial direct controls verify exact Runtime tool_finished.call_id bijection, including reversed same-name calls and every required fail-closed mismatch."
+    },
+    {
+      "id": "UPPER-AUDIT-059-A-P1-003-FAKE-LIVE-FAIL-CLOSED",
+      "severity": "P1",
+      "owner": "EVAL-059-H",
+      "disposition": "closed_verified",
+      "evidence": "API and CLI binding matrices fail closed in both modes, fake cannot accept live inputs or nonzero HTTP attempts, and authorized-live cannot fall back."
+    },
+    {
+      "id": "UPPER-AUDIT-059-A-P2-001-TOP-LEVEL-PROFILE",
+      "severity": "P2",
+      "owner": "EVAL-059-H",
+      "disposition": "closed_verified",
+      "evidence": "The independently parsed R3 summary has a non-empty sanitized top-level profile exactly equal to both scenario profile identities."
+    },
+    {
+      "id": "UPPER-AUDIT-059-A-P2-002-COMMIT-MAP-AMBIENT",
+      "severity": "P2",
+      "owner": "W6R3 Wave Integrator",
+      "disposition": "accepted_close_time_integrator_obligation",
+      "evidence": "Commit 0775f65083fa53b532b78132e7ab1162f98231c5 exists in the candidate, changes only docs/known-issues/codex-task-sandbox-permission-downgrade.md, and formal STATUS/FREEZE explicitly require its entry in the final cycle-2 map.",
+      "open": false,
+      "blocking": false
+    },
+    {
       "id": "AUDIT-059-A-P1-001",
       "severity": "P1",
       "owner": "TOOL-059-A-R1",
-      "disposition": "closed_verified",
-      "evidence": "Canonical Anthropic remediation and strict three-round tests preserve the complete ordered stateless transcript and fail closed on legacy v1."
+      "disposition": "historical_closed_preserved"
     },
     {
       "id": "AUDIT-059-A-P1-002",
       "severity": "P1",
       "owner": "TEST-059-C and TOOL-059-O",
-      "disposition": "closed_verified",
-      "evidence": "Frozen red controls and product behavior enforce exact current unresolved result-set closure and provider call ordering before transport."
+      "disposition": "historical_closed_preserved"
     },
     {
       "id": "AUDIT-059-A-P1-003",
       "severity": "P1",
       "owner": "EVAL-059-H",
-      "disposition": "closed_verified",
-      "evidence": "Human-smoke v3 derives semantic roles from observed model_exchange calls and binds Runtime denial to the actual provider call ID."
+      "disposition": "historical_closed_preserved"
     }
   ],
   "findings": [],
   "finding_counts": {
-    "P0": 0,
-    "P1": 0,
-    "P2": 0,
-    "open_blocking": 0
+    "P0_open": 0,
+    "P1_open": 0,
+    "P2_open": 0,
+    "open_blocking": 0,
+    "nonblocking_close_time_obligations": 1
   },
   "artifact_verification": {
-    "oracle_v2_root": "F:/dev/llm/pico-eval-artifacts/native-provider-oracle-v2/W6R3-EVAL-059-O-01",
-    "oracle_manifest_sha256": "87fa6898bfb7297a4f0244e0e177c1f66e4090b1c43ee544ce59309dc12806b7",
-    "oracle_inventory_sha256": "7cb7fa26e3c4347b3461123e925197c7d44f06b22a5cfc56adda49ab51a63138",
-    "conformance_adjudication_sha256": "d78bec13744cff83edda12e67e5fc151765d0ce41211b381e56778287bcad291",
-    "human_smoke_adjudication_sha256": "fbfe414f7c87218608754b4e807cc114bd2a90b06d8fb622d138b4942c0ed7f9",
-    "human_smoke_v3_root": "F:/dev/llm/pico-eval-artifacts/native-provider-human-smoke-v3/W6R3-EVAL-059-H-01-R2",
-    "human_smoke_v3_summary_sha256": "d5872ee6b8ae2c7a7da7c67aff3637079bea00dc4257542a979cc3ce713ce1e3",
-    "human_smoke_v3_scenario_a_sha256": "cad6cee02f7328e405aa97fb02f6f27678105a32eec6337caed7e6e26bb134e6",
-    "human_smoke_v3_scenario_b_sha256": "fe6a4301e02df04016da287be9d7ac2ed206739c67cfb3ca5e5a08bf39a04d83",
+    "root": "F:/dev/llm/pico-eval-artifacts/native-provider-human-smoke-v3/W6R3-EVAL-059-H-01-R3",
+    "summary_sha256": "4dfc48928e3bb94f773383776519b2538b9bba9a13eb29cab0748c360083aae4",
+    "scenario_a_sha256": "f96e4a4fa1000d362a6d7c0ca03ad2131318ab4aeb3a119f8024054750a6bfcc",
+    "scenario_b_sha256": "88b0a1b42553142d45d0ae0420f0ac980127c2af6fdc385eca214fd07f5973cb",
+    "file_count": 11,
+    "inventory_aggregate_sha256": "ab09409b8b1435177738d45640bda29f6755aab44070246796f8d08ecbe2337e",
+    "aggregate_basis": "SHA-256 of UTF-8 '<file_sha256> <relative_posix_path>\\n' lines sorted by relative path",
     "all_json_reparsed": true,
-    "all_recorded_hashes_matched": true
+    "all_recorded_hashes_matched": true,
+    "status": "PASS",
+    "execution_mode": "fake_provider",
+    "top_level_profile_non_empty": true,
+    "top_level_profile_sanitized": true,
+    "profile_equals_each_scenario_profile_identity": true,
+    "summary_provider_http_attempts": 0,
+    "scenario_provider_http_attempts": {
+      "HSMOKE-V3-A": 0,
+      "HSMOKE-V3-B": 0
+    },
+    "sensitive_scan_hits": 0,
+    "formal_human_smoke": false
+  },
+  "historical_r1_close": {
+    "wave_handoff_sha256": "ce1a548022a05e94e4cd2bab0cbd9fe15a3d52214bc21a9556504d5020169d82",
+    "commit_map_sha256": "55418a09c6b06c580648e79508e56cf00bbe04fa783816dfca909ec5a29f3435",
+    "worker_bundle_sha256": "f6e9ff52a8ed3c39180d54aceea0822cb484b03e0c4834fda2bd8e878ef2db09",
+    "tag_object": "565e937df275c6215661623564c70492cc0b306f",
+    "tag_target": "b5a18cedde2f5897ad261afb286c4e123f54509f",
+    "preserved": true
+  },
+  "commit_map_close_time_obligation": {
+    "finding_id": "UPPER-AUDIT-059-A-P2-002-COMMIT-MAP-AMBIENT",
+    "ambient_commit": "0775f65083fa53b532b78132e7ab1162f98231c5",
+    "changed_paths": [
+      "docs/known-issues/codex-task-sandbox-permission-downgrade.md"
+    ],
+    "required_map": ".codex/eval/state/W6R3-r2-commit-map.json",
+    "map_exists_during_review": false,
+    "formal_owner": "W6R3 Wave Integrator",
+    "disposition": "verify_at_wave_close",
+    "blocking_now": false
   },
   "native_protocol_observations": {
     "provider_http_attempts": 0,
     "live_provider_http_sent": false,
-    "human_smoke_run": false,
+    "formal_human_smoke_run": false,
+    "authorized_live_run": false,
     "formal_effectiveness_run": false,
     "profile_reselection_run": false,
     "w6r4_started": false,
@@ -277,6 +365,10 @@
     "sdk_managed_pico_tool_execution_used": false,
     "credential_leak_count": 0
   },
+  "environment_notes": [
+    "Default Git discovery under the reviewer task SID reports dubious ownership for this linked worktree; read-only identity and status checks used the exact common-repository and linked-worktree metadata paths without changing safe.directory, ACLs, task permissions, or repository configuration.",
+    "The single targeted pytest environment failure is fully explained by that default-Git subprocess boundary; direct candidate-bound deterministic execution passed the same scenario path with HTTP=0."
+  ],
   "cleanup_candidates": [
     {
       "path": "C:/Users/Papewhit/.codex/worktrees/24a9/pico/.venv/",
@@ -285,18 +377,29 @@
       "disposition": "Preserved in place on user instruction; not deleted and not part of the handoff commit."
     }
   ],
+  "risks": [
+    "The W6R3 Wave Integrator must record ambient documentation commit 0775f65083fa53b532b78132e7ab1162f98231c5 in the final cycle-2 commit map and verify the obligation at Wave close.",
+    "This acceptance authorizes only TOOL-059-G revision 2 dispatch; it does not authorize W6R4, W7, profile reselection, provider HTTP, or formal human smoke."
+  ],
   "downstream_gate": {
     "ticket": "TOOL-059-G",
+    "revision": 2,
+    "start_condition": "accepted AUDIT-059-A revision 3 with open P1 count zero",
     "start_condition_met": true,
-    "may_enter": true,
-    "reason": "Revision 2 accepted with all three P1 findings closed and open P1 count equal to zero."
+    "may_dispatch": true,
+    "w6r4_may_start": false,
+    "w7_may_start": false,
+    "reason": "All remediation-cycle-2 P1 findings are independently closed; the sole P2 map item is a formal nonblocking close-time Integrator obligation."
   },
   "provider_http_attempts": 0,
   "formal_status_written": false,
   "formal_freeze_written": false,
   "merge_performed": false,
   "rebase_performed": false,
+  "cherry_pick_performed": false,
   "ready_for_integration": true,
   "ready_for_tool_059_g": true,
+  "w6r4_authorized": false,
+  "w7_authorized": false,
   "stop_after_handoff": true
 }
