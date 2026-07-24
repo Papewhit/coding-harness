@@ -1,0 +1,147 @@
+{
+  "schema_version": "pico-eval-status-proposal-v1",
+  "ticket_id": "TOOL-059-G",
+  "instance_id": "W6R3-TOOL-059-G-01",
+  "wave": "W6R3",
+  "remediation_round": 1,
+  "role": "gate_integrator/w6r3-deterministic-recovery-gate",
+  "status": "complete",
+  "gate_status": "passed",
+  "source_sha": "24bebf8ac67095775856883db7b84a7dcf6ec7d1",
+  "source_tree": "45106ea2c0b70713065e59381172c3d267e6bdde",
+  "source_status_sha256": "7861b114f9d385a58f5379862d0844a5a2741bcde8e5eaafabb17030a10b6f91",
+  "source_freeze_sha256": "90ee36eb13bcc53eff7e48ee4722aa4e14c2fbab916de5e318e7eea0666a942e",
+  "audit_binding": {
+    "ticket_id": "AUDIT-059-A",
+    "revision": 2,
+    "verdict": "accepted",
+    "open_p1": 0,
+    "canonical_commit": "24bebf8ac67095775856883db7b84a7dcf6ec7d1",
+    "worker_commit": "f0d8acef98c0d2f770f5734d783808b6847e5e9d",
+    "stable_patch_id": "89c4fae15704e809daadd1b4247f08ac0623b074",
+    "handoff_sha256": "d93f2131d082128dccea53fb223ab5dd8447a5f13f06e34a337ca89633783f3d",
+    "start_condition_met": true
+  },
+  "artifact": {
+    "root": "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate/W6R3-TOOL-059-G-01",
+    "artifact_manifest_sha256": "836692c1caa4df087981e7016f3768e5f1359c7d8753e2ee7f10f1884e776afe",
+    "artifact_inventory_aggregate_sha256": "312b3fd7d840077d2f0f89b63f17f453a8a3af33c56d6be3cbb7ea5ba7c548c1",
+    "artifact_file_count_excluding_manifest": 205,
+    "gate_report_sha256": "5649d2c6eda0a2fdea3b8b3e67306dba18e04f7ba6bc4c0cf19d75cc8763ea62",
+    "environment_manifest_sha256": "06e8bde4d930fd286727c008b80838747ac977619f057a38f8163e65bd83f867",
+    "command_results_sha256": "e57e0440e66f0e49a05c839a67d320b4a1cba20ffdf5a10767bb747cd6474668",
+    "junit_summary_sha256": "d2acc94f6d2a6bd68349af6979d3704119390c4a22019d890f6367b3ecd11aa2",
+    "invariant_verification_sha256": "7280491bb84d596dd623b774311c324e200e39e182ff43ac78e46db07e542562",
+    "sensitive_scan_sha256": "2719719b9064dc27a7f5a6bb482cb02b3e297b375b310e72def480e1bc79336e"
+  },
+  "hard_gate_result": {
+    "environment": {
+      "ubuntu_wsl2": "Ubuntu 26.04 LTS",
+      "user": "papewhit",
+      "python": "3.12.13",
+      "uv": "0.11.31 user-level",
+      "filesystem": "ext4",
+      "fresh_clone": true,
+      "source_sha_verified": true,
+      "source_tree_verified": true,
+      "source_clean_after_gate": true,
+      "uv_sync_frozen_providers_extra": "passed",
+      "sudo_used": false
+    },
+    "tests": {
+      "targeted_recovery": "90 passed",
+      "protected": "27 passed",
+      "deterministic": "131 passed",
+      "full_suite": "546 passed, 2 live-provider opt-in skipped, 6 warnings",
+      "scoped_ruff": "passed",
+      "full_ruff": "passed",
+      "compileall": "passed",
+      "plan_validation": "VALID: 94 ticket templates, 16 waves"
+    },
+    "protocol_and_safety": {
+      "oracle_v2_hash_bound": true,
+      "both_dialects_complete_stateless_transcript": true,
+      "unresolved_call_result_exact_closure": true,
+      "call_result_one_to_one": true,
+      "pre_runtime_rejection_excluded_from_execution_denominator": true,
+      "execute_completed_semantics_preserved": true,
+      "runtime_safety_chain_bypass_count": 0,
+      "executable_text_fallback_count": 0,
+      "sdk_managed_execution_count": 0,
+      "human_smoke_v3_fake_stub_tests": "passed_without_runner_execution",
+      "repetition_targeted": "passed",
+      "oracle_v2_and_historical_evidence_unchanged": true
+    },
+    "network_and_scope": {
+      "provider_http_attempts": 0,
+      "acceptance_socket_attempt_records": 0,
+      "network_namespace_enforced": true,
+      "python_socket_guard_calibrated": true,
+      "credential_private_locator_raw_url_scan_hits": 0,
+      "human_smoke_run": false,
+      "profile_reselection_run": false,
+      "formal_online_evaluation_run": false,
+      "resume_evaluation_run": false
+    },
+    "all_required_final_commands_exit_zero": true,
+    "blocking_defects": []
+  },
+  "superseded_gate_diagnostics": {
+    "count": 5,
+    "source_changed": false,
+    "final_resolution": "Corrected link-state and verifier assumptions, prewarmed the allowed pytest dependency, and forced nested uv to cached-only mode. The full unchanged suite and final verifier then passed in the same clean source clone.",
+    "evidence_retained": true
+  },
+  "proposal": {
+    "ticket_execution_status": "complete",
+    "ticket_gate_status": "passed",
+    "proposed_immutable_recovery_snapshot_sha": "24bebf8ac67095775856883db7b84a7dcf6ec7d1",
+    "proposed_immutable_recovery_snapshot_tree": "45106ea2c0b70713065e59381172c3d267e6bdde",
+    "native_eval_ready": "deterministic_recovery_passed_pending_w6r4_reselection_and_new_accepted_human_smoke",
+    "w6r4_ready_set": {
+      "status": "proposed_ready",
+      "ticket_ids": [],
+      "ticket_ids_reason": "The current PLAN has no W6R4 ticket templates; TOOL-059-G does not invent or dispatch tickets.",
+      "scope": [
+        "reselect profiles from the immutable recovery snapshot",
+        "request a new user-authorized human smoke only after recovered selection"
+      ],
+      "started": false
+    },
+    "w7_ready": false,
+    "w7_status": "blocked_pending_w6r4_reselection_and_new_user_accepted_human_smoke",
+    "formal_online_lanes": {
+      "effectiveness": "not_run",
+      "human_smoke": "not_run",
+      "resume": "not_run"
+    },
+    "reason": "The canonical Ubuntu WSL2/Python 3.12 fresh-clone deterministic recovery Gate passed with source, Oracle v2, prior evidence and safety semantics unchanged and provider HTTP attempts equal to zero."
+  },
+  "proposed_changes": {
+    "ticket_instances": {
+      "W6R3-TOOL-059-G-01": {
+        "ticket_id": "TOOL-059-G",
+        "role": "gate_integrator/w6r3-deterministic-recovery-gate",
+        "branch": "codex/w6r3-tool-059-g",
+        "source_sha": "24bebf8ac67095775856883db7b84a7dcf6ec7d1",
+        "source_tree": "45106ea2c0b70713065e59381172c3d267e6bdde",
+        "status": "complete",
+        "gate_status": "passed",
+        "provider_http_attempts": 0
+      }
+    },
+    "gates": {
+      "native_eval_ready": "deterministic_recovery_passed_pending_w6r4_reselection_and_new_accepted_human_smoke",
+      "native_resume_ready": "pending"
+    },
+    "run_snapshot_sha": "24bebf8ac67095775856883db7b84a7dcf6ec7d1",
+    "w6r4_ready": true,
+    "w6r4_started": false,
+    "w7_ready": false,
+    "w7_started": false
+  },
+  "canonical_status_written": false,
+  "canonical_freeze_written": false,
+  "canonical_state_written": false,
+  "canonical_state_owner": "W6R3 Wave Integrator"
+}

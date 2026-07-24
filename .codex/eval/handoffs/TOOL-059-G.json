@@ -1,0 +1,290 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-059-G",
+  "instance_id": "W6R3-TOOL-059-G-01",
+  "revision": 1,
+  "wave": "W6R3",
+  "remediation_round": 1,
+  "role": "gate_integrator/w6r3-deterministic-recovery-gate",
+  "status": "complete",
+  "verdict": "passed",
+  "source_thread_id": "019f91dc-1940-7b31-9e6f-086f4941922b",
+  "source": {
+    "sha": "24bebf8ac67095775856883db7b84a7dcf6ec7d1",
+    "tree": "45106ea2c0b70713065e59381172c3d267e6bdde",
+    "starting_ref": "codex/w6r3-remediation-r1-gate-source",
+    "starting_ref_verified": true,
+    "tracked_clean_at_dispatch": true,
+    "tracked_clean_after_gate": true
+  },
+  "worker": {
+    "branch": "codex/w6r3-tool-059-g",
+    "worktree": "C:/Users/Papewhit/.codex/worktrees/efe3/pico",
+    "head_before_handoff_commit": "24bebf8ac67095775856883db7b84a7dcf6ec7d1",
+    "metadata_commit_semantics": "The commit containing this handoff and the two proposals is intentionally not self-recorded.",
+    "merge_performed": false,
+    "rebase_performed": false,
+    "cherry_pick_performed": false,
+    "source_after_dispatch_absorbed": false
+  },
+  "audit_binding": {
+    "ticket_id": "AUDIT-059-A",
+    "revision": 2,
+    "canonical_commit": "24bebf8ac67095775856883db7b84a7dcf6ec7d1",
+    "worker_commit": "f0d8acef98c0d2f770f5734d783808b6847e5e9d",
+    "stable_patch_id": "89c4fae15704e809daadd1b4247f08ac0623b074",
+    "handoff_sha256": "d93f2131d082128dccea53fb223ab5dd8447a5f13f06e34a337ca89633783f3d",
+    "verdict": "accepted",
+    "open_p1": 0,
+    "targeted_passed": 86,
+    "provider_http_attempts": 0,
+    "start_condition_met": true
+  },
+  "dependency_handoff_hashes": {
+    "EVAL-059-O": "849b687163b77e8957529d72e0111edb08625a76a1276c87799e68b595bef00f",
+    "TEST-059-C": "2f806adbce6e29e8161ef5039a9be0cc2fc74eb66fca3f17a4dcda054bf3e75e",
+    "TOOL-059-O": "ee3a39d1df80845304ceac5c6547f1aca7fb02c2911904c97f5e79901e78e48d",
+    "EVAL-059-H": "1c4969142164ec6d0975e1bdbe331636082548dcfb0752b66b3be6e928c07973",
+    "TOOL-059-R": "03c6ade0282d6f2c0a0a2af28c75f1a76c34a5be5358ba67e5cea0b41f5c0fd6",
+    "TOOL-059-A-R1": "d6956ba6821528fa64c0b8e425a1878ff079aaf996d1a0acedb12e2421b7004f"
+  },
+  "formal_state_inputs": {
+    "STATUS_sha256": "7861b114f9d385a58f5379862d0844a5a2741bcde8e5eaafabb17030a10b6f91",
+    "FREEZE_sha256": "90ee36eb13bcc53eff7e48ee4722aa4e14c2fbab916de5e318e7eea0666a942e",
+    "formal_status_written": false,
+    "formal_freeze_written": false
+  },
+  "allowed_write_paths": [
+    "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate/W6R3-TOOL-059-G-01/**",
+    ".codex/eval/proposals/TOOL-059-G.freeze.json",
+    ".codex/eval/proposals/TOOL-059-G.status.json",
+    ".codex/eval/handoffs/TOOL-059-G.json"
+  ],
+  "files_changed_by_ticket": [
+    ".codex/eval/proposals/TOOL-059-G.freeze.json",
+    ".codex/eval/proposals/TOOL-059-G.status.json",
+    ".codex/eval/handoffs/TOOL-059-G.json"
+  ],
+  "canonical_environment": {
+    "distribution": "Ubuntu 26.04 LTS WSL2",
+    "kernel": "6.18.33.2-microsoft-standard-WSL2",
+    "user": "papewhit",
+    "uid": 1000,
+    "python": "3.12.13",
+    "uv": "0.11.31 user-level",
+    "filesystem": "ext4",
+    "fresh_clone": "/home/papewhit/dev/pico-w6r3-tool-059-g-01-24bebf8-20260724-001",
+    "clone_head": "24bebf8ac67095775856883db7b84a7dcf6ec7d1",
+    "clone_tree": "45106ea2c0b70713065e59381172c3d267e6bdde",
+    "clone_clean": true,
+    "uv_sync_command": "uv sync --frozen --extra providers",
+    "uv_sync_result": "passed",
+    "uv_lock_git_blob_oid": "6b949cdc94f74dd00932e66fd2b27f4f6436e4b3",
+    "uv_lock_sha256": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+    "sudo_used": false,
+    "windows_gate_acceptance_commands_run": false
+  },
+  "network_enforcement": {
+    "outer_network_namespace": "unshare --user --map-current-user --net",
+    "namespace_user_preserved": "papewhit",
+    "loopback_link": "DOWN",
+    "python_socket_guard": "network_guard/sitecustomize.py",
+    "python_socket_guard_calibration_attempts": 1,
+    "nested_uv_guard": "network_guard/bin/uv",
+    "nested_uv_mode": "UV_OFFLINE=1 with prewarmed dependency cache",
+    "acceptance_socket_attempt_records": 0,
+    "provider_http_attempts": 0
+  },
+  "tests": [
+    {
+      "id": "targeted_recovery",
+      "scope": "Oracle v2, OpenAI and Anthropic full stateless transcripts, unresolved call/result closure, Runtime safety evidence, human-smoke v3 fake/stub tests, repetition and full dual-dialect fake matrix",
+      "result": "passed",
+      "details": "90 passed in 6.70s"
+    },
+    {
+      "id": "protected",
+      "command": "pytest tests/test_architecture_boundaries.py tests/test_safety_invariants.py tests/test_permissions_acceptance.py tests/test_tool_policy_acceptance.py -q",
+      "result": "passed",
+      "details": "27 passed in 1.94s"
+    },
+    {
+      "id": "deterministic",
+      "scope": "provider contracts, both adapters, Runtime, Session, request context, Oracle v2, safety evidence, repetition, human-smoke v3 fake/stub and Context integrity",
+      "result": "passed",
+      "details": "131 passed in 7.40s"
+    },
+    {
+      "id": "full_suite",
+      "command": "pytest tests -q",
+      "result": "passed",
+      "details": "546 passed, 2 existing live-provider opt-in skipped, 6 warnings in 78.68s"
+    },
+    {
+      "id": "ruff_scoped",
+      "result": "passed",
+      "details": "All W6R3 recovery implementation and test paths passed."
+    },
+    {
+      "id": "ruff_full",
+      "command": "ruff check --no-cache .",
+      "result": "passed"
+    },
+    {
+      "id": "compileall",
+      "command": "python -m compileall -q pico scripts .codex/eval",
+      "result": "passed",
+      "details": "Bytecode output redirected to the allowed artifact root."
+    },
+    {
+      "id": "plan_validation",
+      "command": "python .codex/eval/validate_plan.py",
+      "result": "passed",
+      "details": "VALID: 94 ticket templates, 16 waves"
+    },
+    {
+      "id": "invariant_verification",
+      "result": "passed",
+      "details": "Source, Oracle v2, historical evidence, responsibility boundary, text-fallback absence and SDK-execution absence all verified."
+    },
+    {
+      "id": "source_clean",
+      "result": "passed",
+      "details": "HEAD/tree unchanged and no tracked or non-ignored untracked source files were created."
+    }
+  ],
+  "superseded_gate_diagnostics": [
+    {
+      "ids": [
+        "00_namespace_identity"
+      ],
+      "classification": "gate_harness_assertion",
+      "reason": "The link flags showed DOWN but the kernel sysfs operstate label differed.",
+      "resolution": "Corrected read-only link-flag assertion passed as 00b.",
+      "source_changed": false
+    },
+    {
+      "ids": [
+        "05_full_suite",
+        "05b_full_suite_rerun"
+      ],
+      "classification": "dependency_cache_environment",
+      "reason": "The all-network namespace denied the test fixture's nested temporary pytest resolution, and the nested Runtime intentionally filters UV_OFFLINE.",
+      "resolution": "Performed the explicitly allowed dependency-cache preparation, then used an artifact-local audited uv wrapper that preserved the exact CLI and forced cached-only resolution. The unchanged full suite passed as 05c.",
+      "source_changed": false
+    },
+    {
+      "ids": [
+        "10_invariant_verification",
+        "10b_invariant_verification_rerun"
+      ],
+      "classification": "gate_verifier_assumption",
+      "reason": "The artifact field is named http_attempts, and Pico runtime.run_tool is the required safety entry rather than an SDK runner.",
+      "resolution": "Corrected only the artifact verifier; final invariant verification passed as 10c.",
+      "source_changed": false
+    }
+  ],
+  "acceptance_verdicts": {
+    "oracle_v2_and_historical_adjudication_frozen": "passed",
+    "pre_runtime_rejection_excluded_from_execution_denominator": "passed",
+    "execute_completed_semantics_preserved": "passed",
+    "runtime_chain_violation_blocks_source_snapshot": "passed",
+    "openai_complete_stateless_transcript": "passed",
+    "anthropic_complete_stateless_transcript": "passed",
+    "unresolved_call_result_exact_closure": "passed",
+    "call_result_one_to_one": "passed",
+    "complete_reordered_results_normalized": "passed",
+    "human_smoke_v3_fake_stub_tests": "passed_without_runner_execution",
+    "repetition_safety_ownership": "passed",
+    "executable_text_fallback_absent": "passed",
+    "sdk_managed_execution_absent": "passed",
+    "runtime_safety_chain_bypass_count": 0,
+    "provider_http_attempts": 0,
+    "v2_frozen_inputs_and_old_evidence_unchanged": "passed"
+  },
+  "artifacts": {
+    "root": "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate/W6R3-TOOL-059-G-01",
+    "artifact_manifest": {
+      "sha256": "836692c1caa4df087981e7016f3768e5f1359c7d8753e2ee7f10f1884e776afe",
+      "file_count_excluding_manifest": 205,
+      "aggregate_sha256": "312b3fd7d840077d2f0f89b63f17f453a8a3af33c56d6be3cbb7ea5ba7c548c1",
+      "verified": true
+    },
+    "gate_report_sha256": "5649d2c6eda0a2fdea3b8b3e67306dba18e04f7ba6bc4c0cf19d75cc8763ea62",
+    "environment_manifest_sha256": "06e8bde4d930fd286727c008b80838747ac977619f057a38f8163e65bd83f867",
+    "command_results_sha256": "e57e0440e66f0e49a05c839a67d320b4a1cba20ffdf5a10767bb747cd6474668",
+    "junit_summary_sha256": "d2acc94f6d2a6bd68349af6979d3704119390c4a22019d890f6367b3ecd11aa2",
+    "invariant_verification_sha256": "7280491bb84d596dd623b774311c324e200e39e182ff43ac78e46db07e542562",
+    "sensitive_scan_sha256": "2719719b9064dc27a7f5a6bb482cb02b3e297b375b310e72def480e1bc79336e",
+    "all_json_reparsed": true,
+    "all_manifest_hashes_matched": true,
+    "credential_private_locator_raw_url_scan_hits": 0
+  },
+  "proposals": {
+    "status": {
+      "path": ".codex/eval/proposals/TOOL-059-G.status.json",
+      "sha256": "11ce9a4232ac0e54e976fd44dc669dd185fff19569d565273f87e050a604fa2e",
+      "gate_status": "passed"
+    },
+    "freeze": {
+      "path": ".codex/eval/proposals/TOOL-059-G.freeze.json",
+      "sha256": "84f9b61f40cfb90a437ae67973789f4b22b5dc4d1c4fcc8ac8bb2d142f88ec67",
+      "promotion_allowed": true
+    }
+  },
+  "recovery_snapshot_proposal": {
+    "immutable": true,
+    "source_sha": "24bebf8ac67095775856883db7b84a7dcf6ec7d1",
+    "source_tree": "45106ea2c0b70713065e59381172c3d267e6bdde",
+    "promoted_by_ticket": false,
+    "promotion_owner": "W6R3 Wave Integrator"
+  },
+  "w6r4_ready_set_proposal": {
+    "status": "proposed_ready",
+    "ticket_ids": [],
+    "ticket_ids_reason": "The current PLAN has no W6R4 ticket templates; TOOL-059-G does not invent or dispatch tickets.",
+    "scope": [
+      "reselect profiles from the immutable recovery snapshot",
+      "request a new user-authorized human smoke only after recovered selection"
+    ],
+    "w6r4_started": false
+  },
+  "downstream": {
+    "w7_status": "blocked",
+    "w7_unblock_requires": [
+      "W6R4 recovered profile selection",
+      "new human smoke accepted by the user"
+    ],
+    "formal_online_evaluation_run": false,
+    "human_smoke_run": false,
+    "profile_reselection_run": false,
+    "resume_evaluation_run": false,
+    "w6r4_started": false,
+    "w7_started": false
+  },
+  "defects": [],
+  "risks": [
+    "The current PLAN contains no W6R4 ticket templates, so the ready set is semantic only and dispatch remains a Program Supervisor/Wave Integrator responsibility.",
+    "The formal STATUS/FREEZE still describe the pre-audit review checkpoint until the W6R3 Wave Integrator independently validates and promotes these proposals."
+  ],
+  "cleanup_candidates": [
+    {
+      "path": "/home/papewhit/dev/pico-w6r3-tool-059-g-01-24bebf8-20260724-001",
+      "filesystem": "ext4",
+      "head": "24bebf8ac67095775856883db7b84a7dcf6ec7d1",
+      "tree": "45106ea2c0b70713065e59381172c3d267e6bdde",
+      "tracked_clean": true,
+      "preserved": true,
+      "deleted": false
+    }
+  ],
+  "provider_http_attempts": 0,
+  "formal_status_written": false,
+  "formal_freeze_written": false,
+  "wave_handoff_generated": false,
+  "wave_commit_map_generated": false,
+  "worker_bundle_generated": false,
+  "canonical_tag_generated": false,
+  "ready_for_integration": true,
+  "stop_after_handoff": true
+}
