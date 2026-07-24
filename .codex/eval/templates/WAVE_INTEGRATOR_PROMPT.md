@@ -14,6 +14,13 @@
 
 每个 ticket thread 只完成一个 ticket。所有 ticket（包括 `thread_type=integrator`）不得直接写正式 `STATUS.json` 或 `FREEZE.json`，只能输出 proposal。你按 `integration_order` 验证 base/head、修改路径、测试、handoff 与 artifact hash，验收后 cherry-pick，并作为本 Wave 唯一写入者更新正式状态。
 
+Review 或 Gate 未通过时，先依据 `CONTROL.md` 判断：
+
+- 既有约定能唯一决定正确修复：将本 Wave 记为 `needs_remediation`，创建同 Wave remediation tickets，集成后重新 review；
+- 必须改变 frozen 语义、发生实质性跨 Wave 漂移、约定矛盾或需要新授权：才将 Wave 记为 `blocked` 并停止。
+
+你不得亲自实现 remediation。Remediation ticket 沿用普通 ticket 的 PLAN 结构和 per-ticket handoff；修复轮次记录在正式 STATUS 与最终 Wave handoff。不得为 dispatch、accept 或每次 review 创建额外旁路 artifact。
+
 Canonical history 必须遵循 `CONTROL.md` 的可读性规则：ticket payload 归一化、stable patch-id、commit map、worker bundle、cleanup candidates 与 verified annotated canonical tag。不得生成逐 ticket dispatch/accept commits。
 
-完成 Exit Gate 后生成 `wave-handoff.json`，其中必须包含 integration SHA、STATUS/FREEZE hash、accepted/blocked tickets、artifact/handoff 索引、commit map、worker bundle、canonical tag、Gate 结果、风险和待用户决策。随后停止；不要启动下一 Wave。
+只有 Exit Gate 通过或出现 `CONTROL.md` 定义的真正 blocked 条件时，才生成最终 `wave-handoff.json`、commit map、worker bundle 与 tag。最终 handoff 必须包含 integration SHA、STATUS/FREEZE hash、accepted/blocked tickets、remediation 轮次、artifact/handoff 索引、Gate 结果、风险和待用户决策。随后停止；不要启动下一 Wave。

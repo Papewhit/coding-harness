@@ -40,7 +40,7 @@
 
 ### Wave Integrator
 
-每个 Wave 由用户新建一个非 ticket 的 Integrator thread。它从上一 Wave 的不可变 handoff 启动，冻结 `wave_base_sha`，分发 ticket threads，按 `integration_order` 验收并集成，运行 Exit Gate，并且是该 Wave 唯一可写正式 `STATUS.json` 与 `FREEZE.json` 的角色。完成 `wave-handoff.json` 后停止；下一个 Wave 必须使用新的 Integrator thread。
+每个 Wave 由用户新建一个非 ticket 的 Integrator thread。它从上一 Wave 的不可变 handoff 启动，冻结 `wave_base_sha`，分发 ticket threads，按 `integration_order` 验收并集成，运行 review、remediation 与 Exit Gate，并且是该 Wave 唯一可写正式 `STATUS.json` 与 `FREEZE.json` 的角色。Review 发现可由既有约定唯一决定的缺陷时，Integrator 必须保持本 Wave 活跃并按下述 remediation 规则继续调度；不得仅因实现偏差关闭 Wave。完成最终 `wave-handoff.json` 后停止；下一个 Wave 必须使用新的 Integrator thread。
 
 ### Integrator Ticket / Aggregator
 
@@ -66,7 +66,17 @@ manifest 必须包含 source/evaluator/taskset/provider profile/native conforman
 
 ### Reviewer
 
-只读 diff、测试和 artifact；发现缺陷输出 review handoff，修复另开 ticket。
+只读 diff、测试和 artifact；发现缺陷输出 review handoff，不直接修改实现。修复由 Wave Integrator 在同一 Wave 内分发独立 remediation ticket；Reviewer 不承担调度或修复责任。
+
+### Wave 内 remediation
+
+- Review 或 Gate 发现实现、测试、fixture、verifier、artifact wiring 没有满足既有 contract、freeze 或 Wave Exit Gate 时，正式状态记为 `needs_remediation`，不自动记为 `blocked`。
+- Wave Integrator 不亲自实现修复。它为每个可独立归属的问题创建精确 scoped remediation ticket，沿用普通 ticket 的 PLAN 结构、独立 thread/worktree/branch、allowed paths、commit、tests 与 per-ticket handoff。
+- 新 remediation ticket 必须引用 finding ID 和既有验收依据。若正确结果可由现有约定唯一确定，Integrator 可在必要的 batch checkpoint 中把 ticket 加入本 Wave 的 PLAN 并分配为满足既有 Wave 目标所需的最小 owner；这不属于跨 Wave scope expansion。
+- 每轮 remediation 从不可变 `candidate_sha` 启动。并行 ticket 使用同一 candidate；有依赖的 ticket 在共同 candidate 上应用精确 dependency commits。修复集成后生成新的 candidate，并重新分发只读 review。
+- 保留现有每-ticket handoff，remediation ticket 使用相同格式。修复轮次只记录在正式 `STATUS.json` 与最终 Wave handoff 中；不得为 dispatch、accept 或一次 review 额外创建旁路 artifact。Reviewer ticket 自己的 handoff 仍是该 ticket 的唯一交付物。
+- 只有现有约定不能唯一决定修复、必须改变 frozen Oracle/验收语义、发生实质性跨 Wave 架构或责任漂移、需要新的用户授权/外部权限，或可重建性冲突无法在本 Wave 内解决时，才进入真正的 `blocked`。
+- Wave 只有在 Exit Gate 通过或达到上述真正 blocked 条件时才关闭，并在关闭时生成最终 wave handoff、worker bundle、commit map 与 tag。`needs_remediation` candidate 不生成 Wave 最终交付物。
 
 ## 5. Git 与 Worktree
 
@@ -84,7 +94,7 @@ W0 必须保留当前 `pico/core/runtime_checkpoints.py` 既有工作区修改�
 - 每个 Wave 必须生成 `.codex/eval/state/<WAVE>-commit-map.json`，逐一映射 worker commits、stable patch ID 与 canonical commit；run/reviewer 的无源码结果也要映射 handoff/metadata integration。
 - Wave close 必须创建包含所有保留 worker refs 的 Git bundle，运行 `git bundle verify`，并在 commit map 与 wave handoff 中记录路径和 SHA-256。
 - 未经用户批准，不得删除 worker branch/worktree；只报告已验证 clean 的 cleanup candidates。
-- 每个 canonical snapshot 必须创建并验证 annotated tag `eval-v3/<wave-lower>-canonical`。Tag 指向 source/integration snapshot；后续 metadata commits 不得悄悄改变其语义。
+- 每个通过 Exit Gate 的 canonical snapshot，以及每个真正 blocked 后必须保留的最终 snapshot，必须在 Wave 关闭时创建并验证 annotated tag。通过时使用 `eval-v3/<wave-lower>-canonical`；若同名历史 tag 已因旧流程占用，使用显式递增后缀并在 handoff 中说明。Tag 指向 source/integration snapshot；后续 metadata commits 不得悄悄改变其语义。`needs_remediation` candidate 不得创建最终 tag。
 - 若历史归一化与可重建 patch 身份冲突，先保留 worker refs/bundle 并停止，不得通过丢弃 commits 换取表面整洁。
 
 ## 6. 核心文件所有权
@@ -138,7 +148,7 @@ Native 改造额外冻结：contract、tool schema、SDK transport decision、SD
 
 ## 9. Stop / Block
 
-以下阻断对应下游：
+以下情况阻断对应下游，但不自动关闭当前 Wave。若修复可由既有约定唯一确定，Wave Integrator 必须先进入同 Wave remediation：
 
 - 所有候选 profile 均不满足 native conformance；
 - call ID/result 不完整或出现 result 后重复同一调用；
@@ -152,10 +162,18 @@ Native 改造额外冻结：contract、tool schema、SDK transport decision、SD
 
 不相关 lane 可继续。例如 native live probe 阻塞时，Dream fixtures、Context deterministic cases 和 mini repo 仍可建设。
 
+只有以下情况允许把整个 Wave 最终标记为 `blocked`：
+
+- 修复必须改变已冻结 Oracle、metric、验收语义或用户已批准的行为；
+- 发现实质性跨 Wave 架构/责任漂移，无法作为当前 Wave 既有 Exit Gate 的最小修复；
+- 现有 contract、freeze、ticket 约束或安全规则互相矛盾，无法同时满足；
+- 继续需要新的 live HTTP、凭据、人工判断、外部权限或破坏性操作授权；
+- canonical history、artifact 或 patch identity 无法重建，且无法在本 Wave 内恢复。
+
 ## 10. Handoff
 
 每个 handoff 至少包含：ticket/base/head/commits/files/tests/outputs/hashes/defects/risks/ownership request。Native 相关 ticket 还必须填写 contract/schema/SDK/profile/gate hash，以及是否观察到 text envelope、隐式 retry、unknown block loss 和 safety bypass。
 
-每个 Wave 结束时必须生成 `wave-handoff.json`，至少包含 integration SHA、STATUS/FREEZE hash、accepted/blocked tickets、artifact/handoff 索引、Exit Gate 结果、风险和待用户决策。下一 Wave 只能从该文件与持久化状态恢复，不得依赖上一 Wave 的对话。
+每个 Wave 只有在 Exit Gate 通过或真正 blocked 时才生成最终 `wave-handoff.json`。它至少包含 integration SHA、STATUS/FREEZE hash、accepted/blocked tickets、remediation 轮次、artifact/handoff 索引、Exit Gate 结果、风险和待用户决策。Review 失败后的 `needs_remediation` 不生成中间 Wave handoff、bundle 或 tag。下一 Wave 只能从最终 handoff 与持久化状态恢复，不得依赖上一 Wave 的对话。
 
 W0 Exit Gate 额外要求一次 fresh-controller reconstruction：使用全新只读 thread，仅根据 Git、`STATUS/FREEZE` 和 handoff 重建 integration SHA、accepted tickets、frozen hashes 与 W1 ready set；结果一致后才允许进入 W1。

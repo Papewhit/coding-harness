@@ -312,6 +312,12 @@
         "EVAL-059-H",
         "TOOL-059-R",
         "AUDIT-059-A",
+        "TEST-059-A-R1",
+        "TOOL-059-A-R1",
+        "TEST-059-O-R1",
+        "TOOL-059-O-R1",
+        "EVAL-059-H-R1",
+        "AUDIT-059-A-R1",
         "TOOL-059-G"
       ],
       "dynamic_dependencies": [
@@ -319,9 +325,12 @@
         "TEST-059-C applies the accepted Oracle commit and records the Responses context-loss red baseline before TOOL-059-O",
         "TOOL-059-O waits for TEST-059-C and changes only the OpenAI Responses Adapter",
         "EVAL-059-H and TOOL-059-R may run in parallel after EVAL-059-O with disjoint ownership",
-        "AUDIT-059-A waits for every implementation and fixture ticket and remains read-only",
-        "TOOL-059-G waits for the audit, runs only WSL deterministic gates and emits a W6R4 recovery snapshot without provider HTTP",
-        "Wave close verifies W6R3-commit-map.json, W6R3-workers.bundle and annotated tag eval-v3/w6r3-canonical under the permanent readable-history rules"
+        "AUDIT-059-A remains the immutable first review attempt; its findings enter W6R3 remediation cycle 1 rather than closing the Wave",
+        "TEST-059-A-R1, TEST-059-O-R1 and EVAL-059-H-R1 start from one immutable remediation candidate; each remediation ticket keeps the normal per-ticket handoff",
+        "TOOL-059-A-R1 and TOOL-059-O-R1 wait for their respective red-test tickets",
+        "AUDIT-059-A-R1 waits for all remediation implementations and remains read-only; review failure returns W6R3 to needs_remediation unless CONTROL.md defines a true blocker",
+        "TOOL-059-G waits for AUDIT-059-A-R1, runs only WSL deterministic gates and emits a W6R4 recovery snapshot without provider HTTP",
+        "The old W6R3 handoff, bundle and canonical tag remain historical; final remediation close uses the explicit r1 handoff, commit map, bundle and tag names"
       ],
       "integration_order": [
         "EVAL-059-O",
@@ -330,9 +339,15 @@
         "EVAL-059-H",
         "TOOL-059-R",
         "AUDIT-059-A",
+        "TEST-059-A-R1",
+        "TOOL-059-A-R1",
+        "TEST-059-O-R1",
+        "TOOL-059-O-R1",
+        "EVAL-059-H-R1",
+        "AUDIT-059-A-R1",
         "TOOL-059-G"
       ],
-      "gate": "Oracle v2 and historical adjudication are frozen; stateless Responses, smoke verifier and repetition regressions pass in a fresh WSL clone; readable commit map, worker bundle and canonical tag verify; W7 remains blocked pending W6R4 reselection and a new accepted human smoke"
+      "gate": "Oracle v2 and historical adjudication remain frozen; both dialects preserve complete stateless transcripts; Responses call/result closure and human-smoke v3 pass read-only review and a fresh WSL Gate; readable final r1 commit map, worker bundle and tag verify; W7 remains blocked pending W6R4 reselection and a new accepted human smoke"
     },
     {
       "id": "W7",
@@ -2356,12 +2371,123 @@
         "除 handoff 外的所有路径"
       ]
     },
+    "TEST-059-A-R1": {
+      "title": "Anthropic Stateless Transcript Remediation Red Tests",
+      "thread_type": "implementer",
+      "wave": "W6R3",
+      "depends_on": [
+        "AUDIT-059-A"
+      ],
+      "ticket_file": "tickets/TEST-059-A-R1.md",
+      "allowed_write_paths": [
+        "tests/test_anthropic_stateless_transcript.py",
+        ".codex/eval/handoffs/TEST-059-A-R1.json"
+      ],
+      "forbidden_write_paths": [
+        "pico/**",
+        "frozen Oracle、cases、human-smoke fixtures",
+        "STATUS.json、FREEZE.json"
+      ]
+    },
+    "TOOL-059-A-R1": {
+      "title": "Anthropic 完整无状态 Transcript 修复",
+      "thread_type": "implementer",
+      "wave": "W6R3",
+      "depends_on": [
+        "TEST-059-A-R1"
+      ],
+      "ticket_file": "tickets/TOOL-059-A-R1.md",
+      "allowed_write_paths": [
+        "pico/providers/anthropic_messages.py",
+        ".codex/eval/handoffs/TOOL-059-A-R1.json"
+      ],
+      "forbidden_write_paths": [
+        "OpenAI Responses Adapter、Core/Runtime",
+        "remediation tests、Oracle、cases、human-smoke fixtures",
+        "STATUS.json、FREEZE.json"
+      ]
+    },
+    "TEST-059-O-R1": {
+      "title": "Responses Call/Result Closure Remediation Red Tests",
+      "thread_type": "implementer",
+      "wave": "W6R3",
+      "depends_on": [
+        "AUDIT-059-A"
+      ],
+      "ticket_file": "tickets/TEST-059-O-R1.md",
+      "allowed_write_paths": [
+        "tests/test_openai_responses_call_result_closure.py",
+        ".codex/eval/handoffs/TEST-059-O-R1.json"
+      ],
+      "forbidden_write_paths": [
+        "pico/**",
+        "frozen Oracle、cases、human-smoke fixtures",
+        "STATUS.json、FREEZE.json"
+      ]
+    },
+    "TOOL-059-O-R1": {
+      "title": "Responses Call/Result Closure 修复",
+      "thread_type": "implementer",
+      "wave": "W6R3",
+      "depends_on": [
+        "TEST-059-O-R1"
+      ],
+      "ticket_file": "tickets/TOOL-059-O-R1.md",
+      "allowed_write_paths": [
+        "pico/providers/openai_responses.py",
+        ".codex/eval/handoffs/TOOL-059-O-R1.json"
+      ],
+      "forbidden_write_paths": [
+        "Anthropic Adapter、Core/Runtime",
+        "remediation tests、Oracle、cases、human-smoke fixtures",
+        "STATUS.json、FREEZE.json"
+      ]
+    },
+    "EVAL-059-H-R1": {
+      "title": "Human-smoke v3 Contract 与 Harness 修复",
+      "thread_type": "fixture_builder",
+      "wave": "W6R3",
+      "depends_on": [
+        "AUDIT-059-A"
+      ],
+      "ticket_file": "tickets/EVAL-059-H-R1.md",
+      "allowed_write_paths": [
+        "benchmarks/v3/native-provider/human-smoke-v3.json",
+        "scripts/run_v3_native_human_smoke_v3.py",
+        "tests/test_v3_native_human_smoke_v3.py",
+        "<ARTIFACT_ROOT>/native-provider-human-smoke-v3/**",
+        ".codex/eval/proposals/EVAL-059-H-R1.freeze.json",
+        ".codex/eval/handoffs/EVAL-059-H-R1.json"
+      ],
+      "forbidden_write_paths": [
+        "human-smoke v2 files 与历史 artifacts",
+        "Provider adapters、Runtime/Core、Oracle v2",
+        "STATUS.json、FREEZE.json"
+      ]
+    },
+    "AUDIT-059-A-R1": {
+      "title": "W6R3 Remediation 只读复审",
+      "thread_type": "reviewer",
+      "wave": "W6R3",
+      "depends_on": [
+        "TOOL-059-A-R1",
+        "TOOL-059-O-R1",
+        "EVAL-059-H-R1"
+      ],
+      "ticket_file": "tickets/AUDIT-059-A-R1.md",
+      "allowed_write_paths": [
+        ".codex/eval/handoffs/AUDIT-059-A-R1.json"
+      ],
+      "forbidden_write_paths": [
+        "除 handoff 外的所有路径"
+      ]
+    },
     "TOOL-059-G": {
       "title": "W6R3 Deterministic Recovery Gate",
       "thread_type": "integrator",
       "wave": "W6R3",
       "depends_on": [
-        "AUDIT-059-A"
+        "AUDIT-059-A-R1"
       ],
       "ticket_file": "tickets/TOOL-059-G.md",
       "allowed_write_paths": [

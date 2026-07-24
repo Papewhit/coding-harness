@@ -7,6 +7,7 @@
   "freeze_sha256": "<sha256>",
   "accepted_tickets": [],
   "blocked_tickets": [],
+  "remediation_rounds": [],
   "ticket_handoffs": {},
   "artifacts": {},
   "exit_gate": {
