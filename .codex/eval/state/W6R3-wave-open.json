@@ -1,0 +1,77 @@
+{
+  "schema_version": "pico-eval-wave-open-v1",
+  "wave": "W6R3",
+  "status": "open",
+  "wave_integrator_role": "non-ticket scheduler and sole formal STATUS/FREEZE writer",
+  "wave_integrator_thread": "019f91dc-1940-7b31-9e6f-086f4941922b",
+  "integration_branch": "eval/v3-integration",
+  "control_parent_sha": "1baf1e1adef49e93994a4abbb93a41a520e489fb",
+  "wave_base_policy": "the commit containing this wave-open overlay is the immutable W6R3 wave_base_sha",
+  "upstream": {
+    "wave": "W6R2",
+    "canonical_sha": "62cf5a680edc05ae1d242638827178453163c71e",
+    "runtime_snapshot_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+    "handoff_path": ".codex/eval/state/W6R2-wave-handoff.json",
+    "handoff_sha256": "031f0cf629f60fead1b82e239c69a2e55660a5829a45f5d2d24862e83df6cbd7"
+  },
+  "control_validation": {
+    "plan_sha256": "eec698c325bd3757f102b0bd31273e5b397a548b45da31a43b0b19fffa1bebf5",
+    "plan_result": "VALID: 93 ticket templates, 16 waves",
+    "initial_ready_tickets": [
+      "EVAL-059-O"
+    ],
+    "initial_ready_set_match": true,
+    "allowed_path_ownership_conflicts": [],
+    "workspace_clean_before_overlay": true
+  },
+  "recovery_facts": {
+    "dashscope-o": {
+      "human_smoke_status": "failed",
+      "conclusion": "OpenAI Responses lost the original prompt and accumulated transcript with store=false and no server-side continuation"
+    },
+    "dashscope-a": {
+      "supplemental_human_smoke_status": "semantic_pass",
+      "oracle_status": "false_negative",
+      "conclusion": "read_file -> patch_file -> read_file succeeded semantically; the prior verifier omitted Markdown backticks"
+    },
+    "w7_status": "blocked"
+  },
+  "historical_smoke_evidence": [
+    {
+      "path": "/tmp/pico-w6r2-smoke.sBlCMA/",
+      "handling": "EVAL-059-O must hash-bind and generate redacted adjudication when present; otherwise record unavailable"
+    },
+    {
+      "path": "/tmp/pico-w6r2-smoke-a.19odaO/",
+      "handling": "EVAL-059-O must hash-bind and generate redacted adjudication when present; otherwise record unavailable"
+    }
+  ],
+  "canonical_history": {
+    "rule_reference": ".codex/eval/CONTROL.md#canonical-history-可读性",
+    "commit_map_path": ".codex/eval/state/W6R3-commit-map.json",
+    "worker_bundle_path": "F:\\dev\\llm\\pico-eval-artifacts\\wave-bundles\\W6R3-workers.bundle",
+    "canonical_tag": "eval-v3/w6r3-canonical",
+    "canonical_tag_type": "annotated",
+    "retain_worker_branches_and_worktrees": true
+  },
+  "dispatch_order": [
+    "EVAL-059-O",
+    "TEST-059-C",
+    "EVAL-059-H",
+    "TOOL-059-R",
+    "TOOL-059-O",
+    "AUDIT-059-A",
+    "TOOL-059-G"
+  ],
+  "constraints": {
+    "oracle_v2_before_product_fixes": true,
+    "test_059_c_red_baseline_before_tool_059_o": true,
+    "tool_059_g_environment": "Ubuntu WSL2/Python 3.12 fresh clone",
+    "provider_http_attempts": 0,
+    "profile_reselection_allowed": false,
+    "human_smoke_allowed": false,
+    "start_w6r4_allowed": false,
+    "start_w7_allowed": false
+  },
+  "opened_at": "2026-07-24T10:05:09.3686937+08:00"
+}
