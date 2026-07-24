@@ -514,6 +514,63 @@
       "sha256": "12a6f9b3ae756e6f4f6a2ae380f2926252bb814400a0c994062af3f68f4e9cc9"
     }
   },
+  "native_human_smoke_v2": {
+    "version": "pico-native-human-smoke-v2",
+    "status": "complete",
+    "manifest": {
+      "path": "benchmarks/v3/native-provider/human-smoke-v2.json",
+      "schema_version": "pico-native-human-smoke-v2",
+      "sha256": "5a73a009a5c367db7946af487609a48024605682026d2c9a5f758017883f5853",
+      "single_source_for": [
+        "prompt",
+        "fixture",
+        "expected_postcondition",
+        "verifier"
+      ]
+    },
+    "runner": {
+      "path": "scripts/run_v3_native_human_smoke.py",
+      "sha256": "69e9001e6090c21d6e2701e54ce908cfe514036386d5b0dfee78217559e9f20c",
+      "default": "fail_closed",
+      "fake_provider": "no HTTP",
+      "authorized_live": "requires explicit flag, frozen public profile, provider name, and config before client construction"
+    },
+    "tests": {
+      "path": "tests/test_v3_native_human_smoke.py",
+      "sha256": "2acecaa74c8d6dad87171262c715f93c27dd7222cbcb1b5e5ef22968058e7c62",
+      "result": "6 passed; all fake-provider only"
+    },
+    "scenarios": [
+      "HSMOKE-V2-A",
+      "HSMOKE-V2-B"
+    ],
+    "historical_adjudication": {
+      "source_ticket": "EVAL-059-O",
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-oracle-v2/W6R3-EVAL-059-O-01/human-smoke-adjudication.json",
+      "sha256": "fbfe414f7c87218608754b4e807cc114bd2a90b06d8fb622d138b4942c0ed7f9",
+      "read_only": true
+    },
+    "fake_provider_adjudication": {
+      "root": "F:/dev/llm/pico-eval-artifacts/native-provider-human-smoke-adjudication/W6R3-EVAL-059-H-01-correction",
+      "summary_sha256": "041e5178fd397f5247103b2da2a53a6a61a746cbe4584f6af5522d64b1130999",
+      "status": "PASS",
+      "provider_http_attempts": 0,
+      "sensitive_scan_hits": 0
+    },
+    "not_a_formal_human_smoke": true,
+    "authorized_live_not_run": true,
+    "profile_reselection_run": false,
+    "w6r4_started": false,
+    "w7_started": false,
+    "source_ticket": "EVAL-059-H",
+    "source_worker_head": "0d637dfa5d23e1ebcd28555abce979d900b60218",
+    "source_canonical_commit": "f321f064a1a146bcbf64904ee59f0bb863f118d4",
+    "source_handoff_sha256": "456d89a6d81b909551b9e687a70d48625d0fd814bbbbd519b9fd347b0c45f123",
+    "source_proposal": {
+      "path": ".codex/eval/proposals/EVAL-059-H.freeze.json",
+      "sha256": "4457fb73dff6391622322b0521db17fa4d39d12318bce7afabce1a448e0c9ab3"
+    }
+  },
   "native_resume_contract": null,
   "native_resume_gate": null,
   "auto_dream": null,

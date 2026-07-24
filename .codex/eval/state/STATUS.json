@@ -24,6 +24,70 @@
     "native_resume_ready": "pending"
   },
   "accepted_tickets": {
+    "TOOL-059-R": {
+      "instance_id": "W6R3-TOOL-059-R-01",
+      "status": "accepted",
+      "base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+      "worker_branch_head": "8bcf1e5f1241cc19c7ea2590572dbc08c93cb9f6",
+      "own_commits": [
+        "a80339c0aa1c294c7f0b44eea0e7a4024767a68c",
+        "8bcf1e5f1241cc19c7ea2590572dbc08c93cb9f6"
+      ],
+      "integration_commits": ["d07950a5ee94d90658f28c4b52bafc4916a0097e"],
+      "handoff_path": ".codex/eval/handoffs/TOOL-059-R.json",
+      "handoff_sha256": "03c6ade0282d6f2c0a0a2af28c75f1a76c34a5be5358ba67e5cea0b41f5c0fd6",
+      "stable_patch_id": "8ec7e62d11a8d1cde9e1c24eadd58003b8f9819c",
+      "provider_http_attempts": 0
+    },
+    "EVAL-059-H": {
+      "instance_id": "W6R3-EVAL-059-H-01",
+      "status": "accepted",
+      "base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+      "worker_branch_head": "0d637dfa5d23e1ebcd28555abce979d900b60218",
+      "own_commits": [
+        "1a9a4af7da401cdb838359ad265516e590a953f7",
+        "a71bae0d946cc82eb9c2c115bc89e401790bd639",
+        "83ec770a448cf1f45f6d56878ff237a53eeef0e5",
+        "0d637dfa5d23e1ebcd28555abce979d900b60218"
+      ],
+      "integration_commits": ["f321f064a1a146bcbf64904ee59f0bb863f118d4"],
+      "handoff_path": ".codex/eval/handoffs/EVAL-059-H.json",
+      "handoff_sha256": "456d89a6d81b909551b9e687a70d48625d0fd814bbbbd519b9fd347b0c45f123",
+      "freeze_proposal_sha256": "4457fb73dff6391622322b0521db17fa4d39d12318bce7afabce1a448e0c9ab3",
+      "stable_patch_id": "76f493bb117e86ada3ad1994208626c75a912aa5",
+      "provider_http_attempts": 0
+    },
+    "TOOL-059-O": {
+      "instance_id": "W6R3-TOOL-059-O-01",
+      "status": "accepted",
+      "base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+      "worker_branch_head": "6cd6f68eaa44ae5ac73dc2d748359989186e6e55",
+      "own_commits": [
+        "eaae2ea8be115a44fccd948d9dfd05528aad77e6",
+        "6cd6f68eaa44ae5ac73dc2d748359989186e6e55"
+      ],
+      "integration_commits": ["83540b8df58bfb302268b5abd58876a7bf629abc"],
+      "handoff_path": ".codex/eval/handoffs/TOOL-059-O.json",
+      "handoff_sha256": "ad18b730148979e5f46149432484072c1414fb4dc39f90ad074a0539bfdb49cd",
+      "stable_patch_id": "a7062d1ee7d5a89067a3411d375611183b86d7a2",
+      "provider_http_attempts": 0
+    },
+    "TEST-059-C": {
+      "instance_id": "W6R3-TEST-059-C-01",
+      "status": "accepted_red_baseline",
+      "base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+      "worker_branch_head": "f893c6dfb753c76b648256ca8125d5527be14566",
+      "own_commits": [
+        "70ff40fc4c6761e9f91e6ae4d3bc0cdeffa1fb02",
+        "f893c6dfb753c76b648256ca8125d5527be14566"
+      ],
+      "integration_commits": ["49cc1cc2ff72d61b8cdce871e352803ed68b79b5"],
+      "handoff_path": ".codex/eval/handoffs/TEST-059-C.json",
+      "handoff_sha256": "498887b31ca34d7f347b984f8011162802dc6100ffd9f04f8166845ce3d8316f",
+      "stable_patch_id": "16272167e55eb106a2b78b830f6fd67407ec5c75",
+      "red_baseline": "2 expected failures",
+      "provider_http_attempts": 0
+    },
     "EVAL-059-O": {
       "instance_id": "W6R3-EVAL-059-O-01",
       "status": "accepted",
@@ -951,6 +1015,159 @@
     }
   },
   "ticket_instances": {
+    "W6R3-TOOL-059-R-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "TOOL-059-R",
+      "instance_id": "W6R3-TOOL-059-R-01",
+      "wave": "W6R3",
+      "role": "core_implementer/repetition-path-fingerprint-normalization",
+      "thread_id": "019f91f7-4836-7580-a509-0b355f6089b8",
+      "wave_base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+      "base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+      "starting_ref": "codex/w6r3-wave-base",
+      "branch": "codex/w6r3-tool-059-r",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\e6a1\\pico",
+      "dependency_commits": ["b90fb5297aceef3eb137ae8104888974e96e7141"],
+      "applied_dependency_commits": [
+        {
+          "original_commit": "b90fb5297aceef3eb137ae8104888974e96e7141",
+          "applied_commit": "0a8fd2af56400647c4a5edb9279436729ffa1dde",
+          "stable_patch_id": "06e7e986f6b99b5969dd23f00aebd71f61badef2"
+        }
+      ],
+      "allowed_write_paths": [
+        "pico/core/tool_repetition.py",
+        "pico/core/runtime.py",
+        "tests/test_native_tool_repetition.py",
+        ".codex/eval/handoffs/TOOL-059-R.json"
+      ],
+      "model": "gpt-5.6-sol",
+      "reasoning_effort": "high",
+      "prompt_sha256": "09da0cbf1cb59b08d35d13b0b53c03bd78843030c24448276d977a047fcca891",
+      "prompt_hash_basis": "UTF-8 codexDelegation.input",
+      "worker_branch_head": "8bcf1e5f1241cc19c7ea2590572dbc08c93cb9f6",
+      "integration_commits": ["d07950a5ee94d90658f28c4b52bafc4916a0097e"],
+      "handoff_sha256": "03c6ade0282d6f2c0a0a2af28c75f1a76c34a5be5358ba67e5cea0b41f5c0fd6",
+      "stable_patch_id": "8ec7e62d11a8d1cde9e1c24eadd58003b8f9819c",
+      "status": "accepted"
+    },
+    "W6R3-EVAL-059-H-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "EVAL-059-H",
+      "instance_id": "W6R3-EVAL-059-H-01",
+      "wave": "W6R3",
+      "role": "fixture_builder/human-smoke-v2-manifest-runner-verifier",
+      "thread_id": "019f91f6-ecd6-76a3-a724-482c21cda42a",
+      "wave_base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+      "base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+      "starting_ref": "codex/w6r3-wave-base",
+      "branch": "codex/w6r3-eval-059-h",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\0f69\\pico",
+      "dependency_commits": ["b90fb5297aceef3eb137ae8104888974e96e7141"],
+      "applied_dependency_commits": [
+        {
+          "original_commit": "b90fb5297aceef3eb137ae8104888974e96e7141",
+          "applied_commit": "27c6de12b57a7668181c558e215a3415f251bf5d",
+          "stable_patch_id": "06e7e986f6b99b5969dd23f00aebd71f61badef2"
+        }
+      ],
+      "allowed_write_paths": [
+        "benchmarks/v3/native-provider/human-smoke-v2.json",
+        "scripts/run_v3_native_human_smoke.py",
+        "tests/test_v3_native_human_smoke.py",
+        "F:\\dev\\llm\\pico-eval-artifacts\\native-provider-human-smoke-adjudication\\**",
+        ".codex/eval/proposals/EVAL-059-H.freeze.json",
+        ".codex/eval/handoffs/EVAL-059-H.json"
+      ],
+      "model": "gpt-5.6-terra",
+      "reasoning_effort": "medium",
+      "prompt_sha256": "8d9f39b667caa971e94af246b67b1bf4787e0d5f9378e7f4af321d0fc45b6a75",
+      "prompt_hash_basis": "UTF-8 codexDelegation.input",
+      "worker_branch_head": "0d637dfa5d23e1ebcd28555abce979d900b60218",
+      "integration_commits": ["f321f064a1a146bcbf64904ee59f0bb863f118d4"],
+      "handoff_sha256": "456d89a6d81b909551b9e687a70d48625d0fd814bbbbd519b9fd347b0c45f123",
+      "freeze_proposal_sha256": "4457fb73dff6391622322b0521db17fa4d39d12318bce7afabce1a448e0c9ab3",
+      "stable_patch_id": "76f493bb117e86ada3ad1994208626c75a912aa5",
+      "status": "accepted"
+    },
+    "W6R3-TOOL-059-O-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "TOOL-059-O",
+      "instance_id": "W6R3-TOOL-059-O-01",
+      "wave": "W6R3",
+      "role": "adapter_implementer/openai-responses-stateless-transcript",
+      "thread_id": "019f91fc-3623-7321-aef9-0e2fe37a3212",
+      "wave_base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+      "base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+      "starting_ref": "codex/w6r3-wave-base",
+      "branch": "codex/w6r3-tool-059-o",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\4b6c\\pico",
+      "dependency_commits": [
+        "b90fb5297aceef3eb137ae8104888974e96e7141",
+        "49cc1cc2ff72d61b8cdce871e352803ed68b79b5"
+      ],
+      "applied_dependency_commits": [
+        {
+          "original_commit": "b90fb5297aceef3eb137ae8104888974e96e7141",
+          "applied_commit": "f78719ba155969919c0797b8362a284e1792922f",
+          "stable_patch_id": "06e7e986f6b99b5969dd23f00aebd71f61badef2"
+        },
+        {
+          "original_commit": "49cc1cc2ff72d61b8cdce871e352803ed68b79b5",
+          "applied_commit": "bcd94fe8622a33d27a0254e556cde291e27d13a6",
+          "stable_patch_id": "16272167e55eb106a2b78b830f6fd67407ec5c75"
+        }
+      ],
+      "allowed_write_paths": [
+        "pico/providers/openai_responses.py",
+        ".codex/eval/handoffs/TOOL-059-O.json"
+      ],
+      "model": "gpt-5.6-sol",
+      "reasoning_effort": "high",
+      "prompt_sha256": "c5a0dae9fd2ec6d321fbcd1a610abf40eb80244a6ed6f4468c8e12f959d7a79c",
+      "prompt_hash_basis": "UTF-8 codexDelegation.input",
+      "worker_branch_head": "6cd6f68eaa44ae5ac73dc2d748359989186e6e55",
+      "integration_commits": ["83540b8df58bfb302268b5abd58876a7bf629abc"],
+      "handoff_sha256": "ad18b730148979e5f46149432484072c1414fb4dc39f90ad074a0539bfdb49cd",
+      "stable_patch_id": "a7062d1ee7d5a89067a3411d375611183b86d7a2",
+      "status": "accepted"
+    },
+    "W6R3-TEST-059-C-01": {
+      "schema_version": "pico-eval-ticket-instance-v1",
+      "ticket_id": "TEST-059-C",
+      "instance_id": "W6R3-TEST-059-C-01",
+      "wave": "W6R3",
+      "role": "implementer/responses-stateless-transcript-red-tests",
+      "thread_id": "019f91f6-81c6-75b1-8347-bc996798f993",
+      "wave_base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+      "base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+      "starting_ref": "codex/w6r3-wave-base",
+      "branch": "codex/w6r3-test-059-c",
+      "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\7a4a\\pico",
+      "dependency_commits": ["b90fb5297aceef3eb137ae8104888974e96e7141"],
+      "applied_dependency_commits": [
+        {
+          "original_commit": "b90fb5297aceef3eb137ae8104888974e96e7141",
+          "applied_commit": "3ff111b1b8fd6a1c597095460c7e117ac8a5a83d",
+          "stable_patch_id": "06e7e986f6b99b5969dd23f00aebd71f61badef2"
+        }
+      ],
+      "allowed_write_paths": [
+        "tests/test_openai_responses_tools.py",
+        "tests/test_native_runtime_integration.py",
+        "tests/test_native_stateless_transcript.py",
+        ".codex/eval/handoffs/TEST-059-C.json"
+      ],
+      "model": "gpt-5.6-sol",
+      "reasoning_effort": "medium",
+      "prompt_sha256": "69de15c58b0daa2020ee57344ff77f6b45bf66f5f2825928810bd157d2202b8e",
+      "prompt_hash_basis": "UTF-8 codexDelegation.input",
+      "worker_branch_head": "f893c6dfb753c76b648256ca8125d5527be14566",
+      "integration_commits": ["49cc1cc2ff72d61b8cdce871e352803ed68b79b5"],
+      "handoff_sha256": "498887b31ca34d7f347b984f8011162802dc6100ffd9f04f8166845ce3d8316f",
+      "stable_patch_id": "16272167e55eb106a2b78b830f6fd67407ec5c75",
+      "status": "accepted_red_baseline"
+    },
     "W6R3-EVAL-059-O-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
       "ticket_id": "EVAL-059-O",
@@ -982,6 +1199,8 @@
       ],
       "model": "gpt-5.6-sol",
       "reasoning_effort": "high",
+      "prompt_sha256": "3c5d47228a465010400f2fea780ce072b3c457accdd2b25e7348cc908aed25a0",
+      "prompt_hash_basis": "UTF-8 codexDelegation.input",
       "worker_branch_head": "a642a7d223d392b34f78692fa2bffe0feb5c5b4e",
       "own_commits": [
         "ee656bce32311013c1d637568a4bd472f6010245",
@@ -3728,10 +3947,10 @@
     "W6R": ".codex/eval/state/W6R-wave-handoff.json",
     "W6R2": ".codex/eval/state/W6R2-wave-handoff.json"
   },
-  "ready_tickets": ["TEST-059-C", "EVAL-059-H", "TOOL-059-R"],
+  "ready_tickets": ["AUDIT-059-A"],
   "wave_open": {
     "wave": "W6R3",
-    "status": "open_oracle_v2_frozen",
+    "status": "open_sources_accepted",
     "wave_base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
     "control_overlay_commit_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
     "control_overlay_path": ".codex/eval/state/W6R3-wave-open.json",
@@ -3745,6 +3964,8 @@
     "allowed_path_ownership_conflicts": [],
     "oracle_v2_canonical_commit": "b90fb5297aceef3eb137ae8104888974e96e7141",
     "oracle_v2_status": "frozen",
+    "human_smoke_v2_status": "frozen",
+    "source_ticket_integration_head": "d07950a5ee94d90658f28c4b52bafc4916a0097e",
     "human_smoke_recovery": {
       "dashscope-o": "failed",
       "dashscope-a": "semantic_pass_oracle_false_negative"
@@ -3759,6 +3980,32 @@
     "opened_at": "2026-07-24T10:05:09.3686937+08:00"
   },
   "batch_checkpoints": [
+    {
+      "wave": "W6R3",
+      "batch": 2,
+      "accepted_tickets": ["TEST-059-C", "TOOL-059-O", "EVAL-059-H", "TOOL-059-R"],
+      "canonical_head": "d07950a5ee94d90658f28c4b52bafc4916a0097e",
+      "dependency_commits_for_audit": [
+        "b90fb5297aceef3eb137ae8104888974e96e7141",
+        "49cc1cc2ff72d61b8cdce871e352803ed68b79b5",
+        "83540b8df58bfb302268b5abd58876a7bf629abc",
+        "f321f064a1a146bcbf64904ee59f0bb863f118d4",
+        "d07950a5ee94d90658f28c4b52bafc4916a0097e"
+      ],
+      "stable_patch_ids": {
+        "EVAL-059-O": "06e7e986f6b99b5969dd23f00aebd71f61badef2",
+        "TEST-059-C": "16272167e55eb106a2b78b830f6fd67407ec5c75",
+        "TOOL-059-O": "a7062d1ee7d5a89067a3411d375611183b86d7a2",
+        "EVAL-059-H": "76f493bb117e86ada3ad1994208626c75a912aa5",
+        "TOOL-059-R": "8ec7e62d11a8d1cde9e1c24eadd58003b8f9819c"
+      },
+      "provider_http_attempts": 0,
+      "human_smoke_run": false,
+      "profile_reselection_run": false,
+      "w6r4_started": false,
+      "w7_started": false,
+      "completed_at": "2026-07-24T10:51:29.5508309+08:00"
+    },
     {
       "wave": "W6R3",
       "batch": 1,
@@ -3914,7 +4161,7 @@
   "wave_close": {
     "wave": "W6R3",
     "status": "open",
-    "accepted_tickets": ["EVAL-059-O"],
+    "accepted_tickets": ["EVAL-059-O", "TEST-059-C", "TOOL-059-O", "EVAL-059-H", "TOOL-059-R"],
     "blocked_tickets": [],
     "native_eval_ready": false,
     "native_resume_ready": false,
@@ -4205,5 +4452,5 @@
     "w7_started": false,
     "completed_at": "2026-07-23T19:30:07.4329251+08:00"
   },
-  "updated_at": "2026-07-24T10:29:32.6996165+08:00"
+  "updated_at": "2026-07-24T10:51:29.5508309+08:00"
 }
