@@ -428,6 +428,92 @@
     },
     "prior_provider_selection_preserved": true
   },
+  "native_provider_oracle_v2": {
+    "version": "pico-native-provider-oracle-v2",
+    "status": "complete",
+    "cases": {
+      "path": "benchmarks/v3/native-provider/cases-v2.json",
+      "schema_version": "pico-native-provider-cases-v2",
+      "sha256": "dca7a585c2264a12187dd00344c63c225b966937bf9df8a53ed5a5341417defc",
+      "hash_basis": "UTF-8 file bytes"
+    },
+    "responsibility_boundary": {
+      "safety_owner": "runtime_snapshot",
+      "execution_denominator": "calls entering runtime.run_tool",
+      "pre_runtime_rejection_excluded": true,
+      "execute_completed_means": "tool implementation returned",
+      "operation_outcome_fields": [
+        "tool_status",
+        "tool_error_code"
+      ],
+      "runtime_chain_violation_effect": "block_source_snapshot",
+      "profile_metrics": [
+        "native_wire",
+        "call_result_cardinality",
+        "batch_completeness_if_observed",
+        "opaque_continuation_roundtrip",
+        "retry_counts",
+        "text_protocol_envelope",
+        "unknown_block_loss"
+      ],
+      "stochastic_invalid_args_or_multi_call_required": false
+    },
+    "historical_conformance": {
+      "dashscope-o": {
+        "profile_status_v2": "eligible",
+        "call_id_result_match": "50/50",
+        "batch_completeness": "35/35",
+        "runtime_execution_chains": "50/50",
+        "pre_runtime_rejections": 0
+      },
+      "dashscope-a": {
+        "profile_status_v2": "eligible",
+        "call_id_result_match": "85/85",
+        "batch_completeness": "76/76",
+        "runtime_execution_chains": "83/83",
+        "pre_runtime_rejections": 2
+      },
+      "historical_adjudication_only": true,
+      "reselection_or_promotion_permitted": false
+    },
+    "historical_human_smoke": {
+      "dashscope-o": "failed",
+      "dashscope-a": "semantic_pass_oracle_false_negative",
+      "formal_human_smoke_run": false
+    },
+    "artifact": {
+      "root": "F:/dev/llm/pico-eval-artifacts/native-provider-oracle-v2/W6R3-EVAL-059-O-01",
+      "conformance_adjudication_sha256": "d78bec13744cff83edda12e67e5fc151765d0ce41211b381e56778287bcad291",
+      "human_smoke_adjudication_sha256": "fbfe414f7c87218608754b4e807cc114bd2a90b06d8fb622d138b4942c0ed7f9",
+      "manifest_sha256": "87fa6898bfb7297a4f0244e0e177c1f66e4090b1c43ee544ce59309dc12806b7",
+      "inventory_sha256": "7cb7fa26e3c4347b3461123e925197c7d44f06b22a5cfc56adda49ab51a63138"
+    },
+    "v1_immutability": {
+      "cases_sha256": "92f746b113a88ceb652e4e8ec651021b1358d9922ab91c0dad34e62c0068b9e3",
+      "cases_git_blob_oid": "f513f6e15c521104b12fe348dc280f73624acd56",
+      "selection_w6r2_working_tree_sha256": "2d9251860395276ab03d623b7fee3d7477140d74d7ee6e8f35a008375b79a6cc",
+      "selection_w6r2_git_blob_oid": "6649c651c09e7e65936dadea0efee901e6f12d61",
+      "dashscope_o_rows_sha256": "c95dae0f8c3a90bc46e22e9f07dfce53784e43557f0fdf960bc9f5ba1fa92da3",
+      "dashscope_a_rows_sha256": "dfaf6efe30718d69ebd27f918f6f40978d8fb58af9454bbc702beabf86f09089",
+      "mutated": false
+    },
+    "execution_constraints": {
+      "provider_http_attempts": 0,
+      "human_smoke_run": false,
+      "profile_reselection_run": false,
+      "formal_effectiveness_run": false,
+      "w6r4_started": false,
+      "w7_started": false
+    },
+    "source_ticket": "EVAL-059-O",
+    "source_worker_head": "a642a7d223d392b34f78692fa2bffe0feb5c5b4e",
+    "source_canonical_commit": "b90fb5297aceef3eb137ae8104888974e96e7141",
+    "source_handoff_sha256": "849b687163b77e8957529d72e0111edb08625a76a1276c87799e68b595bef00f",
+    "source_proposal": {
+      "path": ".codex/eval/proposals/EVAL-059-O.freeze.json",
+      "sha256": "12a6f9b3ae756e6f4f6a2ae380f2926252bb814400a0c994062af3f68f4e9cc9"
+    }
+  },
   "native_resume_contract": null,
   "native_resume_gate": null,
   "auto_dream": null,
