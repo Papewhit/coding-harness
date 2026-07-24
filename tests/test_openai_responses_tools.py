@@ -222,6 +222,178 @@ def test_continuation_and_each_tool_result_roundtrip_by_provider_call_id() -> No
     assert wire["tool_choice"] == "none"
 
 
+def _function_call(call_id: str) -> dict[str, Any]:
+    return {
+        "type": "function_call",
+        "call_id": call_id,
+        "name": "weather",
+        "arguments": '{"city":"Hong Kong"}',
+    }
+
+
+def _function_output(call_id: str) -> dict[str, Any]:
+    return {
+        "type": "function_call_output",
+        "call_id": call_id,
+        "output": '{"temperature":22}',
+    }
+
+
+def _complete_continuation(
+    *transcript: dict[str, Any],
+    prompt: str = "Check both cities.",
+) -> ProviderContinuation:
+    return ProviderContinuation(
+        "openai-responses:test-profile",
+        {
+            "version": CONTINUATION_VERSION,
+            "original_prompt": prompt,
+            "transcript": [
+                {"role": "user", "content": prompt},
+                *transcript,
+            ],
+        },
+    )
+
+
+def _followup_request(
+    continuation: ProviderContinuation,
+    *results: ToolCallResult,
+    prompt: str = "Check both cities.",
+) -> ModelRequest:
+    return ModelRequest(
+        prompt=prompt,
+        max_output_tokens=64,
+        tools=[_tool()],
+        tool_results=results,
+        continuation=continuation,
+    )
+
+
+def test_incomplete_unresolved_call_batch_is_rejected_before_transport() -> None:
+    adapter, transport = _adapter()
+    continuation = _complete_continuation(
+        _function_call("call_1"),
+        _function_call("call_2"),
+    )
+    request = _followup_request(
+        continuation,
+        ToolCallResult("call_1", {"temperature": 22}),
+    )
+
+    with pytest.raises(OpenAIResponsesProtocolError) as captured:
+        adapter.request(request)
+
+    assert captured.value.code == "invalid_continuation"
+    assert transport.requests == []
+
+
+def test_reordered_complete_results_are_normalized_to_original_call_order() -> None:
+    adapter, transport = _adapter()
+    continuation = _complete_continuation(
+        _function_call("call_1"),
+        _function_call("call_2"),
+    )
+    request = _followup_request(
+        continuation,
+        ToolCallResult("call_2", {"temperature": 23}),
+        ToolCallResult("call_1", {"temperature": 22}),
+    )
+
+    adapter.request(request)
+
+    outputs = [
+        item
+        for item in transport.requests[0]["input"]
+        if item.get("type") == "function_call_output"
+    ]
+    assert [item["call_id"] for item in outputs] == ["call_1", "call_2"]
+
+
+@pytest.mark.parametrize(
+    ("continuation", "results"),
+    [
+        (
+            _complete_continuation(
+                _function_call("call_1"),
+                _function_call("call_2"),
+            ),
+            (
+                ToolCallResult("call_1", {"temperature": 22}),
+                ToolCallResult("call_2", {"temperature": 23}),
+                ToolCallResult("call_unknown", {"temperature": 24}),
+            ),
+        ),
+        (
+            _complete_continuation(
+                _function_call("call_closed"),
+                _function_output("call_closed"),
+                _function_call("call_current"),
+            ),
+            (
+                ToolCallResult("call_current", {"temperature": 23}),
+                ToolCallResult("call_closed", {"temperature": 22}),
+            ),
+        ),
+    ],
+    ids=("unknown-result-id", "extra-closed-result-id"),
+)
+def test_extra_result_id_is_rejected_before_transport(
+    continuation: ProviderContinuation,
+    results: tuple[ToolCallResult, ...],
+) -> None:
+    adapter, transport = _adapter()
+
+    with pytest.raises(OpenAIResponsesProtocolError) as captured:
+        adapter.request(_followup_request(continuation, *results))
+
+    assert captured.value.code == "invalid_continuation"
+    assert transport.requests == []
+
+
+def test_duplicate_result_id_is_rejected_before_transport() -> None:
+    _, transport = _adapter()
+    continuation = _complete_continuation(_function_call("call_1"))
+
+    with pytest.raises(ValueError, match="duplicate tool result call_id: call_1"):
+        _followup_request(
+            continuation,
+            ToolCallResult("call_1", {"temperature": 22}),
+            ToolCallResult("call_1", {"temperature": 23}),
+        )
+
+    assert transport.requests == []
+
+
+def test_closed_historical_calls_are_not_counted_in_current_result_batch() -> None:
+    adapter, transport = _adapter()
+    continuation = _complete_continuation(
+        _function_call("call_closed"),
+        _function_output("call_closed"),
+        _function_call("call_1"),
+        _function_call("call_2"),
+    )
+    request = _followup_request(
+        continuation,
+        ToolCallResult("call_1", {"temperature": 22}),
+        ToolCallResult("call_2", {"temperature": 23}),
+    )
+
+    adapter.request(request)
+
+    outputs = [
+        item
+        for item in transport.requests[0]["input"]
+        if item.get("type") == "function_call_output"
+    ]
+    assert [item["call_id"] for item in outputs] == [
+        "call_closed",
+        "call_1",
+        "call_2",
+    ]
+    assert len(transport.requests) == 1
+
+
 def test_raw_sdk_response_bytes_win_over_lossy_typed_unknown_item() -> None:
     unknown = {"type": "future_private", "opaque": {"nested": [1, "two"]}}
     raw = _wire_response([unknown])
