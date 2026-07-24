@@ -575,7 +575,9 @@
   },
   "w6r3_recovery_audit": {
     "version": "pico-w6r3-recovery-audit-v1",
-    "status": "blocked",
+    "status": "needs_remediation",
+    "prior_status": "blocked",
+    "remediation_round": 1,
     "source_integration_head_before_close_metadata": "8b0abb22e394206c6e03276a0bb71e309e7efa4b",
     "source_integration_tree_before_close_metadata": "b48a6ebcbade67eb4984eef7c39497fd6a126acf",
     "audit": {
@@ -609,6 +611,43 @@
     "preserved_snapshot": {
       "run_snapshot_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
       "semantics": "Prior W6R2 runtime snapshot remains historical only; W6R3 did not approve a replacement recovery snapshot."
+    },
+    "execution_constraints": {
+      "provider_http_attempts": 0,
+      "human_smoke_run": false,
+      "profile_reselection_run": false,
+      "formal_effectiveness_run": false,
+      "resume_run": false,
+      "w6r4_started": false,
+      "w7_started": false
+    }
+  },
+  "w6r3_remediation_cycle_1": {
+    "version": "pico-w6r3-remediation-cycle-v1",
+    "status": "needs_remediation",
+    "remediation_round": 1,
+    "resume_control_head": "647437bda4be4652f089b93ecf67d99914c45122",
+    "candidate_ref": "codex/w6r3-remediation-r1-candidate",
+    "candidate_semantics": "The commit containing the formal resume checkpoint is the common immutable remediation candidate.",
+    "frozen_inputs_preserved": {
+      "oracle_v2": true,
+      "human_smoke_v2_bytes": true,
+      "w6r2_cases_rows_selection_and_smoke": true
+    },
+    "historical_w6r3_attempt": {
+      "handoff_sha256": "827560dac112f1b813212699d91cca474b5a68dd07d7523d459b04e5f005676d",
+      "commit_map_sha256": "b57b018a73f045e6cdab668f6ec6a44e757aedbc32f6a4263c95a33bc12667bc",
+      "worker_bundle_sha256": "98474e9e8b3a6812b1bf0208bd8f32e9a500339771a1f9fbd7343118a1ed495e",
+      "canonical_tag_object_sha": "15d09fecc52af7b6e0750f044484b3c0b2cf4a02",
+      "canonical_tag_target": "9d35e7d22eca9ff89c7920dd3a7fa479185c75d5",
+      "preserved_immutable": true
+    },
+    "allowed_remediation": {
+      "TEST-059-C": "revision 2",
+      "EVAL-059-H": "revision 2 with new v3 paths",
+      "TOOL-059-A-R1": "new scoped Anthropic owner",
+      "TOOL-059-O": "revision 2 after TEST-059-C",
+      "AUDIT-059-A": "revision 2 read-only re-review"
     },
     "execution_constraints": {
       "provider_http_attempts": 0,

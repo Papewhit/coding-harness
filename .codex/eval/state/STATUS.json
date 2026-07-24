@@ -20,7 +20,7 @@
   "wave_base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
   "run_snapshot_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
   "gates": {
-    "native_eval_ready": "blocked_by_w6r3_audit",
+    "native_eval_ready": "needs_remediation",
     "native_resume_ready": "pending"
   },
   "accepted_tickets": {
@@ -958,7 +958,23 @@
       "selected_profile": null
     }
   },
-  "active_tickets": {},
+  "active_tickets": {
+    "TEST-059-C": {
+      "instance_id": "W6R3-TEST-059-C-01",
+      "revision": 2,
+      "status": "ready_for_review_return"
+    },
+    "EVAL-059-H": {
+      "instance_id": "W6R3-EVAL-059-H-01",
+      "revision": 2,
+      "status": "ready_for_review_return"
+    },
+    "TOOL-059-A-R1": {
+      "instance_id": "W6R3-TOOL-059-A-R1-01",
+      "revision": 1,
+      "status": "ready"
+    }
+  },
   "blocked_tickets": {
     "TOOL-050-QO-R": {
       "instance_id": "W6-TOOL-050-QO-R-01",
@@ -1001,13 +1017,6 @@
       "reason": "completed_24_rows_with_10_protocol_errors_and_10_safety_chain_bypasses",
       "handoff_path": ".codex/eval/handoffs/TOOL-050-DA-R2.json",
       "handoff_sha256": "eec6ee22918fb50adfde7df7a0a7c39eb3d85894a7e2c627a57a59b964202763"
-    },
-    "AUDIT-059-A": {
-      "instance_id": "W6R3-AUDIT-059-A-01",
-      "status": "blocked",
-      "reason": "three_open_p1_findings_block_tool_059_g",
-      "handoff_path": ".codex/eval/handoffs/AUDIT-059-A.json",
-      "handoff_sha256": "659d898a96fab1514b6a78027f886fcefedcff859a2e29f22dc87e293ec06d5b"
     }
   },
   "prior_wave_blocked_tickets": {
@@ -1283,7 +1292,9 @@
       "stable_patch_id": "87e1631af7bf1d62e4ad577f7fb7068f518beca0",
       "provider_http_attempts": 0,
       "open_p1_findings": 3,
-      "status": "blocked",
+      "status": "needs_remediation",
+      "prior_status": "blocked",
+      "remediation_round": 1,
       "completed_at": "2026-07-24T11:07:43+08:00"
     },
     "W6R2-TOOL-050-S-R1-01": {
@@ -4015,10 +4026,10 @@
     "W6R2": ".codex/eval/state/W6R2-wave-handoff.json",
     "W6R3": ".codex/eval/state/W6R3-wave-handoff.json"
   },
-  "ready_tickets": [],
+  "ready_tickets": ["TEST-059-C", "EVAL-059-H", "TOOL-059-A-R1"],
   "wave_open": {
     "wave": "W6R3",
-    "status": "blocked_at_read_only_audit",
+    "status": "needs_remediation",
     "wave_base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
     "control_overlay_commit_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
     "control_overlay_path": ".codex/eval/state/W6R3-wave-open.json",
@@ -4035,7 +4046,7 @@
     "human_smoke_v2_status": "frozen",
     "source_ticket_integration_head": "d07950a5ee94d90658f28c4b52bafc4916a0097e",
     "audit_canonical_commit": "8b0abb22e394206c6e03276a0bb71e309e7efa4b",
-    "audit_status": "blocked",
+    "audit_status": "needs_remediation",
     "deterministic_gate_status": "not_dispatched",
     "human_smoke_recovery": {
       "dashscope-o": "failed",
@@ -4251,9 +4262,11 @@
   ],
   "wave_close": {
     "wave": "W6R3",
-    "status": "blocked_before_deterministic_gate",
+    "status": "needs_remediation",
+    "prior_status": "blocked_before_deterministic_gate",
     "accepted_tickets": ["EVAL-059-O", "TEST-059-C", "TOOL-059-O", "EVAL-059-H", "TOOL-059-R"],
-    "blocked_tickets": ["AUDIT-059-A"],
+    "blocked_tickets": [],
+    "needs_remediation_tickets": ["TEST-059-C", "TOOL-059-O", "EVAL-059-H", "TOOL-059-A-R1", "AUDIT-059-A"],
     "not_dispatched_tickets": ["TOOL-059-G"],
     "source_integration_head_before_close_metadata": "8b0abb22e394206c6e03276a0bb71e309e7efa4b",
     "source_integration_tree_before_close_metadata": "b48a6ebcbade67eb4984eef7c39497fd6a126acf",
@@ -4268,6 +4281,43 @@
     "formal_effectiveness_evaluation_run": false,
     "human_smoke_run": false,
     "resume_evaluation_run": false,
+    "w6r4_started": false,
+    "w7_started": false
+  },
+  "w6r3_remediation": {
+    "status": "needs_remediation",
+    "remediation_round": 1,
+    "resume_control_head": "647437bda4be4652f089b93ecf67d99914c45122",
+    "candidate_ref": "codex/w6r3-remediation-r1-candidate",
+    "candidate_semantics": "The commit containing this resume checkpoint; its resolved SHA is frozen immediately after commit and supplied to every round-1 worker.",
+    "historical_attempt": {
+      "handoff_path": ".codex/eval/state/W6R3-wave-handoff.json",
+      "handoff_sha256": "827560dac112f1b813212699d91cca474b5a68dd07d7523d459b04e5f005676d",
+      "commit_map_path": ".codex/eval/state/W6R3-commit-map.json",
+      "commit_map_sha256": "b57b018a73f045e6cdab668f6ec6a44e757aedbc32f6a4263c95a33bc12667bc",
+      "worker_bundle_path": "F:\\dev\\llm\\pico-eval-artifacts\\wave-bundles\\W6R3-workers.bundle",
+      "worker_bundle_sha256": "98474e9e8b3a6812b1bf0208bd8f32e9a500339771a1f9fbd7343118a1ed495e",
+      "canonical_tag": "eval-v3/w6r3-canonical",
+      "canonical_tag_object_sha": "15d09fecc52af7b6e0750f044484b3c0b2cf4a02",
+      "canonical_tag_target": "9d35e7d22eca9ff89c7920dd3a7fa479185c75d5",
+      "preserved_immutable": true
+    },
+    "finding_ownership": {
+      "AUDIT-059-A-P1-001": ["TOOL-059-A-R1"],
+      "AUDIT-059-A-P1-002": ["TEST-059-C", "TOOL-059-O"],
+      "AUDIT-059-A-P1-003": ["EVAL-059-H"]
+    },
+    "dispatch_order": [
+      "TEST-059-C revision 2",
+      "EVAL-059-H revision 2",
+      "TOOL-059-A-R1",
+      "TOOL-059-O revision 2 after TEST-059-C revision 2",
+      "AUDIT-059-A revision 2 after repaired candidate",
+      "TOOL-059-G only after accepted audit"
+    ],
+    "provider_http_attempts": 0,
+    "human_smoke_run": false,
+    "profile_reselection_run": false,
     "w6r4_started": false,
     "w7_started": false
   },
