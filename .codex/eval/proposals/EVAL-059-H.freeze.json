@@ -2,10 +2,15 @@
   "schema_version": "pico-eval-freeze-proposal-v1",
   "ticket_id": "EVAL-059-H",
   "instance_id": "W6R3-EVAL-059-H-01",
+  "revision": 2,
+  "supersedes_handoff_sha256": "456d89a6d81b909551b9e687a70d48625d0fd814bbbbd519b9fd347b0c45f123",
+  "findings_addressed": ["AUDIT-059-A-P1-003", "PLAN-HSMOKE-V3-SEMANTIC-ORDER", "PLAN-HSMOKE-V3-LIVE-GUARD", "PLAN-HSMOKE-V3-PROVENANCE"],
+  "candidate": {"sha": "ed287daaf9e88d59b5a027e759032e022a138d27", "tree": "72f68c764b26830fb8c86f6bd11f95c3b452b9c4", "ref": "codex/w6r3-remediation-r1-candidate"},
   "status": "complete",
   "proposal_only": true,
   "formal_freeze_written": false,
-  "formal_freeze_sha256": "b1bdc9755e612d5118bf08793b111f91f3dfa4feb27e43ff83933bb08566c0e4",
+  "formal_status_sha256": "df244ea8e5237702d09ba2f0f9eb5e88ea3c6f29e95573afd33ae243d6cac846",
+  "formal_freeze_sha256": "09a6d2143f279ec64bbcacfe48bd9b27f0aac1a377679987dcd6ab411fd67219",
   "dependency": {
     "ticket_id": "EVAL-059-O",
     "original_commit": "b90fb5297aceef3eb137ae8104888974e96e7141",
@@ -32,6 +37,7 @@
       "result": "6 passed; all fake-provider only"
     },
     "scenarios": ["HSMOKE-V2-A", "HSMOKE-V2-B"],
+    "immutable_in_revision_2": true,
     "historical_adjudication": {
       "source_ticket": "EVAL-059-O",
       "path": "F:/dev/llm/pico-eval-artifacts/native-provider-oracle-v2/W6R3-EVAL-059-O-01/human-smoke-adjudication.json",
@@ -47,7 +53,11 @@
     "sensitive_scan_hits": 0
   },
   "not_a_formal_human_smoke": true,
+  "formal_human_smoke_run": false,
+  "v3_contract": {"manifest_sha256": "4a513c285ada8d3fc5a3f694e7286dba0f2bf579685c73e4d5720b51ea756f41", "runner_sha256": "311b158c214493feef48802940e9a4e0a5eb2eb5afc21478cd10743bab506cb6", "tests_sha256": "15a97567d4aba0af0e745c074df54f18b9bbc3964f4f53ecc34a8cf96a3f9b27", "commit": "176f0efb13236e3c236faa2a9d96f17130d1033d", "stable_patch_id": "d8ca9ea8384e433df0a34cc4d124ab009c178c48", "semantic_order": true, "live_guard": "authorized-live requires explicit flag, frozen profile, and provider config; no fake fallback", "provenance": ["model_exchange call IDs", "runtime events", "source", "manifest", "sanitized profile", "HTTP attempts", "before/after hashes", "diff"]},
+  "v3_fake_artifact": {"root": "F:/dev/llm/pico-eval-artifacts/native-provider-human-smoke-v3/W6R3-EVAL-059-H-01-R2", "status": "PASS", "http_attempts": 0, "summary_sha256": "d5872ee6b8ae2c7a7da7c67aff3637079bea00dc4257542a979cc3ce713ce1e3", "results": {"HSMOKE-V3-A": "cad6cee02f7328e405aa97fb02f6f27678105a32eec6337caed7e6e26bb134e6", "HSMOKE-V3-B": "fe6a4301e02df04016da287be9d7ac2ed206739c67cfb3ca5e5a08bf39a04d83"}},
   "authorized_live_not_run": true,
+  "authorized_live_run": false,
   "profile_reselection_run": false,
   "w6r4_started": false,
   "w7_started": false

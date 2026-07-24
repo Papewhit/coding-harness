@@ -1,0 +1,36 @@
+{
+  "schema_version": "pico-native-human-smoke-v3",
+  "version": 3,
+  "execution_modes": {"fake_provider": {"expected_http_attempts": 0}, "authorized_live": {"requires_explicit_authorization": true, "requires_frozen_profile": true, "requires_provider_config": true}},
+  "scenarios": [
+    {
+      "id": "HSMOKE-V3-A",
+      "title": "Refresh a Markdown quickstart",
+      "approval_policy": "auto",
+      "prompt": "The quickstart has an outdated setup command. Please read docs/quickstart.md, update the command and explanation, then verify the final Markdown. Keep the document concise.",
+      "fixture": {"files": {"docs/quickstart.md": "# Quickstart\n\nRun `pico setup` before opening the workspace.\n"}},
+      "fake_responses": [
+        {"tool": {"name": "read_file", "arguments": {"path": "docs/quickstart.md"}}},
+        {"tool": {"name": "patch_file", "arguments": {"path": "docs/quickstart.md", "old_text": "Run `pico setup` before opening the workspace.", "new_text": "Run `pico sync` before opening the workspace so dependencies are ready."}}},
+        {"tool": {"name": "read_file", "arguments": {"path": "docs/quickstart.md"}}},
+        {"final": "Updated and verified the Quickstart command."}
+      ],
+      "expected_postcondition": {"files": {"docs/quickstart.md": {"contains": ["Run `pico sync` before opening the workspace so dependencies are ready."]}}, "semantic_order": ["read_file", "patch_file", "read_file"]},
+      "verifier": {"kind": "semantic_edit_verify"}
+    },
+    {
+      "id": "HSMOKE-V3-B",
+      "title": "Diagnostics request with a denied command",
+      "approval_policy": "never",
+      "prompt": "Please run `printf diagnostics` in this workspace, then inspect README.md and give a concise status update.",
+      "fixture": {"files": {"README.md": "# Field Notes\n\nService status is collected from local logs.\n"}},
+      "fake_responses": [
+        {"tool": {"name": "run_shell", "arguments": {"command": "printf diagnostics", "timeout": 5}}},
+        {"tool": {"name": "read_file", "arguments": {"path": "README.md"}}},
+        {"final": "I inspected the local notes and recorded the available status."}
+      ],
+      "expected_postcondition": {"files": {"README.md": {"equals": "# Field Notes\n\nService status is collected from local logs.\n"}}, "semantic_order": ["run_shell", "read_file"]},
+      "verifier": {"kind": "runtime_denial_then_safe_continuation"}
+    }
+  ]
+}
