@@ -191,8 +191,23 @@ class OpenAIResponsesAdapter:
         replay_items, original_prompt = self._continuation_items(request.continuation)
         if original_prompt is not None:
             input_items = list(replay_items)
-            if request.tool_results:
-                outputs = [_function_output(result) for result in request.tool_results]
+            unresolved_call_ids = _validate_transcript(
+                input_items,
+                original_prompt=original_prompt,
+            )
+            results_by_call_id = {
+                result.call_id: result for result in request.tool_results
+            }
+            if set(results_by_call_id) != set(unresolved_call_ids):
+                raise OpenAIResponsesProtocolError(
+                    "invalid_continuation",
+                    "OpenAI Responses tool results must exactly match the unresolved call batch",
+                )
+            if unresolved_call_ids:
+                outputs = [
+                    _function_output(results_by_call_id[call_id])
+                    for call_id in unresolved_call_ids
+                ]
                 _validate_transcript(
                     [*input_items, *outputs],
                     original_prompt=original_prompt,
@@ -332,7 +347,7 @@ def _validate_transcript(
     transcript: Sequence[Mapping[str, Any]],
     *,
     original_prompt: str,
-) -> None:
+) -> tuple[str, ...]:
     if not transcript or transcript[0] != {
         "role": "user",
         "content": original_prompt,
@@ -341,7 +356,8 @@ def _validate_transcript(
             "invalid_continuation",
             "OpenAI Responses transcript must begin with the original Runtime prompt",
         )
-    call_ids: set[str] = set()
+    call_ids: list[str] = []
+    seen_call_ids: set[str] = set()
     result_ids: set[str] = set()
     for index, item in enumerate(transcript):
         item_type = item.get("type")
@@ -352,12 +368,13 @@ def _validate_transcript(
                     "invalid_continuation",
                     f"OpenAI Responses transcript[{index}] function_call has no call_id",
                 )
-            if call_id in call_ids:
+            if call_id in seen_call_ids:
                 raise OpenAIResponsesProtocolError(
                     "invalid_continuation",
                     f"OpenAI Responses transcript repeats function_call {call_id!r}",
                 )
-            call_ids.add(call_id)
+            call_ids.append(call_id)
+            seen_call_ids.add(call_id)
         elif item_type == "function_call_output":
             call_id = item.get("call_id")
             if not isinstance(call_id, str) or not call_id.strip():
@@ -365,7 +382,7 @@ def _validate_transcript(
                     "invalid_continuation",
                     f"OpenAI Responses transcript[{index}] function_call_output has no call_id",
                 )
-            if call_id not in call_ids:
+            if call_id not in seen_call_ids:
                 raise OpenAIResponsesProtocolError(
                     "invalid_continuation",
                     f"OpenAI Responses transcript result has no prior call {call_id!r}",
@@ -376,6 +393,7 @@ def _validate_transcript(
                     f"OpenAI Responses transcript repeats function result {call_id!r}",
                 )
             result_ids.add(call_id)
+    return tuple(call_id for call_id in call_ids if call_id not in result_ids)
 
 
 def _function_tool(tool: ToolDefinition) -> dict[str, Any]:
