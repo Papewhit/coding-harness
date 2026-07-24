@@ -1,0 +1,296 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "AUDIT-059-A",
+  "instance_id": "W6R3-AUDIT-059-A-01",
+  "wave": "W6R3",
+  "role": "reviewer/oracle-v2-responses-recovery-evidence-closure",
+  "status": "blocked",
+  "audit_outcome": "blocked",
+  "source_thread_id": "019f91dc-1940-7b31-9e6f-086f4941922b",
+  "base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+  "wave_base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+  "starting_ref": "codex/w6r3-wave-base",
+  "starting_ref_verified_target": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+  "branch": "codex/w6r3-audit-059-a",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/24a9/pico",
+  "audited_head_sha": "ce49b24917b95ecb55704e5333c5039360af3b47",
+  "audited_head_tree": "f3c9f2956532c80af5a79ba577e9427721e3136f",
+  "audited_head_semantics": "The exact wave base plus only the five manifest dependencies, before the metadata-only commit containing this handoff.",
+  "metadata_commit_semantics": "The commit containing this handoff is metadata-only and cannot self-record its own SHA.",
+  "dependency_commits": [
+    "b90fb5297aceef3eb137ae8104888974e96e7141",
+    "49cc1cc2ff72d61b8cdce871e352803ed68b79b5",
+    "83540b8df58bfb302268b5abd58876a7bf629abc",
+    "f321f064a1a146bcbf64904ee59f0bb863f118d4",
+    "d07950a5ee94d90658f28c4b52bafc4916a0097e"
+  ],
+  "applied_dependency_commits": [
+    {
+      "ticket_id": "EVAL-059-O",
+      "original_commit": "b90fb5297aceef3eb137ae8104888974e96e7141",
+      "applied_commit": "fb3d0f866b79d2c35e85bf28541919fab7aaf2e6",
+      "stable_patch_id": "06e7e986f6b99b5969dd23f00aebd71f61badef2"
+    },
+    {
+      "ticket_id": "TEST-059-C",
+      "original_commit": "49cc1cc2ff72d61b8cdce871e352803ed68b79b5",
+      "applied_commit": "b1e3e8af31b5fec9446afe308b7eb51716efbd59",
+      "stable_patch_id": "16272167e55eb106a2b78b830f6fd67407ec5c75"
+    },
+    {
+      "ticket_id": "TOOL-059-O",
+      "original_commit": "83540b8df58bfb302268b5abd58876a7bf629abc",
+      "applied_commit": "879811162576762cf2499840128a5555d5be0e08",
+      "stable_patch_id": "a7062d1ee7d5a89067a3411d375611183b86d7a2"
+    },
+    {
+      "ticket_id": "EVAL-059-H",
+      "original_commit": "f321f064a1a146bcbf64904ee59f0bb863f118d4",
+      "applied_commit": "8822544cabe3aff8d4bed815d599edf3adb09fc0",
+      "stable_patch_id": "76f493bb117e86ada3ad1994208626c75a912aa5"
+    },
+    {
+      "ticket_id": "TOOL-059-R",
+      "original_commit": "d07950a5ee94d90658f28c4b52bafc4916a0097e",
+      "applied_commit": "ce49b24917b95ecb55704e5333c5039360af3b47",
+      "stable_patch_id": "8ec7e62d11a8d1cde9e1c24eadd58003b8f9819c"
+    }
+  ],
+  "own_commits": [],
+  "dependency_handoff_hashes": {
+    "EVAL-059-O": "849b687163b77e8957529d72e0111edb08625a76a1276c87799e68b595bef00f",
+    "TEST-059-C": "498887b31ca34d7f347b984f8011162802dc6100ffd9f04f8166845ce3d8316f",
+    "TOOL-059-O": "ad18b730148979e5f46149432484072c1414fb4dc39f90ad074a0539bfdb49cd",
+    "EVAL-059-H": "456d89a6d81b909551b9e687a70d48625d0fd814bbbbd519b9fd347b0c45f123",
+    "TOOL-059-R": "03c6ade0282d6f2c0a0a2af28c75f1a76c34a5be5358ba67e5cea0b41f5c0fd6"
+  },
+  "formal_state_verification": {
+    "integration_worktree": "F:/dev/llm/pico",
+    "integration_branch": "eval/v3-integration",
+    "integration_head": "61fd868073d2ddd8ff02ef42a0347e0294b735ae",
+    "integration_worktree_tracked_clean": true,
+    "STATUS_sha256": "1269dea3b35ede42fea6b7d48abb52e755046c50a9f8c95c42496f5d2894c20f",
+    "FREEZE_sha256": "90480ee24de8f7e2da0ab91027d4d349c64ca1779b9af6e786f81aca59c54436",
+    "matched_instance_manifest": true,
+    "formal_state_modified_by_ticket": false
+  },
+  "allowed_write_paths": [
+    ".codex/eval/handoffs/AUDIT-059-A.json"
+  ],
+  "files_changed_by_ticket": [
+    ".codex/eval/handoffs/AUDIT-059-A.json"
+  ],
+  "audit_method": [
+    "Read AGENTS.md, CONTROL.md, the AUDIT-059-A PLAN entry, ticket, thread template, and all five dependency handoffs.",
+    "Verified the clean detached wave base, created the requested branch, applied only the five ordered dependency commits, and matched every stable patch-id.",
+    "Reviewed the dependency diffs, production adapters, evaluator, Runtime safety chain, human-smoke runner and manifest, repetition implementation, deterministic tests, proposals, and persisted artifacts.",
+    "Verified immutable v1 cases, W6R2 selection, W6R2 wave handoff, and both historical rows files by Git blob or SHA-256.",
+    "Regenerated both historical Oracle v2 profile adjudications in memory with the final dependency-applied evaluator; both matched the persisted adjudication objects exactly.",
+    "Ran no-network deterministic tests and two in-memory negative controls for transcript completeness; no provider client or provider HTTP path was invoked.",
+    "Scanned changed source and public artifacts for credentials, SDK Tool/Agent Runner use, executable text envelopes, and raw authorization material."
+  ],
+  "tests": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 uv run pytest -p no:cacheprovider tests/test_native_provider_evaluator.py tests/test_native_provider_live.py tests/test_native_stateless_transcript.py tests/test_openai_responses_tools.py tests/test_anthropic_messages_tools.py tests/test_v3_native_human_smoke.py tests/test_native_tool_repetition.py tests/test_native_safety_chain_evidence.py -q",
+      "result": "passed",
+      "details": "82 passed in 87.73s; deterministic fake/stub transports only; provider HTTP attempts=0."
+    },
+    {
+      "command": ".venv/Scripts/ruff.exe check --no-cache <audited implementation and test paths>",
+      "result": "passed",
+      "details": "All checks passed."
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed"
+    },
+    {
+      "command": "In-memory Oracle v2 regeneration from immutable TOOL-050-QO-R2 and TOOL-050-QA-R2 rows using the dependency-applied evaluator",
+      "result": "passed",
+      "details": "dashscope-o and dashscope-a regenerated objects were byte-structure equal to the persisted conformance adjudication profiles."
+    },
+    {
+      "command": "In-memory OpenAI Responses incomplete-batch negative control",
+      "result": "failed_as_audit_control",
+      "details": "A v2 continuation with two function_call items and only one ToolCallResult was accepted by compile_request; emitted transcript counts were calls=2, outputs=1."
+    },
+    {
+      "command": "In-memory Anthropic Messages three-tool-round transcript control",
+      "result": "failed_as_audit_control",
+      "details": "The fourth request retained only the third call/result (a3/a3); the first two call/result pairs were absent."
+    },
+    {
+      "command": "Static credential, SDK Runner, text-envelope, and HTTP-path scan over changed source plus Oracle v2 and human-smoke public artifacts",
+      "result": "passed",
+      "details": "Credential-like hits=0; SDK-managed Pico execution hits=0; executable <tool>/<final> fallback hits=0; this ticket's provider HTTP attempts=0."
+    }
+  ],
+  "verdicts": {
+    "pre_runtime_rejection_excluded_from_execution_denominator": {
+      "result": "passed",
+      "evidence": "Oracle v2 classifies explicit or legacy tool_choice_none_violation pre-Runtime rows before incrementing execution_denominator; the persisted dashscope-a adjudication reports 83 runtime executions plus 2 excluded pre-Runtime rejections."
+    },
+    "execute_completed_semantics_preserved": {
+      "result": "passed",
+      "evidence": "Oracle v2 accepts an ordered execute=completed chain independently from structured tool_status/tool_error_code and preserves a nonzero tool failure as runtime_chain_complete=true."
+    },
+    "runtime_chain_violation_blocks_source_snapshot": {
+      "result": "passed",
+      "evidence": "Any missing or malformed Runtime chain increments runtime_chain_violation_count and blocks runtime_snapshot without charging the profile; SDK-managed execution is also snapshot-blocking."
+    },
+    "stochastic_invalid_or_multi_call_not_live_eligibility": {
+      "result": "passed",
+      "evidence": "cases-v2 marks invalid-argument repair and unexpected multi-call predicates deterministic-only; historical source case errors remain descriptive and do not make profile_status_v2 ineligible."
+    },
+    "openai_anthropic_multiround_context_test_symmetry": {
+      "result": "failed",
+      "finding_id": "AUDIT-059-A-P1-001"
+    },
+    "responses_original_prompt_order_uniqueness_and_v1_fail_closed": {
+      "result": "failed",
+      "finding_id": "AUDIT-059-A-P1-002",
+      "passed_subchecks": [
+        "original Runtime prompt remains first in the normal v2 transcript",
+        "a result without a prior call is rejected",
+        "duplicate call IDs and duplicate result IDs are rejected",
+        "legacy v1 continuation fails closed before transport"
+      ]
+    },
+    "human_smoke_manifest_and_live_guard": {
+      "result": "failed",
+      "finding_id": "AUDIT-059-A-P1-003",
+      "passed_subchecks": [
+        "prompt, fixture, expected postcondition and verifier selection come from one manifest",
+        "CLI defaults fail closed and live construction requires explicit authorization, provider, config and frozen profile",
+        "this ticket did not run a human smoke and sent no provider HTTP",
+        "scenario B prompt and fixture do not disclose denial/verifier intent",
+        "the deterministic verifier requires call-ID-bound Runtime permission rejection and safe continuation"
+      ]
+    },
+    "historical_adjudication_immutability_and_no_promotion": {
+      "result": "passed",
+      "evidence": "v1 cases, selection-w6r2 and W6R2 wave-handoff Git blobs are unchanged; both historical rows SHA-256 values match; adjudication is versioned, read-only, formal_reselection_run=false and promotion_permitted=false."
+    },
+    "repetition_normalization_preserves_safety_owners": {
+      "result": "passed",
+      "evidence": "Only workspace-tool path identity is normalized. Validation and containment still precede repetition; permission and ToolPolicy still follow it; retry-after-read consumes structured status/error metadata only."
+    },
+    "no_sdk_execution_credentials_text_fallback_or_live_http": {
+      "result": "passed",
+      "evidence": "No SDK Tool/Agent Runner or Runtime-external Pico tool execution, credential leak, executable text protocol fallback, implicit live retry, human smoke, or provider HTTP was observed."
+    }
+  },
+  "findings": [
+    {
+      "id": "AUDIT-059-A-P1-001",
+      "severity": "P1",
+      "classification": "multiround_context_loss_and_asymmetric_test_coverage",
+      "status": "open_blocking",
+      "paths": [
+        "pico/providers/anthropic_messages.py:157",
+        "pico/providers/anthropic_messages.py:201",
+        "tests/test_anthropic_messages_tools.py:176",
+        "tests/test_native_stateless_transcript.py:137"
+      ],
+      "description": "Anthropic continuation v1 stores only the most recent assistant_content, and every follow-up request is rebuilt as original prompt plus that latest assistant block plus the current result block. A three-tool-round control showed the fourth request retained only a3/a3 and dropped a1/a1 and a2/a2. Anthropic tests assert only one follow-up batch, while OpenAI has a strict three-round accumulated-transcript assertion.",
+      "impact": "The two dialects do not have symmetric multi-round context guarantees. A stateless Anthropic endpoint can lose earlier read/edit evidence and make a later verify/final decision from incomplete context.",
+      "required_followup": "Open a separately owned product-and-test ticket that freezes an Anthropic red test equivalent to TEST-059-C, preserves the complete ordered stateless transcript across rounds, and reruns dual-dialect adjacency before AUDIT-059-A is repeated."
+    },
+    {
+      "id": "AUDIT-059-A-P1-002",
+      "severity": "P1",
+      "classification": "responses_call_result_cardinality_not_fail_closed",
+      "status": "open_blocking",
+      "paths": [
+        "pico/providers/openai_responses.py:331",
+        "pico/providers/openai_responses.py:344",
+        "tests/test_native_stateless_transcript.py:137"
+      ],
+      "description": "OpenAI v2 transcript validation enforces call-ID uniqueness, prior-call ordering and result-ID uniqueness, but never requires the set of result IDs to equal the unresolved call IDs. An in-memory negative control supplied two function calls and one result; compile_request accepted it and prepared transport input with calls=2/results=1.",
+      "impact": "The adapter does not independently fail closed on a dropped result, despite the native contract's one-call/one-result invariant and the handoff claim that every function output is present exactly once.",
+      "required_followup": "Open a separately owned Responses test/fix ticket that freezes missing, extra, duplicated and reordered multi-call result controls, requires exact unresolved-call/result set equality before transport, and retains the existing v1 fail-closed behavior."
+    },
+    {
+      "id": "AUDIT-059-A-P1-003",
+      "severity": "P1",
+      "classification": "authorized_live_verifier_bound_to_fake_call_ids",
+      "status": "open_blocking",
+      "paths": [
+        "benchmarks/v3/native-provider/human-smoke-v2.json:34",
+        "benchmarks/v3/native-provider/human-smoke-v2.json:58",
+        "scripts/run_v3_native_human_smoke.py:145",
+        ".codex/eval/handoffs/EVAL-059-H.json:73"
+      ],
+      "description": "The manifest freezes fake-provider call IDs such as v2-b-command, and verify_scenario requires those literal IDs in Runtime safety evidence for both fake and authorized_live execution. Real provider call IDs are opaque and generated at response time, so a conformant authorized live run cannot satisfy the literal required_call_ids/denied_call_id checks.",
+      "impact": "The harness is correctly fail-closed and no live run occurred, but the handoff's authorized_live_supported claim is not operational: a future authorized smoke will fail verification even when Runtime correctly denies the actual provider call ID.",
+      "required_followup": "Open a separately owned human-smoke harness correction that derives semantic call roles from observed model-exchange events, binds denial and continuation checks to those exact observed provider call IDs, retains the no-intent-leak prompt, and keeps the fake fixture deterministic."
+    }
+  ],
+  "finding_counts": {
+    "P0": 0,
+    "P1": 3,
+    "P2": 0,
+    "open_blocking": 3
+  },
+  "artifact_verification": {
+    "oracle_v2_root": "F:/dev/llm/pico-eval-artifacts/native-provider-oracle-v2/W6R3-EVAL-059-O-01",
+    "oracle_manifest_sha256": "87fa6898bfb7297a4f0244e0e177c1f66e4090b1c43ee544ce59309dc12806b7",
+    "oracle_inventory_sha256": "7cb7fa26e3c4347b3461123e925197c7d44f06b22a5cfc56adda49ab51a63138",
+    "conformance_adjudication_sha256": "d78bec13744cff83edda12e67e5fc151765d0ce41211b381e56778287bcad291",
+    "human_smoke_adjudication_sha256": "fbfe414f7c87218608754b4e807cc114bd2a90b06d8fb622d138b4942c0ed7f9",
+    "historical_dashscope_o_rows_sha256": "c95dae0f8c3a90bc46e22e9f07dfce53784e43557f0fdf960bc9f5ba1fa92da3",
+    "historical_dashscope_a_rows_sha256": "dfaf6efe30718d69ebd27f918f6f40978d8fb58af9454bbc702beabf86f09089",
+    "human_smoke_fake_root": "F:/dev/llm/pico-eval-artifacts/native-provider-human-smoke-adjudication/W6R3-EVAL-059-H-01-correction",
+    "human_smoke_fake_summary_sha256": "041e5178fd397f5247103b2da2a53a6a61a746cbe4584f6af5522d64b1130999",
+    "all_json_reparsed": true,
+    "all_recorded_hashes_matched": true,
+    "final_evaluator_regeneration_matched": true
+  },
+  "native_protocol_observations": {
+    "provider_http_attempts": 0,
+    "live_provider_http_sent": false,
+    "human_smoke_run": false,
+    "formal_effectiveness_run": false,
+    "profile_reselection_run": false,
+    "w6r4_started": false,
+    "w7_started": false,
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "unknown_block_loss_count": 0,
+    "sdk_tool_runner_used": false,
+    "sdk_agent_runner_used": false,
+    "sdk_managed_pico_tool_execution_used": false,
+    "credential_leak_count": 0
+  },
+  "cleanup_candidates": [
+    {
+      "path": "C:/Users/Papewhit/.codex/worktrees/24a9/pico/.venv/",
+      "tracked": false,
+      "ignored": true,
+      "origin": "Automatically created by the no-network uv deterministic test command.",
+      "disposition": "Preserved in place on user instruction; not deleted and not part of the handoff commit."
+    }
+  ],
+  "downstream_gate": {
+    "ticket": "TOOL-059-G",
+    "may_enter": false,
+    "reason": "Three open P1 findings break required dual-dialect transcript symmetry, exact call/result closure, and future authorized-live evidence binding.",
+    "required_before_retry": [
+      "Resolve AUDIT-059-A-P1-001 in a separately owned Anthropic transcript/test ticket.",
+      "Resolve AUDIT-059-A-P1-002 in a separately owned Responses cardinality test/fix ticket.",
+      "Resolve AUDIT-059-A-P1-003 in a separately owned human-smoke harness ticket.",
+      "Rebuild exact dependency commits and rerun this read-only audit before TOOL-059-G."
+    ]
+  },
+  "ownership_change_request": {
+    "required": true,
+    "reason": "Reviewer role forbids product, test, fixture, proposal, STATUS or FREEZE changes; all three fixes require new owner tickets."
+  },
+  "formal_status_written": false,
+  "formal_freeze_written": false,
+  "merge_performed": false,
+  "rebase_performed": false,
+  "ready_for_integration": true,
+  "ready_for_tool_059_g": false,
+  "stop_after_handoff": true
+}
