@@ -624,7 +624,7 @@
   },
   "w6r3_remediation_cycle_1": {
     "version": "pico-w6r3-remediation-cycle-v1",
-    "status": "passed",
+    "status": "superseded_by_remediation_cycle_2",
     "remediation_round": 1,
     "resume_control_head": "647437bda4be4652f089b93ecf67d99914c45122",
     "candidate_ref": "codex/w6r3-remediation-r1-candidate",
@@ -719,8 +719,8 @@
   },
   "w6r3_deterministic_recovery_gate": {
     "version": "pico-native-deterministic-recovery-gate-v1",
-    "status": "complete",
-    "gate_status": "passed",
+    "status": "superseded_needs_remediation",
+    "gate_status": "invalidated_by_upper_review",
     "source": {
       "sha": "24bebf8ac67095775856883db7b84a7dcf6ec7d1",
       "tree": "45106ea2c0b70713065e59381172c3d267e6bdde",
@@ -861,6 +861,77 @@
       "started": false
     },
     "blocking_defects": []
+  },
+  "w6r3_remediation_cycle_2": {
+    "version": "pico-w6r3-remediation-cycle-v2",
+    "status": "needs_remediation",
+    "remediation_round": 2,
+    "resume_control_head": "d514ae3c1185111ee92e88c400e4c0176bf66d4c",
+    "candidate_ref": "codex/w6r3-remediation-r2-candidate",
+    "candidate_semantics": "The commit containing this formal resume checkpoint is the common immutable remediation-cycle-2 candidate.",
+    "frozen_inputs_preserved": {
+      "oracle_v2": true,
+      "human_smoke_v2_bytes": true,
+      "w6r2_cases_rows_selection_and_smoke": true,
+      "historical_w6r3_attempt": true,
+      "historical_w6r3_r1_close": true
+    },
+    "findings": {
+      "UPPER-AUDIT-059-A-P1-003-CALL-ID-BINDING": {
+        "priority": "P1",
+        "owner": "EVAL-059-H",
+        "required_revision": 3,
+        "contract": "Runtime evidence is keyed one-to-one by real provider call_id; missing, duplicate, and extra tool_finished events fail closed."
+      },
+      "UPPER-AUDIT-059-A-P1-003-FAKE-LIVE-FAIL-CLOSED": {
+        "priority": "P1",
+        "owner": "EVAL-059-H",
+        "required_revision": 3,
+        "contract": "fake_provider rejects provider_factory, profile, and live-only CLI inputs and enforces zero HTTP attempts; authorized_live requires every binding."
+      },
+      "UPPER-AUDIT-059-A-P2-001-TOP-LEVEL-PROFILE": {
+        "priority": "P2",
+        "owner": "EVAL-059-H",
+        "required_revision": 3,
+        "contract": "summary.json top level binds the redacted profile identity."
+      },
+      "UPPER-AUDIT-059-A-P2-002-COMMIT-MAP-AMBIENT": {
+        "priority": "P2",
+        "owner": "W6R3 Wave Integrator",
+        "contract": "The final cycle-2 commit map records ambient documentation commit 0775f65083fa53b532b78132e7ab1162f98231c5."
+      }
+    },
+    "allowed_remediation": {
+      "EVAL-059-H": "revision 3 on existing worker task and allowed harness/test/artifact paths",
+      "AUDIT-059-A": "revision 3 read-only review after repaired candidate",
+      "TOOL-059-G": "revision 2 only after accepted audit",
+      "W6R3 Wave Integrator": "formal state and final cycle-2 commit map ambient history record"
+    },
+    "historical_r1_close": {
+      "handoff_sha256": "ce1a548022a05e94e4cd2bab0cbd9fe15a3d52214bc21a9556504d5020169d82",
+      "commit_map_sha256": "55418a09c6b06c580648e79508e56cf00bbe04fa783816dfca909ec5a29f3435",
+      "worker_bundle_sha256": "f6e9ff52a8ed3c39180d54aceea0822cb484b03e0c4834fda2bd8e878ef2db09",
+      "canonical_tag_object_sha": "565e937df275c6215661623564c70492cc0b306f",
+      "canonical_tag_target": "b5a18cedde2f5897ad261afb286c4e123f54509f",
+      "preserved_immutable": true,
+      "disposition": "historical_close_superseded_by_upper_review"
+    },
+    "future_final_bindings": {
+      "handoff_path": ".codex/eval/state/W6R3-wave-handoff-r2.json",
+      "commit_map_path": ".codex/eval/state/W6R3-r2-commit-map.json",
+      "worker_bundle_path": "F:\\dev\\llm\\pico-eval-artifacts\\wave-bundles\\W6R3-r2-workers.bundle",
+      "canonical_tag": "eval-v3/w6r3-canonical-r2",
+      "generate_only_after_gate_terminal": true
+    },
+    "execution_constraints": {
+      "provider_http_attempts": 0,
+      "human_smoke_run": false,
+      "profile_reselection_run": false,
+      "formal_effectiveness_run": false,
+      "resume_run": false,
+      "w6r4_started": false,
+      "w7_started": false
+    }
   },
   "native_resume_contract": null,
   "native_resume_gate": null,

@@ -20,7 +20,7 @@
   "wave_base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
   "run_snapshot_sha": "24bebf8ac67095775856883db7b84a7dcf6ec7d1",
   "gates": {
-    "native_eval_ready": "deterministic_recovery_passed_pending_w6r4_reselection_and_new_accepted_human_smoke",
+    "native_eval_ready": "needs_remediation",
     "native_resume_ready": "pending"
   },
   "accepted_tickets": {
@@ -41,7 +41,7 @@
     },
     "EVAL-059-H": {
       "instance_id": "W6R3-EVAL-059-H-01",
-      "status": "accepted",
+      "status": "needs_remediation_revision_3",
       "revision": 2,
       "base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
       "worker_branch_head": "b583ac24687093aa8b296ccbb5400530546df11d",
@@ -111,7 +111,7 @@
     },
     "AUDIT-059-A": {
       "instance_id": "W6R3-AUDIT-059-A-01",
-      "status": "accepted",
+      "status": "needs_remediation_revision_3",
       "revision": 2,
       "base_sha": "7650029a1d8894a7f2cee111ac67b6487fa7ca29",
       "worker_branch_head": "f0d8acef98c0d2f770f5734d783808b6847e5e9d",
@@ -124,8 +124,8 @@
     },
     "TOOL-059-G": {
       "instance_id": "W6R3-TOOL-059-G-01",
-      "status": "accepted",
-      "gate_status": "passed",
+      "status": "not_dispatched_revision_2",
+      "gate_status": "superseded_needs_remediation",
       "revision": 1,
       "base_sha": "24bebf8ac67095775856883db7b84a7dcf6ec7d1",
       "worker_branch_head": "3b415776a28f2a0a0bd21f41c438ed946400743b",
@@ -1131,7 +1131,7 @@
       "stable_patch_id": "5b8d0b3f0f08d002dc91c68799a550e7755a0fc8",
       "revision": 2,
       "provider_http_attempts": 0,
-      "status": "accepted"
+      "status": "needs_remediation_revision_3"
     },
     "W6R3-TOOL-059-O-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -1321,7 +1321,7 @@
       "stable_patch_id": "89c4fae15704e809daadd1b4247f08ac0623b074",
       "provider_http_attempts": 0,
       "open_p1_findings": 0,
-      "status": "accepted",
+      "status": "needs_remediation_revision_3",
       "prior_status": "blocked",
       "remediation_round": 1,
       "revision": 2,
@@ -1365,8 +1365,8 @@
       "stable_patch_id": "e684e79286dfcbce4f600e1b8b644b8bbeb4bff3",
       "provider_http_attempts": 0,
       "revision": 1,
-      "status": "accepted",
-      "gate_status": "passed"
+      "status": "not_dispatched_revision_2",
+      "gate_status": "superseded_needs_remediation"
     },
     "W6R2-TOOL-050-S-R1-01": {
       "schema_version": "pico-eval-ticket-instance-v1",
@@ -4333,22 +4333,22 @@
   ],
   "wave_close": {
     "wave": "W6R3",
-    "status": "passed",
+    "status": "needs_remediation",
     "prior_status": "blocked_before_deterministic_gate",
-    "accepted_tickets": ["EVAL-059-O", "TEST-059-C", "TOOL-059-O", "EVAL-059-H", "TOOL-059-R", "TOOL-059-A-R1", "AUDIT-059-A", "TOOL-059-G"],
+    "accepted_tickets": ["EVAL-059-O", "TEST-059-C", "TOOL-059-O", "TOOL-059-R", "TOOL-059-A-R1"],
     "blocked_tickets": [],
-    "needs_remediation_tickets": [],
+    "needs_remediation_tickets": ["EVAL-059-H", "AUDIT-059-A"],
     "remediation_payloads_ready_for_review": [],
-    "not_dispatched_tickets": [],
+    "not_dispatched_tickets": ["TOOL-059-G"],
     "source_integration_head_before_close_metadata": "1126bb1cd8405d730c60888de4d60adf9e6f6b2a",
     "source_integration_tree_before_close_metadata": "0e3c23e838f6c81b7647afc774750bbca5eddb4e",
     "immutable_recovery_snapshot_sha": "24bebf8ac67095775856883db7b84a7dcf6ec7d1",
     "immutable_recovery_snapshot_tree": "45106ea2c0b70713065e59381172c3d267e6bdde",
     "audit_handoff_sha256": "d93f2131d082128dccea53fb223ab5dd8447a5f13f06e34a337ca89633783f3d",
-    "open_p1_findings": 0,
-    "open_p1_findings_status": "closed_by_AUDIT-059-A_revision_2",
+    "open_p1_findings": 2,
+    "open_p1_findings_status": "upper_review_returned_AUDIT-059-A-P1-003_to_EVAL-059-H_revision_3",
     "provider_http_attempts": 0,
-    "native_eval_ready": "deterministic_recovery_passed_pending_w6r4_reselection_and_new_accepted_human_smoke",
+    "native_eval_ready": false,
     "native_resume_ready": false,
     "human_smoke_status": "not_run_in_remediation_cycle_1",
     "w7_ready": false,
@@ -4360,7 +4360,7 @@
     "w7_started": false
   },
   "w6r3_remediation": {
-    "status": "passed",
+    "status": "superseded_by_remediation_cycle_2",
     "remediation_round": 1,
     "resume_control_head": "647437bda4be4652f089b93ecf67d99914c45122",
     "candidate_ref": "codex/w6r3-remediation-r1-candidate",
@@ -4464,7 +4464,7 @@
       "canonical_tag": "eval-v3/w6r3-canonical-r1"
     },
     "downstream": {
-      "w6r4_status": "proposed_ready_but_not_started",
+      "w6r4_status": "not_ready_pending_remediation_cycle_2",
       "w6r4_plan_ticket_count": 0,
       "w7_status": "blocked_pending_w6r4_reselection_and_new_user_accepted_human_smoke"
     },
@@ -4483,6 +4483,77 @@
     "resume_run": false,
     "w6r4_started": false,
     "w7_started": false
+  },
+  "w6r3_remediation_cycle_2": {
+    "status": "needs_remediation",
+    "remediation_round": 2,
+    "resume_control_head": "d514ae3c1185111ee92e88c400e4c0176bf66d4c",
+    "candidate_ref": "codex/w6r3-remediation-r2-candidate",
+    "candidate_semantics": "The commit containing this resume checkpoint is the common immutable remediation-cycle-2 candidate.",
+    "upper_review": {
+      "verdict": "audit_failed",
+      "r1_git_and_gate_evidence": "otherwise_verified",
+      "w6r4_ready": false,
+      "findings": {
+        "UPPER-AUDIT-059-A-P1-003-CALL-ID-BINDING": {
+          "priority": "P1",
+          "owner": "EVAL-059-H",
+          "required_revision": 3,
+          "requirement": "Join Runtime tool_finished evidence by unique call_id and reject missing, duplicate, or extra events."
+        },
+        "UPPER-AUDIT-059-A-P1-003-FAKE-LIVE-FAIL-CLOSED": {
+          "priority": "P1",
+          "owner": "EVAL-059-H",
+          "required_revision": 3,
+          "requirement": "Reject live bindings in fake mode, require all live bindings in authorized-live mode, reject fake live-only CLI arguments, and require fake HTTP attempts to equal zero."
+        },
+        "UPPER-AUDIT-059-A-P2-001-TOP-LEVEL-PROFILE": {
+          "priority": "P2",
+          "owner": "EVAL-059-H",
+          "required_revision": 3,
+          "requirement": "Bind the redacted profile identity at the summary artifact top level."
+        },
+        "UPPER-AUDIT-059-A-P2-002-COMMIT-MAP-AMBIENT": {
+          "priority": "P2",
+          "owner": "W6R3 Wave Integrator",
+          "requirement": "Record canonical ambient documentation commit 0775f65083fa53b532b78132e7ab1162f98231c5 in the cycle-2 final commit map."
+        }
+      }
+    },
+    "dispatch": {
+      "EVAL-059-H": "revision_3_pending",
+      "AUDIT-059-A": "revision_3_after_repaired_candidate",
+      "TOOL-059-G": "revision_2_after_accepted_audit"
+    },
+    "historical_r1_close": {
+      "handoff_path": ".codex/eval/state/W6R3-wave-handoff-r1.json",
+      "handoff_sha256": "ce1a548022a05e94e4cd2bab0cbd9fe15a3d52214bc21a9556504d5020169d82",
+      "commit_map_path": ".codex/eval/state/W6R3-r1-commit-map.json",
+      "commit_map_sha256": "55418a09c6b06c580648e79508e56cf00bbe04fa783816dfca909ec5a29f3435",
+      "worker_bundle_path": "F:\\dev\\llm\\pico-eval-artifacts\\wave-bundles\\W6R3-r1-workers.bundle",
+      "worker_bundle_sha256": "f6e9ff52a8ed3c39180d54aceea0822cb484b03e0c4834fda2bd8e878ef2db09",
+      "canonical_tag": "eval-v3/w6r3-canonical-r1",
+      "canonical_tag_object_sha": "565e937df275c6215661623564c70492cc0b306f",
+      "canonical_tag_target": "b5a18cedde2f5897ad261afb286c4e123f54509f",
+      "preserved_immutable": true,
+      "disposition": "historical_close_superseded_by_upper_review"
+    },
+    "future_final_bindings": {
+      "handoff_path": ".codex/eval/state/W6R3-wave-handoff-r2.json",
+      "commit_map_path": ".codex/eval/state/W6R3-r2-commit-map.json",
+      "worker_bundle_path": "F:\\dev\\llm\\pico-eval-artifacts\\wave-bundles\\W6R3-r2-workers.bundle",
+      "canonical_tag": "eval-v3/w6r3-canonical-r2",
+      "generate_only_after_gate_terminal": true
+    },
+    "execution_constraints": {
+      "provider_http_attempts": 0,
+      "human_smoke_run": false,
+      "profile_reselection_run": false,
+      "formal_effectiveness_run": false,
+      "resume_run": false,
+      "w6r4_started": false,
+      "w7_started": false
+    }
   },
   "prior_gate": {
     "wave": "W5",
