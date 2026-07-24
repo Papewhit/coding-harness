@@ -624,7 +624,7 @@
   },
   "w6r3_remediation_cycle_1": {
     "version": "pico-w6r3-remediation-cycle-v1",
-    "status": "review_candidate_frozen_pending_audit",
+    "status": "passed",
     "remediation_round": 1,
     "resume_control_head": "647437bda4be4652f089b93ecf67d99914c45122",
     "candidate_ref": "codex/w6r3-remediation-r1-candidate",
@@ -683,8 +683,29 @@
       }
     },
     "audit_revision_2": {
-      "status": "ready_to_dispatch",
+      "status": "accepted",
+      "worker_head": "f0d8acef98c0d2f770f5734d783808b6847e5e9d",
+      "canonical_commit": "24bebf8ac67095775856883db7b84a7dcf6ec7d1",
+      "handoff_sha256": "d93f2131d082128dccea53fb223ab5dd8447a5f13f06e34a337ca89633783f3d",
+      "stable_patch_id": "89c4fae15704e809daadd1b4247f08ac0623b074",
+      "open_p1_findings": 0,
       "supersedes_handoff_sha256": "659d898a96fab1514b6a78027f886fcefedcff859a2e29f22dc87e293ec06d5b"
+    },
+    "deterministic_gate": {
+      "ticket_id": "TOOL-059-G",
+      "status": "passed",
+      "canonical_commit": "1126bb1cd8405d730c60888de4d60adf9e6f6b2a",
+      "worker_head": "3b415776a28f2a0a0bd21f41c438ed946400743b",
+      "handoff_sha256": "4cef39dc80f56610c1a5ee32145e2abbd294f7a5fe6a1fea0fba8c545b5a7e90",
+      "stable_patch_id": "e684e79286dfcbce4f600e1b8b644b8bbeb4bff3",
+      "recovery_snapshot_sha": "24bebf8ac67095775856883db7b84a7dcf6ec7d1",
+      "recovery_snapshot_tree": "45106ea2c0b70713065e59381172c3d267e6bdde"
+    },
+    "final_bindings": {
+      "commit_map_path": ".codex/eval/state/W6R3-r1-commit-map.json",
+      "worker_bundle_path": "F:\\dev\\llm\\pico-eval-artifacts\\wave-bundles\\W6R3-r1-workers.bundle",
+      "worker_bundle_sha256": "f6e9ff52a8ed3c39180d54aceea0822cb484b03e0c4834fda2bd8e878ef2db09",
+      "canonical_tag": "eval-v3/w6r3-canonical-r1"
     },
     "execution_constraints": {
       "provider_http_attempts": 0,
@@ -695,6 +716,151 @@
       "w6r4_started": false,
       "w7_started": false
     }
+  },
+  "w6r3_deterministic_recovery_gate": {
+    "version": "pico-native-deterministic-recovery-gate-v1",
+    "status": "complete",
+    "gate_status": "passed",
+    "source": {
+      "sha": "24bebf8ac67095775856883db7b84a7dcf6ec7d1",
+      "tree": "45106ea2c0b70713065e59381172c3d267e6bdde",
+      "clean": true
+    },
+    "bindings": {
+      "oracle_v2_cases": {
+        "path": "benchmarks/v3/native-provider/cases-v2.json",
+        "git_blob_oid": "82c50bc318617c6556f82cbf4ec779fcbe4a1993",
+        "sha256": "dca7a585c2264a12187dd00344c63c225b966937bf9df8a53ed5a5341417defc"
+      },
+      "oracle_v2_evaluator": {
+        "path": "pico/evaluation/native_provider.py",
+        "git_blob_oid": "38bb94bcc8397fb42daa353085cc182e4af72c3c",
+        "sha256": "a0b3c2802fc35227c18828fd1875dbe401fc31dca662005bd1eab744e1da5a5f"
+      },
+      "oracle_v2_live_runner": {
+        "path": "pico/evaluation/native_provider_live.py",
+        "git_blob_oid": "024506d99a942d6691b47bbee0fcb432fd46e313",
+        "sha256": "dc6d0b8e6f98d7c714a7a0780ac9f623caee7abdc19977301cc4a4cfc8877e5f"
+      },
+      "oracle_v2_tests": {
+        "path": "tests/test_native_provider_evaluator.py",
+        "git_blob_oid": "aaaf86e51aa7a2ceb33075eec5b2ab0b50d7553f",
+        "sha256": "b3e1dbb534b5461fe0e893462ad0141ae44e5320e63ecdded669a3dd0cf9ff58"
+      },
+      "dual_dialect_live_fake_tests": {
+        "path": "tests/test_native_provider_live.py",
+        "git_blob_oid": "a3b962cc1df9dcfb1dcbc0fca46bb8bfc86169de",
+        "sha256": "cf7cca2e8719e6195f1b57a44d82b785b9b0d91641c83528b273dfa1015ed293"
+      },
+      "openai_responses_adapter": {
+        "path": "pico/providers/openai_responses.py",
+        "git_blob_oid": "ce80c279d0d762d9c9a813b881898959405bf4f6",
+        "sha256": "65a085bddee05eb98814f40b42f425390746a540f31153d7f4ca8a0e3a4dfb7b"
+      },
+      "anthropic_messages_adapter": {
+        "path": "pico/providers/anthropic_messages.py",
+        "git_blob_oid": "2dcdac9ff3cedda57177ba21ed1ebf7a991039d8",
+        "sha256": "7ffb1a0cbd1f0448e28d989e8ac7274996cfb5e11bf815981c409432b632abd0"
+      },
+      "openai_closure_tests": {
+        "path": "tests/test_openai_responses_tools.py",
+        "git_blob_oid": "d9362d690ff6001c069372e22cb66f392df1bdb3",
+        "sha256": "75e393234a4b252388093798ddbfa18e202d13e752ac609a4f3c93eaef394c37"
+      },
+      "anthropic_stateless_transcript_tests": {
+        "path": "tests/test_anthropic_stateless_transcript.py",
+        "git_blob_oid": "886ceb973a574666ce6f08eca000396c3848ddcb",
+        "sha256": "2f9bbfb27203071affa20bb532bdedadea2e445b507bac1d3994e1076e3dd3af"
+      },
+      "openai_stateless_transcript_tests": {
+        "path": "tests/test_native_stateless_transcript.py",
+        "git_blob_oid": "03f90c42272cc63b444eedd3736249681b588f69",
+        "sha256": "b0ddb33705d9b4f561175f4e62565f75f9e456b1b9da296de5983b684dcf2222"
+      },
+      "human_smoke_v3_tests": {
+        "path": "tests/test_v3_native_human_smoke_v3.py",
+        "git_blob_oid": "e27b57452f29d55a3f40b77b5bbd166fbf7ba4d6",
+        "sha256": "15a97567d4aba0af0e745c074df54f18b9bbc3964f4f53ecc34a8cf96a3f9b27"
+      },
+      "repetition_implementation": {
+        "path": "pico/core/tool_repetition.py",
+        "git_blob_oid": "454e413210bbd78ce1bb95099a9be3afb0a7e545",
+        "sha256": "e43a431de2610b676a8225ff776b3b69c0bd7a36a7d31955337f2c0a2062aff5"
+      },
+      "repetition_tests": {
+        "path": "tests/test_native_tool_repetition.py",
+        "git_blob_oid": "82ca273e8514b886abca393f4da332eab7dac15a",
+        "sha256": "db4d62f2f53ad469c4aead4b98b767222a57d3bc9f9fefd4647ad963bb4c4587"
+      },
+      "sdk_dependency_lock": {
+        "path": "uv.lock",
+        "git_blob_oid": "6b949cdc94f74dd00932e66fd2b27f4f6436e4b3",
+        "sha256": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657"
+      },
+      "sdk_transport_decision_sha256": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+      "native_contract_sha256": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+      "tool_schema_sha256": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f"
+    },
+    "responsibility_boundary": {
+      "safety_owner": "runtime_snapshot",
+      "execution_denominator": "calls entering runtime.run_tool",
+      "pre_runtime_rejection_excluded": true,
+      "execute_completed_means": "tool implementation returned",
+      "operation_outcome_fields": ["tool_status", "tool_error_code"],
+      "runtime_chain_violation_effect": "block_source_snapshot"
+    },
+    "gate_result": {
+      "targeted": "90 passed",
+      "protected": "27 passed",
+      "deterministic": "131 passed",
+      "full_suite": "546 passed, 2 live-provider opt-in skipped, 6 warnings",
+      "scoped_ruff": "passed",
+      "full_ruff": "passed",
+      "compileall": "passed",
+      "plan_validation": "VALID: 94 ticket templates, 16 waves",
+      "provider_http_attempts": 0,
+      "acceptance_socket_attempt_records": 0,
+      "credential_private_locator_raw_url_scan_hits": 0,
+      "all_required_tests_passed": true
+    },
+    "artifact": {
+      "root": "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate/W6R3-TOOL-059-G-01",
+      "manifest_sha256": "836692c1caa4df087981e7016f3768e5f1359c7d8753e2ee7f10f1884e776afe",
+      "inventory_aggregate_sha256": "312b3fd7d840077d2f0f89b63f17f453a8a3af33c56d6be3cbb7ea5ba7c548c1",
+      "file_count_excluding_manifest": 205,
+      "gate_report_sha256": "5649d2c6eda0a2fdea3b8b3e67306dba18e04f7ba6bc4c0cf19d75cc8763ea62",
+      "environment_manifest_sha256": "06e8bde4d930fd286727c008b80838747ac977619f057a38f8163e65bd83f867",
+      "command_results_sha256": "e57e0440e66f0e49a05c839a67d320b4a1cba20ffdf5a10767bb747cd6474668",
+      "junit_summary_sha256": "d2acc94f6d2a6bd68349af6979d3704119390c4a22019d890f6367b3ecd11aa2",
+      "invariant_verification_sha256": "7280491bb84d596dd623b774311c324e200e39e182ff43ac78e46db07e542562",
+      "sensitive_scan_sha256": "2719719b9064dc27a7f5a6bb482cb02b3e297b375b310e72def480e1bc79336e"
+    },
+    "historical_immutability": {
+      "oracle_v2": true,
+      "w6r2_cases_rows_selection_and_smoke": true,
+      "human_smoke_v2": true,
+      "historical_w6r3_handoff_bundle_tag": true
+    },
+    "execution_constraints": {
+      "human_smoke_run": false,
+      "profile_reselection_run": false,
+      "formal_effectiveness_run": false,
+      "resume_evaluation_run": false,
+      "w6r4_started": false,
+      "w7_started": false
+    },
+    "w6r4_ready_set": {
+      "status": "proposed_ready",
+      "ticket_ids": [],
+      "ticket_ids_reason": "The current PLAN has no W6R4 ticket templates; dispatch remains a Program Supervisor and Wave Integrator responsibility.",
+      "started": false
+    },
+    "w7": {
+      "status": "blocked",
+      "blocked_until": "W6R4 profile reselection completes and the user accepts a new human smoke",
+      "started": false
+    },
+    "blocking_defects": []
   },
   "native_resume_contract": null,
   "native_resume_gate": null,
