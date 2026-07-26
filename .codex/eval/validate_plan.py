@@ -142,6 +142,7 @@ for required_control_file in (
     "state/TICKET_INSTANCE.template.json",
     "state/INSTALLATION_HANDOFF.template.json",
     "waves/W6R4-profile-reselection-human-smoke.md",
+    "waves/W6R5-human-smoke-measurement-recovery.md",
 ):
     if not (root / required_control_file).exists():
         errors.append(f"missing control-plane file: {required_control_file}")
@@ -246,6 +247,27 @@ else:
                 "W6R4 lacks out-of-band private config rule: "
                 f"{required_private_config_rule}"
             )
+
+w6r5 = wave_by_id("W6R5")
+expected_w6r5_tickets = [
+    "EVAL-063-H",
+    "AUDIT-063-A",
+    "TOOL-063-G",
+    "EVAL-063-R",
+    "EVAL-063-M",
+]
+if w6r5 is None:
+    errors.append("W6R5 measurement-recovery Wave is missing")
+elif (
+    w6r5.get("tickets") != expected_w6r5_tickets
+    or w6r5.get("integration_order") != expected_w6r5_tickets
+    or w6r5.get("procedure_file") != "waves/W6R5-human-smoke-measurement-recovery.md"
+):
+    errors.append("W6R5 ticket order/procedure binding mismatch")
+
+native_eval_authority = str(plan.get("gates", {}).get("native_eval_ready", {}).get("authority", ""))
+if "latest versioned authorized human smoke recovery" not in native_eval_authority:
+    errors.append("native_eval_ready authority must include the latest versioned smoke recovery")
 
 for ticket_id, ticket in tickets.items():
     ticket_file = root / str(ticket["ticket_file"])
@@ -360,7 +382,15 @@ for ticket_id in ("EVAL-061-P", "EVAL-061-R", "EVAL-061-M"):
     if not depends_transitively(ticket_id, "TOOL-062-G"):
         errors.append(f"Resume Ticket lacks native_resume_ready lineage: {ticket_id}")
 
-process_tickets = ("EVAL-021-R", "EVAL-050-P", "EVAL-050-F", "TOOL-062-R", "EVAL-061-R", "EVAL-070-R")
+process_tickets = (
+    "EVAL-063-R",
+    "EVAL-021-R",
+    "EVAL-050-P",
+    "EVAL-050-F",
+    "TOOL-062-R",
+    "EVAL-061-R",
+    "EVAL-070-R",
+)
 for process_ticket in process_tickets:
     handoff_paths = [
         path
@@ -414,6 +444,7 @@ if tickets["EVAL-081-G"].get("required_gates") != ["native_eval_ready"]:
     errors.append("EVAL-081-G must not require native_resume_ready=accepted")
 
 tracked_change_tickets = (
+    "EVAL-063-H",
     "TOOL-060-R",
     "TOOL-061-T",
     "EVAL-060",
@@ -450,6 +481,7 @@ active_files = [
     root / "templates/REVIEW.md",
     root / "templates/RUN_SHARD.md",
     root / "waves/W6R4-profile-reselection-human-smoke.md",
+    root / "waves/W6R5-human-smoke-measurement-recovery.md",
     root / "waves/W7-evaluation-pilots-resume.md",
     root / "waves/W8-final-baseline-resume-gate.md",
     root / "waves/W9-resume-ablation.md",
@@ -470,6 +502,7 @@ forward_control_files = [
     root / "PLAN.json",
     root / "templates/WAVE_INTEGRATOR_PROMPT.md",
     root / "templates/PROGRAM_SUPERVISOR_PROMPT.md",
+    root / "waves/W6R5-human-smoke-measurement-recovery.md",
     root / "waves/W7-evaluation-pilots-resume.md",
     root / "waves/W8-final-baseline-resume-gate.md",
     root / "waves/W9-resume-ablation.md",

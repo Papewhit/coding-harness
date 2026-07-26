@@ -1,6 +1,6 @@
 # W7 — Evaluation Pilots 与 Native Resume 实现
 
-**Entry Gate:** `native_eval_ready=accepted`，并绑定 accepted W6R4 handoff、selection hash、human smoke hash 和 source SHA。
+**Entry Gate:** `native_eval_ready=accepted`，并绑定 accepted W6R4 selection hash，以及 superseding accepted W6R5 handoff、source、human-smoke v4 与 durable public trajectory hashes。W6R4 的 failed v3 smoke 保持历史不变，不作为 W7 source binding。
 
 ## Execution mapping
 

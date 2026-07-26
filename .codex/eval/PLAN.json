@@ -111,7 +111,7 @@
         "accepted",
         "rejected"
       ],
-      "authority": "W6R4 profile reselection, authorized human smoke, and program_supervisor decision",
+      "authority": "W6R4 profile reselection plus the latest versioned authorized human smoke recovery and program_supervisor decision",
       "accepted_required_for": "formal online effectiveness evaluation"
     },
     "native_resume_ready": {
@@ -459,6 +459,35 @@
       "gate": "profile reselection and one authorized human smoke produce an accepted or rejected native_eval_ready decision; no source Ticket is created"
     },
     {
+      "id": "W6R5",
+      "name": "Grounded human smoke and durable trajectory recovery",
+      "serial": true,
+      "tickets": [
+        "EVAL-063-H",
+        "AUDIT-063-A",
+        "TOOL-063-G",
+        "EVAL-063-R",
+        "EVAL-063-M"
+      ],
+      "dynamic_dependencies": [
+        "EVAL-063-H versions the underspecified HSMOKE-V3-A contract as grounded v4 and retains durable public .pico session-event/run evidence without copying private session continuation",
+        "AUDIT-063-A waits for EVAL-063-H and performs read-only review of grounded semantics, durable evidence closure, sensitive-data boundaries, and W6R4 historical immutability",
+        "TOOL-063-G waits for the audit, runs only deterministic WSL checks with zero provider HTTP attempts, and proves W6R4 selection reuse from unchanged production and selection-critical identities",
+        "EVAL-063-R starts only after a new explicit live authorization and runs one local Process using the W6R4 selected profile",
+        "EVAL-063-M waits for EVAL-063-R, separates measurement validity from semantic outcome, obtains the program_supervisor decision, and writes the superseding native_eval_ready conclusion"
+      ],
+      "integration_order": [
+        "EVAL-063-H",
+        "AUDIT-063-A",
+        "TOOL-063-G",
+        "EVAL-063-R",
+        "EVAL-063-M"
+      ],
+      "procedure_file": "waves/W6R5-human-smoke-measurement-recovery.md",
+      "entry_binding": "W6R4 close source, selection, handoff, smoke artifacts, and the approved post-W6R4 change_request",
+      "gate": "grounded human-smoke v4 and durable public trajectory produce a new accepted or rejected native_eval_ready decision without rewriting W6R4 history"
+    },
+    {
       "id": "W7",
       "name": "Evaluation pilots and native Resume implementation",
       "serial": false,
@@ -472,7 +501,7 @@
         "EVAL-060"
       ],
       "dynamic_dependencies": [
-        "All formal online Processes require native_eval_ready=accepted and the accepted W6R4 handoff/selection/smoke hashes",
+        "All formal online Processes require native_eval_ready=accepted and bind the accepted W6R4 selection plus the accepted W6R5 handoff/source/human-smoke-v4 hashes",
         "TOOL-061-T and EVAL-060 wait for TOOL-060-R",
         "EVAL-021-R[x2] and EVAL-050-P[x3] are local Processes; EVAL-021-M is executed by the current integrator",
         "TOOL-061-T and EVAL-060 may share one ordered implementer Thread or use two parallel implementer Threads when paths do not conflict"
@@ -2614,6 +2643,111 @@
       "forbidden_write_paths": [
         "所有产品源码、tests、Oracle、fixtures",
         "STATUS.json、FREEZE.json"
+      ]
+    },
+    "EVAL-063-H": {
+      "title": "Grounded Human-smoke v4 与 Durable Public Trajectory",
+      "thread_type": "fixture_builder",
+      "wave": "W6R5",
+      "depends_on": [
+        "EVAL-059-H"
+      ],
+      "ticket_file": "tickets/EVAL-063-H.md",
+      "allowed_write_paths": [
+        "benchmarks/v3/native-provider/human-smoke-v4.json",
+        "scripts/run_v3_native_human_smoke_v4.py",
+        "tests/test_v3_native_human_smoke_v4.py",
+        "<ARTIFACT_ROOT>/native-provider-human-smoke-v4/**",
+        ".codex/eval/handoffs/EVAL-063-H.json"
+      ],
+      "forbidden_write_paths": [
+        "benchmarks/v3/native-provider/human-smoke-v2.json",
+        "benchmarks/v3/native-provider/human-smoke-v3.json",
+        "scripts/run_v3_native_human_smoke.py",
+        "scripts/run_v3_native_human_smoke_v3.py",
+        "tests/test_v3_native_human_smoke.py",
+        "tests/test_v3_native_human_smoke_v3.py",
+        "pico/core/**",
+        "pico/providers/**",
+        "W6R4 Artifacts",
+        ".codex/eval/CURRENT.md",
+        ".codex/eval/state/FREEZE.json"
+      ]
+    },
+    "AUDIT-063-A": {
+      "title": "Human-smoke v4 Measurement 只读复审",
+      "thread_type": "reviewer",
+      "wave": "W6R5",
+      "depends_on": [
+        "EVAL-063-H"
+      ],
+      "ticket_file": "tickets/AUDIT-063-A.md",
+      "allowed_write_paths": [
+        ".codex/eval/handoffs/AUDIT-063-A.json"
+      ],
+      "forbidden_write_paths": [
+        "除 AUDIT-063-A handoff 外的所有路径"
+      ]
+    },
+    "TOOL-063-G": {
+      "title": "Human-smoke v4 Deterministic Gate 与 Selection Reuse Proof",
+      "thread_type": "integrator",
+      "wave": "W6R5",
+      "depends_on": [
+        "AUDIT-063-A"
+      ],
+      "ticket_file": "tickets/TOOL-063-G.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-human-smoke-v4-gate/<SOURCE_SHA>/**",
+        ".codex/eval/handoffs/TOOL-063-G.json",
+        ".codex/eval/state/FREEZE.json"
+      ],
+      "forbidden_write_paths": [
+        "产品源码",
+        "human-smoke v2/v3 source 与历史 Artifacts",
+        "provider selection Artifacts",
+        ".codex/eval/CURRENT.md",
+        ".codex/eval/state/STATUS.json"
+      ]
+    },
+    "EVAL-063-R": {
+      "title": "Authorized Human-smoke v4 Process",
+      "thread_type": "run_shard",
+      "wave": "W6R5",
+      "depends_on": [
+        "TOOL-063-G"
+      ],
+      "ticket_file": "tickets/EVAL-063-R.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-provider-human-smoke-v4/<SOURCE_SHA>/**",
+        "<ARTIFACT_ROOT>/native-provider-human-smoke-v4/process-manifests/**",
+        ".codex/eval/handoffs/EVAL-063-R.json"
+      ],
+      "forbidden_write_paths": [
+        "所有 Git-tracked source、tests、fixtures 与 control files（EVAL-063-R handoff 除外）",
+        "W6R4 与更早 Artifacts",
+        "raw .pico session JSON 或 private continuation public copy",
+        "private config locator value、secret、raw endpoint 或展开后的命令"
+      ]
+    },
+    "EVAL-063-M": {
+      "title": "Human-smoke v4 Adjudication 与 native_eval_ready Gate",
+      "thread_type": "integrator",
+      "wave": "W6R5",
+      "depends_on": [
+        "EVAL-063-R"
+      ],
+      "ticket_file": "tickets/EVAL-063-M.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-provider-human-smoke-v4/<SOURCE_SHA>/adjudication/**",
+        ".codex/eval/handoffs/EVAL-063-M.json",
+        ".codex/eval/state/FREEZE.json"
+      ],
+      "forbidden_write_paths": [
+        "产品源码、tests、fixtures 与 runner",
+        "W6R4 与更早 Artifacts",
+        ".codex/eval/CURRENT.md",
+        ".codex/eval/state/STATUS.json"
       ]
     },
     "TOOL-060-R": {
