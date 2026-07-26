@@ -658,12 +658,22 @@ def test_step_limit_rejection_is_pre_runtime_and_excluded_from_oracle_v2(
     runtime_evidence_call_ids = {
         item["call_id"] for item in observation["audit"]["safety_chain_evidence"]
     }
+    runtime_started_by_call = {
+        item["call_id"]: item["runtime_started"]
+        for event in observation["events"]
+        if event["type"] == "assistant"
+        for item in event["tool_calls"]
+    }
 
     assert call_ids == result_ids == [call.call_id for call in calls]
     assert runtime_call_count == 12
     assert rejected["error_code"] == "step_limit_exceeded"
     assert rejected["execution_scope"] == "pre_runtime_rejection"
     assert rejected["call_id"] not in runtime_evidence_call_ids
+    assert runtime_started_by_call[rejected["call_id"]] is False
+    assert all(
+        runtime_started_by_call[call.call_id] is True for call in calls[:-1]
+    )
     assert adjudication["runtime_snapshot"]["execution_denominator"] == 12
     assert adjudication["runtime_snapshot"]["complete_execution_chains"] == 12
     assert adjudication["runtime_snapshot"]["pre_runtime_rejection_count"] == 1

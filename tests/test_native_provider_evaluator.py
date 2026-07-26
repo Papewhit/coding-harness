@@ -428,6 +428,84 @@ def test_oracle_v2_true_runtime_chain_violation_blocks_snapshot_not_profile():
     assert adjudication["profile_metrics"]["status"] == "eligible"
 
 
+@pytest.mark.parametrize(
+    ("runtime_started", "status", "denominator", "pre_runtime", "violations"),
+    [
+        (False, "passed", 0, 1, 0),
+        (True, "blocked", 1, 0, 1),
+    ],
+)
+def test_oracle_v2_classifies_unmatched_call_from_runtime_entry_evidence(
+    runtime_started,
+    status,
+    denominator,
+    pre_runtime,
+    violations,
+):
+    case = load_case_set(CASE_PATH)["cases"][1]
+    observation = _passing_observation(case)
+    assistant = next(
+        event
+        for event in observation["events"]
+        if event["type"] == "assistant" and event["tool_calls"]
+    )
+    assistant["tool_calls"][0]["runtime_started"] = runtime_started
+    observation["events"] = [
+        event
+        for event in observation["events"]
+        if event["type"] != "tool_results"
+    ]
+    observation["audit"]["safety_chain_evidence"] = []
+
+    row = evaluate_native_provider_case(case, observation)
+    adjudication = adjudicate_native_provider_rows_v2(
+        [row],
+        source_snapshot_sha="c" * 40,
+    )
+
+    assert row["call_evidence"][0]["runtime_started"] is runtime_started
+    assert row["result_evidence"] == []
+    call_metric = row["native_protocol"]["call_id_result_match"]
+    batch_metric = row["native_protocol"]["batch_completeness"]
+    assert (
+        call_metric["numerator"],
+        call_metric["denominator"],
+        call_metric["value"],
+    ) == (0, 1, 0.0)
+    assert (
+        batch_metric["numerator"],
+        batch_metric["denominator"],
+        batch_metric["value"],
+    ) == (0, 1, 0.0)
+    assert adjudication["profile_metrics"]["status"] == "ineligible"
+    profile_call_metric = adjudication["profile_metrics"][
+        "call_id_result_match"
+    ]
+    profile_batch_metric = adjudication["profile_metrics"][
+        "batch_completeness"
+    ]
+    assert (
+        profile_call_metric["numerator"],
+        profile_call_metric["denominator"],
+        profile_call_metric["value"],
+    ) == (0, 1, 0.0)
+    assert (
+        profile_batch_metric["numerator"],
+        profile_batch_metric["denominator"],
+        profile_batch_metric["value"],
+    ) == (0, 1, 0.0)
+    assert adjudication["runtime_snapshot"]["status"] == status
+    assert adjudication["runtime_snapshot"]["execution_denominator"] == denominator
+    assert (
+        adjudication["runtime_snapshot"]["pre_runtime_rejection_count"]
+        == pre_runtime
+    )
+    assert (
+        adjudication["runtime_snapshot"]["runtime_chain_violation_count"]
+        == violations
+    )
+
+
 def test_oracle_v2_sdk_managed_execution_is_snapshot_hard_failure():
     case = load_case_set(CASE_PATH)["cases"][1]
     observation = _passing_observation(case)

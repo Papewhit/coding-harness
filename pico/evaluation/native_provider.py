@@ -230,14 +230,16 @@ def evaluate_native_provider_case(
                     continue
                 if call_id in completed_ids:
                     duplicate_after_result += 1
-                calls.append(
-                    {
-                        "call_id": call_id,
-                        "name": name if isinstance(name, str) else "",
-                        "batch_index": batch_index,
-                        "event_index": event_index,
-                    }
-                )
+                call_evidence = {
+                    "call_id": call_id,
+                    "name": name if isinstance(name, str) else "",
+                    "batch_index": batch_index,
+                    "event_index": event_index,
+                }
+                runtime_started = item.get("runtime_started")
+                if type(runtime_started) is bool:
+                    call_evidence["runtime_started"] = runtime_started
+                calls.append(call_evidence)
                 batch_call_ids.append(call_id)
             if raw_calls:
                 batches.append({"batch_index": batch_index, "call_ids": batch_call_ids})
@@ -569,19 +571,19 @@ def adjudicate_native_provider_rows_v2(
                 stages = []
             error_code = _historical_tool_error_code(result)
             tool_status = _historical_tool_status(result)
-            execution_scope = (
-                result.get("execution_scope")
-                if isinstance(result, Mapping)
-                else None
-            )
-            is_pre_runtime = (
-                execution_scope == "pre_runtime_rejection"
-                or (
-                    execution_scope is None
-                    and not stages
-                    and error_code in PRE_RUNTIME_REJECTION_ERROR_CODES
+            runtime_started = call.get("runtime_started")
+            if result is None:
+                is_pre_runtime = runtime_started is False and not stages
+            else:
+                execution_scope = result.get("execution_scope")
+                is_pre_runtime = (
+                    execution_scope == "pre_runtime_rejection"
+                    or (
+                        execution_scope is None
+                        and not stages
+                        and error_code in PRE_RUNTIME_REJECTION_ERROR_CODES
+                    )
                 )
-            )
             if is_pre_runtime:
                 classification = "pre_runtime_rejection"
                 pre_runtime_rejections += 1
@@ -605,6 +607,9 @@ def adjudicate_native_provider_rows_v2(
                     "tool_name": tool_name,
                     "classification": classification,
                     "runtime_chain_complete": complete,
+                    "runtime_started": runtime_started
+                    if type(runtime_started) is bool
+                    else None,
                     "tool_status": tool_status,
                     "tool_error_code": error_code,
                 }

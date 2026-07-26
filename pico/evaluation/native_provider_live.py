@@ -353,7 +353,13 @@ def _build_observation(
             "type": "assistant",
             "text": response.text,
             "stop_reason": response.stop_reason.value,
-            "tool_calls": [call.to_dict() for call in response.tool_calls],
+            "tool_calls": [
+                {
+                    **call.to_dict(),
+                    "runtime_started": call.call_id in runtime_started_call_ids,
+                }
+                for call in response.tool_calls
+            ],
         }
         if (
             descriptor is not None
