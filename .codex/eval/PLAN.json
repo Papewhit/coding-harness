@@ -1,6 +1,6 @@
 {
   "schema_version": "pico-eval-plan-v4",
-  "control_revision": "eval-control-v4",
+  "control_revision": "eval-control-v4.2",
   "project": "pico-v3-evaluation-native-tools",
   "integration_branch": "eval/v3-integration",
   "legacy_plan_role": "design_reference_only",
@@ -89,8 +89,15 @@
     "core_file_single_owner": true
   },
   "orchestration": {
-    "program_supervisor": "decides frozen-semantics changes, scope/ownership changes, external authorization, and explicit user decisions; does not implement Tickets",
-    "integrator": "continues across Wave boundaries unless replacement is required; dispatches model Threads, starts Processes, executes integrator Tickets, integrates commits, and maintains CURRENT/FREEZE",
+    "program_supervisor_thread": "persistent_top_level_user_visible",
+    "integrator_thread": "single_wave_top_level_user_visible",
+    "supervisor_integrator_relation": "independent_top_level_threads",
+    "supervisor_integrator_transport": "codex_cross_thread_message",
+    "supervisor_integrator_agent_parent_child": false,
+    "program_supervisor_orchestrates_execution": false,
+    "integrator_may_manage_implementer_reviewer_subthreads": true,
+    "next_wave_integrator_started_by": "user",
+    "decision_escalation": "integrator_self_resolve_then_program_supervisor_then_user",
     "ticket_thread_rule": "Ticket is not a Thread lifetime; one implementer Thread may execute an explicit ordered Ticket sequence",
     "run_shard_rule": "run_shard instances are local Processes; all instances of one logical Ticket produce one Ticket handoff",
     "current_state": ".codex/eval/CURRENT.md",

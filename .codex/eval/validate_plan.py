@@ -10,7 +10,7 @@ plan = json.loads((root / "PLAN.json").read_text(encoding="utf-8"))
 tickets: dict[str, dict[str, object]] = plan["tickets"]
 errors: list[str] = []
 
-EXPECTED_CONTROL_REVISION = "eval-control-v4"
+EXPECTED_CONTROL_REVISION = "eval-control-v4.2"
 EXPECTED_ENUMS = {
     "roles": ["program_supervisor", "integrator", "implementer", "reviewer"],
     "workflow_actions": [
@@ -66,7 +66,22 @@ EXPECTED_EXECUTION_BY_THREAD_TYPE = {
     "integrator": "current_integrator",
     "run_shard": "local_process",
 }
-FUTURE_WAVES = {"W7", "W8", "W9", "W10"}
+EXPECTED_ORCHESTRATION = {
+    "program_supervisor_thread": "persistent_top_level_user_visible",
+    "integrator_thread": "single_wave_top_level_user_visible",
+    "supervisor_integrator_relation": "independent_top_level_threads",
+    "supervisor_integrator_transport": "codex_cross_thread_message",
+    "supervisor_integrator_agent_parent_child": False,
+    "program_supervisor_orchestrates_execution": False,
+    "next_wave_integrator_started_by": "user",
+}
+OBSOLETE_ORCHESTRATION_PHRASES = (
+    "Wave 边界不自动更换 `integrator`",
+    "跨 Wave 继续使用本 Thread",
+    "同一 `integrator` 直接进入 W7",
+    "不因 Ticket 完成或 Wave 边界自动停止",
+)
+FUTURE_WAVES = {"W6R5", "W7", "W8", "W9", "W10"}
 
 
 def markdown_section(text: str, heading: str) -> str:
@@ -90,6 +105,10 @@ if plan.get("schema_version") != "pico-eval-plan-v4":
     errors.append("PLAN schema_version must be pico-eval-plan-v4")
 if plan.get("control_revision") != EXPECTED_CONTROL_REVISION:
     errors.append(f"PLAN control_revision must be {EXPECTED_CONTROL_REVISION}")
+orchestration = plan.get("orchestration", {})
+for name, expected in EXPECTED_ORCHESTRATION.items():
+    if orchestration.get(name) != expected:
+        errors.append(f"orchestration invariant mismatch: {name}")
 for name, expected in EXPECTED_ENUMS.items():
     if plan.get("enums", {}).get(name) != expected:
         errors.append(f"closed enum mismatch: {name}")
@@ -112,6 +131,7 @@ for required_control_file in (
     "templates/CURRENT.md",
     "templates/HUMAN_REVIEW.md",
     "templates/WAVE_INTEGRATOR_PROMPT.md",
+    "templates/PROGRAM_SUPERVISOR_PROMPT.md",
     "templates/THREAD_PROMPT.md",
     "templates/HANDOFF.md",
     "templates/REVIEW.md",
@@ -441,6 +461,35 @@ for path in active_files:
     for ad_hoc in (r"\blane\b", r"\bcampaign controller\b", r"\bcanary\b"):
         if re.search(ad_hoc, text, flags=re.IGNORECASE):
             errors.append(f"undefined ad-hoc term in active control file: {path.relative_to(root)}: {ad_hoc}")
+
+forward_control_files = [
+    repo_root / "AGENTS.md",
+    root / "CONTROL.md",
+    root / "README.md",
+    root / "AGENTS.addendum.md",
+    root / "PLAN.json",
+    root / "templates/WAVE_INTEGRATOR_PROMPT.md",
+    root / "templates/PROGRAM_SUPERVISOR_PROMPT.md",
+    root / "waves/W7-evaluation-pilots-resume.md",
+    root / "waves/W8-final-baseline-resume-gate.md",
+    root / "waves/W9-resume-ablation.md",
+    root / "waves/W10-release.md",
+]
+forward_control_files.extend(
+    root / tickets[ticket_id]["ticket_file"]
+    for ticket_id, ticket in tickets.items()
+    if ticket["wave"] in FUTURE_WAVES
+)
+for path in forward_control_files:
+    if not path.exists():
+        continue
+    text = path.read_text(encoding="utf-8")
+    for obsolete in OBSOLETE_ORCHESTRATION_PHRASES:
+        if obsolete in text:
+            errors.append(
+                "forward control file retains obsolete orchestration rule: "
+                f"{path.relative_to(repo_root)}: {obsolete}"
+            )
 
 if errors:
     print("INVALID")

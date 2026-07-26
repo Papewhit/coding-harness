@@ -50,7 +50,7 @@ On Windows in Codex sandboxed mode, consult `docs/annoying-uv-codex.md` if
 
 - From W6R4 onward, use `.codex/eval/CONTROL.md`, `CURRENT.md`, and the current Wave file as the execution entry point. Treat `PLAN.json` as a machine registry and load only the exact current entries when needed. `state/STATUS.json` is historical through W6R3 and is not the live status source.
 - A Ticket is a commit, acceptance, and handoff unit, not a Thread lifetime. One `implementer` Thread may complete multiple explicitly ordered Tickets.
-- A Wave boundary does not require a fresh `integrator`. `thread_type=integrator` runs in the current `integrator`; `thread_type=run_shard` runs as local Processes and does not create model Threads.
+- Each Wave uses a fresh, user-visible top-level `integrator` Thread. The persistent `program_supervisor` is a separate top-level Thread. They communicate through Codex cross-thread messages and must not form an Agent parent-child relationship. See `.codex/eval/CONTROL.md` for the decision boundary.
 - The current `integrator` is the only writer of `.codex/eval/CURRENT.md` and `FREEZE.json`. Do not create commits for dispatch, acceptance, waiting, or routine state updates.
 - Review findings must be classified as `implementation_defect`, `measurement_defect`, `evaluation_failure`, or `change_request`. A valid evaluation failure is a result, not an automatic product-repair request.
 - Formal Runtime and online Evaluation must not add or retain executable `<tool>/<final>` fallbacks.

@@ -59,4 +59,4 @@
 
 ## Completion rule
 
-当前 `integrator` 直接完成本 Ticket，写一份 handoff，并在同一次状态转换中更新 `CURRENT.md`；本 Ticket 列出 `FREEZE.json` 时直接更新正式 Freeze，不写 status/freeze proposal。依赖满足时继续下一动作，不因 Ticket 完成或 Wave 边界自动停止。
+当前 `integrator` 直接完成本 Ticket，写一份 handoff，并在同一次状态转换中更新 `CURRENT.md`；本 Ticket 列出 `FREEZE.json` 时直接更新正式 Freeze，不写 status/freeze proposal。依赖满足时继续当前 Wave 内的下一动作。当前 Wave close 后停止，不得进入下一 Wave。

@@ -1,9 +1,9 @@
-# Evaluation Control Plane v4
+# Evaluation Control Plane v4.2
 
-**Control revision:** `eval-control-v4`
-**Effective from:** `W6R4`
+**Control revision:** `eval-control-v4.2`
+**Effective from:** `W6R5`
 
-本文件自 W6R4 起取代旧编排行为。Native Tool Calling、安全链、SDK 边界、冻结输入、canonical 环境和证据完整性约束继续有效。W6R3 及以前的 handoff、proposal、提交、tag、bundle、`STATUS.json` 和 `FREEZE.json` 历史内容保持原样，不追溯改写。
+本修订在 W6R4 close 完成后立即取代 W6R4 执行时有效的 `program_supervisor`/`integrator` 编排行为。Native Tool Calling、安全链、SDK 边界、冻结输入、canonical 环境和证据完整性约束继续有效。W6R4 的 Wave 文件、执行记录、handoff 和 Artifact，以及 W6R3 及以前的 handoff、proposal、提交、tag、bundle、`STATUS.json` 和 `FREEZE.json` 历史内容保持原样，不追溯改写。
 
 ## 1. 规则优先级与术语纪律
 
@@ -16,12 +16,16 @@
 5. 当前 Ticket 文件；
 6. `integrator` 发出的 dispatch。
 
-规范性词语为“必须”“禁止”“可以”。角色、工作流动作、持久状态和 Finding 类型只允许使用本文件与 `PLAN.json` 中的固定值。确需新增固定值时，必须先修改集中枚举，再在 prompt、`CURRENT.md`、handoff 或阶段汇报中使用。禁止使用未定义的近义词代替既有值。
+规范性词语为“必须”“禁止”“可以”。角色、工作流动作、持久状态和 Finding 类型只允许使用本文件与 `PLAN.json` 中的固定值。确需新增固定值时，必须先修改集中枚举，再在 prompt、`CURRENT.md`、handoff 或 Wave 汇报中使用。禁止使用未定义的近义词代替既有值。
 
-正文中的角色名一律写成代码值：`program_supervisor`、`integrator`、`implementer`、`reviewer`。W6R4 以后新引入、且不在源码、测试或 frozen contract 中已有定义的 Ticket-local 技术术语，必须先在该 Ticket 的 `Ticket-local terms` 中定义。阶段汇报优先使用精确 Ticket ID，不使用临时概括词代替 Ticket 集合。
+正文中的角色名一律写成代码值：`program_supervisor`、`integrator`、`implementer`、`reviewer`。W6R4 close 后新引入、且不在源码、测试或 frozen contract 中已有定义的 Ticket-local 技术术语，必须先在该 Ticket 的 `Ticket-local terms` 中定义。Wave 汇报优先使用精确 Ticket ID，不使用临时概括词代替 Ticket 集合。
 
 ### 1.1 对象术语
 
+- **顶层 Thread**：用户可见、独立存在，且不是由另一个模型 Thread
+  通过 Agent 工具创建或持有的模型对话。
+- **跨 Thread 消息**：两个既有顶层 Thread 之间通过 Codex 跨 Thread 消息机制发送的可追溯消息；不建立父子 Agent 关系。
+- **执行编排**：为推进执行而主动创建、分发、监控、恢复或终止 `integrator`、`implementer`、`reviewer` 或 Process。解释状态、提供建议、回复决策问题和修订计划不属于执行编排。
 - **Wave**：`PLAN.json` 中共享一个 Exit Gate 的一组 Tickets；允许没有 Ticket、只包含 `integrator` 执行步骤。
 - **Ticket**：工作范围、所有权、验收、提交和 handoff 的最小单位；Ticket 不是 Thread 生命周期单位。
 - **Thread**：一个模型对话。
@@ -50,8 +54,8 @@
 
 | 角色 | 权限与责任 |
 |---|---|
-| `program_supervisor` | 接收结论；决定 frozen 语义变更、范围/所有权变更、外部授权和破坏性操作；不实现 Ticket。 |
-| `integrator` | 分发 Tickets；启动 Processes；验收和集成提交；维护 `CURRENT.md` 与 `FREEZE.json`；执行 `thread_type=integrator` 的 Ticket；控制 Wave。 |
+| `program_supervisor` | 运行在长期保留、用户可见的顶层 Thread 中；跨 Wave 保存计划背景、Wave 汇报、用户决定和方案修订；解释状态、提供建议、处理 `integrator` 无法自行解决的决策问题，并在需要时与用户澄清或修订计划；不编排执行。 |
+| `integrator` | 运行在用户可见的顶层 Thread 中，一个 Thread 只负责一个 Wave；分发当前 Wave 的 Tickets，启动 Processes，验收和集成提交，维护 `CURRENT.md` 与 `FREEZE.json`，执行 `thread_type=integrator` 的 Ticket；可以为当前 Wave 创建 `implementer`/`reviewer` 子 Thread。 |
 | `implementer` | 在 dispatch 列出的路径内实现一个或多个顺序 Tickets；每个 Ticket 分别提交和 handoff。 |
 | `reviewer` | 检查精确 Candidate 和 Artifacts；可以运行检查命令，并写 Ticket 明确允许的 review、proposal、selection 或 audit 输出；不修改产品实现，不调度修复。 |
 
@@ -61,6 +65,16 @@
 - `reviewer` → `model_thread`，由 `reviewer` Thread 执行；
 - `integrator` → `current_integrator`，由当前 `integrator` Thread 直接执行，不创建新 Thread；
 - `run_shard` → `local_process`，由当前 `integrator` 启动 Process，不创建新 Thread；`[xN]` 表示 N 个 Processes，不表示 N 个模型对话。
+
+### 1.2.1 `program_supervisor` 与 `integrator`
+
+- `program_supervisor` 与 `integrator` 必须是两个相互独立、用户可见的顶层 Thread。
+- 二者之间禁止通过 Agent 工具建立父子关系；不得由一方创建、持有或监控另一方。
+- 二者需要沟通时，必须使用 Codex 跨 Thread 消息机制。
+- `program_supervisor` 在没有收到消息或用户提问时保持非活动状态；不等待、轮询或转述 `integrator`、`implementer`、`reviewer` 或 Process 的运行状态。
+- 上述限制不影响 `integrator` 在当前 Wave 内使用 Agent 工具创建和管理 `implementer`、`reviewer` 子 Thread。
+- 每个 Wave 使用一个新的 `integrator` 顶层 Thread。当前 Wave close 后，该 `integrator` 必须停止，不得进入下一 Wave，也不得创建下一 Wave 的 `integrator`。
+- 下一 Wave 的 `integrator` 由用户在新的顶层 Thread 中启动。
 
 ### 1.3 工作流动作枚举
 
@@ -179,11 +193,15 @@ Review verdict 值只有：
 
 `PLAN.json` 是机器可校验的完整 registry；默认不整文件载入上下文。需要核对时只读取当前 Wave/Ticket 的精确条目。禁止默认读取完整 `STATUS.json`、全部旧 handoff、全部 Gate 报告或旧设计长文。
 
-给 `program_supervisor` 的阶段汇报固定为：结论；source/Candidate SHA；自上次完成的 Tickets；open Findings 及其类型；Wave 状态；唯一下一动作；human review 的 `base..candidate` 与 changed files。除非被明确追问，不复述完整过程。
+每个 Wave close 时，`integrator` 必须通过跨 Thread 消息向 `program_supervisor` 发送一次结论性汇报，包含：结论；source/Candidate SHA；自上次完成的 Tickets；open Findings 及其类型；Wave 状态；唯一下一动作；human review 的 `base..candidate` 与 changed files。汇报不复述完整执行过程；`program_supervisor` 可以在需要时追问细节。
+
+`integrator` 不向 `program_supervisor` 汇报普通执行进度、Agent/Process 运行状态、Reviewer 中间状态或现有规则已经决定的下一动作。
 
 ## 4. Thread、Process 与 Ticket 执行
 
-- Wave 边界本身不是更换 `integrator` Thread 的理由。只有 `program_supervisor` 主动更换、当前 Thread 已无法根据 `CURRENT.md` 可靠继续，或发生角色冲突时才更换。
+- 每个 Wave 必须使用一个新的、用户可见的顶层 `integrator` Thread。一个 `integrator` Thread 的执行范围恰好为一个 Wave。
+- 当前 `integrator` 因运行故障或角色冲突需要在 Wave 中途更换时，必须先更新 `CURRENT.md` 并创建允许的 Control checkpoint；用户随后在新的顶层 Thread 中启动替代 `integrator`，继续同一个 Wave。这不创建新的 Repair Wave。
+- 当前 Wave close 后，`integrator` 发送 Wave 汇报并停止。不得直接进入、启动或预先执行下一 Wave。
 - Ticket 与 Thread 禁止强制一一对应。一个 `implementer` Thread 可以按 dispatch 列出的顺序完成多个 Tickets；每个 Ticket 仍必须有独立 base/head、测试摘要和 handoff；修改 `.codex/eval/**` 之外 Git-tracked files 的 Ticket 还必须有独立 Accepted commit。
 - 一个并发 `implementer` 执行序列使用一个独立 worktree/branch。顺序 Tickets 可以复用该 worktree/branch，但开始每个 Ticket 前必须记录该 Ticket 的精确 base SHA 和 dependency commits。并行序列必须从同一 Candidate 建立不同 worktrees。
 - `implementer` 完成当前 Ticket 后不得自行开始未列入 dispatch 的 Ticket。若 dispatch 已列出后续 Ticket，`integrator` 验收当前 Ticket 并给出下一 Ticket 的精确 base/dependencies 后，可以在同一 Thread 继续。
@@ -275,7 +293,7 @@ Pico provider attempts = FREEZE 中的值；未冻结时不得开始正式运行
 - `implementer` 可以在自己的 branch 内使用多个本地提交；`integrator` 验收时使用 `git cherry-pick --no-commit` 或等价的精确 patch 应用，把该 Ticket 的变更汇总成一个 Accepted commit。commit body 记录 `implementer` head/commits、dependency commits、tests 和 stable patch ID。Ticket handoff 在提交后生成，因此 commit body 不要求包含 handoff hash。
 - Ticket handoff、review、`CURRENT.md`、`FREEZE.json` 和其他 `.codex/eval/**` 控制文件禁止混入 Accepted commit。`integrator` 将它们保存在控制工作区，并只在 Wave close 或必须更换 `integrator` 时创建一个 Control checkpoint。
 - `implementer` 写完 Ticket 的 Git-tracked files 后先形成语义 commit，再写 handoff。`integrator` 复制并验证 handoff 后，才允许清理该 worktree 中未提交的控制文件并开始同一 Thread 的下一 Ticket。
-- 禁止为 dispatch、accept、waiting、普通状态更新或阶段汇报创建 commit。
+- 禁止为 dispatch、accept、waiting、普通状态更新或 Wave 汇报创建 commit。
 - 非琐碎语义冲突不得由 `integrator` 随手修补；退回 Responsible Ticket，或在超出既有范围时提交 `change_request`。
 - 最终 Wave handoff 必须直接记录每个有 Accepted commit 的 Ticket 的原始 head、handoff hash、stable patch ID 和 Accepted commit；不再强制生成独立 commit-map 文件。
 - Git bundle 仅在准备删除未合并 `implementer` branch refs、需要离线恢复或 `program_supervisor` 明确要求时生成；不再作为每个 Wave 的强制产物。未验证 Accepted commit、handoff hash 和 clean cleanup candidate 前，不得删除 `implementer` branch/worktree。
@@ -287,16 +305,16 @@ Pico provider attempts = FREEZE 中的值；未冻结时不得开始正式运行
 
 ## 9. 继续、等待与阻断
 
-`integrator` 在下一步能由现有规则唯一决定时必须继续：依赖满足则 `dispatch`；`implementation_defect`/`measurement_defect` 则退回 Responsible Ticket；`evaluation_failure` 则记录并继续；`thread_type=run_shard` ready 则启动 Process；`thread_type=integrator` ready 则直接执行；required Gate rejected 或可选分支明确不执行则 `mark_not_applicable`。
+`integrator` 在下一动作能够由现有规则、已有授权和已接受证据唯一决定时，必须继续执行。
 
-以下情况使用 `waiting`，禁止写成 `blocked`：需要用户选择/接受；需要凭据或访问权；需要外部服务恢复。请求 `program_supervisor` 时只写：当前事实、waiting 原因、可选项、每项直接后果、唯一需要作出的决定。不受该决定影响的工作继续执行。
+当继续执行依赖尚未形成的外部输入、授权、接受或计划级决定，并且该事项已经成为当前 Wave 的唯一剩余阻碍时，Wave 使用 `waiting`。不受该事项影响的已授权工作继续执行。
 
-Wave 只有在以下情况可以 `blocked`：
+`blocked` 是完成适用的决策与恢复过程后形成的终态。只有确认当前规则和授权内不存在合规的继续、恢复或收口路径时，Wave 才可以设为 `blocked`。
 
-1. 继续必须改变 frozen Oracle、metric、验收语义或用户已批准行为；
-2. contract、Freeze、Ticket 约束或安全规则互相矛盾，无法同时满足；
-3. accepted Git SHA/tree、Artifact 或 patch identity 已不可恢复，且无法在当前 Wave 内重建。
+决策数据流：`integrator` 自行判断并解决 → `program_supervisor` 提供建议或处理计划级问题 → 用户作出仍无法在前两级解决的最终决定。
 
-## 10. W6R4 以后适用范围
+> 各角色如何判断和处理需要沟通的事项，由其角色 Prompt 另行规定。
 
-W6R4 按 `waves/W6R4-profile-reselection-human-smoke.md` 执行，没有 Ticket Thread。W7–W10 按各 Wave 文件和本规则执行。旧设计文档只用于追查设计理由，不作为任何新 Thread 的默认输入。
+## 10. W6R4 close 后适用范围
+
+W6R4 已按当时有效规则执行；其 Wave 文件、执行记录、handoff 和 Artifact 不追溯改写。本修订适用于 W6R4 close 后启动的第一个 Wave 及所有后续 Wave，无论下一 Wave 是新增的 W6R5 还是原计划的 W7。各 Wave 仍按自己的 Wave 文件执行。旧设计文档只用于追查设计理由，不作为任何新 Thread 的默认输入。

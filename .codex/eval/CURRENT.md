@@ -8,7 +8,7 @@
 - **Current objective:** W6R4 is closed with its authorized work and conclusions complete; `native_eval_ready` is rejected independently of the passed Wave state.
 - **Source SHA:** `0d8c21c3484b069c71a7a8b784b74330530163d2`
 - **Candidate SHA:** `none`
-- **Control checkpoint SHA:** `pending W6R4 close checkpoint` (previous: `7dd52612d7319b5189214f9bb8976b09a3933c35`)
+- **Control checkpoint SHA:** `1184bd39123e3898061417a275c4083f61ad8102`
 
 ## Gates
 

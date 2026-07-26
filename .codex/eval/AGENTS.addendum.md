@@ -1,8 +1,8 @@
-## Pico v3 Evaluation 与 Native Tool Calling（eval-control-v4）
+## Pico v3 Evaluation 与 Native Tool Calling（eval-control-v4.2）
 
 - 从 W6R4 起以 `.codex/eval/CONTROL.md`、`CURRENT.md` 和当前 Wave 文件为执行入口；`PLAN.json` 只作机器 registry，需要时只读取当前条目；`state/STATUS.json` 只作 W6R3 及以前历史记录。
 - Ticket 是提交、验收和 handoff 单位，不是 Thread 生命周期单位；一个 `implementer` Thread 可以按明确 dispatch 顺序完成多个 Tickets。
-- Wave 边界不自动更换 `integrator`。`thread_type=integrator` 由当前 `integrator` 直接执行；`thread_type=run_shard` 由 `integrator` 启动本地 Process，不创建模型 Thread。
+- 每个 Wave 使用一个全新的用户可见顶层 `integrator` Thread。持久化的 `program_supervisor` 是一个单独的顶层 Thread。二者通过 Codex 跨 Thread 消息交互，禁止建立 parent-child Agent 关系。决策边界详见 `.codex/eval/CONTROL.md`。
 - `reviewer` 必须把 Finding 分类为 `implementation_defect`、`measurement_defect`、`evaluation_failure` 或 `change_request`；有效测量中的任务失败不得自动触发产品修复。
 - 当前 `integrator` 是 `CURRENT.md` 与 `FREEZE.json` 的唯一写入者。禁止为 dispatch、accept、waiting 或普通状态更新创建 commit。
 - 正式 Runtime 与在线 Evaluation 不得新增或保留可执行 `<tool>/<final>` fallback。
