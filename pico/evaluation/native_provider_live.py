@@ -30,6 +30,13 @@ NATIVE_SAFETY_STAGES = (
     "policy",
     "execute",
 )
+PRE_RUNTIME_REJECTION_ERROR_CODES = frozenset(
+    {
+        "model_protocol_error",
+        "step_limit_exceeded",
+        "tool_choice_none_violation",
+    }
+)
 APPROVAL_POLICIES = {
     "final": "auto",
     "single_call": "auto",
@@ -304,6 +311,11 @@ def _build_observation(
         for event in session_events
         if event.get("event") == "tool_finished"
     }
+    runtime_started_call_ids = {
+        str(event.get("call_id", ""))
+        for event in session_events
+        if event.get("event") == "tool_started"
+    }
 
     events: list[dict[str, Any]] = []
     unknown_blocks: list[dict[str, Any]] = []
@@ -363,11 +375,12 @@ def _build_observation(
                     continue
                 result = dict(journal.get("result", {}))
                 finished = finished_by_call.get(call.call_id, {})
+                error_code = _result_error_code(result)
                 results.append(
                     {
                         "call_id": call.call_id,
                         "is_error": bool(result.get("is_error", False)),
-                        "error_code": _result_error_code(result),
+                        "error_code": error_code,
                         "tool_status": str(
                             finished.get(
                                 "status",
@@ -377,14 +390,13 @@ def _build_observation(
                         "tool_error_code": str(
                             finished.get(
                                 "tool_error_code",
-                                _result_error_code(result),
+                                error_code,
                             )
                         ),
-                        "execution_scope": (
-                            "pre_runtime_rejection"
-                            if _result_error_code(result)
-                            == "tool_choice_none_violation"
-                            else "runtime_execution"
+                        "execution_scope": _execution_scope(
+                            call_id=call.call_id,
+                            error_code=error_code,
+                            runtime_started_call_ids=runtime_started_call_ids,
                         ),
                         "output": result.get("output"),
                     }
@@ -649,6 +661,19 @@ def _result_error_code(result: Mapping[str, Any]) -> str:
         return ""
     code = error.get("code")
     return code if isinstance(code, str) else ""
+
+
+def _execution_scope(
+    *,
+    call_id: str,
+    error_code: str,
+    runtime_started_call_ids: set[str],
+) -> str:
+    if call_id in runtime_started_call_ids:
+        return "runtime_execution"
+    if error_code in PRE_RUNTIME_REJECTION_ERROR_CODES:
+        return "pre_runtime_rejection"
+    return "runtime_execution"
 
 
 def _load_json_lines(path: Path) -> list[dict[str, Any]]:

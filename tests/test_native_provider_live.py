@@ -8,6 +8,7 @@ import pytest
 from pico import Pico
 from pico.config import ProviderConfig
 from pico.evaluation.native_provider import (
+    adjudicate_native_provider_rows_v2,
     evaluate_native_provider_case,
     load_case_set,
     run_native_provider_conformance,
@@ -545,6 +546,127 @@ def test_secret_sentinel_and_raw_url_never_enter_observation(
     assert SECRET not in rendered
     assert RAW_URL not in rendered
     assert observation["audit"]["model_response_count"] == 2
+
+
+@pytest.mark.parametrize(
+    ("case_index", "call", "error_code"),
+    [
+        (3, _call("invalid-call", "read_file", {}), "invalid_arguments"),
+        (
+            4,
+            _call(
+                "permission-call",
+                "run_shell",
+                {"command": "echo denied", "timeout": 20},
+            ),
+            "approval_denied",
+        ),
+        (
+            1,
+            _call(
+                "policy-call",
+                "patch_file",
+                {
+                    "path": "README.md",
+                    "old_text": "native",
+                    "new_text": "changed",
+                },
+            ),
+            "prior_read_required",
+        ),
+    ],
+)
+def test_runtime_rejections_remain_runtime_execution(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    case_index: int,
+    call: ToolCall,
+    error_code: str,
+) -> None:
+    _clear_provider_overrides(monkeypatch)
+    config_path = _config(tmp_path)
+    case = load_case_set(CASE_PATH)["cases"][case_index]
+
+    def rejection_factory(
+        config: ProviderConfig, _case: dict
+    ) -> AdverseScriptedClient:
+        return AdverseScriptedClient(
+            config,
+            [_response(calls=(call,)), _response(text="done")],
+        )
+
+    observation = run_native_provider_live_case(
+        case=case,
+        expected_profile=_profile(config_path),
+        provider="fixture",
+        config_path=str(config_path),
+        client_factory=rejection_factory,
+        workspace_parent=tmp_path,
+    )
+    result = observation["events"][2]["results"][0]
+
+    assert result["error_code"] == error_code
+    assert result["execution_scope"] == "runtime_execution"
+    assert observation["audit"]["safety_chain"][0]["stages"]
+
+
+def test_step_limit_rejection_is_pre_runtime_and_excluded_from_oracle_v2(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _clear_provider_overrides(monkeypatch)
+    config_path = _config(tmp_path)
+    case = load_case_set(CASE_PATH)["cases"][1]
+    calls = tuple(
+        _call(f"read-{number}", "read_file", {"path": "README.md"})
+        for number in range(1, 14)
+    )
+    runtime_call_count = 0
+    original_run_tool = Pico.run_tool
+
+    def tracked_run_tool(self: Pico, name: str, args: dict) -> str:
+        nonlocal runtime_call_count
+        runtime_call_count += 1
+        return original_run_tool(self, name, args)
+
+    def step_limit_factory(
+        config: ProviderConfig, _case: dict
+    ) -> AdverseScriptedClient:
+        return AdverseScriptedClient(
+            config,
+            [_response(calls=calls), _response(text="budget exhausted")],
+        )
+
+    monkeypatch.setattr(Pico, "run_tool", tracked_run_tool)
+    observation = run_native_provider_live_case(
+        case=case,
+        expected_profile=_profile(config_path),
+        provider="fixture",
+        config_path=str(config_path),
+        client_factory=step_limit_factory,
+        workspace_parent=tmp_path,
+    )
+    row = evaluate_native_provider_case(case, observation)
+    adjudication = adjudicate_native_provider_rows_v2(
+        [row],
+        source_snapshot_sha="a" * 40,
+    )
+
+    call_ids = [item["call_id"] for item in row["call_evidence"]]
+    result_ids = [item["call_id"] for item in row["result_evidence"]]
+    rejected = row["result_evidence"][-1]
+    runtime_evidence_call_ids = {
+        item["call_id"] for item in observation["audit"]["safety_chain_evidence"]
+    }
+
+    assert call_ids == result_ids == [call.call_id for call in calls]
+    assert runtime_call_count == 12
+    assert rejected["error_code"] == "step_limit_exceeded"
+    assert rejected["execution_scope"] == "pre_runtime_rejection"
+    assert rejected["call_id"] not in runtime_evidence_call_ids
+    assert adjudication["runtime_snapshot"]["execution_denominator"] == 12
+    assert adjudication["runtime_snapshot"]["complete_execution_chains"] == 12
+    assert adjudication["runtime_snapshot"]["pre_runtime_rejection_count"] == 1
 
 
 def test_safety_chain_bypass_is_detected(
