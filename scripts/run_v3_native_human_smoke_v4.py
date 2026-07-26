@@ -55,11 +55,41 @@ _OPAQUE_PUBLIC_KEYS = frozenset(
 _OPAQUE_PUBLIC_SHAPE_KEYS = frozenset({"count", "hash", "type"})
 _OPAQUE_HASH = re.compile(r"^(?:sha256:)?[0-9a-f]{64}$")
 _OPAQUE_TYPE = re.compile(r"^[A-Za-z0-9_.:-]{1,100}$")
+_SAFE_PATH_SEGMENT = re.compile(r"^[A-Za-z0-9_.:-]{1,80}$")
 _RAW_URL = re.compile(r"https?://", re.IGNORECASE)
 _CREDENTIAL = re.compile(
     r"(?:bearer\s+[A-Za-z0-9._~+/=-]{12,}|sk-[A-Za-z0-9_-]{12,})",
     re.IGNORECASE,
 )
+
+
+class PublicArtifactScanError(ValueError):
+    """Public-safe scanner rejection without the rejected value or payload."""
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        reason: str,
+        path: tuple[str, ...],
+        value: Any,
+    ) -> None:
+        self.reason = reason
+        self.path = _safe_public_path(path)
+        self.value_type = _public_value_type(value)
+        self.shape = _public_value_shape(value)
+        super().__init__(
+            f"{message}; path={self.path}; value_type={self.value_type}; "
+            f"shape={self.shape}"
+        )
+
+    def public_evidence(self) -> dict[str, str]:
+        return {
+            "reason": self.reason,
+            "path": self.path,
+            "value_type": self.value_type,
+            "shape": self.shape,
+        }
 
 
 class FakeProvider:
@@ -577,22 +607,46 @@ def _scan_public_value(
     path: tuple[str, ...] = (),
 ) -> None:
     if isinstance(value, Mapping):
+        if path and path[-1] == "output_item_counts":
+            for key, item in value.items():
+                item_path = (*path, str(key))
+                if type(item) is not int or item < 0:
+                    raise PublicArtifactScanError(
+                        "public output_item_counts entry must be a "
+                        "nonnegative integer",
+                        reason="invalid_output_item_count",
+                        path=item_path,
+                        value=item,
+                    )
+            return
         for key, item in value.items():
             normalized = str(key).lower()
+            item_path = (*path, normalized)
             if normalized in _PRIVATE_KEYS:
-                raise ValueError(f"private field {key!r} in public Artifact {context}")
+                raise PublicArtifactScanError(
+                    f"private field {key!r} in public Artifact {context}",
+                    reason="private_field",
+                    path=item_path,
+                    value=item,
+                )
             if normalized in _OPAQUE_PUBLIC_KEYS:
                 if _is_capability_field(path):
                     if type(item) is not bool:
-                        raise ValueError(
+                        raise PublicArtifactScanError(
                             f"public capability {key!r} must be boolean in "
-                            f"Artifact {context}"
+                            f"Artifact {context}",
+                            reason="invalid_capability_type",
+                            path=item_path,
+                            value=item,
                         )
                 elif normalized == "opaque_continuation" or not (
                     _is_public_opaque_shape(item)
                 ):
-                    raise ValueError(
-                        f"private {key!r} payload in public Artifact {context}"
+                    raise PublicArtifactScanError(
+                        f"private {key!r} payload in public Artifact {context}",
+                        reason="private_opaque_payload",
+                        path=item_path,
+                        value=item,
                     )
             _scan_public_value(
                 item,
@@ -613,11 +667,26 @@ def _scan_public_value(
     if not isinstance(value, str):
         return
     if _RAW_URL.search(value):
-        raise ValueError(f"raw endpoint in public Artifact {context}")
+        raise PublicArtifactScanError(
+            f"raw endpoint in public Artifact {context}",
+            reason="raw_endpoint",
+            path=path,
+            value=value,
+        )
     if _CREDENTIAL.search(value):
-        raise ValueError(f"credential-like secret in public Artifact {context}")
+        raise PublicArtifactScanError(
+            f"credential-like secret in public Artifact {context}",
+            reason="credential_like_secret",
+            path=path,
+            value=value,
+        )
     if any(secret in value for secret in private_values):
-        raise ValueError(f"private locator or secret in public Artifact {context}")
+        raise PublicArtifactScanError(
+            f"private locator or secret in public Artifact {context}",
+            reason="private_locator_or_secret",
+            path=path,
+            value=value,
+        )
 
 
 def _is_capability_field(path: tuple[str, ...]) -> bool:
@@ -638,6 +707,38 @@ def _is_public_opaque_shape(value: Any) -> bool:
         and type(count) is int
         and count >= 0
     )
+
+
+def _safe_public_path(path: tuple[str, ...]) -> str:
+    safe = [
+        segment
+        if _SAFE_PATH_SEGMENT.fullmatch(segment)
+        and _RAW_URL.search(segment) is None
+        and _CREDENTIAL.search(segment) is None
+        else "<redacted-key>"
+        for segment in path
+    ]
+    return "$" if not safe else "$." + ".".join(safe)
+
+
+def _public_value_type(value: Any) -> str:
+    if value is None:
+        return "null"
+    if type(value) in {bool, int, float, str}:
+        return type(value).__name__
+    if isinstance(value, Mapping):
+        return "mapping"
+    if isinstance(value, (list, tuple)):
+        return "sequence"
+    return "object"
+
+
+def _public_value_shape(value: Any) -> str:
+    if isinstance(value, Mapping):
+        return "mapping"
+    if isinstance(value, (list, tuple)):
+        return "sequence"
+    return "scalar"
 
 
 def _write_inventory(root: Path, inventory_path: Path) -> dict[str, Any]:
@@ -1000,6 +1101,8 @@ def _write_measurement_failure(
             "validated_after_workspace_cleanup": False,
         },
     }
+    if isinstance(error, PublicArtifactScanError):
+        failure["scanner_failure"] = error.public_evidence()
     _write_accounting_files(target, failure)
 
 

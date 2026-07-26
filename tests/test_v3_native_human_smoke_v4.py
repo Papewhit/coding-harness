@@ -9,6 +9,7 @@ import pytest
 from scripts.run_v3_native_human_smoke_v4 import (
     DEFAULT_MANIFEST,
     FakeProvider,
+    PublicArtifactScanError,
     TRAJECTORY_DIRECTORY,
     TRAJECTORY_INVENTORY,
     _fake_factory,
@@ -26,7 +27,17 @@ from scripts.run_v3_native_human_smoke_v4 import (
 @pytest.fixture
 def live_public_shape() -> dict:
     return {
-        "event": "prompt_built",
+        "event": "model_exchange",
+        "exchange": {
+            "event": "assistant_tool_batch",
+            "metadata": {
+                "output_item_counts": {
+                    "reasoning": 1,
+                    "function_call": 2,
+                    "future-item": 0,
+                }
+            },
+        },
         "prompt_metadata": {
             "provider_profile": {
                 "capabilities": {
@@ -145,6 +156,41 @@ def test_public_scanner_accepts_live_profile_and_sanitized_reasoning_thinking_sh
         (),
         context="live-session.events.jsonl",
     )
+
+
+@pytest.mark.parametrize(
+    ("value", "value_type", "shape"),
+    [
+        (True, "bool", "scalar"),
+        (-1, "int", "scalar"),
+        ("1", "str", "scalar"),
+        ({"payload": "PRIVATE-COUNT-SENTINEL"}, "mapping", "mapping"),
+    ],
+)
+def test_output_item_counts_reject_invalid_reasoning_counts_with_safe_evidence(
+    value: object,
+    value_type: str,
+    shape: str,
+) -> None:
+    event = {
+        "event": "model_exchange",
+        "exchange": {
+            "metadata": {"output_item_counts": {"reasoning": value}}
+        },
+    }
+
+    with pytest.raises(PublicArtifactScanError) as error:
+        _scan_public_value(event, (), context="live-session.events.jsonl")
+
+    evidence = error.value.public_evidence()
+    assert evidence == {
+        "reason": "invalid_output_item_count",
+        "path": "$.exchange.metadata.output_item_counts.reasoning",
+        "value_type": value_type,
+        "shape": shape,
+    }
+    assert "PRIVATE-COUNT-SENTINEL" not in str(error.value)
+    assert "PRIVATE-COUNT-SENTINEL" not in json.dumps(evidence)
 
 
 @pytest.mark.parametrize(
@@ -292,6 +338,15 @@ def test_measurement_failure_persists_exact_stub_attempt_accounting(
         "exact": True,
         "provider_http_attempts": 4,
         "persisted_before_trajectory_validation": True,
+    }
+    assert result["scanner_failure"] == {
+        "reason": "invalid_capability_type",
+        "path": (
+            "$.verification.checks.3.detail.0.model_result.profile."
+            "capabilities.reasoning"
+        ),
+        "value_type": "str",
+        "shape": "scalar",
     }
     assert not (output / "summary.json").exists()
     rendered = "".join(
