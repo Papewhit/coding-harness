@@ -1345,6 +1345,188 @@
       "bundle_created": false
     }
   },
+  "native_human_smoke_v4_gate": {
+    "version": "pico-native-human-smoke-v4-gate-v1",
+    "status": "needs_remediation",
+    "source": {
+      "sha": "e65f370e49fe2ef749e017f33f509997eb1a0cd5",
+      "tree": "b306d8a29f863b64fcb2a45316a5cee8aa44dc7e",
+      "base_sha": "f9626c0a6c3c72907318f0616d0379cbb586404f",
+      "canonical_environment": "Ubuntu WSL2 / Python 3.12.13",
+      "clean_fresh_clone": true
+    },
+    "dependency_handoffs": {
+      "EVAL-063-H": "163de1abc1c2ed170db559d31e463c3def12de54d8565a602b7fed040a354dae",
+      "AUDIT-063-A": "3c745440be19c14a18fe4efed9ce829fed4f2e295cc39f306017281cc620462c"
+    },
+    "measurement_contract": {
+      "manifest": {
+        "path": "benchmarks/v3/native-provider/human-smoke-v4.json",
+        "sha256": "50aaa75f617eff099be4090bfa15c08a245ad4d9fcb206df1f21b5fc8ff68071",
+        "hash_basis": "git_blob_bytes"
+      },
+      "runner": {
+        "path": "scripts/run_v3_native_human_smoke_v4.py",
+        "sha256": "24d87909dd1a60320f74262d4c4d025c869e4e467a05064fc1d0a31c2aa1c1b7",
+        "hash_basis": "git_blob_bytes"
+      },
+      "tests": {
+        "path": "tests/test_v3_native_human_smoke_v4.py",
+        "sha256": "0775754675370759eb87139ca2a4eb50f751cf64455ec5298b7b773a469bec94",
+        "hash_basis": "git_blob_bytes"
+      },
+      "grounded_scenario": "HSMOKE-V4-A",
+      "durable_public_trajectory": true,
+      "raw_session_json_allowed": false,
+      "private_continuation_public_copy_allowed": false
+    },
+    "selection_reuse": {
+      "status": "accepted",
+      "w6r4_source_sha": "0d8c21c3484b069c71a7a8b784b74330530163d2",
+      "selected_profile": "dashscope-o",
+      "selected_profile_id": "sha256:41ebb321c6332867f0bb020621b7e1c17f8c60430374c37c3a670c916326ee70",
+      "selected_public_profile_sha256": "499655acd72b0c10f0bd0a938a032060fb7a5b776e74e478742078da1a137331",
+      "selection_critical_path_count": 18,
+      "selection_critical_changed_path_count": 0,
+      "production_runtime_unchanged": true,
+      "provider_adapters_unchanged": true,
+      "conformance_evaluator_unchanged": true,
+      "sdk_dependency_lock_unchanged": true,
+      "profile_reselection_rerun_required": false,
+      "proof_sha256": "1a8cb663f9c36874b4ce30ca27e42c3c3e2861ca0a9b38cb88cd7836b5abf2a9"
+    },
+    "authorized_live_parameters": {
+      "profile": "dashscope-o",
+      "stream": false,
+      "parallel_tool_execution": false,
+      "sdk_max_retries": 0,
+      "pico_provider_attempts": 1,
+      "private_config_locator_environment_variable": "PICO_NATIVE_PROVIDER_CONFIG",
+      "live_authorization_obtained": false
+    },
+    "gate_result": {
+      "eval_063_h_targeted": "28 passed",
+      "protected": "32 passed",
+      "scoped_ruff": "passed",
+      "compileall": "passed",
+      "plan_validation": "VALID: 99 Ticket templates, 18 Waves, control revision eval-control-v4.2",
+      "diff_check": "passed",
+      "fake_artifact": "2 scenarios PASS",
+      "native_call_count": 5,
+      "raw_session_json_count": 0,
+      "sensitive_or_raw_endpoint_hit_count": 0,
+      "invalid_public_shape_rejection_count": 17,
+      "unsafe_output_item_name_rejection_count": 4,
+      "rejected_key_value_payload_persisted_count": 0,
+      "provider_http_attempts": 0,
+      "all_required_commands_passed": true
+    },
+    "resolved_measurement_defects": {
+      "W6R5-EVAL-063-R-MD-001": {
+        "classification": "measurement_defect",
+        "invalidated_rows": 2,
+        "scope": "v4 public scanner and failure-accounting measurement contract",
+        "invalid_process_evidence_preserved": true,
+        "replacement_live_authorization_required": true
+      },
+      "W6R5-TOOL-063-G-MD-001": {
+        "classification": "measurement_defect",
+        "invalidated_rows": 0,
+        "scope": "integrator-local verifier only",
+        "invalid_logs_preserved": true,
+        "provider_http_attempts": 0
+      },
+      "W6R5-TOOL-063-G-R3-MD-001": {
+        "classification": "measurement_defect",
+        "invalidated_rows": 0,
+        "scope": "integrator-local synthetic credential probe only",
+        "invalid_logs_preserved": true,
+        "provider_http_attempts": 0
+      },
+      "W6R5-EVAL-063-R-MD-002": {
+        "classification": "measurement_defect",
+        "invalidated_rows": 2,
+        "scope": "v4 output_item_counts public value and field-name contract",
+        "r02_exact_provider_http_attempts": 4,
+        "invalid_process_evidence_preserved": true,
+        "replacement_live_authorization_required": true
+      }
+    },
+    "open_measurement_defects": {
+      "W6R5-EVAL-063-R-MD-003": {
+        "classification": "measurement_defect",
+        "status": "open",
+        "responsible_ticket": "EVAL-063-H",
+        "affected_ticket": "EVAL-063-R",
+        "invalidated_rows": 1,
+        "invalidated_process": "W6R5-EVAL-063-R-03",
+        "scope": "HSMOKE-V4-A contains:docs/quickstart.md exact-string Oracle rejects a semantically equivalent sentence after the required read_file -> patch_file -> read_file trajectory succeeded",
+        "actual_text": "Run pico sync before opening the workspace so that all dependencies are ready.",
+        "expected_text": "Run pico sync before opening the workspace so dependencies are ready.",
+        "product_semantic_conclusion_valid": false,
+        "invalid_process_evidence_preserved": true,
+        "r03_exact_provider_http_attempts": 6,
+        "replacement_live_authorization_required": true,
+        "replacement_live_authorized": false,
+        "remediation_authorized": false
+      }
+    },
+    "live_measurement_close": {
+      "wave": "W6R5",
+      "wave_status": "blocked",
+      "native_eval_ready": "pending",
+      "native_resume_ready": "pending",
+      "w7_authorized": false,
+      "processes": {
+        "W6R5-EVAL-063-R-01": {
+          "product_result_valid": false,
+          "classification": "measurement_defect",
+          "evidence_preserved": true
+        },
+        "W6R5-EVAL-063-R-02": {
+          "product_result_valid": false,
+          "classification": "measurement_defect",
+          "provider_http_attempts": 4,
+          "evidence_preserved": true
+        },
+        "W6R5-EVAL-063-R-03": {
+          "product_result_valid": false,
+          "classification": "measurement_defect",
+          "provider_http_attempts": 6,
+          "process_manifest_sha256": "b2c3a97c16ba570df3780b40eb1644beb9e6bef516f1e80f185cbb62a575b82b",
+          "process_result_sha256": "8ecd883349d8a12a560953fd7b2c6e3b7e06c9c3f2ed7e6dcf625497a0afc08d",
+          "summary_sha256": "6e6227693e8ff1b6590b06df2b8e8b8b51bea93dd5df5d96898b4fc63bbf0906",
+          "inventory_sha256": "6ffbfad170604827fd6956a4af7aec6be9a387ad11ae6cfffa7a56811f723cdd",
+          "ticket_handoff_sha256": "05066a7ebdbca1459a91dd245b015a2aaa1eca15af34f9d6fb2c245bf80c8b88",
+          "evidence_preserved": true,
+          "automatic_rerun": false
+        }
+      },
+      "evaluation_v2_proposals_accepted": false,
+      "close_reason": "The user stopped W6R5 remediation after the R-03 exact-string Oracle measurement defect; no valid live product result or authorized compliant continuation remains."
+    },
+    "artifact": {
+      "root": "F:/dev/llm/pico-eval-artifacts/native-human-smoke-v4-gate/e65f370e49fe2ef749e017f33f509997eb1a0cd5",
+      "manifest_sha256": "dad5732e549ab5c248c643e0a850584d186b883b777f65e7b1b57bfa0b6d5af5",
+      "environment_sha256": "ea5815e2c5557db7fdde2245b67b71e2a9b7fa00484e1074de88859f8cfd0f84",
+      "command_results_sha256": "aee841ee352d5520c07c7d6222b871aa2dd9fe54a72fcc032049332ae62a9d69",
+      "selection_reuse_sha256": "1a8cb663f9c36874b4ce30ca27e42c3c3e2861ca0a9b38cb88cd7836b5abf2a9",
+      "validation_sha256": "f53de04c05c5649f9f5306341384d4dd9b846dfc7a5ae5a4454a4201a3a4585e",
+      "gate_report_sha256": "53b6b869900d139b54cc9398dafbdcb82baf9874461a44d5955244faa6c87a54",
+      "inventory_sha256": "dffcc8496eaecc277db723219237116538ee5286811a6b5d7bfbfea487b8d346",
+      "inventory_file_count": 36,
+      "all_member_hashes_and_sizes_matched": true,
+      "all_json_jsonl_reparsed": true
+    },
+    "execution_constraints": {
+      "provider_http_attempts": 0,
+      "private_config_locator_read": false,
+      "formal_effectiveness_run": false,
+      "resume_evaluation_run": false,
+      "w7_started": false
+    },
+    "source_ticket": "TOOL-063-G"
+  },
   "native_resume_contract": null,
   "native_resume_gate": null,
   "auto_dream": null,
