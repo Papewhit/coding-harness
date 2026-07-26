@@ -1120,6 +1120,231 @@
       "w7_started": false
     }
   },
+  "w6r4_profile_reselection_human_smoke": {
+    "version": "pico-w6r4-close-v1",
+    "status": "complete",
+    "wave_state": "passed",
+    "closed_at": "2026-07-26",
+    "entry": {
+      "source_sha": "cffe1bd0344eb66d218c2e24cae19fca63b2cbf0",
+      "source_tree": "5ebb6a2cd62e96753fe3502a3b5846319db7386f",
+      "control_checkpoint_sha": "7dd52612d7319b5189214f9bb8976b09a3933c35",
+      "previous_handoff_path": ".codex/eval/state/W6R3-wave-handoff-r2.json",
+      "previous_handoff_sha256": "521b1f3e30c393cbefd449cbff5057992cdca3167a327ec612532cc7335c8823",
+      "entry_freeze_sha256": "4ca55e089cbf34acf60d33c88d17dcf9819f216acb09e5c99ad72464ef7d9a85"
+    },
+    "accepted_source": {
+      "sha": "0d8c21c3484b069c71a7a8b784b74330530163d2",
+      "tree": "98d4c62a14dfc446c3ff5dceecea7eeb02c1b941",
+      "canonical_environment": "Ubuntu WSL2 ext4 checkout, Python 3.12.13",
+      "clean": true,
+      "changed_source_files": [
+        "pico/evaluation/native_provider.py",
+        "pico/evaluation/native_provider_live.py",
+        "tests/test_native_provider_evaluator.py",
+        "tests/test_native_provider_live.py"
+      ],
+      "accepted_commits": [
+        {
+          "revision": 1,
+          "worker_head": "e78731d289b02cfde49c744ffad0b8b149c0bf28",
+          "canonical_commit": "345261c3f644ddea92065f105bc754e223d0eff4",
+          "tree": "38535dd58d9b317c174a470a1857e6617ac45cc4",
+          "parent": "7dd52612d7319b5189214f9bb8976b09a3933c35",
+          "stable_patch_id": "3335c7a4f94671bb12981bf117d8729b0e1e8cf9",
+          "subject": "fix(eval): [EVAL-059-O][R1] accept pre-runtime rejection scope",
+          "handoff_sha256": "662bb2378223143c6abfec86f8e384d8e3f8c44eabcd3d600844def5933fce39",
+          "review_sha256": "c9f4364bd4b79ee87b9a97176a2045e2c1cf2f7120105ec41e2bafe89dc72f97"
+        },
+        {
+          "revision": 2,
+          "worker_head": "30375b1080cfe8400c3912dfb8b51930d62ee2e9",
+          "canonical_commit": "0d8c21c3484b069c71a7a8b784b74330530163d2",
+          "tree": "98d4c62a14dfc446c3ff5dceecea7eeb02c1b941",
+          "parent": "345261c3f644ddea92065f105bc754e223d0eff4",
+          "stable_patch_id": "75c52ea9cfd8a3ec36ac623dcb0fb600cd86ac8c",
+          "subject": "fix(eval): [EVAL-059-O][R2] accept call-bound runtime evidence",
+          "handoff_sha256": "47f971316f3eab2b93dafe6a66f1e1c5601f8e2d7c2b4e5671a489a4c14480dc",
+          "review_sha256": "27cc4f3f7fe43fd0e5f2bdb256c398c80be83d2621f7bc883011701af6aac0f6"
+        }
+      ]
+    },
+    "measurement_remediations": {
+      "W6R4-MD-001": {
+        "classification": "measurement_defect",
+        "status": "resolved",
+        "finding_path": "F:\\dev\\llm\\pico-eval-artifacts\\native-provider-reselection\\cffe1bd0344eb66d218c2e24cae19fca63b2cbf0\\selection\\W6R4-MD-001.json",
+        "finding_sha256": "cfb4104c707e5d932cdc1415503b309f52b92496bf98c98ce5fac8cb1b5cd94f",
+        "accepted_commit": "345261c3f644ddea92065f105bc754e223d0eff4",
+        "boundary": "Pre-runtime step-limit results are excluded from the Runtime execution denominator."
+      },
+      "W6R4-MD-002": {
+        "classification": "measurement_defect",
+        "status": "resolved",
+        "finding_path": "F:\\dev\\llm\\pico-eval-artifacts\\native-provider-reselection\\345261c3f644ddea92065f105bc754e223d0eff4\\selection\\W6R4-MD-002.json",
+        "finding_sha256": "f4f443870b32a57034773feb9a3b15a2514cd8c5aba193af1e73032b9d5885be",
+        "accepted_commit": "0d8c21c3484b069c71a7a8b784b74330530163d2",
+        "boundary": "Unmatched calls require call-ID-specific runtime-entry evidence and fail closed when evidence is missing or conflicting."
+      },
+      "W6R4-SMOKE-MD-001": {
+        "classification": "measurement_defect",
+        "status": "resolved",
+        "finding_path": "F:\\dev\\llm\\pico-eval-artifacts\\native-provider-human-smoke-v3\\process-manifests\\W6R4-SMOKE-MD-001.json",
+        "finding_sha256": "9d41cfb9825803481a453b3f2f6204f247f96742bbdda1c0186e663dfb528073",
+        "invalid_process_manifest_sha256": "7cbc79bfc17a7fde1b5523034ad1e8be3c8337f575f0bfca126ee02d406f9d29",
+        "invalid_state_marker_sha256": "bb28095487543c2322fe9b830847e5f74c10bacf0f3faa0745e5424f1b2cbb94",
+        "runner_main_entered": false,
+        "output_created": false,
+        "provider_http_attempts": 0,
+        "replacement_authorized": true,
+        "invalid_evidence_preserved": true
+      }
+    },
+    "selection": {
+      "status": "accepted",
+      "source_sha": "0d8c21c3484b069c71a7a8b784b74330530163d2",
+      "adjudicator_source_sha": "0d8c21c3484b069c71a7a8b784b74330530163d2",
+      "contract_interpretation": "The hard Gate requires at least one eligible profile; frozen comparison among eligible profiles selects one Evaluation profile.",
+      "hard_gate_eligible_profiles": [
+        "dashscope-o",
+        "dashscope-a"
+      ],
+      "hard_gate_ineligible_profiles": [
+        "deepseek"
+      ],
+      "unique_selected_profile": "dashscope-o",
+      "selected_profile_id": "sha256:41ebb321c6332867f0bb020621b7e1c17f8c60430374c37c3a670c916326ee70",
+      "selected_public_profile_sha256": "499655acd72b0c10f0bd0a938a032060fb7a5b776e74e478742078da1a137331",
+      "selection_reason": "Completion and protocol/retry metrics tied; dashscope-o had repetition status stability 8/8 versus dashscope-a 6/8.",
+      "artifacts": {
+        "root": "F:\\dev\\llm\\pico-eval-artifacts\\native-provider-reselection\\0d8c21c3484b069c71a7a8b784b74330530163d2\\selection",
+        "selection_sha256": "245bb1032998d61496d18b3a9edcf89ac21b7b2c44ba997267e7a7f344a5b056",
+        "summary_sha256": "6e2cbe3c24a29f1c46b23a629d1e98b85a5e82a8a756da44148df1dff8609583",
+        "verification_sha256": "2c55f760241cc5c9feb2a38e1b773c39f8ba6e48a55aa82ccdb83d609eef10d9",
+        "inventory_sha256": "d8c136a6ef1fe359d0a3fefa05493173c85eb9e3f464c5be6abdb1d958951cd0",
+        "manifest_sha256": "699a294a9027f9109c235ee5b3e3d10b527669a1b23eb1017ff2c4ea43460cb8"
+      },
+      "active_conformance_bundles": {
+        "dashscope-o": {
+          "raw_run_source_sha": "cffe1bd0344eb66d218c2e24cae19fca63b2cbf0",
+          "bundle_sha256": "c10c56be50f1a7503887bc76eaab6b3c8fda4706ff5b5166426aa1b8c24725d6",
+          "profile_status": "eligible",
+          "http_attempts": 73
+        },
+        "dashscope-a": {
+          "raw_run_source_sha": "cffe1bd0344eb66d218c2e24cae19fca63b2cbf0",
+          "bundle_sha256": "012eed42b38ff014935994ff3efbf22bb4c8e913fe644aa7f45f5717a30a993e",
+          "profile_status": "eligible",
+          "http_attempts": 72
+        },
+        "deepseek": {
+          "raw_run_source_sha": "0d8c21c3484b069c71a7a8b784b74330530163d2",
+          "bundle_sha256": "10bd6677d3309ad47cba96af6478f37c44ac1c3dd43c8cc4a0c59e1be76d069c",
+          "profile_status": "ineligible",
+          "http_attempts": 102
+        }
+      },
+      "process_manifests": {
+        "initial_dashscope_o": "75c559524d833f437dd86efd9f33c76f50968d4d7ad9612dfccc89be5199d121",
+        "initial_dashscope_a": "60b7af067827ed49ae9314bc3c7d7572402ac1ac9f72efbf0874b340bb7856b8",
+        "initial_deepseek": "c115d929b95a4234dec8edff35ce7fa9a70ea08fc588cb59ad282c193c8bac2b",
+        "first_replacement_deepseek": "7cbddf2d292070dacee7056df2de7b6cd2d2aadc5c13fe9d55caaabc2f8bf577",
+        "second_replacement_deepseek": "996e4d4878885bf6c456ebdae3feda47f01ae787cd0aafb374fb863d26797dba"
+      },
+      "http_accounting": {
+        "dashscope_o": 73,
+        "dashscope_a": 72,
+        "deepseek_original": 98,
+        "deepseek_first_replacement": 91,
+        "deepseek_second_replacement": 102,
+        "total": 436,
+        "automatic_reruns": 0
+      }
+    },
+    "human_smoke": {
+      "status": "accepted_evidence_with_evaluation_failure",
+      "execution_mode": "authorized_live",
+      "source_sha": "0d8c21c3484b069c71a7a8b784b74330530163d2",
+      "profile": "dashscope-o",
+      "profile_id": "sha256:41ebb321c6332867f0bb020621b7e1c17f8c60430374c37c3a670c916326ee70",
+      "frozen_manifest_sha256": "4a513c285ada8d3fc5a3f694e7286dba0f2bf579685c73e4d5720b51ea756f41",
+      "replacement_process_manifest_sha256": "399e3d91efd3297784fcfbc2a0a57ea19f7ce8ac850d602d60311874196404ba",
+      "replacement_launcher_sha256": "9011c05f46be00b5c0ed98a1d386f928b7f6185eaf6f6a512acff9169722d51d",
+      "replacement_state_marker_sha256": "922fbfb2aa1e5eccec4220dba157024f599baa9c67856f38f8b35fd10b3215ec",
+      "result": {
+        "summary_status": "FAIL",
+        "process_exit_code": 1,
+        "provider_http_attempts": 6,
+        "HSMOKE-V3-A": "FAIL",
+        "HSMOKE-V3-B": "PASS",
+        "automatic_rerun": false
+      },
+      "artifacts": {
+        "root": "F:\\dev\\llm\\pico-eval-artifacts\\native-provider-human-smoke-v3\\W6R4-0d8c21c3484b069c71a7a8b784b74330530163d2-R1",
+        "summary_sha256": "0af9cbc8e35e93b02bcd69da18b1991a756c2b5b9ba649317346c2bec1c10a49",
+        "result_a_sha256": "1511cf83db572bff83019c307b7d5159b0dc88e2cfcabae0b0b21794d73efc37",
+        "result_b_sha256": "76883314f3ff9379ba99d5368fa9adee47da87e9023afb15d0e3fae2b742500e",
+        "evaluation_failure_sha256": "df910751d8ab069736f5082f53e14b16abf77172fd9341df269b3cfe91d4b4c4",
+        "inventory_sha256": "69f616c7b18cc9bed6040adda173d03c3e20931884ef053844c6f6226541ef5e",
+        "human_review_sha256": "149fdc5cfb10bfe065e7a8364cc963e488cc536b8823b3e05ba057584ace53c7",
+        "inventory_member_count": 12,
+        "all_inventory_member_hashes_and_sizes_matched": true
+      },
+      "finding": {
+        "id": "W6R4-EF-001",
+        "classification": "evaluation_failure",
+        "status": "accepted",
+        "automatic_product_repair_requested": false
+      },
+      "evidence_validation": {
+        "summary_result_records_exact": true,
+        "call_result_mapping_one_to_one": true,
+        "safety_events_bound_to_call_ids": true,
+        "source_manifest_profile_bindings_match": true,
+        "exact_secret_or_raw_endpoint_hits": 0,
+        "expanded_private_locator_hits": 0,
+        "raw_url_hits": 0,
+        "credential_marker_hits": 0,
+        "executable_text_envelope_hits": 0
+      }
+    },
+    "decision": {
+      "program_supervisor_accepted_selection": true,
+      "program_supervisor_accepted_human_smoke_evidence": true,
+      "program_supervisor_accepted_evaluation_failure": true,
+      "native_eval_ready": "rejected",
+      "native_resume_ready": "pending",
+      "automatic_repair_authorized": false,
+      "smoke_rerun_authorized": false,
+      "w7_authorized": false,
+      "w7_status": "not_started"
+    },
+    "execution_accounting": {
+      "profile_reselection_http_attempts": 436,
+      "invalid_smoke_launcher_http_attempts": 0,
+      "valid_human_smoke_http_attempts": 6,
+      "w6r4_provider_http_attempts_total": 442,
+      "formal_effectiveness_run": false,
+      "resume_evaluation_run": false
+    },
+    "handoff": {
+      "path": ".codex/eval/state/W6R4-wave-handoff.json",
+      "freeze_sha256_bound_by_handoff": true,
+      "close_checkpoint_sha_recorded_post_commit_in_current": true
+    },
+    "safety": {
+      "private_config_locator_provided_out_of_band": true,
+      "private_config_locator_environment_variable": "PICO_NATIVE_PROVIDER_CONFIG",
+      "private_config_locator_value_persisted": false,
+      "secret_or_raw_endpoint_hits": 0,
+      "opaque_continuation_persisted": false
+    },
+    "cleanup": {
+      "performed": false,
+      "tag_created": false,
+      "bundle_created": false
+    }
+  },
   "native_resume_contract": null,
   "native_resume_gate": null,
   "auto_dream": null,
