@@ -1,20 +1,23 @@
 # EVAL-081-A — 最终 Evidence Bundle 与简历 Claim 生成
 
-**Thread type:** `integrator`  
-**Wave:** `W10`  
-**Base SHA:** 由 Integrator 在启动 prompt 中填写；实现 ticket 必须等于本波 `wave_base_sha`，run shard 必须等于冻结的 `run_snapshot_sha`。
+**Plan type:** `integrator` — 由当前 `integrator` 直接执行，不创建新模型 Thread
+**Wave:** `W10`
+**Base/Candidate SHA:** 由 `integrator` 在 dispatch 中填写；不得从 integration branch 吸收未列出的变化。
 
 ## Start conditions
 
-- `TOOL-050-S-R1`
-- `TOOL-062-G`
-- `EVAL-021-M`
-- `EVAL-031-G`
-- `EVAL-050-M`
-- `EVAL-061-M`
-- `EVAL-080`
+- Required Gate: `native_eval_ready=accepted`
+- Dependency Ticket: `TOOL-050-S-R1`
+- Dependency Ticket: `TOOL-062-G`
+- Dependency Ticket: `EVAL-021-M`
+- Dependency Ticket: `EVAL-031-G`
+- Dependency Ticket: `EVAL-050-M`
+- Dependency Ticket: `EVAL-061-M`
+- Dependency Ticket: `EVAL-080`
+- Gate 条件：`native_resume_ready` 必须已经是 `accepted|rejected`。
+- 依赖例外：只有 `EVAL-061-M=not_applicable` 的 reason=`required_gate_rejected` 且绑定被拒绝的 `native_resume_ready` Gate 时，才视为满足该依赖。
 
-只读取上述依赖的 handoff/freeze；不要读取其他 ticket 的完整对话。
+只读取上述 Gate/依赖的精确 handoff、Freeze 条目和 commits；不要读取其他 Ticket 的完整对话。
 
 ## Goal
 
@@ -33,7 +36,7 @@
 
 - `frozen evaluator/taskset/raw artifacts`
 
-未列出的写路径默认禁止。需要扩展 scope 时停止并提交 `ownership_change_request`。
+未列出的写路径默认禁止。需要扩展 scope 时提交 `change_request`；不得自行修改。
 
 ## Deliverables
 
@@ -51,12 +54,12 @@
 
 ## Commands
 
-由本 ticket 的实现和依赖决定；至少运行受影响测试与 ruff。
+当前 `integrator` 使用既有 runner/聚合脚本执行本 Ticket，并验证输入/输出 hashes。若 source 未改变，不重跑产品 full suite；只运行直接相关的格式、公式、Artifact integrity 或 Gate 检查。
 
 ## Notes
 
 - 无额外说明。
 
-## Stop rule
+## Completion rule
 
-完成验收、提交有意图清晰的 commit（run/reviewer ticket 除外）并生成 `.codex/eval/templates/HANDOFF.md` 格式的 handoff 后立即停止。不得 merge/rebase、更新 `STATUS.json`/`FREEZE.json`（Integrator ticket 除外）或开始下游工作。
+当前 `integrator` 先生成并验证 release docs/Artifacts；把四个 `docs/metrics/*.md` 的 Git-tracked 变更形成一个 Accepted commit，排除 handoff、CURRENT、FREEZE 和其他 `.codex/eval/**` 文件；再写 handoff 并更新 `CURRENT.md`。当 `native_resume_ready=rejected` 时，Resume 报告只记录 Gate 结论与 limitation，不生成效果 claim。依赖满足时继续 `EVAL-081-R`。

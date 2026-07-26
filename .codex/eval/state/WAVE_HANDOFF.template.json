@@ -1,21 +1,52 @@
 {
-  "schema_version": "pico-eval-wave-handoff-v1",
+  "schema_version": "pico-eval-wave-handoff-v2",
+  "control_revision": "eval-control-v4",
   "wave": "<WAVE_ID>",
+  "wave_state": "passed|blocked",
   "wave_base_sha": "<sha>",
   "integration_sha": "<sha>",
-  "status_sha256": "<sha256>",
+  "current_state_sha256": "<sha256>",
   "freeze_sha256": "<sha256>",
   "accepted_tickets": [],
+  "not_applicable_tickets": [
+    {
+      "ticket_id": "<TICKET_ID>",
+      "reason": "required_gate_rejected|optional_branch_not_selected",
+      "binding": "<GATE_OR_DECISION_PATH_AND_HASH>"
+    }
+  ],
   "blocked_tickets": [],
-  "remediation_rounds": [],
+  "open_findings": [
+    {
+      "id": "<FINDING_ID>",
+      "type": "implementation_defect|measurement_defect|evaluation_failure|change_request",
+      "required_action": "<ONE_ACTION>",
+      "responsible_ticket": "<TICKET_ID_OR_NULL>"
+    }
+  ],
   "ticket_handoffs": {},
-  "artifacts": {},
-  "exit_gate": {
-    "status": "accepted|blocked",
-    "commands": [],
-    "evidence": []
+  "ticket_acceptance": {
+    "<TICKET_ID>": {
+      "handoff_sha256": "<SHA256_OR_NULL>",
+      "original_head": "<SHA_OR_NULL>",
+      "stable_patch_id": "<SHA_OR_NULL>",
+      "accepted_commit": "<SHA_OR_NULL>"
+    }
   },
+  "artifacts": {},
+  "gate_results": {
+    "native_eval_ready": "pending|accepted|rejected",
+    "native_resume_ready": "pending|accepted|rejected"
+  },
+  "human_review": {
+    "base_sha": "<sha-or-null>",
+    "candidate_sha": "<sha-or-null>",
+    "summary_path": "<path-or-null>"
+  },
+  "control_checkpoint_commit": "<sha-or-null>",
+  "git_bundle": null,
+  "annotated_tag": null,
   "risks": [],
-  "user_decisions_required": [],
+  "program_supervisor_decision": null,
   "next_wave": "<WAVE_ID_OR_NULL>"
 }

@@ -1,17 +1,21 @@
 {
-  "schema_version": "pico-eval-installation-handoff-v1",
-  "base_commit": "45e7921b766b13a56fbd713d75431fa089e75a02",
+  "schema_version": "pico-eval-installation-handoff-v2",
+  "control_revision": "eval-control-v4",
+  "base_commit": "<sha>",
   "integration_branch": "eval/v3-integration",
-  "provider_example_commit": "<sha>",
   "control_plane_commit": "<sha>",
-  "artifact_root": "F:\\dev\\llm\\pico-eval-artifacts",
-  "local_config_path": "F:\\dev\\llm\\pico\\.pico.toml",
+  "artifact_root": "<path>",
+  "private_config_locator": {
+    "environment_variable": "PICO_NATIVE_PROVIDER_CONFIG",
+    "provided_out_of_band": true,
+    "value_persisted": false
+  },
   "configured_profile_names": [],
   "unconfigured_profile_names": [],
   "plan_sha256": "<sha256>",
   "control_sha256": "<sha256>",
-  "status_sha256": "<sha256>",
+  "current_state_path": ".codex/eval/CURRENT.md",
+  "current_state_sha256": "<sha256>",
   "freeze_sha256": "<sha256>",
-  "ready_wave": "W0",
-  "ready_tickets": ["EVAL-000"]
+  "ready_wave": "<WAVE_ID>"
 }

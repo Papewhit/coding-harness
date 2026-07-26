@@ -1,35 +1,12 @@
 {
-  "schema_version": "pico-eval-control-v3",
-  "project": "pico-v3-evaluation-native-tools",
+  "schema_version": "pico-eval-status-history-v4",
+  "control_revision": "eval-control-v4",
+  "purpose": "Historical machine index only; CURRENT.md is the authoritative live state from W6R4 onward.",
+  "current_state_path": ".codex/eval/CURRENT.md",
+  "current_state_sha256": "<sha256>",
   "integration_branch": "eval/v3-integration",
-  "repo_root": "<fill>",
-  "base_commit": "<fill>",
-  "installation_sha": "<fill-after-control-plane-commit>",
-  "work_branch": "<fill>",
-  "local_config_path": "<fill>",
-  "artifact_root": "<fill>",
-  "program_supervisor_thread": "<fill>",
-  "current_wave_integrator_thread": null,
-  "profiles": {
-    "qwen_openai_responses": {"local_name": "dashscope-o", "configured": "<true-or-false>"},
-    "qwen_anthropic_messages": {"local_name": "dashscope-a", "configured": "<true-or-false>"},
-    "deepseek_anthropic_messages": {"local_name": "deepseek", "configured": "<true-or-false>"}
-  },
-  "bootstrap_sha": "<fill-after-EVAL-000>",
-  "current_wave": "W0",
-  "wave_base_sha": "<fill>",
-  "gates": {
-    "native_eval_ready": "pending",
-    "native_resume_ready": "pending"
-  },
+  "base_commit": "<sha>",
   "accepted_tickets": {},
-  "active_tickets": {},
-  "blocked_tickets": {},
-  "ticket_instances": {},
   "wave_handoffs": {},
-  "ready_tickets": [
-    "EVAL-000"
-  ],
-  "last_gate": null,
   "updated_at": "<iso8601>"
 }

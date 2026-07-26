@@ -1,5 +1,6 @@
 {
-  "schema_version": "pico-eval-freeze-v2",
+  "schema_version": "pico-eval-freeze-v3",
+  "control_revision": "eval-control-v4",
   "artifact_contract": null,
   "native_contract": null,
   "tool_schema": null,
@@ -7,6 +8,7 @@
   "sdk_dependency_lock": null,
   "native_deterministic_gate": null,
   "provider_selection": null,
+  "native_eval_ready_record": null,
   "native_resume_contract": null,
   "native_resume_gate": null,
   "auto_dream": null,

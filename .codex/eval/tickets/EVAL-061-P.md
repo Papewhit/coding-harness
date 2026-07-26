@@ -1,16 +1,19 @@
 # EVAL-061-P — Resume Pilot 与 Native 中断谓词冻结
 
-**Thread type:** `reviewer`  
-**Wave:** `W8`  
-**Base SHA:** 由 Integrator 在启动 prompt 中填写；实现 ticket 必须等于本波 `wave_base_sha`，run shard 必须等于冻结的 `run_snapshot_sha`。
+**Plan type:** `reviewer` — 使用 `reviewer` Thread；可以写本 Ticket 明确允许的 review/proposal Artifact
+**Wave:** `W8`
+**Review binding:** 由 `integrator` 填写精确 `base_sha`、`candidate_sha` 与 Artifact hashes。
 
 ## Start conditions
 
-- `EVAL-050-R`
-- `EVAL-060`
-- `TOOL-062-G`
+- Required Gate: `native_eval_ready=accepted`
+- Required Gate: `native_resume_ready=accepted`
+- Dependency Ticket: `EVAL-050-R`
+- Dependency Ticket: `EVAL-060`
+- Dependency Ticket: `TOOL-062-G`
+- 适用条件：若 `native_resume_ready=rejected`，不得启动本 Ticket；`integrator` 执行 `mark_not_applicable`，reason=`required_gate_rejected`。
 
-只读取上述依赖的 handoff/freeze；不要读取其他 ticket 的完整对话。
+只读取上述 Gate/依赖的精确 handoff、Freeze 条目和 commits；不要读取其他 Ticket 的完整对话。
 
 ## Goal
 
@@ -26,7 +29,7 @@
 
 - `taskset、runner source、产品 Runtime`
 
-未列出的写路径默认禁止。需要扩展 scope 时停止并提交 `ownership_change_request`。
+未列出的写路径默认禁止。需要扩展 scope 时提交 `change_request`；不得自行修改。
 
 ## Deliverables
 
@@ -40,16 +43,20 @@
 - [ ] K1 在首次 mutation 前且 native batch/checkpoint 落盘
 - [ ] K2 在首次有效 mutation/result 后且 checkpoint 落盘
 - [ ] 不使用时间点 kill
-- [ ] predicate 引用 Gate N2 hash
+- [ ] predicate 引用 `native_resume_ready` Gate hash
+
+## Result handling
+
+测量有效但任务、provider 或产品表现失败时，记录为 `evaluation_failure` 并继续；只有 evaluator/runner/evidence/Artifact 绑定关系使结论不可信时才记录 `measurement_defect`。
 
 ## Commands
 
-由本 ticket 的实现和依赖决定；至少运行受影响测试与 ruff。
+`reviewer` 提交精确 Process manifest；`integrator` 在 Gate 与 live 授权有效时启动 Pilot Process。`reviewer` 不在模型 Thread 中守候命令，只分析返回的 Artifact，并仅运行必要的短时只读 verifier。完整日志写文件；handoff 只记录命令、exit code、数量摘要、路径和 SHA-256。
 
 ## Notes
 
 - 无额外说明。
 
-## Stop rule
+## Completion rule
 
-完成验收并生成 `.codex/eval/templates/HANDOFF.md` 格式的 handoff 后立即停止。不得 merge/rebase、更新正式 `STATUS.json`/`FREEZE.json` 或开始下游工作；所需状态变化只写 proposal。
+按 `templates/REVIEW.md` 与 `templates/HANDOFF.md` 返回一份 review handoff。Finding 必须分类为 `implementation_defect|measurement_defect|evaluation_failure|change_request`。`reviewer` 不修改产品实现、不设置 Wave 状态；同一 Candidate 的后续 revision 可以在本 Thread 继续 review。

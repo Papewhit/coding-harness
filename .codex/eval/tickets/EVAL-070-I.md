@@ -1,17 +1,17 @@
 # EVAL-070-I — Structured Context Grouped Ablation Hook 与 Runner
 
-**Thread type:** `implementer`  
-**Wave:** `W8`  
-**Base SHA:** 由 Integrator 在启动 prompt 中填写；实现 ticket 必须等于本波 `wave_base_sha`，run shard 必须等于冻结的 `run_snapshot_sha`。
+**Plan type:** `implementer` — 使用 `implementer` Thread
+**Wave:** `W8`
+**Base/Candidate SHA:** 由 `integrator` 在 dispatch 中填写；不得从 integration branch 吸收未列出的变化。
 
 ## Start conditions
 
-- `EVAL-031-G`
-- `EVAL-040-M`
-- `EVAL-041`
-- `TOOL-050-S-R1`
+- Dependency Ticket: `EVAL-031-G`
+- Dependency Ticket: `EVAL-040-M`
+- Dependency Ticket: `EVAL-041`
+- Dependency Ticket: `TOOL-050-S-R1`
 
-只读取上述依赖的 handoff/freeze；不要读取其他 ticket 的完整对话。
+只读取上述 Gate/依赖的精确 handoff、Freeze 条目和 commits；不要读取其他 Ticket 的完整对话。
 
 ## Goal
 
@@ -31,7 +31,7 @@
 - `provider adapters`
 - `frozen taskset`
 
-未列出的写路径默认禁止。需要扩展 scope 时停止并提交 `ownership_change_request`。
+未列出的写路径默认禁止。需要扩展 scope 时提交 `change_request`；不得自行修改。
 
 ## Deliverables
 
@@ -53,6 +53,6 @@
 
 - 无额外说明。
 
-## Stop rule
+## Completion rule
 
-完成验收、提交有意图清晰的 commit（run/reviewer ticket 除外）并生成 `.codex/eval/templates/HANDOFF.md` 格式的 handoff 后立即停止。不得 merge/rebase、更新 `STATUS.json`/`FREEZE.json`（Integrator ticket 除外）或开始下游工作。
+运行本 Ticket 的 targeted tests 与 scoped lint。先把 `.codex/eval/**` 之外的 Git-tracked 变更形成一个语义 commit，再按 `templates/HANDOFF.md` 写 handoff；handoff 和其他控制文件不得进入该 commit。返回 `integrator` 验收。若 dispatch sequence 还有后续 Ticket，只有在 `integrator` 已复制并验证本 handoff、清理未提交控制文件，并给出下一 Ticket 的精确 base/dependency commits 后才继续；不得自行开始未 dispatch 的工作。

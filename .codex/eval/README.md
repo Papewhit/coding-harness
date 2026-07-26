@@ -1,49 +1,47 @@
-# Pico v3 Evaluation：Native Tool Calling 受控多线程执行方案
+# Pico v3 Evaluation：W6R4 以后执行入口
 
-本版本把 **Native Tool Calling** 提升为所有正式在线 Evaluation 的硬前置，同时保留 Auto-dream fixture、Context deterministic、mini repo 等可独立建设的并行 lane。
+当前控制修订为 `eval-control-v4`。本修订只改变执行编排、状态展示和交接方式；Native Tool Calling、安全链、SDK 边界、冻结输入、canonical 环境和证据完整性要求不变。
 
-旧 1200+ 行方案继续作为设计参考，不作为线程启动 prompt。每个 Codex thread 默认只读取：
+## 从哪里开始
+
+任何后续 `integrator` 先读取：
 
 1. 仓库根 `AGENTS.md`；
 2. `.codex/eval/CONTROL.md`；
-3. 自己的 `tickets/<ticket-id>.md`；
-4. ticket 明确列出的 handoff/freeze。
+3. `.codex/eval/CURRENT.md`；
+4. CURRENT 指向的当前 Wave 文件、当前动作涉及的 Ticket 文件和最新权威 handoff。
 
-## 两个硬 Gate
+`PLAN.json` 是机器 registry；运行 `validate_plan.py` 校验，只有排查不一致时才读取当前 Wave/Ticket 的精确条目。`implementer`/`reviewer` 只读取 AGENTS、CONTROL、CURRENT、dispatch 列出的 Ticket，以及精确列出的 commits/Freeze/handoff/Artifact。不要默认读取完整 `PLAN.json`、`STATUS.json`、全部旧 handoff 或旧长方案。
 
-**Native Eval-ready — recovered Gate N1 `TOOL-050-S-R1` + user-authorized human smoke**
+## 当前控制原则
 
-要求 Runtime 端到端使用结构化 tool call/result、call ID 完整匹配、无文本 fallback，并至少有一个真实 provider profile 通过 native conformance。通过后才允许 Auto-dream Live、Local Coding Task 和 Context Ablation 正式运行。
+所有固定角色、动作、状态、原因、Finding 类型和 review verdict 都集中定义在 `CONTROL.md` 第 1–2 节；`PLAN.json.enums` 仅作为机器可校验镜像。新增固定值必须先同时修改这两处。
 
-**Native Resume-ready — `TOOL-062-G`**
+- Ticket 是工作、提交、验收和 handoff 单位，不是 Thread 生命周期单位。
+- 一个 `implementer` Thread 可以按 dispatch 顺序完成多个 Tickets；每个 Ticket 仍有独立 commit、测试摘要和 handoff。
+- Wave 边界不自动更换 `integrator`。
+- `thread_type=run_shard` 由 `integrator` 启动本地 Process；`[xN]` 是 N 个 Process，不是 N 个模型对话。
+- `thread_type=integrator` 由当前 `integrator` 直接执行。
+- `reviewer` 必须把 Finding 分类为 `implementation_defect`、`measurement_defect`、`evaluation_failure` 或 `change_request`。
+- `evaluation_failure` 是结果，不自动触发产品修复。
+- `.codex/eval/CURRENT.md` 是当前状态入口；`state/STATUS.json` 只保留 W6R3 及以前历史。
+- Human review 使用 `base..candidate` 源码 diff 和短 review summary，不要求阅读 handoff JSON 或控制提交树。
 
-要求 pending/executing/completed/rejected/uncertain 状态可持久化，provider continuation 可跨进程恢复，副作用工具在不确定状态下不自动重放。通过后才允许正式 Resume Evaluation。
+## 两个 Gate
 
-## SDK 的位置
+- `native_eval_ready`：W6R4 使用 W6R3 accepted source 完成 profile reselection、授权 human smoke 和 `program_supervisor` 接受后才可为 `accepted`。
+- `native_resume_ready`：`TOOL-062-G` 通过后才可为 `accepted`。
 
-- Provider-neutral contract 与 Pico 自有工具状态机先冻结。
-- OpenAI/Anthropic SDK viability 同期 Spike。
-- SDK decision 冻结后再实现生产 Adapter。
-- SDK 只负责传输、请求类型、响应解码和 raw response；Pico 继续负责安全链、权限、工具执行、session/checkpoint、Resume 和 Evaluation evidence。
-- 禁止 SDK Tool Runner、Agents SDK 自动循环和 SDK 对 Pico 工具函数的自动执行。
-- 正式 Evaluation：`stream=false`、自动并行工具关闭、SDK retry=0；Pico retry 策略显式冻结并逐次记录。
+Gate 状态使用 `pending|accepted|rejected`。Wave 状态使用 `not_started|running|waiting|passed|blocked`；需要用户授权、凭据或外部服务时使用 `waiting`，不使用 `blocked`。
 
-## 多线程执行
+## 当前下一步
 
-- 当前 plan-level thread 只汇总用户决策和 Wave 结果；每个 Wave 由用户手动创建一个新的非 ticket Integrator thread。
-- Wave Integrator 负责分发 workers、验收、cherry-pick、Gate、正式 `STATUS/FREEZE` 与 `wave-handoff.json`；完成后停止。
-- 所有 ticket（包括 `thread_type=integrator`）仍是一 thread 一 ticket；聚合/Gate ticket 只输出状态 proposal。
-- 只保留一个 `eval/v3-integration` 集成分支。
-- 同一 Wave 的实现线程从相同 `wave_base_sha` 建立独立 worktree。
-- 同一核心文件同一时刻只有一个 owner。
-- run shard 不修改源码，只写独占 artifact 目录。
-- fixture/oracle/metric 先冻结，产品修复独立提交，再用同版输入重跑。
-- Testing 与 Evaluation 以 Ubuntu WSL2/Python 3.12 fresh clone 为 canonical 环境；Windows 仅作 best-effort 开发兼容检查。
+按 `waves/W6R4-profile-reselection-human-smoke.md` 执行。W6R4 没有 Ticket Thread、源码修改、Git bundle，也不为每个 Process 创建单独 handoff。有效且被接受的 human smoke 后，同一 `integrator` 直接进入 W7。
 
-## 首次使用
+## 计划校验
 
-1. 将本目录复制为仓库根目录下的 `.codex/eval/`。
-2. 将 `AGENTS.addendum.md` 追加/覆盖到仓库根规则。
-3. 运行 `python .codex/eval/validate_plan.py`。
-4. 使用 `templates/WAVE_INTEGRATOR_PROMPT.md` 手动启动新的 W0 Wave Integrator，由它分发 `EVAL-000`，验收后再分发 `EVAL-001`。
-5. 按 `waves/W*.md` 推进；一个 thread 只完成一个 ticket。
+```bash
+python .codex/eval/validate_plan.py
+```
+
+旧 `docs/enhancements/pico-v3-evaluation-codex-phased-plan.md` 和 W6R3 及以前控制材料只作为历史设计与审计来源。

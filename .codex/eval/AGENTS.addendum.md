@@ -1,16 +1,17 @@
-## Pico v3 Evaluation 与 Native Tool Calling 规则
+## Pico v3 Evaluation 与 Native Tool Calling（eval-control-v4）
 
-- 当前 plan-level thread 只汇总用户决策和 Wave 结果；每个 Wave 使用新的非 ticket Integrator thread。
-- 按 `.codex/eval/PLAN.json` 和单个 ticket 工作；一个 ticket thread 只完成一个 ticket。
-- 当期 Wave Integrator 是正式 `STATUS/FREEZE` 的唯一写入者；ticket 只能提交 `status_proposal` / `freeze_proposal`。
-- 正式 Runtime 与在线 Evaluation 不得新增或保留 `<tool>/<final>` fallback。
-- Provider SDK 只能位于 Adapter/transport 边界；禁止 SDK Tool Runner、Agents Runner 和自动执行 Pico 工具。
+- 从 W6R4 起以 `.codex/eval/CONTROL.md`、`CURRENT.md` 和当前 Wave 文件为执行入口；`PLAN.json` 只作机器 registry，需要时只读取当前条目；`state/STATUS.json` 只作 W6R3 及以前历史记录。
+- Ticket 是提交、验收和 handoff 单位，不是 Thread 生命周期单位；一个 `implementer` Thread 可以按明确 dispatch 顺序完成多个 Tickets。
+- Wave 边界不自动更换 `integrator`。`thread_type=integrator` 由当前 `integrator` 直接执行；`thread_type=run_shard` 由 `integrator` 启动本地 Process，不创建模型 Thread。
+- `reviewer` 必须把 Finding 分类为 `implementation_defect`、`measurement_defect`、`evaluation_failure` 或 `change_request`；有效测量中的任务失败不得自动触发产品修复。
+- 当前 `integrator` 是 `CURRENT.md` 与 `FREEZE.json` 的唯一写入者。禁止为 dispatch、accept、waiting 或普通状态更新创建 commit。
+- 正式 Runtime 与在线 Evaluation 不得新增或保留可执行 `<tool>/<final>` fallback。
+- Provider SDK 只能位于 Adapter/transport 边界；禁止 SDK Tool Runner、Agents Runner 和 SDK 自动执行 Pico 工具。
 - Core、Session、Checkpoint 不得保存 SDK 对象；只保存 Pico contract 与 JSON-safe opaque continuation。
-- 所有 native tool call/result 必须以 provider call ID 一一匹配，并继续经过现有安全链。
-- Testing 与 Evaluation 的 canonical 环境是 Ubuntu WSL2/Python 3.12 fresh clone；Windows 仅作 best-effort 开发兼容检查，不作为本计划 Gate，也不在评测期间补 Windows native 能力。
-- recovered Gate N1 `TOOL-050-S-R1` 与用户授权的 human smoke 前禁止正式在线效果评测；`TOOL-062-G` 前禁止正式 Resume 评测。
-- 每个写入 ticket 使用独立 worktree/branch，从不可变 base SHA 开始；共享文件只由指定 owner 修改。
-- fixture/oracle/metric 先冻结，产品修复独立提交；不得为了改善结果同步改题。
-- run shard 不改源码，只写自己的 artifact 目录，记录 source/evaluator/taskset/provider/native gate hash。
-- 下游只通过 Git SHA、STATUS/FREEZE hash、handoff 和 artifact 接续，不通过上一段长对话接续。
+- native tool call/result 必须按 provider call ID 一一匹配，并继续经过现有安全链。
+- Testing/Evaluation canonical 环境为 Ubuntu WSL2/Python 3.12 fresh clone；Windows 只作 best-effort 兼容检查。
+- `native_eval_ready=accepted` 前禁止正式在线效果评测；`native_resume_ready=accepted` 前禁止正式 Resume 评测。
+- 并发 `implementer` 执行序列各用独立 worktree/branch；Process 不修改 Git-tracked files，只写独占 Artifact 目录。
+- fixture/oracle/metric 先 Freeze，产品修复独立提交；不得为了改善结果修改 frozen 输入。
+- 下游只通过精确 Git SHA、CURRENT、Freeze、handoff 和 Artifact 接续，不通过长对话记忆接续。
 - 保留既有 `pico/core/runtime_checkpoints.py` 工作区修改；不得 reset 或覆盖。

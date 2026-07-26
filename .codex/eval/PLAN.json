@@ -1,23 +1,124 @@
 {
-  "schema_version": "pico-eval-plan-v3",
+  "schema_version": "pico-eval-plan-v4",
+  "control_revision": "eval-control-v4",
   "project": "pico-v3-evaluation-native-tools",
   "integration_branch": "eval/v3-integration",
   "legacy_plan_role": "design_reference_only",
+  "enums": {
+    "roles": [
+      "program_supervisor",
+      "integrator",
+      "implementer",
+      "reviewer"
+    ],
+    "workflow_actions": [
+      "dispatch",
+      "execute",
+      "review",
+      "integrate",
+      "accept",
+      "mark_not_applicable",
+      "remediate",
+      "close"
+    ],
+    "thread_types": [
+      "implementer",
+      "fixture_builder",
+      "reviewer",
+      "integrator",
+      "run_shard"
+    ],
+    "execution_modes": [
+      "model_thread",
+      "local_process",
+      "current_integrator"
+    ],
+    "ticket_states": [
+      "pending",
+      "running",
+      "needs_remediation",
+      "accepted",
+      "not_applicable",
+      "blocked"
+    ],
+    "wave_states": [
+      "not_started",
+      "running",
+      "waiting",
+      "passed",
+      "blocked"
+    ],
+    "gate_states": [
+      "pending",
+      "accepted",
+      "rejected"
+    ],
+    "waiting_reasons": [
+      "none",
+      "user_decision",
+      "credential_or_access",
+      "external_service"
+    ],
+    "not_applicable_reasons": [
+      "required_gate_rejected",
+      "optional_branch_not_selected"
+    ],
+    "finding_types": [
+      "implementation_defect",
+      "measurement_defect",
+      "evaluation_failure",
+      "change_request"
+    ],
+    "review_verdicts": [
+      "accepted",
+      "findings"
+    ],
+    "thread_type_execution": {
+      "implementer": "model_thread executed by role implementer",
+      "fixture_builder": "model_thread executed by role implementer",
+      "reviewer": "model_thread executed by role reviewer",
+      "integrator": "current_integrator; no new model Thread",
+      "run_shard": "local_process; no model Thread"
+    }
+  },
   "concurrency": {
-    "recommended_max_write_threads": 6,
-    "hard_max_write_threads_without_replanning": 8,
-    "recommended_max_live_run_threads": 3,
-    "one_integrator_per_wave": true,
+    "recommended_max_model_threads": 3,
+    "hard_max_model_threads_without_replanning": 6,
+    "recommended_max_live_processes": 3,
+    "integrator_continuity_across_waves": true,
     "core_file_single_owner": true
   },
   "orchestration": {
-    "program_supervisor": "plan-level user decision and Wave result index; no ticket implementation",
-    "wave_integrator": "one fresh non-ticket thread per Wave",
-    "ticket_thread_rule": "one ticket instance per thread",
-    "shared_state_writer": "current Wave Integrator only",
-    "cross_wave_handoff": "integration SHA plus STATUS/FREEZE hashes and wave-handoff.json"
+    "program_supervisor": "decides frozen-semantics changes, scope/ownership changes, external authorization, and explicit user decisions; does not implement Tickets",
+    "integrator": "continues across Wave boundaries unless replacement is required; dispatches model Threads, starts Processes, executes integrator Tickets, integrates commits, and maintains CURRENT/FREEZE",
+    "ticket_thread_rule": "Ticket is not a Thread lifetime; one implementer Thread may execute an explicit ordered Ticket sequence",
+    "run_shard_rule": "run_shard instances are local Processes; all instances of one logical Ticket produce one Ticket handoff",
+    "current_state": ".codex/eval/CURRENT.md",
+    "historical_status": ".codex/eval/state/STATUS.json is historical through W6R3 and is not updated with live state",
+    "cross_wave_handoff": "CURRENT.md plus exact source SHA, FREEZE hash, latest authoritative Wave handoff and Artifact hashes"
+  },
+  "gates": {
+    "native_eval_ready": {
+      "state_values": [
+        "pending",
+        "accepted",
+        "rejected"
+      ],
+      "authority": "W6R4 profile reselection, authorized human smoke, and program_supervisor decision",
+      "accepted_required_for": "formal online effectiveness evaluation"
+    },
+    "native_resume_ready": {
+      "state_values": [
+        "pending",
+        "accepted",
+        "rejected"
+      ],
+      "authority": "TOOL-062-G",
+      "accepted_required_for": "formal process-interruption and Resume evaluation"
+    }
   },
   "global_exclusive_paths": [
+    ".codex/eval/CURRENT.md",
     ".codex/eval/state/STATUS.json",
     ".codex/eval/state/FREEZE.json",
     "pico/evaluation/__init__.py",
@@ -283,7 +384,7 @@
       ],
       "dynamic_dependencies": [
         "TOOL-055-E makes repository-owned OpenAI Responses coverage as strict as Anthropic Messages and emits ordered safety-chain evidence",
-        "EVAL-056-H waits for TOOL-055-E and binds ordered evidence plus the private config locator into the harness contract",
+        "EVAL-056-H waits for TOOL-055-E and binds ordered evidence plus the public PICO_NATIVE_PROVIDER_CONFIG environment-variable contract into the harness; the private locator value remains out of band and is never persisted",
         "TOOL-057-A performs a read-only dual-dialect and evidence-closure audit",
         "TOOL-058-G uses only an Ubuntu WSL2/Python 3.12 fresh clone as the canonical Gate; Windows is optional and non-blocking",
         "the three R2 provider shards start in parallel only after TOOL-058-G is accepted and all run in WSL from one immutable snapshot",
@@ -340,6 +441,17 @@
       "gate": "Oracle v2 and historical adjudication remain frozen; both dialects preserve complete stateless transcripts; Responses call/result closure and human-smoke v3 pass read-only review and a fresh WSL Gate; readable final r1 commit map, worker bundle and tag verify; W7 remains blocked pending W6R4 reselection and a new accepted human smoke"
     },
     {
+      "id": "W6R4",
+      "name": "Profile reselection and authorized human smoke",
+      "serial": true,
+      "tickets": [],
+      "integration_order": [],
+      "execution_owner": "integrator",
+      "procedure_file": "waves/W6R4-profile-reselection-human-smoke.md",
+      "entry_binding": "CURRENT.md source SHA and W6R3-wave-handoff-r2.json",
+      "gate": "profile reselection and one authorized human smoke produce an accepted or rejected native_eval_ready decision; no source Ticket is created"
+    },
+    {
       "id": "W7",
       "name": "Evaluation pilots and native Resume implementation",
       "serial": false,
@@ -353,10 +465,15 @@
         "EVAL-060"
       ],
       "dynamic_dependencies": [
-        "TOOL-050-S-R1 no longer authorizes online shards after its selected-profile human smoke failed; online shards require a future W6R4 recovered selection and explicit user approval after the new human smoke",
-        "TOOL-061-T and EVAL-060 wait for TOOL-060-R"
+        "All formal online Processes require native_eval_ready=accepted and the accepted W6R4 handoff/selection/smoke hashes",
+        "TOOL-061-T and EVAL-060 wait for TOOL-060-R",
+        "EVAL-021-R[x2] and EVAL-050-P[x3] are local Processes; EVAL-021-M is executed by the current integrator",
+        "TOOL-061-T and EVAL-060 may share one ordered implementer Thread or use two parallel implementer Threads when paths do not conflict"
       ],
-      "gate": "dream evidence and local pilot reviewed; native Resume deterministic contract and interruption runner ready"
+      "gate": "dream evidence and local Pilot reviewed; native Resume deterministic contract and interruption runner accepted; valid evaluation failures are retained",
+      "entry_gates": [
+        "native_eval_ready"
+      ]
     },
     {
       "id": "W8",
@@ -371,10 +488,15 @@
         "EVAL-070-I"
       ],
       "dynamic_dependencies": [
-        "TOOL-062-G waits for selected-profile restart shard",
-        "EVAL-061-P waits for Gate N2"
+        "EVAL-050-F[x3] and TOOL-062-R are local Processes",
+        "TOOL-062-G waits for selected-profile restart evidence and is executed by the current integrator",
+        "EVAL-061-P runs only when native_resume_ready=accepted; when the Gate is rejected it is marked not_applicable with reason required_gate_rejected",
+        "EVAL-070-I implements the runner only and does not start formal live Rows"
       ],
-      "gate": "27 final local rows aggregated; Gate N2 native_resume_ready; Resume tasks/predicates frozen"
+      "gate": "27 final local rows aggregated; native_resume_ready has an accepted or rejected decision; when accepted, Resume tasks/predicates are frozen",
+      "entry_gates": [
+        "native_eval_ready"
+      ]
     },
     {
       "id": "W9",
@@ -387,7 +509,16 @@
         "EVAL-070-R[x2-4]",
         "EVAL-070-M"
       ],
-      "gate": "paired Resume evidence aggregated; Context ablation complete or explicitly deferred"
+      "gate": "applicable Resume evidence aggregated; optional Context Ablation completed or its Tickets marked not_applicable by an explicit reason and binding",
+      "entry_gates": [
+        "native_eval_ready"
+      ],
+      "dynamic_dependencies": [
+        "EVAL-061-R[x3] requires native_resume_ready=accepted",
+        "When native_resume_ready=rejected, EVAL-061-R, EVAL-061-M, EVAL-070-S, EVAL-070-R, and EVAL-070-M are marked not_applicable with reason required_gate_rejected",
+        "EVAL-061-R[x3] and EVAL-070-R[x2-4] are local Processes and each logical Ticket produces one handoff",
+        "When native_resume_ready=accepted, the optional Context Ablation branch starts only after an explicit program_supervisor decision; if not selected, EVAL-070-S, EVAL-070-R, and EVAL-070-M are marked not_applicable with reason optional_branch_not_selected"
+      ]
     },
     {
       "id": "W10",
@@ -403,7 +534,15 @@
         "EVAL-081-R",
         "EVAL-081-G"
       ],
-      "gate": "native-eval-ready and native-resume-ready evidence bundle accepted"
+      "gate": "evidence bundle, independent audit and release Gate accepted; claims remain scoped to available evidence and rejected Gates are reported",
+      "entry_gates": [
+        "native_eval_ready"
+      ],
+      "dynamic_dependencies": [
+        "native_resume_ready must be decided before W10 starts, but it may be accepted or rejected",
+        "EVAL-081-A may consume EVAL-061-M=not_applicable when native_resume_ready=rejected and must omit unsupported Resume claims",
+        "EVAL-081-A, EVAL-081-R, and EVAL-081-G continue after a rejected native_resume_ready Gate and report that result as a limitation"
+      ]
     }
   ],
   "tickets": {
@@ -567,10 +706,13 @@
       "ticket_file": "tickets/EVAL-021-R.md",
       "allowed_write_paths": [
         "<ARTIFACT_ROOT>/phase-1-auto-dream/<RUN_SHA>/<SHARD_ID>/**",
-        ".codex/eval/handoffs/<SHARD_ID>.json"
+        ".codex/eval/handoffs/EVAL-021-R.json"
       ],
       "forbidden_write_paths": [
         "所有源码与 frozen fixtures"
+      ],
+      "required_gates": [
+        "native_eval_ready"
       ]
     },
     "EVAL-021-M": {
@@ -584,8 +726,8 @@
       "allowed_write_paths": [
         "<ARTIFACT_ROOT>/phase-1-auto-dream/summary.json",
         "<ARTIFACT_ROOT>/phase-1-auto-dream/summary.md",
-        ".codex/eval/proposals/EVAL-021-M.freeze.json",
-        ".codex/eval/handoffs/EVAL-021-M.json"
+        ".codex/eval/handoffs/EVAL-021-M.json",
+        ".codex/eval/state/FREEZE.json"
       ],
       "forbidden_write_paths": [
         "Dream 产品源码",
@@ -872,10 +1014,13 @@
       "ticket_file": "tickets/EVAL-050-P.md",
       "allowed_write_paths": [
         "<ARTIFACT_ROOT>/phase-4-local-tasks-pilot/<RUN_SHA>/<REPO_SHARD>/**",
-        ".codex/eval/handoffs/<REPO_SHARD>.json"
+        ".codex/eval/handoffs/EVAL-050-P.json"
       ],
       "forbidden_write_paths": [
         "所有源码、taskset、verifier"
+      ],
+      "required_gates": [
+        "native_eval_ready"
       ]
     },
     "EVAL-050-R": {
@@ -906,10 +1051,13 @@
       "ticket_file": "tickets/EVAL-050-F.md",
       "allowed_write_paths": [
         "<ARTIFACT_ROOT>/phase-4-local-tasks-final/<RUN_SHA>/<REPO_SHARD>/**",
-        ".codex/eval/handoffs/<REPO_SHARD>.json"
+        ".codex/eval/handoffs/EVAL-050-F.json"
       ],
       "forbidden_write_paths": [
         "所有源码、taskset、verifier"
+      ],
+      "required_gates": [
+        "native_eval_ready"
       ]
     },
     "EVAL-050-M": {
@@ -923,8 +1071,8 @@
       "allowed_write_paths": [
         "<ARTIFACT_ROOT>/phase-4-local-tasks-final/summary.json",
         "<ARTIFACT_ROOT>/phase-4-local-tasks-final/summary.md",
-        ".codex/eval/proposals/EVAL-050-M.freeze.json",
-        ".codex/eval/handoffs/EVAL-050-M.json"
+        ".codex/eval/handoffs/EVAL-050-M.json",
+        ".codex/eval/state/FREEZE.json"
       ],
       "forbidden_write_paths": [
         "产品源码、raw rows、taskset"
@@ -970,6 +1118,10 @@
       ],
       "forbidden_write_paths": [
         "taskset、runner source、产品 Runtime"
+      ],
+      "required_gates": [
+        "native_eval_ready",
+        "native_resume_ready"
       ]
     },
     "EVAL-061-R": {
@@ -984,10 +1136,14 @@
       "ticket_file": "tickets/EVAL-061-R.md",
       "allowed_write_paths": [
         "<ARTIFACT_ROOT>/phase-5-resume/<RUN_SHA>/<TASK_SHARD>/**",
-        ".codex/eval/handoffs/<TASK_SHARD>.json"
+        ".codex/eval/handoffs/EVAL-061-R.json"
       ],
       "forbidden_write_paths": [
         "所有源码、frozen predicates/taskset"
+      ],
+      "required_gates": [
+        "native_eval_ready",
+        "native_resume_ready"
       ]
     },
     "EVAL-061-M": {
@@ -1001,11 +1157,15 @@
       "allowed_write_paths": [
         "<ARTIFACT_ROOT>/phase-5-resume/summary.json",
         "<ARTIFACT_ROOT>/phase-5-resume/summary.md",
-        ".codex/eval/proposals/EVAL-061-M.freeze.json",
-        ".codex/eval/handoffs/EVAL-061-M.json"
+        ".codex/eval/handoffs/EVAL-061-M.json",
+        ".codex/eval/state/FREEZE.json"
       ],
       "forbidden_write_paths": [
         "产品源码、raw rows、frozen predicates"
+      ],
+      "required_gates": [
+        "native_eval_ready",
+        "native_resume_ready"
       ]
     },
     "EVAL-070-I": {
@@ -1049,6 +1209,10 @@
       ],
       "forbidden_write_paths": [
         "frozen taskset、Runtime、结果 rows"
+      ],
+      "required_gates": [
+        "native_eval_ready",
+        "native_resume_ready"
       ]
     },
     "EVAL-070-R": {
@@ -1062,10 +1226,14 @@
       "ticket_file": "tickets/EVAL-070-R.md",
       "allowed_write_paths": [
         "<ARTIFACT_ROOT>/phase-6-context-ablation/<RUN_SHA>/<GROUP_SHARD>/**",
-        ".codex/eval/handoffs/<GROUP_SHARD>.json"
+        ".codex/eval/handoffs/EVAL-070-R.json"
       ],
       "forbidden_write_paths": [
         "所有源码、frozen taskset/selection"
+      ],
+      "required_gates": [
+        "native_eval_ready",
+        "native_resume_ready"
       ]
     },
     "EVAL-070-M": {
@@ -1083,6 +1251,10 @@
       ],
       "forbidden_write_paths": [
         "源码、raw rows、selection"
+      ],
+      "required_gates": [
+        "native_eval_ready",
+        "native_resume_ready"
       ]
     },
     "EVAL-080": {
@@ -1130,6 +1302,12 @@
       ],
       "forbidden_write_paths": [
         "frozen evaluator/taskset/raw artifacts"
+      ],
+      "required_gates": [
+        "native_eval_ready"
+      ],
+      "allowed_not_applicable_dependencies": [
+        "EVAL-061-M"
       ]
     },
     "EVAL-081-R": {
@@ -1157,12 +1335,14 @@
       ],
       "ticket_file": "tickets/EVAL-081-G.md",
       "allowed_write_paths": [
-        ".codex/eval/proposals/EVAL-081-G.status.json",
-        ".codex/eval/proposals/EVAL-081-G.freeze.json",
-        ".codex/eval/handoffs/EVAL-081-G.json"
+        ".codex/eval/handoffs/EVAL-081-G.json",
+        ".codex/eval/state/FREEZE.json"
       ],
       "forbidden_write_paths": [
         "frozen fixture/oracle/taskset，除非版本升级并重跑"
+      ],
+      "required_gates": [
+        "native_eval_ready"
       ]
     },
     "TOOL-010": {
@@ -2488,10 +2668,13 @@
       ],
       "forbidden_write_paths": [
         "所有源码、frozen contract、本地配置写入"
+      ],
+      "required_gates": [
+        "native_eval_ready"
       ]
     },
     "TOOL-062-G": {
-      "title": "Native Resume-ready Gate（Gate N2）",
+      "title": "native_resume_ready Gate",
       "thread_type": "integrator",
       "wave": "W8",
       "depends_on": [
@@ -2502,9 +2685,8 @@
       "allowed_write_paths": [
         "<ARTIFACT_ROOT>/native-resume-conformance/summary.json",
         "<ARTIFACT_ROOT>/native-resume-conformance/summary.md",
-        ".codex/eval/proposals/TOOL-062-G.freeze.json",
-        ".codex/eval/proposals/TOOL-062-G.status.json",
-        ".codex/eval/handoffs/TOOL-062-G.json"
+        ".codex/eval/handoffs/TOOL-062-G.json",
+        ".codex/eval/state/FREEZE.json"
       ],
       "forbidden_write_paths": [
         "产品源码",

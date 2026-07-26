@@ -48,15 +48,17 @@ On Windows in Codex sandboxed mode, consult `docs/annoying-uv-codex.md` if
 
 ## Pico v3 Evaluation and Native Tool Calling
 
-- The current plan-level thread only summarizes user decisions and Wave results; use a fresh non-ticket Integrator thread for every Wave.
-- Work from `.codex/eval/PLAN.json` and one ticket per ticket thread.
-- The current Wave Integrator is the only writer of the canonical `.codex/eval/state/STATUS.json` and `FREEZE.json`; tickets emit `status_proposal` / `freeze_proposal` files instead.
+- From W6R4 onward, use `.codex/eval/CONTROL.md`, `CURRENT.md`, and the current Wave file as the execution entry point. Treat `PLAN.json` as a machine registry and load only the exact current entries when needed. `state/STATUS.json` is historical through W6R3 and is not the live status source.
+- A Ticket is a commit, acceptance, and handoff unit, not a Thread lifetime. One `implementer` Thread may complete multiple explicitly ordered Tickets.
+- A Wave boundary does not require a fresh `integrator`. `thread_type=integrator` runs in the current `integrator`; `thread_type=run_shard` runs as local Processes and does not create model Threads.
+- The current `integrator` is the only writer of `.codex/eval/CURRENT.md` and `FREEZE.json`. Do not create commits for dispatch, acceptance, waiting, or routine state updates.
+- Review findings must be classified as `implementation_defect`, `measurement_defect`, `evaluation_failure`, or `change_request`. A valid evaluation failure is a result, not an automatic product-repair request.
 - Formal Runtime and online Evaluation must not add or retain executable `<tool>/<final>` fallbacks.
 - Provider SDKs stay at the Adapter/transport boundary. Do not use SDK Tool Runners, Agents Runners, or SDK-managed execution of Pico tools.
 - Core, Session, and Checkpoint persist only Pico contracts and JSON-safe opaque continuation, never SDK objects.
 - Match every native tool call/result one-to-one using the provider call ID and preserve the existing safety chain.
-- Use Ubuntu WSL2/Python 3.12 fresh clones as the canonical testing and evaluation environment. Windows is a best-effort development compatibility lane during this evaluation plan; Windows failures or unavailable native capabilities do not block evaluation and are tracked separately.
-- Do not run formal online effectiveness evaluation before recovered Gate N1 `TOOL-050-S-R1` and the user-authorized human smoke, or formal Resume evaluation before `TOOL-062-G`.
-- Every write ticket uses its own worktree/branch from an immutable base SHA. Run shards do not change source and write only their exclusive artifact directory.
+- Use Ubuntu WSL2/Python 3.12 fresh clones as the canonical testing and evaluation environment. Windows is best-effort compatibility only.
+- Do not run formal online effectiveness evaluation before `native_eval_ready=accepted`, or formal Resume evaluation before `native_resume_ready=accepted`.
+- Each concurrent `implementer` sequence uses its own worktree/branch from an immutable Candidate. Run Processes do not change source and write only their exclusive Artifact directories.
 - Freeze fixture/oracle/metric inputs before product fixes; never change frozen questions to improve results.
-- Continue downstream work only through Git SHA, STATUS/FREEZE hashes, handoffs, and artifacts, not through a preceding long conversation.
+- Continue work through exact Git SHAs, CURRENT, Freeze hashes, handoffs, and Artifacts, not through a preceding long conversation.
