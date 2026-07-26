@@ -35,6 +35,7 @@ def live_public_shape() -> dict:
                     "reasoning": 1,
                     "function_call": 2,
                     "future-item": 0,
+                    "x" * 80: 3,
                 }
             },
         },
@@ -191,6 +192,39 @@ def test_output_item_counts_reject_invalid_reasoning_counts_with_safe_evidence(
     }
     assert "PRIVATE-COUNT-SENTINEL" not in str(error.value)
     assert "PRIVATE-COUNT-SENTINEL" not in json.dumps(evidence)
+
+
+@pytest.mark.parametrize(
+    "unsafe_name",
+    [
+        "bad key",
+        "https://private.example/v1",
+        "sk-0123456789abcdef",
+        "x" * 81,
+    ],
+)
+def test_output_item_counts_reject_unsafe_names_without_persisting_them(
+    unsafe_name: str,
+) -> None:
+    event = {
+        "event": "model_exchange",
+        "exchange": {
+            "metadata": {"output_item_counts": {unsafe_name: 1}}
+        },
+    }
+
+    with pytest.raises(PublicArtifactScanError) as error:
+        _scan_public_value(event, (), context="live-session.events.jsonl")
+
+    evidence = error.value.public_evidence()
+    assert evidence == {
+        "reason": "invalid_output_item_name",
+        "path": "$.exchange.metadata.output_item_counts.<redacted-key>",
+        "value_type": "str",
+        "shape": "scalar",
+    }
+    assert unsafe_name not in str(error.value)
+    assert unsafe_name not in json.dumps(evidence)
 
 
 @pytest.mark.parametrize(

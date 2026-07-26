@@ -610,6 +610,13 @@ def _scan_public_value(
         if path and path[-1] == "output_item_counts":
             for key, item in value.items():
                 item_path = (*path, str(key))
+                if not _is_safe_public_field_name(key):
+                    raise PublicArtifactScanError(
+                        "public output_item_counts entry name is not safe",
+                        reason="invalid_output_item_name",
+                        path=item_path,
+                        value=key,
+                    )
                 if type(item) is not int or item < 0:
                     raise PublicArtifactScanError(
                         "public output_item_counts entry must be a "
@@ -709,13 +716,18 @@ def _is_public_opaque_shape(value: Any) -> bool:
     )
 
 
+def _is_safe_public_field_name(value: Any) -> bool:
+    return (
+        type(value) is str
+        and _SAFE_PATH_SEGMENT.fullmatch(value) is not None
+        and _RAW_URL.search(value) is None
+        and _CREDENTIAL.search(value) is None
+    )
+
+
 def _safe_public_path(path: tuple[str, ...]) -> str:
     safe = [
-        segment
-        if _SAFE_PATH_SEGMENT.fullmatch(segment)
-        and _RAW_URL.search(segment) is None
-        and _CREDENTIAL.search(segment) is None
-        else "<redacted-key>"
+        segment if _is_safe_public_field_name(segment) else "<redacted-key>"
         for segment in path
     ]
     return "$" if not safe else "$." + ".".join(safe)
