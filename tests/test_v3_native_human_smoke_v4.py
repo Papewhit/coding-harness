@@ -11,6 +11,8 @@ from scripts.run_v3_native_human_smoke_v4 import (
     FakeProvider,
     TRAJECTORY_DIRECTORY,
     TRAJECTORY_INVENTORY,
+    _fake_factory,
+    _scan_public_value,
     _write_inventory,
     copy_public_trajectory,
     load_manifest,
@@ -19,6 +21,28 @@ from scripts.run_v3_native_human_smoke_v4 import (
     validate_artifact_inventory,
     validate_public_trajectory,
 )
+
+
+@pytest.fixture
+def live_public_shape() -> dict:
+    return {
+        "event": "prompt_built",
+        "prompt_metadata": {
+            "provider_profile": {
+                "capabilities": {
+                    "native_tools": True,
+                    "reasoning": True,
+                    "thinking": False,
+                    "opaque_continuation": True,
+                }
+            }
+        },
+        "reasoning": {
+            "hash": "sha256:" + "a" * 64,
+            "type": "openai-reasoning",
+            "count": 1,
+        },
+    }
 
 
 @pytest.fixture(scope="module")
@@ -108,6 +132,16 @@ def test_copy_fails_closed_when_public_evidence_is_missing(
         copy_public_trajectory(workspace, tmp_path / "target", [])
 
 
+def test_public_scanner_accepts_live_profile_and_sanitized_reasoning_shape(
+    live_public_shape: dict,
+) -> None:
+    _scan_public_value(
+        live_public_shape,
+        (),
+        context="live-session.events.jsonl",
+    )
+
+
 def test_durable_call_id_mismatch_is_rejected(
     fake_artifact: Path, tmp_path: Path
 ) -> None:
@@ -145,6 +179,18 @@ def test_durable_call_id_mismatch_is_rejected(
             ("C:/private/provider-config.json",),
             "private locator or secret",
         ),
+        ("reasoning", "private chain of thought", (), "private 'reasoning' payload"),
+        (
+            "reasoning",
+            {
+                "hash": "sha256:" + "b" * 64,
+                "type": "openai-reasoning",
+                "count": 1,
+                "content": "private chain of thought",
+            },
+            (),
+            "private 'reasoning' payload",
+        ),
     ],
 )
 def test_private_material_in_public_trajectory_is_rejected(
@@ -170,6 +216,57 @@ def test_private_material_in_public_trajectory_is_rejected(
             record["verification"]["observed_calls"],
             private_values=private_values,
         )
+
+
+def test_measurement_failure_persists_exact_stub_attempt_accounting(
+    tmp_path: Path,
+) -> None:
+    private_reasoning = "PRIVATE-REASONING-SENTINEL"
+
+    class CountingStub:
+        def __init__(self, scenario: dict) -> None:
+            self.inner = _fake_factory(scenario)
+            self.http_attempts = 0
+            self._pico_profile_identity = {
+                **self.inner._pico_profile_identity,
+                "capabilities": {
+                    "native_tools": True,
+                    "reasoning": private_reasoning,
+                },
+            }
+
+        def request(self, request):
+            self.http_attempts += 1
+            return self.inner.request(request)
+
+    output = tmp_path / "accounting"
+    with pytest.raises(ValueError, match="private 'reasoning' payload"):
+        run_manifest(
+            DEFAULT_MANIFEST,
+            output,
+            provider_factory=lambda scenario: CountingStub(scenario),
+            execution_mode="authorized_live",
+            profile={"profile_id": "stub-live-public"},
+        )
+
+    result_path = output / "HSMOKE-V4-A" / "result.json"
+    result = json.loads(result_path.read_text(encoding="utf-8"))
+    assert result["artifact_status"] == "INVALID"
+    assert result["failure_classification"] == "measurement_defect"
+    assert result["failure_stage"] == "public_result_validation"
+    assert result["http_attempts"] == 4
+    assert result["http_accounting"] == {
+        "exact": True,
+        "provider_http_attempts": 4,
+        "persisted_before_trajectory_validation": True,
+    }
+    assert not (output / "summary.json").exists()
+    rendered = "".join(
+        path.read_text(encoding="utf-8")
+        for path in output.rglob("*")
+        if path.is_file()
+    )
+    assert private_reasoning not in rendered
 
 
 def test_public_artifact_parse_failure_is_rejected(

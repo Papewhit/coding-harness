@@ -44,14 +44,17 @@ _PRIVATE_KEYS = frozenset(
         "continuation",
         "endpoint",
         "locator",
-        "opaque_continuation",
         "private_continuation",
         "provider_config",
-        "reasoning",
         "secret",
-        "thinking",
     }
 )
+_OPAQUE_PUBLIC_KEYS = frozenset(
+    {"opaque_continuation", "reasoning", "thinking"}
+)
+_OPAQUE_PUBLIC_SHAPE_KEYS = frozenset({"count", "hash", "type"})
+_OPAQUE_HASH = re.compile(r"^(?:sha256:)?[0-9a-f]{64}$")
+_OPAQUE_TYPE = re.compile(r"^[A-Za-z0-9_.:-]{1,100}$")
 _RAW_URL = re.compile(r"https?://", re.IGNORECASE)
 _CREDENTIAL = re.compile(
     r"(?:bearer\s+[A-Za-z0-9._~+/=-]{12,}|sk-[A-Za-z0-9_-]{12,})",
@@ -567,18 +570,39 @@ def _parse_public_file(path: Path, private_values: tuple[str, ...]) -> list[Any]
 
 
 def _scan_public_value(
-    value: Any, private_values: tuple[str, ...], *, context: str
+    value: Any,
+    private_values: tuple[str, ...],
+    *,
+    context: str,
+    path: tuple[str, ...] = (),
 ) -> None:
     if isinstance(value, Mapping):
         for key, item in value.items():
             normalized = str(key).lower()
             if normalized in _PRIVATE_KEYS:
                 raise ValueError(f"private field {key!r} in public Artifact {context}")
-            _scan_public_value(item, private_values, context=context)
+            if normalized in _OPAQUE_PUBLIC_KEYS and not (
+                _is_public_capability(path, item)
+                or _is_public_opaque_shape(item)
+            ):
+                raise ValueError(
+                    f"private {key!r} payload in public Artifact {context}"
+                )
+            _scan_public_value(
+                item,
+                private_values,
+                context=context,
+                path=(*path, normalized),
+            )
         return
     if isinstance(value, (list, tuple)):
-        for item in value:
-            _scan_public_value(item, private_values, context=context)
+        for index, item in enumerate(value):
+            _scan_public_value(
+                item,
+                private_values,
+                context=context,
+                path=(*path, str(index)),
+            )
         return
     if not isinstance(value, str):
         return
@@ -588,6 +612,26 @@ def _scan_public_value(
         raise ValueError(f"credential-like secret in public Artifact {context}")
     if any(secret in value for secret in private_values):
         raise ValueError(f"private locator or secret in public Artifact {context}")
+
+
+def _is_public_capability(path: tuple[str, ...], value: Any) -> bool:
+    return bool(path) and path[-1] == "capabilities" and type(value) is bool
+
+
+def _is_public_opaque_shape(value: Any) -> bool:
+    if not isinstance(value, Mapping) or set(value) != _OPAQUE_PUBLIC_SHAPE_KEYS:
+        return False
+    digest = value.get("hash")
+    shape_type = value.get("type")
+    count = value.get("count")
+    return (
+        isinstance(digest, str)
+        and _OPAQUE_HASH.fullmatch(digest) is not None
+        and isinstance(shape_type, str)
+        and _OPAQUE_TYPE.fullmatch(shape_type) is not None
+        and type(count) is int
+        and count >= 0
+    )
 
 
 def _write_inventory(root: Path, inventory_path: Path) -> dict[str, Any]:
@@ -709,6 +753,8 @@ def run_manifest(
         target = output_dir / scenario["id"]
         target.mkdir(parents=True)
         workspace: Path
+        accounting: dict[str, Any]
+        record: dict[str, Any]
         with tempfile.TemporaryDirectory(
             prefix=f"{scenario['id']}-", dir=target
         ) as temporary:
@@ -716,68 +762,131 @@ def run_manifest(
             _write_fixture(workspace, scenario)
             before = _snapshot(workspace, scenario["fixture"]["files"])
             provider = factory(scenario)
-            agent = Pico(
-                model_client=provider,
-                workspace=WorkspaceContext.build(workspace),
-                session_store=SessionStore(workspace / ".pico/sessions"),
-                approval_policy=scenario["approval_policy"],
-                max_steps=16,
-                auto_dream=False,
-            )
-            bind_native_safety_evidence(
-                agent, case_id=scenario["id"], repetition=1
-            )
-            exit_code, stdout, stderr = 0, "", ""
             try:
-                stdout = agent.ask(scenario["prompt"])
-            except Exception as exc:
-                exit_code, stderr = 1, f"{type(exc).__name__}: {exc}"
-            events = _events(agent)
-            verification = verify_scenario(
-                scenario, workspace, agent, events, before
-            )
-            attempts = int(getattr(provider, "http_attempts", 0))
-            if execution_mode == "fake_provider" and attempts != 0:
-                raise ValueError("fake_provider observed nonzero http_attempts")
-            record = {
-                "scenario_id": scenario["id"],
-                "pico_exit": exit_code,
-                "verifier_exit": 0 if verification["status"] == "PASS" else 1,
-                "stdout": stdout,
-                "stderr": stderr,
-                "http_attempts": attempts,
-                "runtime_source": {
-                    "commit": _git_head(),
-                    "manifest_sha256": _sha256(manifest_path),
-                    "profile": dict(
-                        profile or provider._pico_profile_identity
-                    ),
-                },
-                "verification": verification,
-            }
-            record["trajectory"] = copy_public_trajectory(
-                workspace,
+                agent = Pico(
+                    model_client=provider,
+                    workspace=WorkspaceContext.build(workspace),
+                    session_store=SessionStore(workspace / ".pico/sessions"),
+                    approval_policy=scenario["approval_policy"],
+                    max_steps=16,
+                    auto_dream=False,
+                )
+                bind_native_safety_evidence(
+                    agent, case_id=scenario["id"], repetition=1
+                )
+                exit_code, stdout, stderr = 0, "", ""
+                pico_error_type: str | None = None
+                try:
+                    stdout = agent.ask(scenario["prompt"])
+                except Exception as exc:
+                    exit_code = 1
+                    pico_error_type = type(exc).__name__
+                    stderr = f"{pico_error_type}: {exc}"
+                attempts = int(getattr(provider, "http_attempts", 0))
+                identity = dict(
+                    profile
+                    or getattr(provider, "_pico_profile_identity", {})
+                )
+                accounting = _initial_accounting_record(
+                    scenario_id=scenario["id"],
+                    execution_mode=execution_mode,
+                    exit_code=exit_code,
+                    attempts=attempts,
+                    pico_error_type=pico_error_type,
+                    manifest_path=manifest_path,
+                    profile_id=identity.get("profile_id"),
+                )
+                _write_accounting_files(target, accounting)
+                stage = "http_accounting_validation"
+                try:
+                    if execution_mode == "fake_provider" and attempts != 0:
+                        raise ValueError(
+                            "fake_provider observed nonzero http_attempts"
+                        )
+                    stage = "scenario_verification"
+                    events = _events(agent)
+                    verification = verify_scenario(
+                        scenario, workspace, agent, events, before
+                    )
+                    record = {
+                        **accounting,
+                        "artifact_status": "VALIDATING",
+                        "failure_classification": (
+                            "evaluation_failure"
+                            if exit_code or verification["status"] != "PASS"
+                            else None
+                        ),
+                        "failure_stage": (
+                            "agent.ask"
+                            if exit_code
+                            else "semantic_verification"
+                            if verification["status"] != "PASS"
+                            else None
+                        ),
+                        "verifier_exit": (
+                            0 if verification["status"] == "PASS" else 1
+                        ),
+                        "stdout": stdout,
+                        "stderr": stderr,
+                        "runtime_source": {
+                            "commit": _git_head(),
+                            "manifest_sha256": _sha256(manifest_path),
+                            "profile": identity,
+                        },
+                        "verification": verification,
+                    }
+                    stage = "public_result_validation"
+                    _scan_public_value(
+                        record,
+                        private_values,
+                        context=f"{scenario['id']}/result.json",
+                    )
+                    stage = "trajectory_validation"
+                    record["trajectory"] = copy_public_trajectory(
+                        workspace,
+                        target,
+                        verification["observed_calls"],
+                        private_values=private_values,
+                    )
+                    record["artifact_status"] = "VALID"
+                    stage = "result_persistence"
+                    _write_record_files(target, record)
+                except Exception as exc:
+                    _write_measurement_failure(
+                        target,
+                        accounting,
+                        stage=stage,
+                        error=exc,
+                    )
+                    raise
+            finally:
+                close = getattr(provider, "close", None)
+                if callable(close):
+                    close()
+        if workspace.exists():
+            error = RuntimeError("temporary workspace cleanup failed")
+            _write_measurement_failure(
                 target,
-                verification["observed_calls"],
+                accounting,
+                stage="workspace_cleanup",
+                error=error,
+            )
+            raise error
+        try:
+            validate_public_trajectory(
+                target / TRAJECTORY_DIRECTORY,
+                target / TRAJECTORY_INVENTORY,
+                record["verification"]["observed_calls"],
                 private_values=private_values,
             )
-            _scan_public_value(
-                record,
-                private_values,
-                context=f"{scenario['id']}/result.json",
+        except Exception as exc:
+            _write_measurement_failure(
+                target,
+                accounting,
+                stage="post_cleanup_trajectory_validation",
+                error=exc,
             )
-            _write_record_files(target, record)
-            close = getattr(provider, "close", None)
-            if callable(close):
-                close()
-        if workspace.exists():
-            raise RuntimeError("temporary workspace cleanup failed")
-        validate_public_trajectory(
-            target / TRAJECTORY_DIRECTORY,
-            target / TRAJECTORY_INVENTORY,
-            record["verification"]["observed_calls"],
-            private_values=private_values,
-        )
+            raise
         record["trajectory"]["validated_after_workspace_cleanup"] = True
         _scan_public_value(
             record,
@@ -818,11 +927,89 @@ def run_manifest(
     return summary
 
 
+def _initial_accounting_record(
+    *,
+    scenario_id: str,
+    execution_mode: str,
+    exit_code: int,
+    attempts: int,
+    pico_error_type: str | None,
+    manifest_path: Path,
+    profile_id: Any,
+) -> dict[str, Any]:
+    return {
+        "schema_version": "pico-native-human-smoke-v4-scenario-result",
+        "scenario_id": scenario_id,
+        "artifact_status": "PARTIAL",
+        "execution_mode": execution_mode,
+        "pico_exit": exit_code,
+        "verifier_exit": 1,
+        "http_attempts": attempts,
+        "http_accounting": {
+            "exact": True,
+            "provider_http_attempts": attempts,
+            "persisted_before_trajectory_validation": True,
+        },
+        "failure_classification": (
+            "evaluation_failure" if exit_code else None
+        ),
+        "failure_stage": "agent.ask" if exit_code else None,
+        "error_type": pico_error_type,
+        "runtime_source": {
+            "commit": _git_head(),
+            "manifest_sha256": _sha256(manifest_path),
+            "profile_id": (
+                profile_id
+                if isinstance(profile_id, str) and profile_id
+                else "unavailable"
+            ),
+        },
+        "trajectory": {
+            "status": "not_validated",
+            "validated_after_workspace_cleanup": False,
+        },
+    }
+
+
+def _write_measurement_failure(
+    target: Path,
+    accounting: Mapping[str, Any],
+    *,
+    stage: str,
+    error: Exception,
+) -> None:
+    trajectory = target / TRAJECTORY_DIRECTORY
+    failure = {
+        **accounting,
+        "artifact_status": "INVALID",
+        "verifier_exit": 1,
+        "failure_classification": "measurement_defect",
+        "failure_stage": stage,
+        "error_type": type(error).__name__,
+        "trajectory": {
+            "status": (
+                "invalid_preserved" if trajectory.exists() else "not_copied"
+            ),
+            "root": TRAJECTORY_DIRECTORY if trajectory.exists() else None,
+            "validated_after_workspace_cleanup": False,
+        },
+    }
+    _write_accounting_files(target, failure)
+
+
+def _write_accounting_files(
+    target: Path, record: Mapping[str, Any]
+) -> None:
+    _write_json_atomic(target / "result.json", record)
+    for name, content in {
+        "pico.exit.txt": f"{record['pico_exit']}\n",
+        "verifier.exit.txt": f"{record['verifier_exit']}\n",
+    }.items():
+        (target / name).write_text(content, encoding="utf-8")
+
+
 def _write_record_files(target: Path, record: Mapping[str, Any]) -> None:
-    (target / "result.json").write_text(
-        json.dumps(record, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-    )
+    _write_json_atomic(target / "result.json", record)
     for name, content in {
         "pico.stdout.txt": str(record["stdout"]),
         "pico.stderr.txt": str(record["stderr"]),
@@ -830,6 +1017,28 @@ def _write_record_files(target: Path, record: Mapping[str, Any]) -> None:
         "verifier.exit.txt": f"{record['verifier_exit']}\n",
     }.items():
         (target / name).write_text(content, encoding="utf-8")
+
+
+def _write_json_atomic(path: Path, payload: Mapping[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.NamedTemporaryFile(
+        "w",
+        encoding="utf-8",
+        delete=False,
+        dir=path.parent,
+        prefix=path.name + ".",
+        suffix=".tmp",
+    ) as handle:
+        json.dump(
+            payload,
+            handle,
+            ensure_ascii=False,
+            indent=2,
+            sort_keys=True,
+        )
+        handle.write("\n")
+        temporary = Path(handle.name)
+    temporary.replace(path)
 
 
 def _load_jsonl(path: Path) -> list[dict[str, Any]]:
