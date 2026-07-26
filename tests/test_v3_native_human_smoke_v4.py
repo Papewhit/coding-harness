@@ -42,6 +42,11 @@ def live_public_shape() -> dict:
             "type": "openai-reasoning",
             "count": 1,
         },
+        "thinking": {
+            "hash": "c" * 64,
+            "type": "anthropic-thinking",
+            "count": 2,
+        },
     }
 
 
@@ -132,7 +137,7 @@ def test_copy_fails_closed_when_public_evidence_is_missing(
         copy_public_trajectory(workspace, tmp_path / "target", [])
 
 
-def test_public_scanner_accepts_live_profile_and_sanitized_reasoning_shape(
+def test_public_scanner_accepts_live_profile_and_sanitized_reasoning_thinking_shapes(
     live_public_shape: dict,
 ) -> None:
     _scan_public_value(
@@ -140,6 +145,24 @@ def test_public_scanner_accepts_live_profile_and_sanitized_reasoning_shape(
         (),
         context="live-session.events.jsonl",
     )
+
+
+@pytest.mark.parametrize(
+    "field", ["reasoning", "thinking", "opaque_continuation"]
+)
+def test_public_capability_fields_require_exact_booleans(field: str) -> None:
+    invalid = {
+        "capabilities": {
+            field: {
+                "hash": "sha256:" + "d" * 64,
+                "type": "public-shape",
+                "count": 1,
+            }
+        }
+    }
+
+    with pytest.raises(ValueError, match="must be boolean"):
+        _scan_public_value(invalid, (), context="live-profile")
 
 
 def test_durable_call_id_mismatch_is_rejected(
@@ -191,6 +214,16 @@ def test_durable_call_id_mismatch_is_rejected(
             (),
             "private 'reasoning' payload",
         ),
+        (
+            "opaque_continuation",
+            {
+                "hash": "sha256:" + "e" * 64,
+                "type": "ProviderContinuation",
+                "count": 1,
+            },
+            (),
+            "private 'opaque_continuation' payload",
+        ),
     ],
 )
 def test_private_material_in_public_trajectory_is_rejected(
@@ -240,7 +273,7 @@ def test_measurement_failure_persists_exact_stub_attempt_accounting(
             return self.inner.request(request)
 
     output = tmp_path / "accounting"
-    with pytest.raises(ValueError, match="private 'reasoning' payload"):
+    with pytest.raises(ValueError, match="must be boolean"):
         run_manifest(
             DEFAULT_MANIFEST,
             output,

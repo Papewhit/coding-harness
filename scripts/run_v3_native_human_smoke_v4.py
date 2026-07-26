@@ -581,13 +581,19 @@ def _scan_public_value(
             normalized = str(key).lower()
             if normalized in _PRIVATE_KEYS:
                 raise ValueError(f"private field {key!r} in public Artifact {context}")
-            if normalized in _OPAQUE_PUBLIC_KEYS and not (
-                _is_public_capability(path, item)
-                or _is_public_opaque_shape(item)
-            ):
-                raise ValueError(
-                    f"private {key!r} payload in public Artifact {context}"
-                )
+            if normalized in _OPAQUE_PUBLIC_KEYS:
+                if _is_capability_field(path):
+                    if type(item) is not bool:
+                        raise ValueError(
+                            f"public capability {key!r} must be boolean in "
+                            f"Artifact {context}"
+                        )
+                elif normalized == "opaque_continuation" or not (
+                    _is_public_opaque_shape(item)
+                ):
+                    raise ValueError(
+                        f"private {key!r} payload in public Artifact {context}"
+                    )
             _scan_public_value(
                 item,
                 private_values,
@@ -614,8 +620,8 @@ def _scan_public_value(
         raise ValueError(f"private locator or secret in public Artifact {context}")
 
 
-def _is_public_capability(path: tuple[str, ...], value: Any) -> bool:
-    return bool(path) and path[-1] == "capabilities" and type(value) is bool
+def _is_capability_field(path: tuple[str, ...]) -> bool:
+    return bool(path) and path[-1] == "capabilities"
 
 
 def _is_public_opaque_shape(value: Any) -> bool:
