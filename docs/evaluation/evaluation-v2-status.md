@@ -6,8 +6,8 @@
 
 ## 当前状态
 
-- 当前阶段：P1——确定性模块基线。
-- 阶段结论：已完成。已接受 source `dcd8ea110c6c4dad5c09943fab26b8197142ae29` 的正式离线模块 Artifact 已生成并通过 checkout-independent verifier；没有发起 provider HTTP，也没有进入 P2。
+- 当前阶段：P2——最小真实编码桥接。
+- 阶段结论：实现候选和本地离线验证已完成，正等待在候选 source 的 WSL fresh clone 中完成最终复核并冻结 `pilot-v1`、`baseline-v1` 两份 run config。P2 尚未关闭，配置尚未获得用户接受，没有发起 provider HTTP，也没有进入 P3。
 - 历史控制 checkpoint： `2876cd53e17fd2b6eb089dbfaf14cd67615498fc`。
 - 计划中的 P0 起点： `44677cd7f6a9535c1a74e8628078e9d4967594b5`。
 - 实际 P0 起始 commit： `758eeaf7360f09296bc8a87567b021e68ca097d7`。该提交只解除 Evaluation v2 启动暂停并更新文档状态；P0 在检查其 diff 后从该 clean commit 开始。
@@ -16,10 +16,13 @@
 - 原 P1 候选 source commit：`2abc0c30badd619151b99f01abdab82331482824`； user guide 计划更新和 verifier revision 后已失效，未作为批次 source 接受，也未 运行 Artifact。
 - P1 已接受 source commit： `dcd8ea110c6c4dad5c09943fab26b8197142ae29`。
 - P1 结束 commit：承载本状态条目的 commit；完整 SHA 在提交后的交付消息中报告， 不为回填而 amend。
+- P1 实际结束 commit：`91a578d74439bd643b0dcb693a3b55a806b71f34`。
+- P2 实际起始 commit：`4a70016101ffab6f777e53f938c472b5fe1e405d`；它相对 P1 结束 commit 只重排 Markdown 和补充对应文档规则，不改变 Evaluation v2 语义。
+- P2 实现候选 source：承载本状态条目的 commit；完整 SHA 和 tree 在提交后的交付消息中报告，不为回填而 amend。
 - 正式 Artifact： `F:\dev\llm\pico-eval-artifacts\evaluation-v2\module-baseline-v1\dcd8ea110c6c4dad5c09943fab26b8197142ae29`。
 - wrapper revision 使用量：`0/1`。`dcd8ea1` 是正式测量前由总体方案和 user guide 交付要求驱动的实现对齐，不是测量 wrapper 缺陷修订。
-- 当前 blocker：无。P2 尚未开始。
-- 下一动作：从 P1 结束 commit 启动新的 P2 顶层任务，只完成计划限定的离线桥接、 fake end-to-end 测试和 run config 冻结，不发起 provider HTTP。
+- 当前 blocker：候选提交后的 WSL fresh-clone 复核、两份 run config 冻结以及用户对其内容和哈希的明确接受尚未完成。
+- 下一动作：提交 P2 实现候选，在其 detached WSL fresh clone 中使用 providers extra 复跑定向测试和 scoped Ruff；全部通过后，以该提交为 source 创建并只读验证两份 run config，展示全文、哈希、source/tree 和 scoped diff，随后停止等待用户接受。
 
 ## 历史无效测量
 
@@ -162,3 +165,61 @@ R-03 的主要结论是测量装置缺陷：HSMOKE-V4-A 实际完成了 `read_fi
 ### 下一阶段的精确第一步
 
 从 P1 结束 commit 启动新的 P2 顶层任务，以 `pico/evaluation/live_tasks.py` 的 `LocalLiveTaskRunner`、`TaskSpec` 和 `ClientResult` 为起点，先补充实际 `repositories -> tasks` taskset 的 loader 测试；后续只实施计划限定的 client/证据留存与 run config 工作，不发起 provider HTTP。
+
+## P2 阶段记录（实现候选，待配置接受）
+
+### 阶段结论
+
+- 复用 `LocalLiveTaskRunner`，将正式 `repositories -> tasks` taskset 映射为隔离的 `TaskSpec`，并在创建 row 目录前重算 taskset、任务输入和仓库树锁。
+- 新增薄 Runtime client，直接使用现有 provider adapter 和 Pico Runtime；没有引入 SDK Tool/Agents Runner，也没有保留可执行文本工具 fallback。
+- 固定 `approval=auto`、workspace write scope、auto-dream=false、4096 output token、50 tool steps、300 秒 provider timeout、600 秒 row timeout和最小工具白名单。`run_shell` 使用 required bubblewrap `--unshare-net`，子 agent、ask-user 和 plan 工具不开放。
+- 实现 immutable row、失败最小记录、private/public 原件选择、verifier 独立证据、workspace hash/diff、四层 call ID/工具名/终态核对、实际值凭据扫描和清理后 checksum 复算。
+- CLI 保留旧离线模式，新增 run config 生成、只读验证及 Evaluation v2 的 cohort/stage/task/repo/repetition 参数；Pilot 和 Baseline row 身份及 repetition-major 顺序在配置中冻结。
+- user guide 已同步 P2 的命令、前置条件、调用边界、Artifact 入口和结果解释。
+- 当前本地 fake 流程的 provider HTTP 请求数为 0；尚未创建任何正式 row，尚未运行 P3。
+
+### 起始与候选 commit
+
+- 起始：`4a70016101ffab6f777e53f938c472b5fe1e405d`，tree `9c49e65e2702cd0a301ce9e9046054218809cf85`。
+- 实现候选：承载本状态条目的 commit；完整 commit 和 tree 在提交后的交付消息中报告。
+- P2 结束：尚未发生。用户接受两份 run config 后另建独立 docs commit 关闭 P2；不 amend、不回填候选 source。
+
+### 实际修改文件和 diff stat
+
+- 修改 `pico/evaluation/live_tasks.py`、`scripts/run_local_coding_tasks.py`、`tests/test_live_task_evaluator.py`、本 user guide 和 status。
+- 新增 taskset/配置/调度/证据/row capture/live client 模块、`scripts/run_pico_live_task_client.py` 和 `tests/test_evaluation_v2_evidence.py`。
+- 精确候选 diff stat：15 files changed, 3321 insertions(+), 114 deletions(-)。
+- `.codex/eval/**`、taskset、taskset lock、evidence protocol 和 Runtime 核心语义均未修改。
+
+### 已执行的命令与测试
+
+- `uv run --extra providers pytest tests/test_live_task_evaluator.py tests/test_evaluation_v2_evidence.py -q`：当前本地 targeted 结果 30 passed；加入 `tests/test_architecture_boundaries.py` 和 `tests/test_safety_invariants.py` 后为 41 passed。
+- scoped `uv run --extra providers ruff check`：通过。
+- 两个实际 CLI `--help`：通过；主 runner 显示 `--run-config`、`--prepare-run-configs`、`--verify-only`、`--cohort-id`、`--stage`、`--task`、`--repo` 和 `--repetitions`，薄 client 只接受 `--run-config`。
+- bubblewrap 实际探针：本地命令退出 0，`--unshare-net` 内对外 socket 以 `Network is unreachable` 失败。
+- WSL fresh clone 的 targeted tests、architecture boundary、safety invariant、scoped Ruff、CLI help 和两份配置只读验证尚待候选提交后执行。
+
+### 新增 rows 与 metrics
+
+- 新增 Evaluation v2 正式 rows：0。
+- 新增真实产品 metrics：0。
+- fake T01 只验证 runner、workspace、hidden verifier 和证据协议，不进入产品成功率分母。
+- provider HTTP 请求：0。
+
+### 有效产品失败
+
+0。P2 不运行真实产品评测。
+
+### invalid rows
+
+0。故障注入测试产生的临时记录只属于 pytest fixture，不是 Evaluation v2 正式 row。
+
+### 当前 blocker
+
+- 候选 source 尚未提交和在 WSL fresh clone 复核。
+- `pilot-v1/<source>/public/run-config.*` 与 `baseline-v1/<source>/public/run-config.*` 尚未冻结和展示。
+- 用户尚未接受两份配置；P3 没有 live 授权。
+
+### 下一阶段的精确第一步
+
+创建实现候选提交并取得完整 commit/tree；在 detached WSL fresh clone 中执行最终离线验收。只有验收全部通过才生成两份配置；展示后停止，等待用户明确接受。P3 的第一步仍是单独授权且绑定已接受配置哈希的 T01 live row。

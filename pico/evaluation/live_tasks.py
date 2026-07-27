@@ -12,7 +12,6 @@ from __future__ import annotations
 from collections import Counter
 from dataclasses import dataclass, field
 from enum import Enum
-import hashlib
 import json
 import os
 from pathlib import Path
@@ -29,6 +28,11 @@ from pico.evaluation.contracts import (
     native_protocol_metadata,
     sanitize_public_artifact,
 )
+from pico.evaluation.live_utils import (
+    compare_manifests,
+    sanitize_trace,
+    workspace_manifest,
+)
 
 
 FORMAL_RUN_KIND = "formal"
@@ -43,6 +47,7 @@ class FailureCategory(str, Enum):
     PROVIDER = "provider"
     PROTOCOL = "protocol"
     INFRASTRUCTURE = "infrastructure"
+    MEASUREMENT = "measurement"
 
 
 class LiveTaskError(RuntimeError):
@@ -71,6 +76,8 @@ class TaskSpec:
     run_kinds: tuple[str, ...] = ("synthetic", "probe", FORMAL_RUN_KIND)
     shard: str = "default"
     reference_paths: tuple[Path, ...] = ()
+    expected_files_changed: tuple[str, ...] = ()
+    network_access: bool = False
 
     @classmethod
     def from_mapping(cls, value: Mapping[str, Any], *, base_dir: Path) -> "TaskSpec":
@@ -94,6 +101,10 @@ class TaskSpec:
             run_kinds=run_kinds,
             shard=str(value.get("shard", "default")),
             reference_paths=references,
+            expected_files_changed=tuple(
+                str(path) for path in value.get("expected_files_changed", [])
+            ),
+            network_access=bool(value.get("network_access", False)),
         )
 
 
@@ -128,10 +139,22 @@ class ClientResult:
     protocol_errors: tuple[str, ...] = ()
     error: str = ""
     failure_category: FailureCategory = FailureCategory.NONE
+    session_id: str = ""
+    runtime_run_id: str = ""
+    final_answer: str = ""
+    http_attempts_exact: bool = True
+    original_state_paths: tuple[str, ...] = ()
+    exit_code: int | None = None
 
 
 class LiveTaskClient(Protocol):
-    def run(self, workspace: Path, prompt: str) -> ClientResult:
+    def run(
+        self,
+        workspace: Path,
+        prompt: str,
+        *,
+        evidence_path: Path | None = None,
+    ) -> ClientResult:
         """Run the task without receiving verifier or reference paths."""
 
 
@@ -141,6 +164,14 @@ class RunRequest:
     shard: str
     tool_050_s_hash: str = ""
     run_id: str = ""
+    cohort_id: str = ""
+    row_id: str = ""
+    source_commit: str = ""
+    source_tree: str = ""
+    repetition: int = 1
+    stage: str = ""
+    run_config_path: Path | None = None
+    sensitive_values: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -165,6 +196,8 @@ class _VerifierResult:
     returncode: int
     duration_ms: int
     output: str
+    stdout: str = ""
+    stderr: str = ""
 
 
 @dataclass
@@ -174,6 +207,15 @@ class LocalLiveTaskRunner:
     verifier_environment: Mapping[str, str] = field(default_factory=dict)
 
     def run(self, task: TaskSpec, request: RunRequest, client: LiveTaskClient) -> RunEvidence:
+        if request.cohort_id:
+            from pico.evaluation.evaluation_v2_artifacts import run_evaluation_v2_row
+
+            return run_evaluation_v2_row(self, task, request, client)
+        return self._run_legacy(task, request, client)
+
+    def _run_legacy(
+        self, task: TaskSpec, request: RunRequest, client: LiveTaskClient
+    ) -> RunEvidence:
         self._validate(task, request)
         run_id = request.run_id or _new_run_id(task.task_id)
         run_dir = self.output_root.resolve() / request.run_kind / request.shard / run_id
@@ -210,6 +252,7 @@ class LocalLiveTaskRunner:
                     returncode=-1,
                     duration_ms=0,
                     output=str(exc),
+                    stderr=str(exc),
                 )
                 if failure is FailureCategory.NONE:
                     failure = FailureCategory.INFRASTRUCTURE
@@ -305,12 +348,16 @@ class LocalLiveTaskRunner:
             )
         except (OSError, subprocess.SubprocessError) as exc:
             raise InfrastructureFailure(f"hidden verifier could not run: {type(exc).__name__}") from exc
-        output = "\n".join(part for part in (completed.stdout.strip(), completed.stderr.strip()) if part)
+        stdout = str(sanitize_public_artifact(completed.stdout.strip()))
+        stderr = str(sanitize_public_artifact(completed.stderr.strip()))
+        output = "\n".join(part for part in (stdout, stderr) if part)
         return _VerifierResult(
             passed=completed.returncode == 0,
             returncode=completed.returncode,
             duration_ms=int((time.monotonic() - started) * 1000),
-            output=str(sanitize_public_artifact(output)),
+            output=output,
+            stdout=stdout,
+            stderr=stderr,
         )
 
 
@@ -322,77 +369,21 @@ def select_tasks(
     run_kinds: Sequence[str] = (),
     shards: Sequence[str] = (),
 ) -> list[TaskSpec]:
-    """Apply independently composable task/repo/run-kind/shard filters."""
+    from pico.evaluation.taskset import select_tasks as select
 
-    task_filter = set(task_ids)
-    repo_filter = set(repo_ids)
-    kind_filter = set(run_kinds)
-    shard_filter = set(shards)
-    return [
-        task
-        for task in tasks
-        if (not task_filter or task.task_id in task_filter)
-        and (not repo_filter or task.repo_id in repo_filter)
-        and (not kind_filter or bool(kind_filter.intersection(task.run_kinds)))
-        and (not shard_filter or task.shard in shard_filter)
-    ]
+    return select(
+        tasks,
+        task_ids=task_ids,
+        repo_ids=repo_ids,
+        run_kinds=run_kinds,
+        shards=shards,
+    )
 
 
 def load_task_specs(path: Path) -> list[TaskSpec]:
-    """Load a standalone task manifest; the final shared taskset is optional."""
+    from pico.evaluation.taskset import load_task_specs as load
 
-    path = path.resolve()
-    payload = json.loads(path.read_text(encoding="utf-8"))
-    rows = payload if isinstance(payload, list) else payload.get("tasks", [])
-    if not isinstance(rows, list):
-        raise ValueError("task manifest must be a list or contain a tasks list")
-    return [TaskSpec.from_mapping(row, base_dir=path.parent) for row in rows]
-
-
-def workspace_manifest(root: Path) -> dict[str, str]:
-    manifest: dict[str, str] = {}
-    for path in sorted(root.rglob("*")):
-        if not path.is_file():
-            continue
-        relative = path.relative_to(root).as_posix()
-        manifest[relative] = hashlib.sha256(path.read_bytes()).hexdigest()
-    return manifest
-
-
-def compare_manifests(before: Mapping[str, str], after: Mapping[str, str]) -> dict[str, list[str]]:
-    before_paths = set(before)
-    after_paths = set(after)
-    return {
-        "created": sorted(after_paths - before_paths),
-        "modified": sorted(path for path in before_paths & after_paths if before[path] != after[path]),
-        "deleted": sorted(before_paths - after_paths),
-    }
-
-
-def sanitize_trace(events: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
-    """Remove opaque contents and secrets while preserving evidence shape."""
-
-    sanitized = []
-    for event in events:
-        public = dict(event)
-        for key in tuple(public):
-            if key.lower() in {"thinking", "reasoning", "continuation", "opaque_continuation"}:
-                public[key] = _opaque_shape(public[key])
-        sanitized.append(sanitize_public_artifact(public))
-    return sanitized
-
-
-def _opaque_shape(value: Any) -> dict[str, Any]:
-    try:
-        encoded = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
-    except (TypeError, ValueError):
-        encoded = repr(type(value).__name__).encode()
-    count = len(value) if isinstance(value, (list, tuple, dict)) else int(value is not None)
-    return {
-        "hash": hashlib.sha256(encoded).hexdigest(),
-        "type": type(value).__name__,
-        "count": count,
-    }
+    return load(path)
 
 
 def _native_evidence(result: ClientResult) -> dict[str, Any]:

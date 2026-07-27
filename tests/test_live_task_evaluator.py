@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import shutil
 
 import pytest
 
@@ -219,6 +220,54 @@ def test_filters_work_without_the_final_taskset() -> None:
     assert select_tasks(tasks, repo_ids=["other-repo"]) == [other]
     assert select_tasks(tasks, run_kinds=["formal"]) == [task]
     assert select_tasks(tasks, shards=["other-shard"]) == [other]
+
+
+def test_repository_taskset_loads_all_frozen_tasks_without_exposing_hidden_paths() -> None:
+    root = Path(__file__).resolve().parents[1]
+    tasks = load_task_specs(root / "benchmarks" / "v3" / "local-repos" / "taskset.json")
+
+    assert [task.task_id for task in tasks] == [f"T{number:02d}" for number in range(1, 10)]
+    assert {task.repo_id for task in tasks} == {"tinyconfig", "miniqueue", "logslice"}
+    assert all(task.network_access is False for task in tasks)
+    assert tasks[0].expected_files_changed == ("tinyconfig/config.py",)
+    assert tasks[0].prompt.startswith("# T01")
+    assert tasks[0].verifier not in tasks[0].source_dir.parents
+    assert tasks[0].reference_paths[0] not in tasks[0].source_dir.parents
+
+
+def test_repository_taskset_rejects_duplicate_task_ids(tmp_path: Path) -> None:
+    source = tmp_path / "public_repo"
+    hidden = tmp_path / "hidden"
+    shutil.copytree(FIXTURE / "public_repo", source)
+    shutil.copytree(FIXTURE / "hidden", hidden)
+    payload = {
+        "execution_policy": {"network_access": False},
+        "repositories": [
+            {
+                "id": "repo",
+                "base_snapshot": str(source),
+                "tasks": [
+                    {
+                        "id": "duplicate",
+                        "task_doc": str(hidden / "reference.txt"),
+                        "hidden_verifier": str(hidden / "verifier.py"),
+                        "reference_patch": str(hidden / "reference.txt"),
+                    },
+                    {
+                        "id": "duplicate",
+                        "task_doc": str(hidden / "reference.txt"),
+                        "hidden_verifier": str(hidden / "verifier.py"),
+                        "reference_patch": str(hidden / "reference.txt"),
+                    },
+                ],
+            }
+        ],
+    }
+    manifest = tmp_path / "taskset.json"
+    manifest.write_text(json.dumps(payload), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="duplicate task"):
+        load_task_specs(manifest)
 
 
 def test_hidden_material_inside_public_source_is_rejected(tmp_path: Path) -> None:
