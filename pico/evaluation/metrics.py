@@ -6,7 +6,7 @@ from collections.abc import Generator
 from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Mapping
 
 from ..config import resolve_provider_config
 from .evaluator import run_fixed_benchmark
@@ -2005,12 +2005,15 @@ def _recovery_variant_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
 def run_context_ablation_v2(
     artifact_path: str | Path = DEFAULT_CONTEXT_ABLATION_V2_PATH, repetitions: int = 5
 ) -> dict[str, Any]:
+    repetitions = int(repetitions)
     payload = run_context_stress_matrix(repetitions=repetitions)
     artifact = {
         "schema_version": METRICS_SCHEMA_VERSION,
         "artifact_type": "context-ablation-v2",
         "captured_at": datetime.utcnow().isoformat() + "Z",
         "config_count": payload["config_count"],
+        "repetitions": repetitions,
+        "run_count": payload["config_count"] * repetitions,
         "configs": payload["configs"],
         "summary": payload["summary"],
     }
@@ -2020,13 +2023,17 @@ def run_context_ablation_v2(
 def run_memory_ablation_v2(
     artifact_path: str | Path = DEFAULT_MEMORY_ABLATION_V2_PATH, repetitions: int = 5
 ) -> dict[str, Any]:
+    repetitions = int(repetitions)
     payload = run_large_scale_memory_experiment(repetitions=repetitions)
     artifact = {
         "schema_version": METRICS_SCHEMA_VERSION,
         "artifact_type": "memory-ablation-v2",
         "captured_at": datetime.utcnow().isoformat() + "Z",
         "task_count": payload["task_count"],
+        "repetitions": repetitions,
+        "variant_count": len(payload["variants"]),
         "runs_per_variant": payload["runs_per_variant"],
+        "run_count": payload["runs_per_variant"] * len(payload["variants"]),
         "category_counts": payload["category_counts"],
         "variants": payload["variants"],
         "rows": payload["rows"],
@@ -2048,6 +2055,10 @@ def run_recovery_ablation_v2(
         "artifact_type": "recovery-ablation-v2",
         "captured_at": datetime.utcnow().isoformat() + "Z",
         "task_count": len(RECOVERY_ABLATION_TASKS),
+        "repetitions": repetitions,
+        "variant_count": len(variants),
+        "runs_per_variant": len(RECOVERY_ABLATION_TASKS) * repetitions,
+        "run_count": len(RECOVERY_ABLATION_TASKS) * repetitions * len(variants),
         "variants": {
             variant: {
                 "summary": _recovery_variant_summary(rows),
@@ -2059,74 +2070,337 @@ def run_recovery_ablation_v2(
     return _write_json_artifact(artifact_path, artifact)
 
 
+def _report_artifact_path(path: str | Path, artifact_root: str | Path | None) -> str:
+    path = Path(path)
+    if artifact_root is None:
+        return path.as_posix()
+    try:
+        return path.resolve().relative_to(Path(artifact_root).resolve()).as_posix()
+    except ValueError as exc:
+        raise ValueError(f"report artifact is outside artifact_root: {path}") from exc
+
+
+def build_benchmark_core_report(
+    harness_artifact_path: str | Path = DEFAULT_HARNESS_REGRESSION_V2_PATH,
+    context_artifact_path: str | Path = DEFAULT_CONTEXT_ABLATION_V2_PATH,
+    memory_artifact_path: str | Path = DEFAULT_MEMORY_ABLATION_V2_PATH,
+    recovery_artifact_path: str | Path = DEFAULT_RECOVERY_ABLATION_V2_PATH,
+    *,
+    cohort_id: str = "module-baseline-v1",
+    source_sha: str = "",
+    artifact_root: str | Path | None = None,
+) -> dict[str, Any]:
+    harness = json.loads(Path(harness_artifact_path).read_text(encoding="utf-8"))
+    context = json.loads(Path(context_artifact_path).read_text(encoding="utf-8"))
+    memory = json.loads(Path(memory_artifact_path).read_text(encoding="utf-8"))
+    recovery = json.loads(Path(recovery_artifact_path).read_text(encoding="utf-8"))
+
+    harness_summary = dict(harness["summary"])
+    total_tasks = int(harness_summary["total_tasks"])
+    harness_summary.setdefault(
+        "passed", round(float(harness_summary["pass_rate"]) * total_tasks)
+    )
+    harness_summary.setdefault("failed", total_tasks - int(harness_summary["passed"]))
+    harness_summary.setdefault(
+        "within_budget",
+        round(float(harness_summary["within_budget_rate"]) * total_tasks),
+    )
+    harness_summary.setdefault(
+        "verifier_passes",
+        round(float(harness_summary["verifier_pass_rate"]) * total_tasks),
+    )
+    harness_summary.setdefault(
+        "failure_category_counts",
+        dict(harness.get("failure_category_counts", {})),
+    )
+
+    return {
+        "schema_version": 1,
+        "artifact_type": "pico-module-baseline-v2",
+        "cohort_id": cohort_id,
+        "source_sha": source_sha,
+        "scope": {
+            "evidence_level": "deterministic-module",
+            "provider_http_requests": 0,
+            "is_end_to_end_coding_result": False,
+            "statement": (
+                "这些结果属于确定性、模块级证据，不属于真实端到端编码任务结果，"
+                "也不进入 pilot-v1 或 baseline-v1 的成功率分母。"
+            ),
+        },
+        "modules": {
+            "harness_regression": {
+                "artifact_path": _report_artifact_path(
+                    harness_artifact_path, artifact_root
+                ),
+                "sample_counts": {
+                    "tasks": total_tasks,
+                    "runs": total_tasks,
+                },
+                "metrics": harness_summary,
+                "formulas": {
+                    "pass_rate": "passed / total fixed tasks",
+                    "within_budget_rate": "within-budget runs / total fixed tasks",
+                    "verifier_pass_rate": "verifier passes / total fixed tasks",
+                    "failure_category_counts": "failed runs grouped by evaluator category",
+                },
+                "exclusions": {"count": 0, "reasons": []},
+            },
+            "context_ablation": {
+                "artifact_path": _report_artifact_path(
+                    context_artifact_path, artifact_root
+                ),
+                "sample_counts": {
+                    "configs": int(context["config_count"]),
+                    "repetitions_per_config": int(context.get("repetitions", 0)),
+                    "runs": int(context.get("run_count", 0)),
+                },
+                "metrics": dict(context["summary"]),
+                "formulas": {
+                    "avg_full_prompt_chars": "mean of 12 config-level averages",
+                    "avg_raw_prompt_chars": "mean of 12 config-level averages",
+                    "avg_prompt_compression_ratio": (
+                        "mean of 12 config-level average compression ratios"
+                    ),
+                    "max_prompt_compression_ratio": (
+                        "maximum of 12 config-level average compression ratios"
+                    ),
+                    "current_request_preserved_rate": (
+                        "configs preserving the current request in every repetition "
+                        "/ total configs"
+                    ),
+                },
+                "exclusions": {"count": 0, "reasons": []},
+            },
+            "working_memory_ablation": {
+                "artifact_path": _report_artifact_path(
+                    memory_artifact_path, artifact_root
+                ),
+                "sample_counts": {
+                    "tasks": int(memory["task_count"]),
+                    "variants": int(memory.get("variant_count", len(memory["variants"]))),
+                    "repetitions_per_task": int(memory.get("repetitions", 0)),
+                    "runs_per_variant": int(memory["runs_per_variant"]),
+                    "runs": int(memory.get("run_count", 0)),
+                },
+                "metrics": dict(memory["variants"]),
+                "formulas": {
+                    "repeated_reads": "sum of repeated reads in the variant",
+                    "avg_tool_steps": "mean tool steps across variant runs",
+                    "correct_rate": "correct runs / all runs in the variant",
+                    "memory_hit_rate": (
+                        "runs with zero repeated reads / all runs in the variant"
+                    ),
+                },
+                "exclusions": {"count": 0, "reasons": []},
+            },
+            "recovery_ablation": {
+                "artifact_path": _report_artifact_path(
+                    recovery_artifact_path, artifact_root
+                ),
+                "sample_counts": {
+                    "tasks": int(recovery["task_count"]),
+                    "variants": int(
+                        recovery.get("variant_count", len(recovery["variants"]))
+                    ),
+                    "repetitions_per_task": int(recovery.get("repetitions", 0)),
+                    "runs_per_variant": int(recovery.get("runs_per_variant", 0)),
+                    "runs": int(recovery.get("run_count", 0)),
+                },
+                "metrics": {
+                    variant: dict(payload["summary"])
+                    for variant, payload in recovery["variants"].items()
+                },
+                "formulas": {
+                    "resume_success_rate": "successful resumes / all variant runs",
+                    "stale_reanchor_rate": (
+                        "successful reanchors / partial-stale variant runs"
+                    ),
+                    "workspace_drift_detection_rate": (
+                        "detected drifts / workspace-mismatch variant runs"
+                    ),
+                    "resume_false_accept_rate": (
+                        "false accepts / invalid-resume variant runs"
+                    ),
+                },
+                "exclusions": {"count": 0, "reasons": []},
+            },
+        },
+    }
+
+
+def _append_formulas(lines: list[str], formulas: Mapping[str, str]) -> None:
+    lines.extend(["", "公式："])
+    lines.extend(
+        f"- `{name}`：{formula}" for name, formula in sorted(formulas.items())
+    )
+
+
+def render_benchmark_core_report(report: Mapping[str, Any]) -> str:
+    modules = report["modules"]
+    harness = modules["harness_regression"]
+    context = modules["context_ablation"]
+    memory = modules["working_memory_ablation"]
+    recovery = modules["recovery_ablation"]
+    harness_metrics = harness["metrics"]
+    context_metrics = context["metrics"]
+
+    lines = [
+        "# Pico Benchmark Core Report",
+        "",
+        f"- Cohort：`{report['cohort_id']}`",
+        f"- Source SHA：`{report['source_sha'] or 'not-recorded'}`",
+        f"- 证据边界：{report['scope']['statement']}",
+        f"- Provider HTTP requests：{report['scope']['provider_http_requests']}",
+        "",
+        "## Harness Regression",
+        f"- 证据：`{harness['artifact_path']}`",
+        f"- 固定 regression 任务数：{harness['sample_counts']['tasks']}",
+        f"- 排除数：{harness['exclusions']['count']}",
+        f"- pass_rate：{harness_metrics['pass_rate']:.2%}",
+        f"- within_budget_rate：{harness_metrics['within_budget_rate']:.2%}",
+        f"- verifier_pass_rate：{harness_metrics['verifier_pass_rate']:.2%}",
+        (
+            "- failure_category_counts："
+            f"`{json.dumps(harness_metrics['failure_category_counts'], sort_keys=True)}`"
+        ),
+    ]
+    _append_formulas(lines, harness["formulas"])
+    lines.extend(
+        [
+            "",
+            "## Context Ablation",
+            f"- 证据：`{context['artifact_path']}`",
+            f"- 配置数：{context['sample_counts']['configs']}",
+            f"- 每配置重复：{context['sample_counts']['repetitions_per_config']}",
+            f"- 总运行数：{context['sample_counts']['runs']}",
+            f"- 排除数：{context['exclusions']['count']}",
+            f"- avg_full_prompt_chars：{context_metrics['avg_full_prompt_chars']:.2f}",
+            f"- avg_raw_prompt_chars：{context_metrics['avg_raw_prompt_chars']:.2f}",
+            (
+                "- avg_prompt_compression_ratio："
+                f"{context_metrics['avg_prompt_compression_ratio']:.2%}"
+            ),
+            (
+                "- max_prompt_compression_ratio："
+                f"{context_metrics['max_prompt_compression_ratio']:.2%}"
+            ),
+            (
+                "- current_request_preserved_rate："
+                f"{context_metrics['current_request_preserved_rate']:.2%}"
+            ),
+        ]
+    )
+    _append_formulas(lines, context["formulas"])
+    lines.extend(
+        [
+            "",
+            "## Working Memory Ablation",
+            f"- 证据：`{memory['artifact_path']}`",
+            f"- 任务数：{memory['sample_counts']['tasks']}",
+            f"- Variant 数：{memory['sample_counts']['variants']}",
+            f"- 每 variant 运行数：{memory['sample_counts']['runs_per_variant']}",
+            f"- 总运行数：{memory['sample_counts']['runs']}",
+            f"- 排除数：{memory['exclusions']['count']}",
+        ]
+    )
+    for variant in ("memory_on", "memory_off", "memory_irrelevant"):
+        metrics = memory["metrics"][variant]
+        lines.extend(
+            [
+                "",
+                f"### `{variant}`",
+                f"- repeated_reads：{metrics['repeated_reads']}",
+                f"- avg_tool_steps：{metrics['avg_tool_steps']:.2f}",
+                f"- correct_rate：{metrics['correct_rate']:.2%}",
+                f"- memory_hit_rate：{metrics['memory_hit_rate']:.2%}",
+            ]
+        )
+    _append_formulas(lines, memory["formulas"])
+    lines.extend(
+        [
+            "",
+            "## Recovery / Resume Ablation",
+            f"- 证据：`{recovery['artifact_path']}`",
+            f"- 任务数：{recovery['sample_counts']['tasks']}",
+            f"- Variant 数：{recovery['sample_counts']['variants']}",
+            f"- 每 variant 运行数：{recovery['sample_counts']['runs_per_variant']}",
+            f"- 总运行数：{recovery['sample_counts']['runs']}",
+            f"- 排除数：{recovery['exclusions']['count']}",
+        ]
+    )
+    for variant in ("resume_enabled", "resume_disabled"):
+        metrics = recovery["metrics"][variant]
+        lines.extend(
+            [
+                "",
+                f"### `{variant}`",
+                f"- resume_success_rate：{metrics['resume_success_rate']:.2%}",
+                f"- stale_reanchor_rate：{metrics['stale_reanchor_rate']:.2%}",
+                (
+                    "- workspace_drift_detection_rate："
+                    f"{metrics['workspace_drift_detection_rate']:.2%}"
+                ),
+                (
+                    "- resume_false_accept_rate："
+                    f"{metrics['resume_false_accept_rate']:.2%}"
+                ),
+            ]
+        )
+    _append_formulas(lines, recovery["formulas"])
+    lines.extend(
+        [
+            "",
+            "## 可以安全写进简历的指标",
+            "- avg_full_prompt_chars",
+            "- avg_raw_prompt_chars",
+            "- avg_prompt_compression_ratio",
+            "- max_prompt_compression_ratio",
+            "- repeated_reads",
+            "- avg_tool_steps",
+            "- correct_rate",
+            "- resume_success_rate",
+            "- workspace_drift_detection_rate",
+            "- resume_false_accept_rate",
+            "",
+            "## 只适合放文档/面试展开的指标",
+            "- current_request_preserved_rate",
+            "- memory_hit_rate",
+            "- stale_reanchor_rate",
+            "- failure_category_counts",
+            "",
+            "## 口径边界",
+            "- Harness regression 只证明 runtime 合同稳定，不证明 provider 上限。",
+            "- Context、memory、recovery 只证明模块收益，不与真实编码成功率混写。",
+        ]
+    )
+    return "\n".join(lines) + "\n"
+
+
 def write_benchmark_core_report(
     report_path: str | Path = DEFAULT_CORE_REPORT_PATH,
     harness_artifact_path: str | Path = DEFAULT_HARNESS_REGRESSION_V2_PATH,
     context_artifact_path: str | Path = DEFAULT_CONTEXT_ABLATION_V2_PATH,
     memory_artifact_path: str | Path = DEFAULT_MEMORY_ABLATION_V2_PATH,
     recovery_artifact_path: str | Path = DEFAULT_RECOVERY_ABLATION_V2_PATH,
+    *,
+    report_json_path: str | Path | None = None,
+    cohort_id: str = "module-baseline-v1",
+    source_sha: str = "",
+    artifact_root: str | Path | None = None,
 ) -> str:
-    harness = json.loads(Path(harness_artifact_path).read_text(encoding="utf-8"))
-    context = json.loads(Path(context_artifact_path).read_text(encoding="utf-8"))
-    memory = json.loads(Path(memory_artifact_path).read_text(encoding="utf-8"))
-    recovery = json.loads(Path(recovery_artifact_path).read_text(encoding="utf-8"))
-
-    enabled_recovery = recovery["variants"]["resume_enabled"]["summary"]
-    lines = [
-        "# Pico Benchmark Core Report",
-        "",
-        "这轮 benchmark 只收缩到 Harness regression、context ablation、working memory ablation 和 recovery ablation 四层，不把 provider、run aggregation 或 durable memory 的别的结论揉进来。",
-        "",
-        "## Harness Regression",
-        f"- 固定 regression 任务数：{harness['summary']['total_tasks']}",
-        f"- pass_rate：{harness['summary']['pass_rate']:.2%}",
-        f"- within_budget_rate：{harness['summary']['within_budget_rate']:.2%}",
-        f"- verifier_pass_rate：{harness['summary']['verifier_pass_rate']:.2%}",
-        "",
-        "## Context Ablation",
-        f"- 配置数：{context['config_count']}",
-        f"- avg_full_prompt_chars：{context['summary']['avg_full_prompt_chars']:.2f}",
-        f"- avg_raw_prompt_chars：{context['summary']['avg_raw_prompt_chars']:.2f}",
-        f"- avg_prompt_compression_ratio：{context['summary']['avg_prompt_compression_ratio']:.2%}",
-        f"- max_prompt_compression_ratio：{context['summary']['max_prompt_compression_ratio']:.2%}",
-        f"- current_request_preserved_rate：{context['summary']['current_request_preserved_rate']:.2%}",
-        "",
-        "## Working Memory Ablation",
-        f"- memory_on repeated_reads：{memory['variants']['memory_on']['repeated_reads']}",
-        f"- memory_off repeated_reads：{memory['variants']['memory_off']['repeated_reads']}",
-        f"- memory_on avg_tool_steps：{memory['variants']['memory_on']['avg_tool_steps']:.2f}",
-        f"- memory_on correct_rate：{memory['variants']['memory_on']['correct_rate']:.2%}",
-        f"- memory_hit_rate：{memory['variants']['memory_on']['memory_hit_rate']:.2%}",
-        "",
-        "## Recovery / Resume Ablation",
-        f"- resume_success_rate：{enabled_recovery['resume_success_rate']:.2%}",
-        f"- stale_reanchor_rate：{enabled_recovery['stale_reanchor_rate']:.2%}",
-        f"- workspace_drift_detection_rate：{enabled_recovery['workspace_drift_detection_rate']:.2%}",
-        f"- resume_false_accept_rate：{enabled_recovery['resume_false_accept_rate']:.2%}",
-        "",
-        "## 可以安全写进简历的指标",
-        "- avg_full_prompt_chars",
-        "- avg_raw_prompt_chars",
-        "- avg_prompt_compression_ratio",
-        "- max_prompt_compression_ratio",
-        "- repeated_reads",
-        "- avg_tool_steps",
-        "- correct_rate",
-        "- resume_success_rate",
-        "- workspace_drift_detection_rate",
-        "- resume_false_accept_rate",
-        "",
-        "## 只适合放文档/面试展开的指标",
-        "- current_request_preserved_rate",
-        "- memory_hit_rate",
-        "- stale_reanchor_rate",
-        "- failure_category_counts",
-        "",
-        "## 口径边界",
-        "- Harness regression 只证明 runtime 合同稳定，不证明 provider 上限。",
-        "- Context、memory、recovery 这三层只证明模块收益，不和 provider benchmark 混写。",
-    ]
-    report_text = "\n".join(lines) + "\n"
+    report = build_benchmark_core_report(
+        harness_artifact_path=harness_artifact_path,
+        context_artifact_path=context_artifact_path,
+        memory_artifact_path=memory_artifact_path,
+        recovery_artifact_path=recovery_artifact_path,
+        cohort_id=cohort_id,
+        source_sha=source_sha,
+        artifact_root=artifact_root,
+    )
+    if report_json_path is not None:
+        _write_json_artifact(report_json_path, report)
+    report_text = render_benchmark_core_report(report)
     report_path = Path(report_path)
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(report_text, encoding="utf-8")

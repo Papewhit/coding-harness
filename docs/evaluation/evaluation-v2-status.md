@@ -9,8 +9,9 @@
 
 ## 当前状态
 
-- 当前阶段：P0——停止旧控制面并恢复可见性。
-- 阶段结论：已完成。W6R5 专用活动入口已退役，Evaluation v2 文档入口已建立。
+- 当前阶段：P1——确定性模块基线。
+- 阶段结论：进行中。模块 runner、结构化报告和确定性复核已实现并通过 targeted
+  tests；尚未创建或运行正式 `module-baseline-v1` Artifact。
 - 历史控制 checkpoint：
   `2876cd53e17fd2b6eb089dbfaf14cd67615498fc`。
 - 计划中的 P0 起点：
@@ -18,10 +19,13 @@
 - 实际 P0 起始 commit：
   `758eeaf7360f09296bc8a87567b021e68ca097d7`。该提交只解除 Evaluation v2
   启动暂停并更新文档状态；P0 在检查其 diff 后从该 clean commit 开始。
-- P0 结束 commit：承载本状态条目的提交。完整 SHA 在 P0 提交后的交付消息中记录，
-  并由 P1 第一次更新状态页时回填为字面 SHA。
-- 当前 blocker：无。
-- 下一阶段：P1——确定性模块基线。
+- P0 结束 commit：`747feb384dbcdbe1b4d3b9e04e9590111970254f`。
+- P1 起始 commit：`57eb0d4f15621ebfe01c6e1cda66ab6f145e160d`。
+- P1 待确认 source commit：承载本状态条目的实现提交；完整 SHA 在提交后的交付消息
+  中展示，用户接受前不得运行模块基线。
+- 当前 blocker：无技术 blocker；当前停点是 source SHA 用户确认。
+- 下一动作：用户接受 P1 source SHA 后，在 WSL2/Python 3.12 fresh clone 中运行
+  固定模块命令并执行 `--verify-only`。
 
 ## 历史无效测量
 
@@ -45,7 +49,7 @@ R-03 的主要结论是测量装置缺陷：HSMOKE-V4-A 实际完成了
 ### 起始与结束 commit
 
 - 起始：`758eeaf7360f09296bc8a87567b021e68ca097d7`。
-- 结束：承载本状态条目的 P0 commit；完整 SHA 见提交后交付记录。
+- 结束：`747feb384dbcdbe1b4d3b9e04e9590111970254f`。
 
 ### 实际修改文件和 diff stat
 
@@ -97,3 +101,64 @@ R-03 的主要结论是测量装置缺陷：HSMOKE-V4-A 实际完成了
 从 P0 结束 commit 启动新的 P1 顶层任务，只实现并运行
 `scripts/run_evaluation_v2_modules.py` 所编排的确定性模块基线；输出到
 `module-baseline-v1/<source-sha>`，不得发起 provider HTTP。
+
+## P1 阶段记录（进行中）
+
+### 阶段结论
+
+- 已新增薄模块 runner，固定编排 harness、context、memory 和 recovery evaluator。
+- 已将报告收敛为结构化 JSON 单一数据源，并由确定性 renderer 生成 Markdown。
+- 已实现五个事实 JSON 的 SHA-256/字节数清单、不可覆盖目录检查和 `--verify-only`。
+- 尚未运行正式模块基线，没有创建外部 Artifact，也没有发起 provider HTTP。
+
+### 起始与结束 commit
+
+- 起始：`57eb0d4f15621ebfe01c6e1cda66ab6f145e160d`。
+- 待确认 source：承载本状态条目的 P1 实现提交；完整 SHA 见提交后交付消息。
+- 结束：P1 尚未完成。
+
+### 实际修改文件和 diff stat
+
+- `M docs/evaluation/evaluation-v2-status.md`
+- `M pico/evaluation/metrics.py`
+- `A scripts/run_evaluation_v2_modules.py`
+- `A tests/test_evaluation_v2_modules.py`
+- `M tests/test_metrics.py`
+- 精确 diff stat 在实现提交前复核并在 P1 完成记录中更新。
+
+### 执行过的命令与测试
+
+- WSL2 使用 CPython 3.12.13；`uv run --frozen --python 3.12 ruff check` 对上述
+  Python 文件执行 scoped lint，结果通过。
+- 第一次 targeted pytest 运行得到 `7 passed, 3 failed`；失败只涉及 canonical
+  JSON 排序后公式字段顺序变化，导致 Markdown 字节重建不一致。
+- 固定 renderer 的公式排序后，重新运行
+  `tests/test_metrics.py tests/test_evaluation_v2_modules.py -q`，结果为
+  `11 passed`。六条 `datetime.utcnow()` deprecation warning 来自既有时间戳实现，
+  不影响本阶段结果。
+- 测试只使用 scripted/fake evaluator；未读取 provider locator，未发起 provider
+  HTTP。
+
+### 新增 rows 与 metrics
+
+- 新增 Evaluation v2 rows：0。
+- 新增正式实测 metrics：0。
+- 当前只有实现测试数据，不属于 `module-baseline-v1` 结果。
+
+### 有效产品失败
+
+0。正式模块基线尚未运行。
+
+### invalid rows
+
+0。P1 模块阶段不创建 Evaluation v2 编码评测行，正式模块基线也尚未运行。
+
+### 当前 blocker
+
+无技术 blocker。按照 Artifact 冻结规则，必须先提交实现并由用户接受完整 source
+SHA，之后才能在对应的全新目录中运行模块基线。
+
+### 下一阶段的精确第一步
+
+提交 P1 实现并展示完整 source SHA、精确 Artifact 路径与离线命令；用户接受后，
+从该 SHA 建立 WSL2/Python 3.12 fresh clone，运行模块基线和 `--verify-only`。
