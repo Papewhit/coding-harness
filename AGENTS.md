@@ -35,6 +35,7 @@ PICO_LIVE_SMOKE=1 uv run pytest tests/test_release_smoke.py -q  # Test a configu
 - Put generated documentation under `docs/`, prefer an existing
   matching subdirectory, and use descriptive kebab-case filenames. Do not
   modify `.gitignore` merely to track generated documentation.
+- Do not insert manual line breaks in Markdown solely to control line length.
 
 ## Architecture and Design Materials
 
