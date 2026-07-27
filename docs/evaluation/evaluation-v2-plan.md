@@ -123,17 +123,17 @@ Auto-dream、产品改进和 Native Resume 只保留为后续路线图，不属�
 
 ## 活动文档
 
-后续评测只使用以下五份活动文档：
+后续评测只使用以下六份活动文档：
 
 - `docs/evaluation/evaluation-v2-plan.md`：本执行计划。
 - `docs/evaluation/evaluation-v2-evidence-protocol.md`：已经接受的证据保存、确定性
   检查、Codex 审计和结果分类规则。
 - `docs/evaluation/evaluation-v2-status.md`：当前阶段和人类可读进度。
+- `docs/evaluation/evaluation-v2-user-guide.md`：面向用户的最新评测框架调用方式、调用范围、产物入口和结果解释。
 - `docs/evaluation/evaluation-v2-metrics.md`：指标定义和证据边界。
 - `docs/evaluation/evaluation-report-v2.md`：最终评测报告。
 
-不得同步改写 reset plan。除已经持久化的 evidence protocol 外，其余活动文档由 P0
-从本文生成，不能与本文并行维护另一套阶段或 Gate 定义。
+不得同步改写 reset plan。P0 已建立 status、metrics 和 report；user guide 从 P1 开始随实际交付建立并动态更新。任何活动文档都不能与本文并行维护另一套阶段、Gate、证据规则或指标公式。
 
 ## Artifact 根目录与 live 配置冻结
 
@@ -322,6 +322,7 @@ G2 通过要求确定性报告检查程序同时证明：
    结论；
 5. P5 的一次只读 claims-to-evidence review 已完成，且没有未解决的“结论缺少证据”
    Finding。
+6. `evaluation-v2-user-guide.md` 已覆盖 P1–P5 实际交付的所有评测入口，其命令参数、调用范围、前置条件、产物入口和结果解释与最终 CLI `--help`、测试及 Artifact 结构一致。
 
 ## 阶段 P0——停止旧控制面并恢复可见性
 
@@ -390,6 +391,7 @@ G2 通过要求确定性报告检查程序同时证明：
   `checksums.json`，并在 `<module-root>/reports/` 生成
   `pico-module-baseline-v2.json` 与 `pico-module-baseline-v2.md`。
 - 在报告中明确标注：这些结果属于确定性、模块级证据，不属于真实端到端编码任务结果。
+- 创建 `docs/evaluation/evaluation-v2-user-guide.md`，记录 wrapper 实际支持的完整命令和参数（包括只验证既有 Artifact 的参数）、clean checkout 与输出目录前置条件、调用的现有 evaluator、明确不调用的 provider/网络范围、产物入口和结果解释。
 
 ### 验证
 
@@ -397,12 +399,12 @@ G2 通过要求确定性报告检查程序同时证明：
 - `uv run ruff check scripts/run_evaluation_v2_modules.py
   tests/test_evaluation_v2_modules.py`；
 - 对五个 JSON 文件重算哈希，并验证 Markdown 可由报告 JSON 确定性重建；
+- 核对 wrapper 的 CLI `--help`、targeted tests 与 user guide 中的参数、前置条件和示例一致；
 - 不发起 provider 请求。
 
 ### 修复规则
 
-测量 wrapper 最多允许一次修订。若发现的是产品逻辑失败，应记录结果，不得在本阶段
-反复修改产品直至通过。P1 完成后先发布模块报告和状态页，再进入 P2。
+测量 wrapper 最多允许一次修订。若发现的是产品逻辑失败，应记录结果，不得在本阶段反复修改产品直至通过。P1 完成后先发布模块报告、状态页和 user guide，再进入 P2。
 
 ## 阶段 P2——最小真实编码桥接
 
@@ -693,6 +695,16 @@ Cold 的配对评测；这些候选项的范围、顺序和授权尚未决定。
   阶段批准或已有 credential 推断为 provider HTTP 授权；
 - live 阶段获得结果后，只完成该阶段的记录、审计和报告，不自动修改产品；
 - P5/G2 完成后必须停止并等待用户决定。
+
+### Status 与 user guide 更新策略
+
+`evaluation-v2-status.md` 采用混合更新策略：顶部“当前状态”只保留最新现状并原位更新；当前活动阶段按阶段 ID 建立或更新同一条记录；阶段关闭后该记录冻结，后续不得静默改写，只能追加带原因和 commit 的更正说明。因此 status 同时是当前现状基准和简洁阶段账本，但不承担评测框架使用手册的职责。
+
+`evaluation-v2-user-guide.md` 采用当前版本更新策略：按已交付评测框架维护唯一章节，只描述当前可用接口，不保留已经失效的旧参数或旧命令，历史变化由 Git 保存。每个阶段结束前都必须检查本阶段是否新增或改变评测入口、参数、前置条件、调用范围、Artifact 结构或结果解释；有变化时必须在同一阶段提交中更新对应章节，没有变化时在 status 中明确记录“user guide 无变化”。
+
+每个 user guide 章节至少包含：适用目的与不适用范围、完整命令和参数、运行前置条件、会调用和明确不会调用的组件、写入范围、首选产物入口、结果字段如何解释以及不能推出的结论。指标公式和证据规则分别链接 metrics 与 evidence protocol，不在 user guide 中复制第二套正文。
+
+阶段结束前必须核对 CLI `--help`、相关测试、实际执行命令和 user guide 一致；任何新增参数只存在于代码或测试而没有进入 user guide 时，该阶段不得标记完成。
 
 每阶段必须更新 `evaluation-v2-status.md`，至少包含：
 
