@@ -10,9 +10,9 @@
 ## 当前状态
 
 - 当前阶段：P1——确定性模块基线。
-- 阶段结论：进行中。唯一一次 wrapper revision 已完成：Artifact verifier 已与
-  checkout 解耦，P1 user guide 已建立，targeted tests 通过；尚未创建或运行正式
-  `module-baseline-v1` Artifact。
+- 阶段结论：已完成。已接受 source
+  `dcd8ea110c6c4dad5c09943fab26b8197142ae29` 的正式离线模块 Artifact 已生成并通过
+  checkout-independent verifier；没有发起 provider HTTP，也没有进入 P2。
 - 历史控制 checkpoint：
   `2876cd53e17fd2b6eb089dbfaf14cd67615498fc`。
 - 计划中的 P0 起点：
@@ -25,11 +25,17 @@
 - 原 P1 候选 source commit：`2abc0c30badd619151b99f01abdab82331482824`；
   user guide 计划更新和 verifier revision 后已失效，未作为批次 source 接受，也未
   运行 Artifact。
-- P1 待确认 source commit：承载本状态条目的 revision 提交；完整 SHA 在提交后的
-  交付消息中展示，用户接受前不得运行模块基线。
-- 当前 blocker：无技术 blocker；当前停点是 source SHA 用户确认。
-- 下一动作：用户接受 P1 source SHA 后，在 WSL2/Python 3.12 fresh clone 中运行
-  固定模块命令并执行 checkout-independent 的 `--verify-only`。
+- P1 已接受 source commit：
+  `dcd8ea110c6c4dad5c09943fab26b8197142ae29`。
+- P1 结束 commit：承载本状态条目的 commit；完整 SHA 在提交后的交付消息中报告，
+  不为回填而 amend。
+- 正式 Artifact：
+  `F:\dev\llm\pico-eval-artifacts\evaluation-v2\module-baseline-v1\dcd8ea110c6c4dad5c09943fab26b8197142ae29`。
+- wrapper revision 使用量：`0/1`。`dcd8ea1` 是正式测量前由总体方案和 user guide
+  交付要求驱动的实现对齐，不是测量 wrapper 缺陷修订。
+- 当前 blocker：无。P2 尚未开始。
+- 下一动作：从 P1 结束 commit 启动新的 P2 顶层任务，只完成计划限定的离线桥接、
+  fake end-to-end 测试和 run config 冻结，不发起 provider HTTP。
 
 ## 历史无效测量
 
@@ -106,7 +112,7 @@ R-03 的主要结论是测量装置缺陷：HSMOKE-V4-A 实际完成了
 `scripts/run_evaluation_v2_modules.py` 所编排的确定性模块基线；输出到
 `module-baseline-v1/<source-sha>`，不得发起 provider HTTP。
 
-## P1 阶段记录（进行中）
+## P1 阶段记录（已完成）
 
 ### 阶段结论
 
@@ -116,25 +122,36 @@ R-03 的主要结论是测量装置缺陷：HSMOKE-V4-A 实际完成了
   verifier；`--verify-only` 不再依赖当前 checkout 或 HEAD。
 - 已创建当前版本的 `evaluation-v2-user-guide.md`，并核对 CLI `--help`、测试和
   文档中的参数、前置条件、调用范围、产物入口与结果边界。
-- 尚未运行正式模块基线，没有创建外部 Artifact，也没有发起 provider HTTP。
+- 用户接受完整 source
+  `dcd8ea110c6c4dad5c09943fab26b8197142ae29` 后，已在 WSL2、CPython 3.12.13
+  fresh clone 中生成正式 `module-baseline-v1` Artifact。
+- 独立 `--verify-only` 已验证固定五个事实 JSON 的精确清单、字节数和 SHA-256，
+  并由报告 JSON 逐字节重建 Markdown。Artifact 边界记录 provider HTTP 请求数为
+  0，且明确不是端到端编码结果。
 
 ### 起始与结束 commit
 
 - 起始：`57eb0d4f15621ebfe01c6e1cda66ab6f145e160d`。
 - 初始实现：`2abc0c30badd619151b99f01abdab82331482824`。
 - user guide 计划更新：`6fac7ca01a9af075e56d3d226ae3113ec08157a3`。
-- 待确认 source：承载本状态条目的 P1 revision 提交；完整 SHA 见提交后交付消息。
-- 结束：P1 尚未完成。
+- 已接受 source：`dcd8ea110c6c4dad5c09943fab26b8197142ae29`，tree
+  `b7bfcc173cf0e1725efe4a3c44d5d8ff2b2f02a1`。
+- 结束：承载本状态条目的 commit；完整 SHA 在提交后的交付消息中报告。
 
 ### 实际修改文件和 diff stat
 
+- `M docs/evaluation/evaluation-v2-plan.md`
 - `M docs/evaluation/evaluation-v2-status.md`
 - `A docs/evaluation/evaluation-v2-user-guide.md`
+- `M pico/evaluation/metrics.py`
 - `A pico/evaluation/module_baseline.py`
-- `M scripts/run_evaluation_v2_modules.py`
-- `M tests/test_evaluation_v2_modules.py`
-- 本次是 P1 允许的唯一一次 wrapper revision；精确阶段 diff stat 在 P1 完成记录中
-  更新。
+- `A scripts/run_evaluation_v2_modules.py`
+- `A tests/test_evaluation_v2_modules.py`
+- `M tests/test_metrics.py`
+- 阶段汇总：8 files changed, 1359 insertions(+), 67 deletions(-)。
+- wrapper revision 使用量为 `0/1`。`dcd8ea1` 同时承载了已批准总体方案新增的 living
+  user guide 要求和测量前 verifier 边界调整；它发生在 source 接受和首次正式测量
+  之前，不计为测量 wrapper 缺陷修订。
 
 ### 执行过的命令与测试
 
@@ -151,31 +168,81 @@ R-03 的主要结论是测量装置缺陷：HSMOKE-V4-A 实际完成了
   不影响本阶段结果。
 - 实际 CLI `--help` 只包含 `--output-root` 和 `--verify-only`，与 user guide 和
   targeted tests 一致。
-- 测试只使用 scripted/fake evaluator；未读取 provider locator，未发起 provider
-  HTTP。
+- source 接受后，在
+  `/home/papewhit/pico-eval-clones/p1-dcd8ea110c6c4dad` 建立 detached fresh
+  clone，确认 HEAD 为已接受 source、tree 为上述 tree、checkout clean、Python 为
+  3.12.13。
+- fresh clone 中显式运行 `uv sync --frozen --python 3.12`；随后运行
+  `uv run --frozen --python 3.12 pytest tests/test_metrics.py
+  tests/test_evaluation_v2_modules.py -q`，结果为 `18 passed`，并出现上述 6 条既有
+  deprecation warning。
+- fresh clone 中对 `pico/evaluation/module_baseline.py`、
+  `scripts/run_evaluation_v2_modules.py`、两个对应测试文件和
+  `pico/evaluation/metrics.py` 执行 scoped Ruff，结果通过；再次执行实际 CLI
+  `--help`，仍只包含 user guide 已记录的两个参数。
+- 正式运行命令为
+  `uv run --frozen --python 3.12 python scripts/run_evaluation_v2_modules.py
+  --output-root
+  /mnt/f/dev/llm/pico-eval-artifacts/evaluation-v2/module-baseline-v1/dcd8ea110c6c4dad5c09943fab26b8197142ae29`，
+  运行前再次确认 checkout clean、HEAD 正确且目标目录不存在。
+- 独立复核命令为同一命令追加 `--verify-only`；结果为 source 和 cohort 一致、
+  `verified_json_files=5`、`markdown_rebuilt=true`。
+- 正式 Artifact 包含 4 个模块 JSON、`public/modules/checksums.json`、报告 JSON 和
+  报告 Markdown。manifest 精确覆盖 5 个事实 JSON，没有额外项；所有哈希为 64 位
+  SHA-256，所有字节数重算一致。
+- 首次选择的 `/tmp` fresh clone 在后续 WSL 调用前被环境清理；随后对 `/mnt/f`
+  fresh clone 的创建命令在宿主等待 120 秒后超时。两次都没有启动 evaluator 或
+  创建 Artifact；最终使用上述 WSL 用户目录 fresh clone 完成正式运行。
+- 完成实际运行后再次核对 user guide；CLI、前置条件、调用范围、Artifact 结构和
+  结果解释均未变化，因此本次结束提交中 user guide 无变化。
+- 全过程只使用 scripted/fake evaluator；未读取 provider locator，provider HTTP
+  请求数为 0。
 
 ### 新增 rows 与 metrics
 
 - 新增 Evaluation v2 rows：0。
-- 新增正式实测 metrics：0。
-- 当前只有实现测试数据，不属于 `module-baseline-v1` 结果。
+- 模块报告入口：
+  `F:\dev\llm\pico-eval-artifacts\evaluation-v2\module-baseline-v1\dcd8ea110c6c4dad5c09943fab26b8197142ae29\reports\pico-module-baseline-v2.json`。
+- harness：12 个固定任务、12 次运行，passed 12、failed 0、pass rate 100%、
+  verifier pass rate 100%、within-budget rate 100%。
+- context：12 个 config × 5 次重复，共 60 次运行；current-request preserved rate
+  100%，平均 full prompt 8740 字符，平均 raw prompt 9998.67 字符，平均压缩率
+  10.66%，最大压缩率 22.46%。
+- working memory：12 个任务 × 3 个 variant × 5 次重复，共 180 次运行。三个
+  variant 的 correct rate 均为 100%；`memory_on` 的 memory hit rate 为 100%、
+  repeated reads 为 0、平均 tool steps 为 0，`memory_off` 和
+  `memory_irrelevant` 的 memory hit rate 均为 0、repeated reads 均为 60、平均
+  tool steps 均为 1。
+- recovery：10 个任务 × 2 个 variant × 3 次重复，共 60 次运行。
+  `resume_enabled` 的 resume success rate 为 90%、stale reanchor rate 为 100%、
+  workspace drift detection rate 为 100%、false accept rate 为 0；
+  `resume_disabled` 四项均为 0。
+- 四个模块的 exclusions count 均为 0。上述指标只属于确定性模块证据，不进入
+  `pilot-v1` 或 `baseline-v1` 的编码成功率分母。
 
 ### 有效产品失败
 
-0。正式模块基线尚未运行。
+- harness 明确分类的有效产品失败为 0。
+- 其他三个 ablation evaluator 输出指标而不作开放语义 passed/failed 分类，因此
+  verifier 不把它们自动转成产品失败。特别是 recovery 中 3 个
+  `schema_mismatch_missing` 重复按 fixture 得到 `no-checkpoint`，使
+  `resume_enabled` 的聚合 resume success rate 为 90%；其 false accept 均为 0。
+  本记录保留该事实，不替用户作额外语义判分。
 
 ### invalid rows
 
-0。P1 模块阶段不创建 Evaluation v2 编码评测行，正式模块基线也尚未运行。
+0。P1 不创建 Evaluation v2 编码评测行；所有正式模块 Artifact 均完整并通过独立
+复核。前述两次环境准备中断发生在 evaluator 启动前，不是测量行，也不产生
+`invalid`。
 
 ### 当前 blocker
 
-无技术 blocker。wrapper revision 额度已使用 1/1；按照 Artifact 冻结规则，必须先
-提交 revision 并由用户接受完整 source SHA，之后才能在对应的全新目录中运行模块
-基线。
+无。P1 已完成，wrapper revision 使用量为 `0/1`，正式 Artifact 不覆盖、不重跑。
 
 ### 下一阶段的精确第一步
 
-提交 P1 唯一 revision 并展示完整 source SHA、tree、精确 Artifact 路径与离线命令；
-用户接受后，从该 SHA 建立 WSL2/Python 3.12 fresh clone，运行模块基线和
-`--verify-only`。
+从 P1 结束 commit 启动新的 P2 顶层任务，以
+`pico/evaluation/live_tasks.py` 的 `LocalLiveTaskRunner`、`TaskSpec` 和
+`ClientResult` 为起点，先补充实际 `repositories -> tasks` taskset 的 loader
+测试；后续只实施计划限定的 client/证据留存与 run config 工作，不发起 provider
+HTTP。
