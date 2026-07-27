@@ -12,8 +12,8 @@
 - 本文只规定证据、确定性检查、Codex 审计和结果分类；
 - executable plan 通过规则编号引用本文，不复制或改写规则正文。
 
-Evaluation v2 executable plan 已于 2026-07-27 获批但暂停启动。本文本身不提供任何
-独立执行授权，并且：
+Evaluation v2 executable plan 已于 2026-07-27 获批并切换为可执行状态。本文本身
+不提供任何独立执行授权，并且：
 
 - 不重新开启 W6R5；
 - 不授权修改 Pico 产品、运行新评测或发起 provider 请求；

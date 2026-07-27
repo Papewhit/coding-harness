@@ -2,11 +2,10 @@
 
 ## 文档状态
 
-本文已于 2026-07-27 获用户批准，成为 Evaluation v2 的执行方案，但当前处于
-**已批准、暂停启动**状态。用户要求先讨论执行方式；在用户另行解除暂停前，不得
-启动 P0、修改评测代码、运行真实 provider 或进入后续阶段。
+本文已于 2026-07-27 获用户批准，当前处于**已批准、可执行**状态。P0 是唯一下一
+阶段；初始执行权限只覆盖 P0–P2 的离线工作，不包含任何真实 provider 请求。
 
-讨论期间只在本文讨论阶段、顺序和 Gate。已经单独接受的
+本文规定阶段、顺序和 Gate。已经单独接受的
 `docs/evaluation/evaluation-v2-evidence-protocol.md` 只维护证据与判定规则；
 `pico-evaluation-reset-plan-v2-zh.md` 只作为方案形成背景，不承担执行约束。本文
 现为唯一的活动执行计划。
@@ -117,13 +116,12 @@ Auto-dream、产品改进和 Native Resume 只保留为后续路线图，不属�
 - 基线数据一经产生即不可覆盖。27 条主评测行中的 `invalid` 也不在同一基线内重跑；
   如以后需要补充观察，必须在 P5 之后经用户决定建立独立补充批次。产品修复后必须
   创建独立的 post-fix cohort，不得回写或美化原始 baseline。
-- 用户解除当前启动暂停后，初始执行权限只覆盖 P0–P2 的离线工作，不授权 provider
-  HTTP。P3、P4A、P4B、P4C 分别需要一次明确的 live 授权；前一阶段的授权不能
-  传递到后一阶段。
+- 初始执行权限只覆盖 P0–P2 的离线工作，不授权 provider HTTP。P3、P4A、P4B、
+  P4C 分别需要一次明确的 live 授权；前一阶段的授权不能传递到后一阶段。
 
 ## 活动文档
 
-本文获批后，后续评测只使用以下五份活动文档：
+后续评测只使用以下五份活动文档：
 
 - `docs/evaluation/evaluation-v2-plan.md`：本执行计划。
 - `docs/evaluation/evaluation-v2-evidence-protocol.md`：已经接受的证据保存、确定性
@@ -132,8 +130,8 @@ Auto-dream、产品改进和 Native Resume 只保留为后续路线图，不属�
 - `docs/evaluation/evaluation-v2-metrics.md`：指标定义和证据边界。
 - `docs/evaluation/evaluation-report-v2.md`：最终评测报告。
 
-讨论期间不得同步改写 reset plan。除已经持久化的 evidence protocol 外，其余活动
-文档必须从获批后的本文生成，不能与本文并行维护另一套阶段或 Gate 定义。
+不得同步改写 reset plan。除已经持久化的 evidence protocol 外，其余活动文档由 P0
+从本文生成，不能与本文并行维护另一套阶段或 Gate 定义。
 
 ## Artifact 根目录与 live 配置冻结
 
