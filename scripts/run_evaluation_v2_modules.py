@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import subprocess
 import tempfile
@@ -12,26 +11,23 @@ from pathlib import Path
 from typing import Any
 
 from pico.evaluation.evaluator import run_harness_regression_v2
+from pico.evaluation.module_baseline import (
+    CHECKSUMS_PATH,
+    COHORT_ID,
+    MODULE_PATHS,
+    REPORT_JSON_PATH,
+    REPORT_MARKDOWN_PATH,
+    build_module_checksums,
+    verify_module_baseline,
+)
 from pico.evaluation.metrics import (
-    render_benchmark_core_report,
     run_context_ablation_v2,
     run_memory_ablation_v2,
     run_recovery_ablation_v2,
     write_benchmark_core_report,
 )
 
-COHORT_ID = "module-baseline-v1"
 REPO_ROOT = Path(__file__).resolve().parents[1]
-MODULE_PATHS = {
-    "harness": Path("public/modules/harness-regression-v2.json"),
-    "context": Path("public/modules/context-ablation-v2.json"),
-    "memory": Path("public/modules/memory-ablation-v2.json"),
-    "recovery": Path("public/modules/recovery-ablation-v2.json"),
-}
-REPORT_JSON_PATH = Path("reports/pico-module-baseline-v2.json")
-REPORT_MARKDOWN_PATH = Path("reports/pico-module-baseline-v2.md")
-CHECKSUMS_PATH = Path("public/modules/checksums.json")
-CHECKSUMMED_PATHS = (*MODULE_PATHS.values(), REPORT_JSON_PATH)
 
 
 def _run_git(*args: str) -> str:
@@ -46,8 +42,11 @@ def _run_git(*args: str) -> str:
 
 def repository_source_sha() -> str:
     source_sha = _run_git("rev-parse", "HEAD")
-    if len(source_sha) != 40:
-        raise RuntimeError("git HEAD is not a full commit SHA")
+    if (
+        len(source_sha) != 40
+        or any(character not in "0123456789abcdef" for character in source_sha)
+    ):
+        raise RuntimeError("git HEAD is not a full lowercase commit SHA")
     return source_sha
 
 
@@ -62,10 +61,6 @@ def _write_json(path: Path, payload: dict[str, Any]) -> None:
         json.dumps(payload, indent=2, sort_keys=True, ensure_ascii=False) + "\n",
         encoding="utf-8",
     )
-
-
-def _sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def _validate_source_directory(output_root: Path, source_sha: str) -> None:
@@ -86,70 +81,6 @@ def _prepare_output_root(output_root: Path, source_sha: str) -> None:
     output_root.mkdir(parents=True, exist_ok=True)
     (output_root / "public" / "modules").mkdir(parents=True, exist_ok=True)
     (output_root / "reports").mkdir(parents=True, exist_ok=True)
-
-
-def _build_checksums(output_root: Path) -> dict[str, Any]:
-    files = {}
-    for relative_path in CHECKSUMMED_PATHS:
-        path = output_root / relative_path
-        files[relative_path.as_posix()] = {
-            "sha256": _sha256(path),
-            "size_bytes": path.stat().st_size,
-        }
-    return {
-        "schema_version": 1,
-        "algorithm": "sha256",
-        "files": files,
-    }
-
-
-def verify_module_baseline(output_root: Path, source_sha: str) -> dict[str, Any]:
-    output_root = output_root.resolve()
-    _validate_source_directory(output_root, source_sha)
-    checksums_path = output_root / CHECKSUMS_PATH
-    if not checksums_path.is_file():
-        raise ValueError(f"missing checksum manifest: {checksums_path}")
-    checksums = json.loads(checksums_path.read_text(encoding="utf-8"))
-    if checksums.get("schema_version") != 1:
-        raise ValueError("unsupported checksum manifest schema")
-    if checksums.get("algorithm") != "sha256":
-        raise ValueError("checksum manifest must use sha256")
-
-    expected_paths = {path.as_posix() for path in CHECKSUMMED_PATHS}
-    recorded_paths = set(checksums.get("files", {}))
-    if recorded_paths != expected_paths:
-        raise ValueError(
-            "checksum manifest paths differ from the fixed P1 artifact set"
-        )
-    for relative_path in CHECKSUMMED_PATHS:
-        path = output_root / relative_path
-        if not path.is_file():
-            raise ValueError(f"missing P1 artifact: {relative_path.as_posix()}")
-        record = checksums["files"][relative_path.as_posix()]
-        if record.get("sha256") != _sha256(path):
-            raise ValueError(f"checksum mismatch: {relative_path.as_posix()}")
-        if record.get("size_bytes") != path.stat().st_size:
-            raise ValueError(f"size mismatch: {relative_path.as_posix()}")
-
-    report_json_path = output_root / REPORT_JSON_PATH
-    report = json.loads(report_json_path.read_text(encoding="utf-8"))
-    if report.get("cohort_id") != COHORT_ID:
-        raise ValueError("report cohort_id does not identify module-baseline-v1")
-    if report.get("source_sha") != source_sha:
-        raise ValueError("report source_sha does not match the output directory")
-    expected_markdown = render_benchmark_core_report(report)
-    markdown_path = output_root / REPORT_MARKDOWN_PATH
-    if not markdown_path.is_file():
-        raise ValueError(f"missing P1 report: {REPORT_MARKDOWN_PATH.as_posix()}")
-    if markdown_path.read_text(encoding="utf-8") != expected_markdown:
-        raise ValueError("Markdown report cannot be rebuilt from report JSON")
-
-    return {
-        "cohort_id": COHORT_ID,
-        "source_sha": source_sha,
-        "verified_json_files": len(CHECKSUMMED_PATHS),
-        "markdown_rebuilt": True,
-    }
 
 
 def run_module_baseline(output_root: Path, source_sha: str) -> dict[str, Any]:
@@ -187,8 +118,8 @@ def run_module_baseline(output_root: Path, source_sha: str) -> dict[str, Any]:
         source_sha=source_sha,
         artifact_root=output_root,
     )
-    _write_json(output_root / CHECKSUMS_PATH, _build_checksums(output_root))
-    return verify_module_baseline(output_root, source_sha)
+    _write_json(output_root / CHECKSUMS_PATH, build_module_checksums(output_root))
+    return verify_module_baseline(output_root, expected_source_sha=source_sha)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -204,11 +135,11 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
-    require_clean_checkout()
-    source_sha = repository_source_sha()
     if args.verify_only:
-        result = verify_module_baseline(args.output_root, source_sha)
+        result = verify_module_baseline(args.output_root)
     else:
+        require_clean_checkout()
+        source_sha = repository_source_sha()
         result = run_module_baseline(args.output_root, source_sha)
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0

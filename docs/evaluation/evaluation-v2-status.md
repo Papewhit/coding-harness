@@ -10,8 +10,9 @@
 ## 当前状态
 
 - 当前阶段：P1——确定性模块基线。
-- 阶段结论：进行中。模块 runner、结构化报告和确定性复核已实现并通过 targeted
-  tests；尚未创建或运行正式 `module-baseline-v1` Artifact。
+- 阶段结论：进行中。唯一一次 wrapper revision 已完成：Artifact verifier 已与
+  checkout 解耦，P1 user guide 已建立，targeted tests 通过；尚未创建或运行正式
+  `module-baseline-v1` Artifact。
 - 历史控制 checkpoint：
   `2876cd53e17fd2b6eb089dbfaf14cd67615498fc`。
 - 计划中的 P0 起点：
@@ -21,11 +22,14 @@
   启动暂停并更新文档状态；P0 在检查其 diff 后从该 clean commit 开始。
 - P0 结束 commit：`747feb384dbcdbe1b4d3b9e04e9590111970254f`。
 - P1 起始 commit：`57eb0d4f15621ebfe01c6e1cda66ab6f145e160d`。
-- P1 待确认 source commit：承载本状态条目的实现提交；完整 SHA 在提交后的交付消息
-  中展示，用户接受前不得运行模块基线。
+- 原 P1 候选 source commit：`2abc0c30badd619151b99f01abdab82331482824`；
+  user guide 计划更新和 verifier revision 后已失效，未作为批次 source 接受，也未
+  运行 Artifact。
+- P1 待确认 source commit：承载本状态条目的 revision 提交；完整 SHA 在提交后的
+  交付消息中展示，用户接受前不得运行模块基线。
 - 当前 blocker：无技术 blocker；当前停点是 source SHA 用户确认。
 - 下一动作：用户接受 P1 source SHA 后，在 WSL2/Python 3.12 fresh clone 中运行
-  固定模块命令并执行 `--verify-only`。
+  固定模块命令并执行 checkout-independent 的 `--verify-only`。
 
 ## 历史无效测量
 
@@ -108,34 +112,45 @@ R-03 的主要结论是测量装置缺陷：HSMOKE-V4-A 实际完成了
 
 - 已新增薄模块 runner，固定编排 harness、context、memory 和 recovery evaluator。
 - 已将报告收敛为结构化 JSON 单一数据源，并由确定性 renderer 生成 Markdown。
-- 已实现五个事实 JSON 的 SHA-256/字节数清单、不可覆盖目录检查和 `--verify-only`。
+- 已将五个事实 JSON、报告合同和 Markdown 的复核逻辑抽为 P5/G2 可组合调用的纯
+  verifier；`--verify-only` 不再依赖当前 checkout 或 HEAD。
+- 已创建当前版本的 `evaluation-v2-user-guide.md`，并核对 CLI `--help`、测试和
+  文档中的参数、前置条件、调用范围、产物入口与结果边界。
 - 尚未运行正式模块基线，没有创建外部 Artifact，也没有发起 provider HTTP。
 
 ### 起始与结束 commit
 
 - 起始：`57eb0d4f15621ebfe01c6e1cda66ab6f145e160d`。
-- 待确认 source：承载本状态条目的 P1 实现提交；完整 SHA 见提交后交付消息。
+- 初始实现：`2abc0c30badd619151b99f01abdab82331482824`。
+- user guide 计划更新：`6fac7ca01a9af075e56d3d226ae3113ec08157a3`。
+- 待确认 source：承载本状态条目的 P1 revision 提交；完整 SHA 见提交后交付消息。
 - 结束：P1 尚未完成。
 
 ### 实际修改文件和 diff stat
 
 - `M docs/evaluation/evaluation-v2-status.md`
-- `M pico/evaluation/metrics.py`
-- `A scripts/run_evaluation_v2_modules.py`
-- `A tests/test_evaluation_v2_modules.py`
-- `M tests/test_metrics.py`
-- 精确 diff stat 在实现提交前复核并在 P1 完成记录中更新。
+- `A docs/evaluation/evaluation-v2-user-guide.md`
+- `A pico/evaluation/module_baseline.py`
+- `M scripts/run_evaluation_v2_modules.py`
+- `M tests/test_evaluation_v2_modules.py`
+- 本次是 P1 允许的唯一一次 wrapper revision；精确阶段 diff stat 在 P1 完成记录中
+  更新。
 
 ### 执行过的命令与测试
 
 - WSL2 使用 CPython 3.12.13；`uv run --frozen --python 3.12 ruff check` 对上述
-  Python 文件执行 scoped lint，结果通过。
+  revision Python 文件执行 scoped lint，结果通过。
 - 第一次 targeted pytest 运行得到 `7 passed, 3 failed`；失败只涉及 canonical
   JSON 排序后公式字段顺序变化，导致 Markdown 字节重建不一致。
 - 固定 renderer 的公式排序后，重新运行
-  `tests/test_metrics.py tests/test_evaluation_v2_modules.py -q`，结果为
-  `11 passed`。六条 `datetime.utcnow()` deprecation warning 来自既有时间戳实现，
+  `tests/test_metrics.py tests/test_evaluation_v2_modules.py -q`，初始实现结果为
+  `11 passed`。
+- 本次 revision 首次测试为 `17 passed, 1 failed`；唯一失败是 user guide 将
+  `provider HTTP` 跨行拆分，导致精确文档边界检查未匹配。修正文档后重新运行为
+  `18 passed`。六条 `datetime.utcnow()` deprecation warning 来自既有时间戳实现，
   不影响本阶段结果。
+- 实际 CLI `--help` 只包含 `--output-root` 和 `--verify-only`，与 user guide 和
+  targeted tests 一致。
 - 测试只使用 scripted/fake evaluator；未读取 provider locator，未发起 provider
   HTTP。
 
@@ -155,10 +170,12 @@ R-03 的主要结论是测量装置缺陷：HSMOKE-V4-A 实际完成了
 
 ### 当前 blocker
 
-无技术 blocker。按照 Artifact 冻结规则，必须先提交实现并由用户接受完整 source
-SHA，之后才能在对应的全新目录中运行模块基线。
+无技术 blocker。wrapper revision 额度已使用 1/1；按照 Artifact 冻结规则，必须先
+提交 revision 并由用户接受完整 source SHA，之后才能在对应的全新目录中运行模块
+基线。
 
 ### 下一阶段的精确第一步
 
-提交 P1 实现并展示完整 source SHA、精确 Artifact 路径与离线命令；用户接受后，
-从该 SHA 建立 WSL2/Python 3.12 fresh clone，运行模块基线和 `--verify-only`。
+提交 P1 唯一 revision 并展示完整 source SHA、tree、精确 Artifact 路径与离线命令；
+用户接受后，从该 SHA 建立 WSL2/Python 3.12 fresh clone，运行模块基线和
+`--verify-only`。

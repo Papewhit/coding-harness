@@ -3,6 +3,9 @@ import json
 
 import pytest
 
+from pico.evaluation import metrics as metrics_module
+from pico.evaluation import module_baseline
+from pico.evaluation.metrics import render_benchmark_core_report
 from scripts import run_evaluation_v2_modules as modules_runner
 
 
@@ -128,6 +131,17 @@ def _run_fake_baseline(tmp_path, monkeypatch):
     return output_root, result, calls
 
 
+def _rewrite_report_and_checksums(output_root, change):
+    report_path = output_root / module_baseline.REPORT_JSON_PATH
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    change(report)
+    _write_json(report_path, report)
+    _write_json(
+        output_root / module_baseline.CHECKSUMS_PATH,
+        module_baseline.build_module_checksums(output_root),
+    )
+
+
 def test_module_runner_writes_fixed_outputs_and_rebuildable_report(
     tmp_path, monkeypatch
 ):
@@ -149,13 +163,13 @@ def test_module_runner_writes_fixed_outputs_and_rebuildable_report(
     }
 
     checksums = json.loads(
-        (output_root / modules_runner.CHECKSUMS_PATH).read_text(encoding="utf-8")
+        (output_root / module_baseline.CHECKSUMS_PATH).read_text(encoding="utf-8")
     )
     expected_paths = {
-        path.as_posix() for path in modules_runner.CHECKSUMMED_PATHS
+        path.as_posix() for path in module_baseline.CHECKSUMMED_PATHS
     }
     assert set(checksums["files"]) == expected_paths
-    assert modules_runner.CHECKSUMS_PATH.as_posix() not in checksums["files"]
+    assert module_baseline.CHECKSUMS_PATH.as_posix() not in checksums["files"]
     for relative_path, record in checksums["files"].items():
         data = (output_root / relative_path).read_bytes()
         assert record == {
@@ -164,7 +178,7 @@ def test_module_runner_writes_fixed_outputs_and_rebuildable_report(
         }
 
     report = json.loads(
-        (output_root / modules_runner.REPORT_JSON_PATH).read_text(encoding="utf-8")
+        (output_root / module_baseline.REPORT_JSON_PATH).read_text(encoding="utf-8")
     )
     assert report["scope"]["provider_http_requests"] == 0
     assert report["scope"]["is_end_to_end_coding_result"] is False
@@ -174,10 +188,10 @@ def test_module_runner_writes_fixed_outputs_and_rebuildable_report(
     )
     assert report["modules"]["recovery_ablation"]["sample_counts"]["runs"] == 60
     assert report["modules"]["harness_regression"]["exclusions"]["count"] == 0
-    markdown = (output_root / modules_runner.REPORT_MARKDOWN_PATH).read_text(
+    markdown = (output_root / module_baseline.REPORT_MARKDOWN_PATH).read_text(
         encoding="utf-8"
     )
-    assert modules_runner.render_benchmark_core_report(report) == markdown
+    assert render_benchmark_core_report(report) == markdown
     assert "不属于真实端到端编码任务结果" in markdown
 
     persisted_text = "\n".join(
@@ -206,26 +220,128 @@ def test_module_runner_rejects_nonempty_output_before_evaluators(
 
 def test_module_verifier_detects_json_and_markdown_tampering(tmp_path, monkeypatch):
     output_root, _, _ = _run_fake_baseline(tmp_path, monkeypatch)
-    harness_path = output_root / modules_runner.MODULE_PATHS["harness"]
+    harness_path = output_root / module_baseline.MODULE_PATHS["harness"]
     original_harness = harness_path.read_bytes()
     harness_path.write_bytes(original_harness + b"\n")
 
     with pytest.raises(ValueError, match="checksum mismatch"):
-        modules_runner.verify_module_baseline(output_root, SOURCE_SHA)
+        module_baseline.verify_module_baseline(output_root)
 
     harness_path.write_bytes(original_harness)
-    markdown_path = output_root / modules_runner.REPORT_MARKDOWN_PATH
+    markdown_path = output_root / module_baseline.REPORT_MARKDOWN_PATH
     markdown_path.write_text(
         markdown_path.read_text(encoding="utf-8") + "tampered\n",
         encoding="utf-8",
     )
     with pytest.raises(ValueError, match="cannot be rebuilt"):
-        modules_runner.verify_module_baseline(output_root, SOURCE_SHA)
+        module_baseline.verify_module_baseline(output_root)
+
+
+def test_module_verifier_is_checkout_independent(tmp_path, monkeypatch):
+    output_root, _, _ = _run_fake_baseline(tmp_path, monkeypatch)
+    before = {
+        path.relative_to(output_root): path.read_bytes()
+        for path in output_root.rglob("*")
+        if path.is_file()
+    }
+
+    def must_not_run(*args, **kwargs):
+        raise AssertionError("verify-only must not inspect Git or run evaluators")
+
+    monkeypatch.setattr(modules_runner, "require_clean_checkout", must_not_run)
+    monkeypatch.setattr(modules_runner, "repository_source_sha", must_not_run)
+    monkeypatch.setattr(modules_runner, "run_harness_regression_v2", must_not_run)
+    monkeypatch.setattr(modules_runner, "run_context_ablation_v2", must_not_run)
+    monkeypatch.setattr(modules_runner, "run_memory_ablation_v2", must_not_run)
+    monkeypatch.setattr(modules_runner, "run_recovery_ablation_v2", must_not_run)
+    monkeypatch.setattr(metrics_module, "resolve_provider_config", must_not_run)
+    monkeypatch.setattr(metrics_module, "build_native_model_client", must_not_run)
+
+    assert (
+        modules_runner.main(["--output-root", str(output_root), "--verify-only"]) == 0
+    )
+    after = {
+        path.relative_to(output_root): path.read_bytes()
+        for path in output_root.rglob("*")
+        if path.is_file()
+    }
+    assert after == before
+
+
+def test_module_verifier_rejects_source_mismatches(tmp_path, monkeypatch):
+    output_root, _, _ = _run_fake_baseline(tmp_path, monkeypatch)
+
+    with pytest.raises(ValueError, match="expected_source_sha"):
+        module_baseline.verify_module_baseline(
+            output_root, expected_source_sha="b" * 40
+        )
+
+    _rewrite_report_and_checksums(
+        output_root,
+        lambda report: report.__setitem__("source_sha", "b" * 40),
+    )
+    with pytest.raises(ValueError, match="report source_sha"):
+        module_baseline.verify_module_baseline(output_root)
+
+
+@pytest.mark.parametrize(
+    ("change", "message"),
+    [
+        (
+            lambda report: report.__setitem__("schema_version", 2),
+            "unsupported module report schema",
+        ),
+        (
+            lambda report: report["scope"].__setitem__(
+                "provider_http_requests", 1
+            ),
+            "zero provider HTTP requests",
+        ),
+        (
+            lambda report: report["scope"].__setitem__(
+                "is_end_to_end_coding_result", True
+            ),
+            "must not claim",
+        ),
+    ],
+)
+def test_module_verifier_rejects_report_contract_changes(
+    tmp_path, monkeypatch, change, message
+):
+    output_root, _, _ = _run_fake_baseline(tmp_path, monkeypatch)
+    _rewrite_report_and_checksums(output_root, change)
+
+    with pytest.raises(ValueError, match=message):
+        module_baseline.verify_module_baseline(output_root)
+
+
+def test_module_verifier_rejects_missing_and_extra_files(tmp_path, monkeypatch):
+    output_root, _, _ = _run_fake_baseline(tmp_path, monkeypatch)
+    harness_path = output_root / module_baseline.MODULE_PATHS["harness"]
+    harness_path.unlink()
+    with pytest.raises(ValueError, match="missing P1 artifact"):
+        module_baseline.verify_module_baseline(output_root)
+
+    output_root, _, _ = _run_fake_baseline(tmp_path / "second", monkeypatch)
+    checksums_path = output_root / module_baseline.CHECKSUMS_PATH
+    checksums = json.loads(checksums_path.read_text(encoding="utf-8"))
+    checksums["files"]["unexpected.json"] = {
+        "sha256": "0" * 64,
+        "size_bytes": 0,
+    }
+    _write_json(checksums_path, checksums)
+    with pytest.raises(ValueError, match="fixed P1 artifact set"):
+        module_baseline.verify_module_baseline(output_root)
 
 
 def test_module_runner_requires_source_sha_directory(tmp_path):
     with pytest.raises(ValueError, match="must end with"):
         modules_runner.run_module_baseline(tmp_path / "wrong", SOURCE_SHA)
+
+    invalid_root = tmp_path / "not-a-source-sha"
+    invalid_root.mkdir()
+    with pytest.raises(ValueError, match="full lowercase Git commit SHA"):
+        module_baseline.module_source_sha(invalid_root)
 
 
 def test_verify_only_cli_flag_is_available():
@@ -243,3 +359,25 @@ def test_clean_checkout_guard_rejects_repository_changes(monkeypatch):
     )
     with pytest.raises(RuntimeError, match="clean checkout"):
         modules_runner.require_clean_checkout()
+
+
+def test_user_guide_matches_module_cli_and_boundaries():
+    help_text = modules_runner.build_parser().format_help()
+    guide = (
+        modules_runner.REPO_ROOT
+        / "docs"
+        / "evaluation"
+        / "evaluation-v2-user-guide.md"
+    ).read_text(encoding="utf-8")
+
+    for option in ("--output-root", "--verify-only"):
+        assert option in help_text
+        assert option in guide
+    for boundary in (
+        "Python 3.12",
+        "clean checkout",
+        "provider HTTP",
+        "pico-module-baseline-v2.md",
+        "pico-module-baseline-v2.json",
+    ):
+        assert boundary in guide
