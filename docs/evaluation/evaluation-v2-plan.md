@@ -708,6 +708,8 @@ invalid rows
 下一阶段的精确第一步
 ```
 
+状态页必须字面记录阶段起始 commit 的完整 SHA。阶段结束 commit 无法在自身内容中记录自己的最终 SHA，因此在该 commit 内统一写作“承载本状态条目的 commit”；提交完成后，交付消息必须报告其完整 SHA，下一阶段再把该 SHA 字面记录为自己的起点。不得仅为回填结束 SHA 而创建或 amend 额外 commit。
+
 SHA、JSON 和 inventory 只能作为辅助证据，不能代替人类可读状态说明。
 
 ## 应直接复用的现有资产
