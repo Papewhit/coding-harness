@@ -184,6 +184,8 @@ public/rows/<row-id>/original/
 
 私有原件位于 `private/rows/<row-id>/original/`。workspace 清理前复制 session、events 和 Pico run state；public 只选择 session events、task state、trace 和 report。raw SDK/provider 网络响应不会复制到 private 或 public。
 
-`run-record.json` 是阶段、source、退出码、精确 provider request 次数、失败位置和现有证据位置的最小记录。`evidence-view.json` 只做确定性导航：它从 session exchange、tool result、session events 和 trace 核对 call ID、工具名和终态，并记录原始路径与稳定位置；它不替代原件或 Codex 审计。
+`run-record.json` 是阶段、source、退出码、精确 provider request 次数、失败位置和现有证据位置的最小记录。client 完成后的 verifier、复制或清理阶段即使失败，runner 也会从已原子持久化的 `client_result` 恢复 request attempts，并交叉验证 attempt 序号、精确标记和汇总计数；无法一致恢复时标记 measurement failure，不把请求数回退为可信的 0。
+
+`evidence-view.json` 只做确定性导航：它从 session exchange、tool result、session events 和 trace 核对 call ID、工具名和终态，并记录原始路径与稳定位置；它不替代原件或 Codex 审计。private/public `checksums.json` 是完整文件 inventory，不只是已列文件的抽样哈希；验证同时检查 schema、唯一且安全的规范相对路径、实际文件集合、字节数和 SHA-256，任何未列或缺失文件都会失败。
 
 凭据检查使用本次实际 locator、credential 和测试 sentinel 的完整值做精确字节扫描，只持久化通过布尔值、扫描文件数和不含敏感值的位置。缺失原件、请求次数不精确、call/result 不闭合或扫描命中都会保留最小记录并标记 measurement failure。`product_result=passed/failed` 只表示 hidden verifier 的确定性结果；最终 `valid + passed`、`valid + failed` 或 `invalid` 分类仍按 evidence protocol 和后续审计产生。

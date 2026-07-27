@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections import Counter
 import difflib
 import json
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any, Mapping
 
 from pico.evaluation.evaluation_v2_config import sha256_file
@@ -152,10 +152,11 @@ def scan_known_values(root: Path, sensitive_values: tuple[str, ...]) -> dict[str
 
 def checksums(root: Path, subtree: str | None = None) -> dict[str, Any]:
     start = root / subtree if subtree else root
+    manifest_path = root / "checksums.json"
     files = []
     if start.exists():
         for path in sorted(start.rglob("*")):
-            if path.is_file() and path.name != "checksums.json":
+            if path.is_file() and path != manifest_path:
                 files.append(
                     {
                         "path": path.relative_to(root).as_posix(),
@@ -167,11 +168,67 @@ def checksums(root: Path, subtree: str | None = None) -> dict[str, Any]:
 
 
 def verify_checksums(manifest_path: Path, root: Path) -> None:
+    root = root.resolve()
+    manifest_path = manifest_path.resolve()
+    try:
+        manifest_path.relative_to(root)
+    except ValueError as exc:
+        raise ValueError("checksum manifest must be inside its inventory root") from exc
     payload = _load_object(manifest_path)
-    for item in payload.get("files", []):
-        path = root / str(item["path"])
+    if set(payload) != {"schema_version", "files"}:
+        raise ValueError("checksum manifest fields drift")
+    if payload["schema_version"] != CHECKSUM_SCHEMA:
+        raise ValueError("unsupported checksum manifest schema")
+    items = payload["files"]
+    if not isinstance(items, list):
+        raise ValueError("checksum manifest files must be a list")
+    declared: dict[str, Mapping[str, Any]] = {}
+    for item in items:
+        if not isinstance(item, Mapping) or set(item) != {"path", "bytes", "sha256"}:
+            raise ValueError("checksum manifest entry fields drift")
+        relative = _safe_inventory_path(item.get("path"))
+        if relative in declared:
+            raise ValueError(f"duplicate checksum inventory path: {relative}")
+        size = item.get("bytes")
+        digest = item.get("sha256")
+        if type(size) is not int or size < 0:
+            raise ValueError(f"invalid checksum byte count: {relative}")
+        if (
+            not isinstance(digest, str)
+            or len(digest) != 64
+            or any(character not in "0123456789abcdef" for character in digest)
+        ):
+            raise ValueError(f"invalid checksum digest: {relative}")
+        declared[relative] = item
+    actual = {
+        path.relative_to(root).as_posix()
+        for path in root.rglob("*")
+        if path.is_file() and path != manifest_path
+    }
+    if set(declared) != actual:
+        missing = sorted(actual - set(declared))
+        unexpected = sorted(set(declared) - actual)
+        raise ValueError(
+            f"checksum inventory is incomplete: unlisted={missing}, missing={unexpected}"
+        )
+    for relative, item in declared.items():
+        path = root / relative
+        if path.is_symlink():
+            raise ValueError(f"checksum inventory path must not be a symlink: {relative}")
         if path.stat().st_size != item["bytes"] or sha256_file(path) != item["sha256"]:
             raise ValueError(f"checksum verification failed: {item['path']}")
+
+
+def _safe_inventory_path(value: Any) -> str:
+    if not isinstance(value, str) or not value or "\\" in value or "\0" in value:
+        raise ValueError("checksum inventory path is not a safe relative path")
+    path = PurePosixPath(value)
+    if path.is_absolute() or any(part in {"", ".", ".."} for part in path.parts):
+        raise ValueError(f"unsafe checksum inventory path: {value}")
+    normalized = path.as_posix()
+    if normalized != value:
+        raise ValueError(f"non-canonical checksum inventory path: {value}")
+    return normalized
 
 
 def _call_protocol_errors(

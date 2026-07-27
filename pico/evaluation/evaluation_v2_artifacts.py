@@ -17,6 +17,7 @@ from pico.evaluation.evaluation_v2_row_capture import (
     finalize_row,
     load_object,
     now,
+    recover_client_result,
     update_record,
     write_json,
 )
@@ -84,28 +85,15 @@ def run_evaluation_v2_row(
             measurement_errors=measurement_errors,
         )
     except Exception as exc:
-        measurement_errors.append(f"{type(exc).__name__}: {exc}")
-        current = load_object(run_record_path)
-        update_record(
-            run_record_path,
-            {
-                "phase": "failed",
-                "finished_at": now(),
-                "measurement_status": "invalid",
-                "measurement_errors": sorted(set(measurement_errors)),
-                "failure_type": type(exc).__name__,
-                "failure": {
-                    "stage": current.get("phase", "unknown"),
-                    "exit_code": client_result.exit_code,
-                    "provider_request_count": len(client_result.http_attempts),
-                    "provider_request_count_exact": client_result.http_attempts_exact,
-                },
-            },
-            request.sensitive_values,
+        client_result = _preserve_failed_row(
+            exc=exc,
+            client_result=client_result,
+            measurement_errors=measurement_errors,
+            request=request,
+            private_row=private_row,
+            public_row=public_row,
+            run_record_path=run_record_path,
         )
-        if private_row.exists() and not (private_row / "checksums.json").exists():
-            write_json(private_row / "checksums.json", checksums(private_row, "original"))
-        write_json(public_row / "checksums.json", checksums(public_row))
 
     protocol = _native_evidence(client_result)
     failure = client_result.failure_category
@@ -128,6 +116,50 @@ def run_evaluation_v2_row(
         workspace=workspace_path,
         artifact=artifact,
     )
+
+
+def _preserve_failed_row(
+    *,
+    exc: Exception,
+    client_result: ClientResult,
+    measurement_errors: list[str],
+    request: RunRequest,
+    private_row: Path,
+    public_row: Path,
+    run_record_path: Path,
+) -> ClientResult:
+    measurement_errors.append(f"{type(exc).__name__}: {exc}")
+    current = load_object(run_record_path)
+    recovery_status = "unavailable"
+    try:
+        client_result = recover_client_result(current)
+        recovery_status = "validated"
+    except (TypeError, ValueError) as recovery_error:
+        measurement_errors.append(
+            f"persisted client result recovery failed: {recovery_error}"
+        )
+    update_record(
+        run_record_path,
+        {
+            "phase": "failed",
+            "finished_at": now(),
+            "measurement_status": "invalid",
+            "measurement_errors": sorted(set(measurement_errors)),
+            "failure_type": type(exc).__name__,
+            "failure": {
+                "stage": current.get("phase", "unknown"),
+                "exit_code": client_result.exit_code,
+                "provider_request_count": len(client_result.http_attempts),
+                "provider_request_count_exact": client_result.http_attempts_exact,
+                "client_result_recovery": recovery_status,
+            },
+        },
+        request.sensitive_values,
+    )
+    if private_row.exists() and not (private_row / "checksums.json").exists():
+        write_json(private_row / "checksums.json", checksums(private_row, "original"))
+    write_json(public_row / "checksums.json", checksums(public_row))
+    return client_result
 
 
 def _validate_request(task: TaskSpec, request: RunRequest) -> None:

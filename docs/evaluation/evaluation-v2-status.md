@@ -7,7 +7,7 @@
 ## 当前状态
 
 - 当前阶段：P2——最小真实编码桥接。
-- 阶段结论：实现候选和本地离线验证已完成，正等待在候选 source 的 WSL fresh clone 中完成最终复核并冻结 `pilot-v1`、`baseline-v1` 两份 run config。P2 尚未关闭，配置尚未获得用户接受，没有发起 provider HTTP，也没有进入 P3。
+- 阶段结论：审查修订实现和本地离线验证已完成，正等待在修订候选 source 的 WSL fresh clone 中完成最终复核并冻结新的 `pilot-v1`、`baseline-v1` 两份 run config。初始候选配置已作废，P2 尚未关闭，配置尚未获得用户接受，没有发起 provider HTTP，也没有进入 P3。
 - 历史控制 checkpoint： `2876cd53e17fd2b6eb089dbfaf14cd67615498fc`。
 - 计划中的 P0 起点： `44677cd7f6a9535c1a74e8628078e9d4967594b5`。
 - 实际 P0 起始 commit： `758eeaf7360f09296bc8a87567b021e68ca097d7`。该提交只解除 Evaluation v2 启动暂停并更新文档状态；P0 在检查其 diff 后从该 clean commit 开始。
@@ -18,7 +18,8 @@
 - P1 结束 commit：承载本状态条目的 commit；完整 SHA 在提交后的交付消息中报告， 不为回填而 amend。
 - P1 实际结束 commit：`91a578d74439bd643b0dcb693a3b55a806b71f34`。
 - P2 实际起始 commit：`4a70016101ffab6f777e53f938c472b5fe1e405d`；它相对 P1 结束 commit 只重排 Markdown 和补充对应文档规则，不改变 Evaluation v2 语义。
-- P2 实现候选 source：承载本状态条目的 commit；完整 SHA 和 tree 在提交后的交付消息中报告，不为回填而 amend。
+- P2 初始实现候选 source：`8c571834f6f297da3679aba1d279461bee06a517`，tree `614482ffa3515550878efeb87db05922ec5af07c`；用户接受前的审查发现两项证据完整性问题，因此该 source 及其两份配置已作废，不得用于 P3。
+- P2 修订实现候选 source：承载本状态更正条目的 commit；完整 SHA 和 tree 在提交后的交付消息中报告，不为回填而 amend。
 - 正式 Artifact： `F:\dev\llm\pico-eval-artifacts\evaluation-v2\module-baseline-v1\dcd8ea110c6c4dad5c09943fab26b8197142ae29`。
 - wrapper revision 使用量：`0/1`。`dcd8ea1` 是正式测量前由总体方案和 user guide 交付要求驱动的实现对齐，不是测量 wrapper 缺陷修订。
 - 当前 blocker：候选提交后的 WSL fresh-clone 复核、两份 run config 冻结以及用户对其内容和哈希的明确接受尚未完成。
@@ -223,3 +224,26 @@ R-03 的主要结论是测量装置缺陷：HSMOKE-V4-A 实际完成了 `read_fi
 ### 下一阶段的精确第一步
 
 创建实现候选提交并取得完整 commit/tree；在 detached WSL fresh clone 中执行最终离线验收。只有验收全部通过才生成两份配置；展示后停止，等待用户明确接受。P3 的第一步仍是单独授权且绑定已接受配置哈希的 T01 live row。
+
+## P2 审查修订记录（待新配置接受）
+
+### 审查结论
+
+- `evaluation_v2_artifacts.py` 的异常处理曾在 client 已持久化、但 verifier 或证据复制随后失败时使用尚未赋值的默认 `ClientResult`，从而把真实非零请求数写成 0/不精确。
+- `evaluation_v2_evidence.py` 的 checksum verifier 曾只核对 manifest 已列文件，无法发现目录中的额外未列文件，也没有完整验证 schema、重复路径和安全相对路径。
+- 两项均为 P1 finding，结论成立。初始 source `8c571834f6f297da3679aba1d279461bee06a517` 对应的 Pilot SHA-256 `97bf942d24d6c6645b058f79bdbf8fb2d3441fb498cb154e3eec6e2d667250e4` 和 Baseline SHA-256 `ea486987ab9484e364e8f95917156696740551bc1228a421e5c9f7deb7c1904e` 从未获用户接受、没有 row 或 HTTP 记录，现明确作废。
+
+### 修订内容
+
+- 异常处理从已有 `run-record.json` 恢复完整 `ClientResult`，验证 HTTP attempt 是唯一连续序号，验证精确标记为布尔值，并将 attempt 数与已持久化 summary 交叉核对。恢复不一致会作为 measurement error 保留，不能伪装成准确的 0。
+- checksum verifier 要求固定 schema 和字段集合，验证唯一、安全、规范的相对路径、非负整数大小和小写 SHA-256，并比较实际文件集合与 manifest 集合。额外未列文件、缺失文件、symlink、重复或越界路径均失败。
+- 新增“1 次 HTTP 后 evidence copy 失败仍恢复 count=1/exact=true”“汇总计数矛盾时拒绝恢复”和“额外未列文件”等回归测试。
+- 将原超过 500 行的证据测试 fixture 拆到 `tests/evaluation_v2_helpers.py`；修订后的所有新实现和测试文件均不超过 500 行，函数不超过 100 行。
+- 修订 scoped diff：7 files changed, 577 insertions(+), 265 deletions(-)。
+
+### 当前状态与下一动作
+
+- 修订本地 targeted tests 为 34 passed；加入 architecture boundary 和 safety invariant 后为 45 passed。scoped Ruff、两个 CLI help 和 `git diff --check` 均通过。
+- 修订候选的 detached WSL fresh-clone 复核尚未执行。
+- 新候选提交后必须重新建立 detached WSL fresh clone，并以新 source/client 哈希创建新的 `pilot-v1/<source>` 和 `baseline-v1/<source>` 配置目录。
+- 旧配置保留为未接受的历史候选，不覆盖、不用于 live；P3 仍未授权，provider HTTP 仍为 0。

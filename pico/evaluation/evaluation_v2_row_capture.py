@@ -22,6 +22,7 @@ from pico.evaluation.evaluation_v2_evidence import (
 from pico.evaluation.live_tasks import (
     ClientResult,
     FailureCategory,
+    HttpAttempt,
     InfrastructureFailure,
     RunRequest,
     TaskSpec,
@@ -346,6 +347,90 @@ def client_result_dict(result: ClientResult) -> dict[str, Any]:
     return payload
 
 
+def recover_client_result(record: Mapping[str, Any]) -> ClientResult:
+    """Rebuild and validate the request-count facts already persisted by the client."""
+
+    payload = record.get("client_result")
+    if not isinstance(payload, Mapping):
+        raise ValueError("run-record has no persisted client_result")
+    raw_attempts = payload.get("http_attempts")
+    if not isinstance(raw_attempts, list):
+        raise ValueError("persisted client_result http_attempts must be a list")
+    attempts = tuple(
+        _recover_http_attempt(item, expected=index)
+        for index, item in enumerate(raw_attempts, start=1)
+    )
+    exact = payload.get("http_attempts_exact")
+    if type(exact) is not bool:
+        raise ValueError("persisted request-count exactness flag is not boolean")
+    category = FailureCategory(str(payload.get("failure_category", "none")))
+    result = ClientResult(
+        profile=dict(payload.get("profile", {})),
+        native_gate_hash=str(payload.get("native_gate_hash", "")),
+        call_ids=tuple(map(str, payload.get("call_ids", []))),
+        result_call_ids=tuple(map(str, payload.get("result_call_ids", []))),
+        http_attempts=attempts,
+        trace=tuple(payload.get("trace", [])),
+        sdk_retry_count=int(payload.get("sdk_retry_count", 0)),
+        pico_retry_count=int(payload.get("pico_retry_count", 0)),
+        protocol_errors=tuple(map(str, payload.get("protocol_errors", []))),
+        error=str(payload.get("error", "")),
+        failure_category=category,
+        session_id=str(payload.get("session_id", "")),
+        runtime_run_id=str(payload.get("runtime_run_id", "")),
+        final_answer=str(payload.get("final_answer", "")),
+        http_attempts_exact=exact,
+        original_state_paths=tuple(map(str, payload.get("original_state_paths", []))),
+        exit_code=(
+            int(payload["exit_code"])
+            if payload.get("exit_code") is not None
+            else None
+        ),
+    )
+    _validate_persisted_request_summary(record, result)
+    return result
+
+
+def _recover_http_attempt(value: Any, *, expected: int) -> HttpAttempt:
+    if not isinstance(value, Mapping):
+        raise ValueError("persisted HTTP attempt must be an object")
+    attempt = value.get("attempt")
+    duration = value.get("duration_ms", 0)
+    status = value.get("status_code")
+    if type(attempt) is not int or attempt != expected:
+        raise ValueError("persisted HTTP attempts are not uniquely sequential")
+    if type(duration) is not int or duration < 0:
+        raise ValueError("persisted HTTP attempt duration is invalid")
+    if status is not None and type(status) is not int:
+        raise ValueError("persisted HTTP attempt status is invalid")
+    return HttpAttempt(
+        attempt=attempt,
+        status_code=status,
+        duration_ms=duration,
+        error_type=str(value.get("error_type", "")),
+    )
+
+
+def _validate_persisted_request_summary(
+    record: Mapping[str, Any],
+    result: ClientResult,
+) -> None:
+    summary = record.get("provider_requests")
+    if summary is None:
+        return
+    if not isinstance(summary, Mapping):
+        raise ValueError("persisted provider request summary must be an object")
+    if type(summary.get("count")) is not int or summary["count"] != len(
+        result.http_attempts
+    ):
+        raise ValueError("persisted provider request count does not match attempts")
+    if (
+        type(summary.get("exact")) is not bool
+        or summary["exact"] is not result.http_attempts_exact
+    ):
+        raise ValueError("persisted provider request exactness does not match")
+
+
 def update_record(
     path: Path,
     updates: Mapping[str, Any],
@@ -401,6 +486,7 @@ __all__ = [
     "finalize_row",
     "load_object",
     "now",
+    "recover_client_result",
     "update_record",
     "write_json",
 ]

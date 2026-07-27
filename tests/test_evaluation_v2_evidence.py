@@ -18,197 +18,19 @@ from pico.evaluation.evaluation_v2_config import (
     verify_run_config,
     verify_taskset_lock,
 )
+from pico.evaluation.evaluation_v2_evidence import checksums, verify_checksums
 from pico.evaluation.live_client import required_network_sandbox
-from pico.evaluation.live_tasks import (
-    ClientResult,
-    FailureCategory,
-    HttpAttempt,
-    LocalLiveTaskRunner,
-    RunRequest,
-    load_task_specs,
+from pico.evaluation.live_tasks import LocalLiveTaskRunner, load_task_specs
+from tests.evaluation_v2_helpers import (
+    DuplicateResultClient,
+    ExplodingClient,
+    FailedT01Client,
+    FakeT01Client,
+    ROOT,
+    TASKSET,
+    request as _request,
+    write_config as _write_config,
 )
-
-
-ROOT = Path(__file__).resolve().parents[1]
-TASKSET = ROOT / "benchmarks" / "v3" / "local-repos" / "taskset.json"
-SOURCE_COMMIT = "a" * 40
-SOURCE_TREE = "b" * 40
-NATIVE_GATE = "c" * 64
-
-
-class FakeT01Client:
-    def __init__(self, *, mismatched: bool = False, secret: str = "") -> None:
-        self.mismatched = mismatched
-        self.secret = secret
-
-    def run(
-        self,
-        workspace: Path,
-        prompt: str,
-        *,
-        evidence_path: Path | None = None,
-    ) -> ClientResult:
-        assert prompt.startswith("# T01")
-        assert evidence_path is not None
-        config = workspace / "tinyconfig" / "config.py"
-        text = config.read_text(encoding="utf-8")
-        text = text.replace(
-            '    debug = bool(_read_value(values, "APP_DEBUG", "false"))',
-            """    debug_text = _read_value(values, "APP_DEBUG", "false").strip().lower()
-    if debug_text in {"true", "1", "yes", "on"}:
-        debug = True
-    elif debug_text in {"false", "0", "no", "off"}:
-        debug = False
-    else:
-        raise ConfigError("APP_DEBUG has an unsupported boolean value")""",
-        )
-        config.write_text(text, encoding="utf-8")
-        self._write_pico_state(workspace)
-        result_id = "wrong-call" if self.mismatched else "call-1"
-        return ClientResult(
-            profile={"provider": "fake"},
-            native_gate_hash=NATIVE_GATE,
-            call_ids=("call-1",),
-            result_call_ids=(result_id,),
-            http_attempts=(),
-            session_id="session-1",
-            runtime_run_id="runtime-1",
-            final_answer="Implemented conventional APP_DEBUG parsing.",
-            http_attempts_exact=True,
-        )
-
-    def _write_pico_state(self, workspace: Path) -> None:
-        sessions = workspace / ".pico" / "sessions"
-        run = workspace / ".pico" / "runs" / "runtime-1"
-        sessions.mkdir(parents=True)
-        run.mkdir(parents=True)
-        session = {
-            "id": "session-1",
-            "model_exchange": {
-                "events": [
-                    {
-                        "event": "assistant_tool_batch",
-                        "tool_calls": [
-                            {
-                                "call_id": "call-1",
-                                "name": "patch_file",
-                                "arguments": {"path": "tinyconfig/config.py"},
-                            }
-                        ],
-                    },
-                    {
-                        "event": "tool_result",
-                        "call_id": "call-1",
-                        "name": "patch_file",
-                        "status": "completed",
-                    },
-                ]
-            },
-        }
-        if self.secret:
-            session["leak"] = self.secret
-        (sessions / "session-1.json").write_text(
-            json.dumps(session), encoding="utf-8"
-        )
-        (sessions / "session-1.events.jsonl").write_text(
-            json.dumps(
-                {
-                    "event": "tool_finished",
-                    "call_id": "call-1",
-                    "tool_name": "patch_file",
-                    "status": "ok",
-                }
-            )
-            + "\n",
-            encoding="utf-8",
-        )
-        (run / "task_state.json").write_text("{}\n", encoding="utf-8")
-        (run / "trace.jsonl").write_text(
-            json.dumps(
-                {
-                    "event": "tool_executed",
-                    "call_id": "call-1",
-                    "name": "patch_file",
-                    "tool_status": "ok",
-                }
-            )
-            + "\n",
-            encoding="utf-8",
-        )
-        (run / "report.json").write_text(
-            json.dumps({"final_answer": "done"}) + "\n", encoding="utf-8"
-        )
-        (run / "raw-provider-response.json").write_text(
-            '{"must_not_publish": true}\n', encoding="utf-8"
-        )
-
-
-class FailedT01Client(FakeT01Client):
-    def run(
-        self,
-        workspace: Path,
-        prompt: str,
-        *,
-        evidence_path: Path | None = None,
-    ) -> ClientResult:
-        result = super().run(
-            workspace,
-            prompt,
-            evidence_path=evidence_path,
-        )
-        return replace(
-            result,
-            http_attempts=(
-                HttpAttempt(
-                    attempt=1,
-                    status_code=503,
-                    duration_ms=12,
-                    error_type="ServiceUnavailable",
-                ),
-            ),
-            failure_category=FailureCategory.PROVIDER,
-            error="ServiceUnavailable",
-            exit_code=1,
-        )
-
-
-class ExplodingClient:
-    def run(
-        self,
-        workspace: Path,
-        prompt: str,
-        *,
-        evidence_path: Path | None = None,
-    ) -> ClientResult:
-        del workspace, prompt, evidence_path
-        raise RuntimeError("synthetic client failure")
-
-
-class DuplicateResultClient(FakeT01Client):
-    def run(
-        self,
-        workspace: Path,
-        prompt: str,
-        *,
-        evidence_path: Path | None = None,
-    ) -> ClientResult:
-        result = super().run(
-            workspace,
-            prompt,
-            evidence_path=evidence_path,
-        )
-        session_path = workspace / ".pico" / "sessions" / "session-1.json"
-        session = json.loads(session_path.read_text(encoding="utf-8"))
-        session["model_exchange"]["events"].append(
-            {
-                "event": "tool_result",
-                "call_id": "call-1",
-                "name": "patch_file",
-                "status": "completed",
-            }
-        )
-        session_path.write_text(json.dumps(session), encoding="utf-8")
-        return result
 
 
 def test_taskset_lock_recomputes_all_frozen_inputs() -> None:
@@ -456,12 +278,94 @@ def test_evidence_copy_failure_preserves_minimum_invalid_record(
     evidence = LocalLiveTaskRunner(cohort_root).run(
         load_task_specs(TASKSET)[0],
         _request(config_path),
-        FakeT01Client(),
+        FailedT01Client(),
     )
 
     assert evidence.failure_category == "measurement"
     assert evidence.artifact["phase"] == "failed"
     assert evidence.artifact["failure"]["stage"] == "evidence_copy"
+    assert evidence.artifact["failure"]["provider_request_count"] == 1
+    assert evidence.artifact["failure"]["provider_request_count_exact"] is True
+    assert evidence.artifact["failure"]["client_result_recovery"] == "validated"
+    assert len(evidence.artifact["client_result"]["http_attempts"]) == 1
+
+
+def test_request_count_recovery_rejects_inconsistent_persisted_summary(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    config_path, cohort_root = _write_config(tmp_path, monkeypatch)
+
+    def corrupt_summary_then_fail(**kwargs: object) -> object:
+        public_row = Path(str(kwargs["public_row"]))
+        record_path = public_row / "run-record.json"
+        record = json.loads(record_path.read_text(encoding="utf-8"))
+        record["provider_requests"]["count"] = 2
+        record_path.write_bytes(canonical_json(record))
+        raise RuntimeError("copy failed")
+
+    monkeypatch.setattr(capturelib, "_copy_originals", corrupt_summary_then_fail)
+    evidence = LocalLiveTaskRunner(cohort_root).run(
+        load_task_specs(TASKSET)[0],
+        _request(config_path),
+        FailedT01Client(),
+    )
+
+    assert evidence.artifact["failure"]["client_result_recovery"] == "unavailable"
+    assert evidence.artifact["failure"]["provider_request_count_exact"] is False
+    assert any(
+        "request count does not match" in error
+        for error in evidence.artifact["measurement_errors"]
+    )
+
+
+def test_checksum_verifier_rejects_unlisted_extra_file(tmp_path: Path) -> None:
+    root = tmp_path / "row"
+    root.mkdir()
+    (root / "record.json").write_text("{}\n", encoding="utf-8")
+    _write_checksum_manifest(root)
+    (root / "unlisted.txt").write_text("extra\n", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="inventory is incomplete"):
+        verify_checksums(root / "checksums.json", root)
+
+
+def test_checksum_verifier_rejects_schema_and_unsafe_paths(tmp_path: Path) -> None:
+    root = tmp_path / "row"
+    root.mkdir()
+    (root / "record.json").write_text("{}\n", encoding="utf-8")
+    manifest = _write_checksum_manifest(root)
+    payload = json.loads(manifest.read_text(encoding="utf-8"))
+    payload["schema_version"] = "drift"
+    manifest.write_bytes(canonical_json(payload))
+    with pytest.raises(ValueError, match="schema"):
+        verify_checksums(manifest, root)
+
+    payload["schema_version"] = "pico-evaluation-v2-checksums-v1"
+    payload["files"][0]["path"] = "../record.json"
+    manifest.write_bytes(canonical_json(payload))
+    with pytest.raises(ValueError, match="unsafe"):
+        verify_checksums(manifest, root)
+
+
+def test_checksum_verifier_rejects_duplicate_and_invalid_metadata(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "row"
+    root.mkdir()
+    (root / "record.json").write_text("{}\n", encoding="utf-8")
+    manifest = _write_checksum_manifest(root)
+    payload = json.loads(manifest.read_text(encoding="utf-8"))
+    payload["files"].append(dict(payload["files"][0]))
+    manifest.write_bytes(canonical_json(payload))
+    with pytest.raises(ValueError, match="duplicate"):
+        verify_checksums(manifest, root)
+
+    payload["files"] = payload["files"][:1]
+    payload["files"][0]["bytes"] = True
+    manifest.write_bytes(canonical_json(payload))
+    with pytest.raises(ValueError, match="byte count"):
+        verify_checksums(manifest, root)
 
 
 def test_lock_drift_fails_before_row_directories_are_created(
@@ -498,50 +402,7 @@ def test_row_directory_collision_is_never_overwritten(
         runner.run(task, _request(config_path), FakeT01Client())
 
 
-def _request(config_path: Path) -> RunRequest:
-    return RunRequest(
-        run_kind="formal",
-        shard="tinyconfig",
-        tool_050_s_hash=NATIVE_GATE,
-        run_id="pilot-v1-T01-r1",
-        cohort_id="pilot-v1",
-        row_id="pilot-v1-T01-r1",
-        source_commit=SOURCE_COMMIT,
-        source_tree=SOURCE_TREE,
-        repetition=1,
-        stage="p2-fake",
-        run_config_path=config_path,
-    )
-
-
-def _write_config(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> tuple[Path, Path]:
-    monkeypatch.setattr(
-        configlib,
-        "_git_identity",
-        lambda _root, require_clean=True: (SOURCE_COMMIT, SOURCE_TREE),
-    )
-    environment = {
-        "execution_environment": "test",
-        "os": "test",
-        "python": "3.12.13",
-        "implementation": "CPython",
-    }
-    monkeypatch.setattr(configlib, "_runtime_environment", lambda: environment)
-    payload = configlib.build_run_config(
-        source_root=ROOT,
-        artifact_root=tmp_path,
-        cohort_id="pilot-v1",
-        environment=environment,
-    )
-    cohort_root = tmp_path / "pilot-v1" / SOURCE_COMMIT
-    public = cohort_root / "public"
-    public.mkdir(parents=True)
-    config_path = public / "run-config.json"
-    encoded = canonical_json(payload)
-    config_path.write_bytes(encoded)
-    (public / "run-config.sha256").write_text(
-        sha256_bytes(encoded) + "\n", encoding="ascii"
-    )
-    return config_path, cohort_root
+def _write_checksum_manifest(root: Path) -> Path:
+    path = root / "checksums.json"
+    path.write_bytes(canonical_json(checksums(root)))
+    return path
