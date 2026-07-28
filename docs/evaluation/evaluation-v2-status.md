@@ -375,4 +375,7 @@ G0 未通过。P4A 不得启动。
 
 - run config 现统一记录虚拟环境的稳定 `bin/python`（Windows 为 `Scripts/python.exe`）别名，避免 direct Python 与 `uv run` 对同一解释器采用不同字面路径。
 - Pilot finalizer 新增 `--initialize-report`，用于命令在首条 row 前停止时确定性生成全 `no result` 报告；该模式不解析 provider 配置、不写 row、不调用 provider。
+- 离线修复 commit：`f10b4b5ea822af7f0374260553ba610965498509`。WSL CPython 3.12.13 下，真实桥接、Evaluation v2 evidence、Pilot report 与 live evaluator 共 55 项 targeted tests 通过，scoped Ruff 通过。
+- `pilot-v2` 报告已由上述提交生成并通过 `--verify-only`：`g0_status=pending`、planned 3、final classified 0、no result 3，Markdown 可逐字节重建。valid-run rate 与 verified-run success 均无分母；provider 请求合计为 0，tool steps、repeated reads 与 Runtime elapsed time 没有可用样本。
+- 公开 Artifact 共 4 个文件：run config、旁路哈希和两份报告。实际 locator 与 credential 共 2 个敏感值的精确扫描命中 0；`public/rows` 目录不存在。
 - `pilot-v3` 已作为新的隔离 cohort 身份加入离线实现，但尚未获得授权。生成其 run config、建立 live clone 或执行任何命令前，必须先提交并验收本修复，再由用户明确授权新的 source/tree、配置哈希、三条 row 与独占输出目录。
