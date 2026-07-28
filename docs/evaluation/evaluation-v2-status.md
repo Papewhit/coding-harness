@@ -353,3 +353,10 @@ G0 未通过。P4A 不得启动。
 ### 下一阶段的精确第一步
 
 由用户决定是否授权使用新 source、新 run config、新 cohort 和新 row 身份进行修复后 live 观察。停止条件是首条 row 能形成可信的 `valid + failed` 或 `valid + passed`；出现可信产品失败时继续 cohort，不修改 Pico 产品直至通过。原 `pilot-v1-T01-r1` 永久保留为 invalid。
+
+## P3 `pilot-v2` 重新授权（执行中）
+
+- 用户已授权在新 source 上再次开展完整 P3；授权仅覆盖 `pilot-v2-T01-r1`、`pilot-v2-T04-r1`、`pilot-v2-T07-r1`，不延伸至 P4。
+- 继续使用既有 provider profile、Runtime 预算、SDK retry 0、单次 row 和无语义重跑规则。T01 先执行 G0；可信的 `valid + failed` 与 `valid + passed` 同样通过 G0。
+- `pilot-v1` 的 source、配置、row、审计和报告保持不可变。`pilot-v2` 使用新 source、新 run config、独立 Artifact 目录和全新 row 身份。
+- 在冻结新 source 与 run config 前保持 provider HTTP 为 0。

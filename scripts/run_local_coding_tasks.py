@@ -20,6 +20,7 @@ from pico.evaluation.evaluation_v2_config import (
     verify_run_config,
     write_run_config,
 )
+from pico.evaluation.evaluation_v2_schedule import PILOT_COHORTS
 from pico.evaluation.live_tasks import (
     ClientResult,
     FailureCategory,
@@ -216,7 +217,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--prepare-run-configs",
         action="store_true",
-        help="Create pilot-v1 and baseline-v1 configs under --output-root.",
+        help="Create frozen Evaluation v2 configs under --output-root.",
     )
     parser.add_argument(
         "--verify-only",
@@ -267,7 +268,12 @@ def _prepare_configs(args: argparse.Namespace) -> int:
     if args.run_config or args.client_command:
         raise SystemExit("config preparation cannot execute a client")
     rows = []
-    for cohort_id in sorted(SUPPORTED_COHORTS):
+    cohort_ids = (
+        [args.cohort_id]
+        if args.cohort_id
+        else sorted(SUPPORTED_COHORTS)
+    )
+    for cohort_id in cohort_ids:
         path, digest = write_run_config(
             source_root=SOURCE_ROOT,
             artifact_root=args.output_root,
@@ -370,6 +376,8 @@ def _validate_stage_selection(
     stage_tasks = {
         ("pilot-v1", "P3-G0"): ("T01",),
         ("pilot-v1", "P3-remainder"): ("T04", "T07"),
+        ("pilot-v2", "P3-G0"): ("T01",),
+        ("pilot-v2", "P3-remainder"): ("T04", "T07"),
         ("baseline-v1", "P4A"): ("T01", "T02", "T03"),
         ("baseline-v1", "P4B"): ("T04", "T05", "T06"),
         ("baseline-v1", "P4C"): ("T07", "T08", "T09"),
@@ -377,7 +385,7 @@ def _validate_stage_selection(
     expected_tasks = stage_tasks.get((cohort_id, stage))
     if expected_tasks is None:
         raise SystemExit("Evaluation v2 requires a frozen stage identifier")
-    repetitions = 1 if cohort_id == "pilot-v1" else 3
+    repetitions = 1 if cohort_id in PILOT_COHORTS else 3
     expected = {
         (task_id, repetition)
         for repetition in range(1, repetitions + 1)

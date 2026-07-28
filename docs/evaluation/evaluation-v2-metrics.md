@@ -10,6 +10,7 @@
 
 - `module-baseline-v1`：P1 的确定性模块评测，不是真实 provider 编码结果；
 - `pilot-v1`：P3 的三任务 Pilot，只验证测量链和 G0，不进入正式基线；
+- `pilot-v2`：评测桥接修复后、另行授权的新 source P3 Pilot；与 `pilot-v1` 分开报告，不覆盖其 invalid row，也不进入正式基线；
 - `baseline-v1`：P4A–P4C 的 27 条正式编码评测行，是正式编码成功率的唯一分母。
 
 W6R5 的 R-01、R-02、R-03 是历史无效测量，不属于上述任何批次。后续补充批次和 post-fix 批次也必须独立报告，不得回写 `baseline-v1`。

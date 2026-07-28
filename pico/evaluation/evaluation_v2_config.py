@@ -17,7 +17,11 @@ from pico.evaluation.taskset import (
     sha256_file,
     verify_taskset_lock as verify_frozen_taskset,
 )
-from pico.evaluation.evaluation_v2_schedule import allowed_rows, launch_commands
+from pico.evaluation.evaluation_v2_schedule import (
+    PILOT_COHORTS,
+    allowed_rows,
+    launch_commands,
+)
 
 
 RUN_CONFIG_SCHEMA = "pico-evaluation-v2-run-config-v1"
@@ -28,7 +32,7 @@ CLIENT_PATH = Path("scripts/run_pico_live_task_client.py")
 CONFIG_LOCATOR_ENV = "PICO_NATIVE_PROVIDER_CONFIG"
 WINDOWS_ARTIFACT_ROOT = r"F:\dev\llm\pico-eval-artifacts\evaluation-v2"
 WSL_ARTIFACT_ROOT = "/mnt/f/dev/llm/pico-eval-artifacts/evaluation-v2"
-SUPPORTED_COHORTS = frozenset({"pilot-v1", "baseline-v1"})
+SUPPORTED_COHORTS = frozenset({*PILOT_COHORTS, "baseline-v1"})
 RUN_CONFIG_KEYS = frozenset(
     "allowed_rows artifacts client cohort_id environment launch_commands "
     "private_config profile retry runtime schema_version source taskset".split()

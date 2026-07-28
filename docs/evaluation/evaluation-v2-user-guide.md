@@ -94,7 +94,7 @@ public/modules/checksums.json
 
 ### 适用目的与不适用范围
 
-`scripts/run_local_coding_tasks.py` 现有离线模式保持不变；Evaluation v2 模式用于验证冻结的 9-task taskset、生成或只读核验 `pilot-v1` 与 `baseline-v1` run config，并在后续独立授权的 P3/P4 阶段启动真实 Pico Runtime。
+`scripts/run_local_coding_tasks.py` 现有离线模式保持不变；Evaluation v2 模式用于验证冻结的 9-task taskset、生成或只读核验 `pilot-v1`、桥接修复后的 `pilot-v2` 与 `baseline-v1` run config，并在后续独立授权的 P3/P4 阶段启动真实 Pico Runtime。
 
 P2 自身只运行 fake client、hidden verifier 和确定性证据检查。生成或验证 run config 不解析 provider credential、不构造 provider transport，也不发起 provider HTTP。run config 获用户接受不等于 G0；G0 仍由另行授权的 P3 首条 T01 live row 验证。
 
@@ -112,22 +112,21 @@ P2 自身只运行 fake client、hidden verifier 和确定性证据检查。生�
 uv sync --frozen --extra providers --python 3.12
 ```
 
-### 生成两份 canonical run config
+### 生成指定 canonical run config
 
 ```bash
 uv run --frozen --extra providers --python 3.12 \
   python scripts/run_local_coding_tasks.py \
   --prepare-run-configs \
+  --cohort-id pilot-v2 \
   --output-root /mnt/f/dev/llm/pico-eval-artifacts/evaluation-v2
 ```
 
 该命令只创建：
 
 ```text
-pilot-v1/<source-sha>/public/run-config.json
-pilot-v1/<source-sha>/public/run-config.sha256
-baseline-v1/<source-sha>/public/run-config.json
-baseline-v1/<source-sha>/public/run-config.sha256
+pilot-v2/<source-sha>/public/run-config.json
+pilot-v2/<source-sha>/public/run-config.sha256
 ```
 
 JSON 使用排序键、2 空格缩进和末尾换行；`.sha256` 是 JSON 文件字节的小写 SHA-256。配置固定 source/tree、taskset、`dashscope-o` public profile、`qwen3.6-plus`、OpenAI Responses、SDK 版本、预算、timeout、重试策略、工具白名单、bubblewrap 网络隔离、Artifact 路径、client 哈希、允许的 row 身份和 P3/P4 完整启动命令。配置只记录 locator 变量名及存在/文件类型检查结果，不记录 locator 或 credential 值。
@@ -137,7 +136,7 @@ JSON 使用排序键、2 空格缩进和末尾换行；`.sha256` 是 JSON 文件
 ```bash
 uv run --frozen --extra providers --python 3.12 \
   python scripts/run_local_coding_tasks.py \
-  --run-config /mnt/f/dev/llm/pico-eval-artifacts/evaluation-v2/pilot-v1/<source-sha>/public/run-config.json \
+  --run-config /mnt/f/dev/llm/pico-eval-artifacts/evaluation-v2/pilot-v2/<source-sha>/public/run-config.json \
   --verify-only
 
 uv run --frozen --extra providers --python 3.12 \
@@ -153,7 +152,7 @@ uv run --frozen --extra providers --python 3.12 \
 正式入口接受：
 
 - `--run-config`：已接受的 canonical 配置；
-- `--cohort-id`：`pilot-v1` 或 `baseline-v1`，必须与配置一致；
+- `--cohort-id`：`pilot-v1`、`pilot-v2` 或 `baseline-v1`，必须与配置一致；
 - `--stage`：配置冻结的 `P3-G0`、`P3-remainder`、`P4A`、`P4B` 或 `P4C`；
 - `--task`、`--repo`：可重复使用的任务或仓库过滤器；
 - `--repetitions`：该阶段冻结的重复次数。
@@ -170,7 +169,7 @@ runner 要求请求集合与该阶段的冻结集合精确相同，按 repetitio
 
 ### Row Artifact 与结果解释
 
-后续 live row 使用固定 ID：Pilot 为 `pilot-v1-<task>-r1`；Baseline 为 `baseline-v1-<task>-r<1..3>`。既有 private/public row 目录永不覆盖。
+后续 live row 使用固定 ID：初始 Pilot 为 `pilot-v1-<task>-r1`，桥接修复后的 Pilot 为 `pilot-v2-<task>-r1`；Baseline 为 `baseline-v1-<task>-r<1..3>`。既有 private/public row 目录永不覆盖。
 
 主要公开入口：
 

@@ -8,7 +8,11 @@ import pytest
 from pico.evaluation.evaluation_v2_evidence import checksums
 from pico.evaluation.evaluation_v2_row_capture import write_json
 from pico.evaluation.pilot_audit import AUDIT_SCHEMA, DECISION_SCHEMA
-from pico.evaluation.pilot_report import finalize_pilot, verify_pilot
+from pico.evaluation.pilot_report import (
+    build_pilot_report,
+    finalize_pilot,
+    verify_pilot,
+)
 from scripts import finalize_evaluation_v2_pilot as cli
 from tests.evaluation_v2_helpers import write_config
 
@@ -177,6 +181,30 @@ def test_partial_pilot_passes_g0_and_rebuilds_markdown(
     assert report["metrics"]["repeated_reads"]["total"] == 1
     assert report["metrics"]["elapsed_time_ms"]["mean"] == 1250
     assert verify_pilot(config)["markdown_rebuilt"] is True
+
+
+def test_pilot_v2_report_uses_new_cohort_and_row_identities(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    config, _ = write_config(
+        tmp_path,
+        monkeypatch,
+        cohort_id="pilot-v2",
+    )
+
+    report = build_pilot_report(config, generator=GENERATOR)
+
+    assert report["cohort_id"] == "pilot-v2"
+    assert report["g0"] == {
+        "status": "pending",
+        "rule": "T01 measurement valid under evidence protocol rules 1-5",
+        "row_id": "pilot-v2-T01-r1",
+    }
+    assert [row["row_id"] for row in report["rows"]] == [
+        "pilot-v2-T01-r1",
+        "pilot-v2-T04-r1",
+        "pilot-v2-T07-r1",
+    ]
 
 
 def test_full_pilot_reports_valid_failure_and_provider_failure(

@@ -195,6 +195,36 @@ def test_run_config_never_persists_locator_value(
     assert locator not in config_path.read_text(encoding="utf-8")
 
 
+def test_pilot_v2_config_has_new_rows_and_p3_only_commands(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    config_path, cohort_root = _write_config(
+        tmp_path,
+        monkeypatch,
+        cohort_id="pilot-v2",
+    )
+    payload = json.loads(config_path.read_text(encoding="utf-8"))
+
+    assert cohort_root.parent.name == "pilot-v2"
+    assert payload["cohort_id"] == "pilot-v2"
+    assert [row["row_id"] for row in payload["allowed_rows"]] == [
+        "pilot-v2-T01-r1",
+        "pilot-v2-T04-r1",
+        "pilot-v2-T07-r1",
+    ]
+    assert set(payload["launch_commands"]) == {"p3_g0", "p3_remainder"}
+    assert payload["launch_commands"]["p3_g0"]["argv"][-6:] == [
+        "--task",
+        "T01",
+        "--repo",
+        "tinyconfig",
+        "--repetitions",
+        "1",
+    ]
+    assert "--cohort-id pilot-v2" in payload["launch_commands"]["p3_g0"]["display"]
+    assert verify_run_config(config_path)["cohort_id"] == "pilot-v2"
+
+
 def test_network_isolated_shell_includes_unshare_net(tmp_path: Path) -> None:
     sandbox = required_network_sandbox()
     argv = sandbox._bubblewrap_argv(

@@ -6,13 +6,16 @@ import shlex
 from typing import Any
 
 
+PILOT_COHORTS = frozenset({"pilot-v1", "pilot-v2"})
+
+
 def allowed_rows(cohort_id: str) -> list[dict[str, Any]]:
     task_ids = (
         ["T01", "T04", "T07"]
-        if cohort_id == "pilot-v1"
+        if cohort_id in PILOT_COHORTS
         else [f"T{number:02d}" for number in range(1, 10)]
     )
-    repetitions = 1 if cohort_id == "pilot-v1" else 3
+    repetitions = 1 if cohort_id in PILOT_COHORTS else 3
     return [
         {
             "row_id": f"{cohort_id}-{task_id}-r{repetition}",
@@ -67,7 +70,7 @@ def launch_commands(
                 "1",
             ],
         }
-        if cohort_id == "pilot-v1"
+        if cohort_id in PILOT_COHORTS
         else {
             "p4a": [
                 *base,
@@ -108,4 +111,4 @@ def launch_commands(
     }
 
 
-__all__ = ["allowed_rows", "launch_commands"]
+__all__ = ["PILOT_COHORTS", "allowed_rows", "launch_commands"]

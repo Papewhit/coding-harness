@@ -196,14 +196,17 @@ class DuplicateResultClient(FakeT01Client):
         return result
 
 
-def request(config_path: Path) -> RunRequest:
+def request(
+    config_path: Path, *, cohort_id: str = "pilot-v1"
+) -> RunRequest:
+    row_id = f"{cohort_id}-T01-r1"
     return RunRequest(
         run_kind="formal",
         shard="tinyconfig",
         tool_050_s_hash=NATIVE_GATE,
-        run_id="pilot-v1-T01-r1",
-        cohort_id="pilot-v1",
-        row_id="pilot-v1-T01-r1",
+        run_id=row_id,
+        cohort_id=cohort_id,
+        row_id=row_id,
         source_commit=SOURCE_COMMIT,
         source_tree=SOURCE_TREE,
         repetition=1,
@@ -212,7 +215,12 @@ def request(config_path: Path) -> RunRequest:
     )
 
 
-def write_config(tmp_path: Path, monkeypatch: Any) -> tuple[Path, Path]:
+def write_config(
+    tmp_path: Path,
+    monkeypatch: Any,
+    *,
+    cohort_id: str = "pilot-v1",
+) -> tuple[Path, Path]:
     monkeypatch.setattr(
         configlib,
         "_git_identity",
@@ -228,10 +236,10 @@ def write_config(tmp_path: Path, monkeypatch: Any) -> tuple[Path, Path]:
     payload = configlib.build_run_config(
         source_root=ROOT,
         artifact_root=tmp_path,
-        cohort_id="pilot-v1",
+        cohort_id=cohort_id,
         environment=environment,
     )
-    cohort_root = tmp_path / "pilot-v1" / SOURCE_COMMIT
+    cohort_root = tmp_path / cohort_id / SOURCE_COMMIT
     public = cohort_root / "public"
     public.mkdir(parents=True)
     config_path = public / "run-config.json"

@@ -10,6 +10,7 @@ import statistics
 from typing import Any
 
 from pico.evaluation.evaluation_v2_config import canonical_json, verify_run_config
+from pico.evaluation.evaluation_v2_schedule import PILOT_COHORTS
 from pico.evaluation.evaluation_v2_evidence import (
     checksums,
     verify_checksums,
@@ -39,8 +40,8 @@ def cohort_root(run_config_path: Path) -> Path:
 def verified_config(run_config_path: Path) -> dict[str, Any]:
     payload = _load_object(run_config_path)
     verify_run_config(run_config_path)
-    if payload.get("cohort_id") != "pilot-v1":
-        raise ValueError("Pilot report requires the pilot-v1 run config")
+    if payload.get("cohort_id") not in PILOT_COHORTS:
+        raise ValueError("Pilot report requires a supported Pilot run config")
     return payload
 
 
@@ -95,7 +96,7 @@ def verify_pilot(run_config_path: Path) -> dict[str, Any]:
     if markdown != render_pilot_markdown(report):
         raise ValueError("Pilot Markdown cannot be rebuilt from report JSON")
     return {
-        "cohort_id": "pilot-v1",
+        "cohort_id": str(config["cohort_id"]),
         "g0_status": report["g0"]["status"],
         "rows": report["counts"],
         "markdown_rebuilt": True,
@@ -106,6 +107,7 @@ def build_pilot_report(
     run_config_path: Path, *, generator: Mapping[str, Any]
 ) -> dict[str, Any]:
     config = verified_config(run_config_path)
+    cohort_id = str(config["cohort_id"])
     root = cohort_root(run_config_path)
     rows = [_row_report(root, row) for row in config["allowed_rows"]]
     counts = Counter(str(row["status"]) for row in rows)
@@ -134,7 +136,7 @@ def build_pilot_report(
         g0_status = "pending"
     return {
         "schema_version": REPORT_SCHEMA,
-        "cohort_id": "pilot-v1",
+        "cohort_id": cohort_id,
         "source": dict(config["source"]),
         "run_config": {
             "path": run_config_path.resolve().as_posix(),
@@ -147,7 +149,7 @@ def build_pilot_report(
         "g0": {
             "status": g0_status,
             "rule": "T01 measurement valid under evidence protocol rules 1-5",
-            "row_id": "pilot-v1-T01-r1",
+            "row_id": f"{cohort_id}-T01-r1",
         },
         "counts": {
             "planned": len(rows),
