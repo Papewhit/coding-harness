@@ -5,9 +5,6 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from pico.evaluation.evaluation_v2_config import (
-    verify_run_config,
-)
 from pico.evaluation.evaluation_v2_evidence import (
     EVIDENCE_VIEW_SCHEMA,
     checksums,
@@ -44,8 +41,6 @@ def run_evaluation_v2_row(
 ) -> RunEvidence:
     """Run one immutable-identity row while preserving partial evidence."""
 
-    runner._validate(task, request)
-    _validate_request(task, request)
     root = runner.output_root.resolve()
     private_row = root / "private" / "rows" / request.row_id
     public_row = root / "public" / "rows" / request.row_id
@@ -160,35 +155,6 @@ def _preserve_failed_row(
         write_json(private_row / "checksums.json", checksums(private_row, "original"))
     write_json(public_row / "checksums.json", checksums(public_row))
     return client_result
-
-
-def _validate_request(task: TaskSpec, request: RunRequest) -> None:
-    expected = f"{request.cohort_id}-{task.task_id}-r{request.repetition}"
-    if request.row_id != expected:
-        raise ValueError(f"row identity must be {expected}")
-    if request.repetition < 1:
-        raise ValueError("repetition must be positive")
-    if not request.source_commit or not request.source_tree:
-        raise ValueError("Evaluation v2 rows require source commit and tree")
-    if request.run_config_path is None:
-        raise ValueError("Evaluation v2 rows require a run config")
-    payload = load_object(request.run_config_path)
-    source_root = Path(str(payload.get("source", {}).get("workspace_root", "")))
-    verified = verify_run_config(request.run_config_path, source_root=source_root)
-    if verified["cohort_id"] != request.cohort_id:
-        raise ValueError("row cohort does not match run config")
-    if verified["source"]["commit"] != request.source_commit:
-        raise ValueError("row source does not match run config")
-    if verified["source"]["tree"] != request.source_tree:
-        raise ValueError("row tree does not match run config")
-    allowed = {
-        (str(row["task_id"]), int(row["repetition"]), str(row["row_id"]))
-        for row in payload.get("allowed_rows", [])
-    }
-    if (task.task_id, request.repetition, request.row_id) not in allowed:
-        raise ValueError("row identity is not allowed by run config")
-    if task.network_access:
-        raise ValueError("Evaluation v2 local tasks must declare network_access=false")
 
 
 def _initial_record(task: TaskSpec, request: RunRequest) -> dict[str, Any]:

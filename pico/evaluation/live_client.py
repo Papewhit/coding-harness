@@ -3,6 +3,9 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping
+from pathlib import Path
+import sys
+import tempfile
 import time
 from typing import Any
 
@@ -157,6 +160,32 @@ def required_network_sandbox(
     )
 
 
+def probe_required_network_sandbox() -> None:
+    """Run the one allowed live-start bubblewrap writability probe."""
+
+    sandbox = required_network_sandbox(
+        extra_readonly_paths=(
+            sys.prefix,
+            str(Path(sys.base_prefix).parent),
+        )
+    )
+    with tempfile.TemporaryDirectory(prefix="pico-eval-sandbox-probe-") as temporary:
+        workspace = Path(temporary)
+        marker = workspace / "marker"
+        result = sandbox.run(
+            "printf ready > marker",
+            cwd=workspace,
+            env={},
+            timeout=10,
+        )
+        if (
+            result.returncode != 0
+            or not marker.is_file()
+            or marker.read_text(encoding="utf-8") != "ready"
+        ):
+            raise RuntimeError("network-isolated bubblewrap probe failed")
+
+
 def _latest_attempts(
     inner: Any,
     response: ModelResponse | None,
@@ -206,5 +235,6 @@ __all__ = [
     "AuditedNativeClient",
     "NetworkIsolatedSandboxRunner",
     "build_client_result",
+    "probe_required_network_sandbox",
     "required_network_sandbox",
 ]

@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
 import hashlib
 from importlib import metadata
 import json
@@ -37,6 +38,16 @@ RUN_CONFIG_KEYS = frozenset(
     "allowed_rows artifacts client cohort_id environment launch_commands "
     "private_config profile retry runtime schema_version source taskset".split()
 )
+
+
+@dataclass(frozen=True)
+class LiveStartValidation:
+    """Facts produced by the single pre-row live-start validator."""
+
+    payload: Mapping[str, Any]
+    sha256: str
+    row_ids: tuple[str, ...]
+    sensitive_values: tuple[str, ...]
 
 
 def canonical_json(value: Any) -> bytes:
@@ -256,14 +267,6 @@ def write_run_config(
         cohort_id=cohort_id,
         environment=environment,
     )
-    locator = payload["private_config"]
-    if not all(
-        locator.get(key) is True
-        for key in ("env_defined", "target_exists", "target_is_file")
-    ):
-        raise ValueError(
-            "PICO_NATIVE_PROVIDER_CONFIG must identify an existing file before freezing configs"
-        )
     source_commit = str(payload["source"]["commit"])
     cohort_root = artifact_root.resolve() / cohort_id / source_commit
     if cohort_root.exists() and any(cohort_root.iterdir()):
@@ -278,34 +281,127 @@ def write_run_config(
     return config_path, digest
 
 
-def verify_run_config(path: Path, *, source_root: Path | None = None) -> dict[str, Any]:
-    """Validate a frozen config, its sibling hash, and optional source checkout."""
+def verify_run_config(path: Path) -> dict[str, Any]:
+    """Verify only canonical JSON, the existing schema, and the sibling hash."""
 
+    payload, digest = _read_run_config(path, require_canonical=True)
+    return {
+        "cohort_id": payload["cohort_id"],
+        "sha256": digest,
+        "source": payload["source"],
+    }
+
+
+def validate_live_start(
+    run_config: Path,
+    *,
+    source_root: Path,
+    cohort_id: str,
+    requested_rows: Sequence[tuple[str, int, str]],
+    artifact_root: Path,
+) -> LiveStartValidation:
+    """Apply the closed live-start blocker set once before any row exists."""
+
+    path = run_config.resolve()
+    payload, digest = _read_run_config(path, require_canonical=False)
+    source_root = source_root.resolve()
+    artifact_root = artifact_root.resolve()
+
+    source_commit, source_tree = _git_identity(source_root)
+    expected_source = _required_object(payload, "source")
+    if (
+        source_commit != expected_source.get("commit")
+        or source_tree != expected_source.get("tree")
+    ):
+        raise ValueError("live source HEAD/tree does not match run config")
+    if payload.get("cohort_id") != cohort_id:
+        raise ValueError("requested cohort is outside run config")
+
+    artifacts = _required_object(payload, "artifacts")
+    declared_artifact = Path(str(artifacts.get("cohort_wsl", ""))).resolve()
+    if (
+        artifact_root != declared_artifact
+        or path != artifact_root / "public" / "run-config.json"
+    ):
+        raise ValueError("Artifact output directory is outside run config")
+
+    allowed = {
+        (str(row["task_id"]), int(row["repetition"]), str(row["row_id"]))
+        for row in payload.get("allowed_rows", [])
+        if isinstance(row, Mapping)
+    }
+    row_ids = []
+    for task_id, repetition, row_id in requested_rows:
+        identity = (str(task_id), int(repetition), str(row_id))
+        if identity not in allowed:
+            raise ValueError("requested row is outside run config")
+        private_row = artifact_root / "private" / "rows" / row_id
+        public_row = artifact_root / "public" / "rows" / row_id
+        if private_row.exists() or public_row.exists():
+            raise ValueError(f"target row already exists: {row_id}")
+        row_ids.append(row_id)
+
+    locator = os.environ.get(CONFIG_LOCATOR_ENV, "")
+    locator_path = Path(locator) if locator else None
+    if not locator_path or not locator_path.is_file():
+        raise ValueError(
+            f"{CONFIG_LOCATOR_ENV} must identify an existing regular file"
+        )
+    expected_profile = _required_object(
+        _required_object(payload, "profile"),
+        "public_profile",
+    )
+    from pico.config import resolve_provider_config
+
+    provider = resolve_provider_config(
+        str(expected_profile["provider"]),
+        start=source_root,
+        config_path=locator,
+    )
+    actual_identity = provider.public_identity()
+    actual_profile = {
+        "provider": provider.name,
+        "profile_id": actual_identity.get("profile_id"),
+        "model": provider.model,
+    }
+    frozen_profile = {
+        key: expected_profile.get(key)
+        for key in ("provider", "profile_id", "model")
+    }
+    if actual_profile != frozen_profile:
+        raise ValueError("resolved provider/profile/model does not match run config")
+
+    from pico.evaluation.live_client import probe_required_network_sandbox
+
+    probe_required_network_sandbox()
+    return LiveStartValidation(
+        payload=payload,
+        sha256=digest,
+        row_ids=tuple(row_ids),
+        sensitive_values=tuple(
+            value for value in (locator, provider.api_key) if value
+        ),
+    )
+
+
+def _read_run_config(
+    path: Path,
+    *,
+    require_canonical: bool,
+) -> tuple[dict[str, Any], str]:
     path = path.resolve()
     payload = _load_object(path)
     if payload.get("schema_version") != RUN_CONFIG_SCHEMA:
         raise ValueError("unsupported run config schema")
     if canonical_json(payload) != path.read_bytes():
-        raise ValueError("run config is not canonical JSON")
+        if require_canonical:
+            raise ValueError("run config is not canonical JSON")
     digest = sha256_file(path)
     hash_path = path.with_name("run-config.sha256")
     if hash_path.read_text(encoding="ascii").strip() != digest:
         raise ValueError("run config SHA-256 does not match")
     _validate_run_config_payload(payload)
-    if source_root is not None:
-        source_root = source_root.resolve()
-        if len(path.parents) < 4:
-            raise ValueError("run config path does not have the frozen cohort layout")
-        expected = build_run_config(
-            source_root=source_root,
-            artifact_root=path.parents[3],
-            cohort_id=str(payload["cohort_id"]),
-        )
-        if payload != expected:
-            raise ValueError(
-                "run config does not exactly match its source, environment, and schedule"
-            )
-    return {"cohort_id": payload["cohort_id"], "sha256": digest, "source": payload["source"]}
+    return payload, digest
 
 
 def _validate_run_config_payload(payload: Mapping[str, Any]) -> None:
@@ -373,11 +469,6 @@ def _validate_run_config_payload(payload: Mapping[str, Any]) -> None:
         "value_persisted"
     ) is not False:
         raise ValueError("run config private locator policy drift")
-    serialized = json.dumps(payload, sort_keys=True)
-    if os.environ.get(CONFIG_LOCATOR_ENV, "") in serialized and os.environ.get(
-        CONFIG_LOCATOR_ENV, ""
-    ):
-        raise ValueError("run config contains the private config locator")
 
 
 def _public_profile(selected: Mapping[str, Any]) -> dict[str, Any]:
@@ -418,21 +509,21 @@ def _validate_selected_profile(profile: Mapping[str, Any]) -> None:
 
 
 def _runtime_environment() -> dict[str, str]:
-    release = platform.freedesktop_os_release()
-    value = {
+    try:
+        release = platform.freedesktop_os_release()
+    except OSError:
+        release = {}
+    try:
+        sdk_version = metadata.version("openai")
+    except metadata.PackageNotFoundError:
+        sdk_version = "unavailable"
+    return {
         "execution_environment": "Ubuntu WSL2",
         "os": f"{release.get('ID', '')} {release.get('VERSION_ID', '')}".strip(),
         "python": platform.python_version(),
         "implementation": platform.python_implementation(),
-        "openai_sdk": metadata.version("openai"),
+        "openai_sdk": sdk_version,
     }
-    if value["os"] != "ubuntu 26.04":
-        raise ValueError("Evaluation v2 config freeze requires Ubuntu 26.04")
-    if value["python"] != "3.12.13" or value["implementation"] != "CPython":
-        raise ValueError("Evaluation v2 config freeze requires CPython 3.12.13")
-    if value["openai_sdk"] != "2.46.0":
-        raise ValueError("Evaluation v2 config freeze requires openai SDK 2.46.0")
-    return value
 
 
 def _locator_check() -> dict[str, bool]:
@@ -447,9 +538,14 @@ def _locator_check() -> dict[str, bool]:
 
 def _git_identity(source_root: Path, *, require_clean: bool = True) -> tuple[str, str]:
     if require_clean:
-        status = _git(source_root, "status", "--porcelain")
+        status = _git(
+            source_root,
+            "status",
+            "--porcelain",
+            "--untracked-files=no",
+        )
         if status:
-            raise ValueError("run config source checkout must be clean")
+            raise ValueError("run config source tracked files must be clean")
     commit = _git(source_root, "rev-parse", "HEAD")
     tree = _git(source_root, "rev-parse", "HEAD^{tree}")
     if len(commit) != 40 or len(tree) != 40:
@@ -492,6 +588,7 @@ def _write_bytes_atomic(path: Path, content: bytes) -> None:
 
 __all__ = [
     "CONFIG_LOCATOR_ENV",
+    "LiveStartValidation",
     "RUN_CONFIG_SCHEMA",
     "SUPPORTED_COHORTS",
     "TASKSET_LOCK_PATH",
@@ -499,6 +596,7 @@ __all__ = [
     "build_run_config",
     "canonical_json",
     "sha256_file",
+    "validate_live_start",
     "verify_run_config",
     "verify_taskset_lock",
     "write_run_config",

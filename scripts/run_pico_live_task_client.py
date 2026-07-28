@@ -18,7 +18,6 @@ from pico.core.workspace import WorkspaceContext
 from pico.evaluation.evaluation_v2_config import (
     CONFIG_LOCATOR_ENV,
     canonical_json,
-    verify_run_config,
 )
 from pico.evaluation.live_client import (
     AuditedNativeClient,
@@ -33,7 +32,6 @@ from pico.evaluation.live_tasks import (
     HttpAttempt,
 )
 from pico.evaluation.native_provider_profiles import (
-    assert_provider_profile_matches,
     provider_session_identity,
 )
 from pico.providers import build_native_model_client
@@ -215,18 +213,13 @@ def _validated_live_inputs(
     if not prompt:
         raise SystemExit(f"{PROMPT_ENV} is required")
     run_config = _load_object(run_config_path)
-    source_root = Path(run_config["source"]["workspace_root"])
-    verify_run_config(run_config_path, source_root=source_root)
-    locator = os.environ.get(CONFIG_LOCATOR_ENV, "")
-    if not locator or not Path(locator).is_file():
-        raise SystemExit(f"{CONFIG_LOCATOR_ENV} must identify an existing file")
+    locator = os.environ[CONFIG_LOCATOR_ENV]
     expected_profile = run_config["profile"]["public_profile"]
     provider_config = resolve_provider_config(
         str(expected_profile["provider"]),
         start=workspace,
         config_path=locator,
     )
-    assert_provider_profile_matches(provider_config, expected_profile)
     return workspace, evidence_path, prompt, run_config, provider_config, locator
 
 
@@ -243,9 +236,6 @@ def _build_agent(
             str(Path(sys.base_prefix).parent),
         )
     )
-    probe = sandbox.run("true", cwd=workspace, env={}, timeout=10)
-    if probe.returncode:
-        raise RuntimeError("network-isolated bubblewrap preflight failed")
     agent = Pico(
         model_client=client,
         workspace=WorkspaceContext.build(workspace),

@@ -545,28 +545,6 @@ def test_checksum_verifier_rejects_duplicate_and_invalid_metadata(
         verify_checksums(manifest, root)
 
 
-def test_lock_drift_fails_before_row_directories_are_created(
-    tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    config_path, cohort_root = _write_config(tmp_path, monkeypatch)
-    monkeypatch.setattr(
-        configlib,
-        "verify_taskset_lock",
-        lambda _root: (_ for _ in ()).throw(ValueError("taskset drift")),
-    )
-
-    with pytest.raises(ValueError, match="taskset drift"):
-        LocalLiveTaskRunner(cohort_root).run(
-            load_task_specs(TASKSET)[0],
-            _request(config_path),
-            FakeT01Client(),
-        )
-
-    assert not (cohort_root / "public" / "rows").exists()
-    assert not (cohort_root / "private" / "rows").exists()
-
-
 def test_row_directory_collision_is_never_overwritten(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:

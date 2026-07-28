@@ -11,16 +11,14 @@ import subprocess
 import tempfile
 from typing import Any, Mapping
 
-from pico.config import resolve_provider_config
 from pico.evaluation.evaluation_v2_config import (
-    CONFIG_LOCATOR_ENV,
     SUPPORTED_COHORTS,
     TASKSET_PATH,
     canonical_json,
+    validate_live_start,
     verify_run_config,
     write_run_config,
 )
-from pico.evaluation.evaluation_v2_schedule import PILOT_COHORTS
 from pico.evaluation.live_tasks import (
     ClientResult,
     FailureCategory,
@@ -228,7 +226,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--stage", default="")
     parser.add_argument("--task", action="append", default=[])
     parser.add_argument("--repo", action="append", default=[])
-    parser.add_argument("--repetitions", type=int, default=1)
+    parser.add_argument("--repetitions", type=int)
     parser.add_argument(
         "--run-kind",
         action="append",
@@ -249,9 +247,19 @@ def main(argv: list[str] | None = None) -> int:
     if args.verify_only:
         if args.run_config is None:
             raise SystemExit("--verify-only requires --run-config")
+        if (
+            args.cohort_id
+            or args.stage
+            or args.task
+            or args.repo
+            or args.repetitions is not None
+        ):
+            raise SystemExit(
+                "--verify-only does not accept live selection parameters"
+            )
         print(
             json.dumps(
-                verify_run_config(args.run_config, source_root=SOURCE_ROOT),
+                verify_run_config(args.run_config),
                 indent=2,
                 sort_keys=True,
             )
@@ -287,13 +295,12 @@ def _prepare_configs(args: argparse.Namespace) -> int:
 def _run_evaluation_v2(args: argparse.Namespace) -> int:
     if args.client_command:
         raise SystemExit("Evaluation v2 client command is frozen in run-config.json")
-    if args.repetitions < 1:
+    repetitions = 1 if args.repetitions is None else args.repetitions
+    if repetitions < 1:
         raise SystemExit("--repetitions must be positive")
-    verify_run_config(args.run_config, source_root=SOURCE_ROOT)
-    payload = _load_object(args.run_config)
-    cohort_id = args.cohort_id or str(payload["cohort_id"])
-    if cohort_id != payload["cohort_id"]:
-        raise SystemExit("--cohort-id does not match --run-config")
+    if args.cohort_id is None:
+        raise SystemExit("Evaluation v2 live execution requires --cohort-id")
+    cohort_id = args.cohort_id
     tasks = select_tasks(
         load_task_specs(SOURCE_ROOT / TASKSET_PATH),
         task_ids=args.task,
@@ -302,35 +309,41 @@ def _run_evaluation_v2(args: argparse.Namespace) -> int:
     if not tasks:
         raise SystemExit("no tasks matched the requested filters")
     tasks = sorted(tasks, key=lambda task: task.task_id)
-    allowed = {
-        (str(row["task_id"]), int(row["repetition"])): str(row["row_id"])
-        for row in payload["allowed_rows"]
-    }
     selected = [
         (task, repetition)
-        for repetition in range(1, args.repetitions + 1)
+        for repetition in range(1, repetitions + 1)
         for task in tasks
     ]
-    if any((task.task_id, repetition) not in allowed for task, repetition in selected):
-        raise SystemExit("requested rows are outside the frozen run config")
-    _validate_stage_selection(
+    requested_rows = [
+        (
+            task.task_id,
+            repetition,
+            f"{cohort_id}-{task.task_id}-r{repetition}",
+        )
+        for task, repetition in selected
+    ]
+    cohort_root = args.run_config.resolve().parents[1]
+    validation = validate_live_start(
+        args.run_config,
+        source_root=SOURCE_ROOT,
         cohort_id=cohort_id,
-        stage=args.stage,
-        selected=selected,
+        requested_rows=requested_rows,
+        artifact_root=cohort_root,
     )
-
+    payload = validation.payload
     command = [str(item) for item in payload["client"]["command"]]
     client = CommandClient(
         command,
         timeout_seconds=float(payload["runtime"]["row_timeout_seconds"]),
     )
-    cohort_root = args.run_config.resolve().parents[1]
     runner = LocalLiveTaskRunner(cohort_root)
     source = payload["source"]
-    sensitive_values = _sensitive_values(payload)
     summaries = []
-    for task, repetition in selected:
-        row_id = allowed[(task.task_id, repetition)]
+    for (task, repetition), row_id in zip(
+        selected,
+        validation.row_ids,
+        strict=True,
+    ):
         evidence = runner.run(
             task,
             RunRequest(
@@ -345,7 +358,7 @@ def _run_evaluation_v2(args: argparse.Namespace) -> int:
                 repetition=repetition,
                 stage=args.stage,
                 run_config_path=args.run_config.resolve(),
-                sensitive_values=sensitive_values,
+                sensitive_values=validation.sensitive_values,
             ),
             client,
         )
@@ -365,53 +378,6 @@ def _run_evaluation_v2(args: argparse.Namespace) -> int:
             break
     print(json.dumps(summaries, indent=2, sort_keys=True))
     return int(any(row["status"] != "passed" for row in summaries))
-
-
-def _validate_stage_selection(
-    *,
-    cohort_id: str,
-    stage: str,
-    selected: list[tuple[Any, int]],
-) -> None:
-    stage_tasks = {
-        ("pilot-v1", "P3-G0"): ("T01",),
-        ("pilot-v1", "P3-remainder"): ("T04", "T07"),
-        ("pilot-v2", "P3-G0"): ("T01",),
-        ("pilot-v2", "P3-remainder"): ("T04", "T07"),
-        ("pilot-v3", "P3-G0"): ("T01",),
-        ("pilot-v3", "P3-remainder"): ("T04", "T07"),
-        ("baseline-v1", "P4A"): ("T01", "T02", "T03"),
-        ("baseline-v1", "P4B"): ("T04", "T05", "T06"),
-        ("baseline-v1", "P4C"): ("T07", "T08", "T09"),
-    }
-    expected_tasks = stage_tasks.get((cohort_id, stage))
-    if expected_tasks is None:
-        raise SystemExit("Evaluation v2 requires a frozen stage identifier")
-    repetitions = 1 if cohort_id in PILOT_COHORTS else 3
-    expected = {
-        (task_id, repetition)
-        for repetition in range(1, repetitions + 1)
-        for task_id in expected_tasks
-    }
-    observed = {(task.task_id, repetition) for task, repetition in selected}
-    if observed != expected:
-        raise SystemExit("requested rows do not exactly match the frozen stage")
-
-
-def _sensitive_values(payload: Mapping[str, Any]) -> tuple[str, ...]:
-    locator = os.environ.get(CONFIG_LOCATOR_ENV, "")
-    if not locator:
-        raise SystemExit(f"{CONFIG_LOCATOR_ENV} is required for live Evaluation v2")
-    path = Path(locator)
-    if not path.is_file():
-        raise SystemExit(f"{CONFIG_LOCATOR_ENV} must identify an existing file")
-    profile = payload["profile"]["public_profile"]
-    config = resolve_provider_config(
-        str(profile["provider"]),
-        start=SOURCE_ROOT,
-        config_path=locator,
-    )
-    return tuple(value for value in (locator, config.api_key) if value)
 
 
 def _run_legacy(args: argparse.Namespace) -> int:

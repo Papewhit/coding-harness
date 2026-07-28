@@ -94,17 +94,18 @@ public/modules/checksums.json
 
 ### 适用目的与不适用范围
 
-`scripts/run_local_coding_tasks.py` 现有离线模式保持不变；Evaluation v2 模式用于验证冻结的 9-task taskset、生成或只读核验隔离的 `pilot-vN` 与 `baseline-v1` run config，并在后续独立授权的 P3/P4 阶段启动真实 Pico Runtime。当前已使用 `pilot-v1`、`pilot-v2`，`pilot-v3` 只作为下一次纠正性观察的预留身份。
+`scripts/run_local_coding_tasks.py` 现有离线模式保持不变；Evaluation v2 模式用于验证冻结的 9-task taskset、生成或只读核验隔离的 `pilot-vN` 与 `baseline-v1` run config，并在用户明确要求开始相应 P3/P4 阶段后启动真实 Pico Runtime。`pilot-v1`、`pilot-v2` 是不可变历史批次，`pilot-v3` 是下一次纠正性观察的独立身份。
 
-P2 自身只运行 fake client、hidden verifier 和确定性证据检查。生成或验证 run config 不解析 provider credential、不构造 provider transport，也不发起 provider HTTP。run config 获用户接受不等于 G0；G0 仍由另行授权的 P3 首条 T01 live row 验证。
+P2 和后续配置冻结只运行 fake client、hidden verifier 和确定性证据检查。生成或验证 run config 不解析 provider credential、不构造 provider transport，也不发起 provider HTTP。展示配置不是签名或单独接受步骤；用户明确要求开始 P3 时，G0 才由首条 T01 live row 验证。
 
-### 运行前置条件
+### 配置生成条件
 
-- 在 Ubuntu 26.04 WSL2 的 clean fresh clone 中运行，HEAD 必须是拟冻结的完整 source commit，Python 必须为 CPython 3.12.13。
-- 使用 providers extra 安装依赖；OpenAI SDK 必须精确为 `2.46.0`。
+- 在 WSL2 fresh clone 中运行，当前 tracked 文件必须 clean，HEAD/tree 将作为完整 source 身份写入配置；untracked 文件不阻断生成。
+- 使用 providers extra 安装依赖。生成器记录当时的 Python、操作系统和 OpenAI SDK 事实，但不因解释器别名、符号链接、clone 绝对路径、操作系统补丁版本、SDK 当前版本或 locator 当前状态阻断。
 - `benchmarks/v3/local-repos/taskset.json`、`taskset.lock.json`、仓库 base snapshot、task doc、hidden verifier 和 reference patch 必须全部通过锁文件重算。
-- `PICO_NATIVE_PROVIDER_CONFIG` 只在 launcher 进程内指向一个存在的文件。若 WSL 未继承该变量，只在当前 Windows launcher 进程的 `WSLENV` 中追加 `PICO_NATIVE_PROVIDER_CONFIG/p`；不得把 locator 写入命令行、仓库、Artifact 或持久化 shell 配置。
 - 固定 Artifact 根目录为 `/mnt/f/dev/llm/pico-eval-artifacts/evaluation-v2`，对应 Windows 的 `F:\dev\llm\pico-eval-artifacts\evaluation-v2`。目标 `<cohort-id>/<source-sha>` 必须不存在或为空。
+
+生成配置不要求 `PICO_NATIVE_PROVIDER_CONFIG` 已设置。配置只记录生成时 locator 的存在性和类型事实，不记录 locator 或 credential 值。
 
 依赖准备：
 
@@ -145,19 +146,23 @@ uv run --frozen --extra providers --python 3.12 \
   --verify-only
 ```
 
-只读验证不执行任务。它核对 canonical JSON、旁路哈希、clean checkout 的 source/tree、运行环境、taskset 与仓库树、profile selection、client 文件、固定策略、row 清单和 launch command；任一漂移都会在创建评测行目录和首次 provider HTTP 之前失败。
+该 `--verify-only` 只检查 canonical JSON、既有 v1 schema 和旁路哈希，不执行任务、不读取 locator、不解析 provider、不探测 sandbox、不构造 Runtime/client，也不要求当前 checkout 对应配置 source。它拒绝 `--cohort-id`、`--stage`、`--task`、`--repo` 和 `--repetitions` 等 live 选择参数。
 
-### Evaluation v2 live 参数与授权边界
+### Evaluation v2 live 参数与启动验证
 
 正式入口接受：
 
-- `--run-config`：已接受的 canonical 配置；
-- `--cohort-id`：当前实现接受 `pilot-v1`、`pilot-v2`、`pilot-v3` 或 `baseline-v1`，必须与配置一致；新 Pilot 身份本身不构成 live 授权；
-- `--stage`：配置冻结的 `P3-G0`、`P3-remainder`、`P4A`、`P4B` 或 `P4C`；
+- `--run-config`：冻结配置；
+- `--cohort-id`：当前实现接受 `pilot-v1`、`pilot-v2`、`pilot-v3` 或 `baseline-v1`，必须与配置一致；
+- `--stage`：供 row 记录的 `P3-G0`、`P3-remainder`、`P4A`、`P4B` 或 `P4C`；
 - `--task`、`--repo`：可重复使用的任务或仓库过滤器；
-- `--repetitions`：该阶段冻结的重复次数。
+- `--repetitions`：请求的重复次数，省略时为 1。
 
-runner 要求请求集合与该阶段的冻结集合精确相同，按 repetition-major、task ID 升序执行。P3/P4 不得手工拼装新命令；应直接使用对应 `run-config.json` 的 `launch_commands`。截至 P2，这些命令只是冻结内容，未获执行授权。
+正式 live 命令在创建首条 row 和首次 provider HTTP 前只调用一次 `validate_live_start`。它只阻断五类情况：配置 JSON/schema/旁路哈希失败；tracked source 不 clean 或 HEAD/tree 不符；请求 row/Artifact 越界或目标 row 已存在；locator 不是文件或 provider/profile/model 不符；正式 bubblewrap 加 `--unshare-net` 的单次最小 marker 探针失败。它不重建配置、不构造 Runtime/client、不推导 HTTP 上限，也不要求请求集合等于某阶段的完整 row 集合。
+
+P3/P4 的顺序和完整 row 集合由计划与配置中的冻结命令约束；runner 只要求每条请求都在 `allowed_rows` 内，并按 repetition-major、task ID 升序执行。不得手工拼装遗漏 row 的替代命令；应原样使用 `run-config.json` 的 `launch_commands`。用户明确要求开始某阶段即允许执行该阶段计划内的冻结命令，不创建或检查授权文件、授权环境变量或 status 授权记录。
+
+live 启动时，`PICO_NATIVE_PROVIDER_CONFIG` 只在 launcher 进程内指向一个文件。若 WSL 未继承该变量，只在当前 Windows launcher 进程的 `WSLENV` 中追加 `PICO_NATIVE_PROVIDER_CONFIG/p`；不得把 locator 写入命令行、仓库、Artifact 或持久化 shell 配置。子进程会为实际执行再次读取 provider 配置，但不重复作 profile 启动判定。
 
 ### Runtime 与写入范围
 
@@ -165,7 +170,7 @@ runner 要求请求集合与该阶段的冻结集合精确相同，按 repetitio
 
 固定 Runtime 策略为：`approval=auto`、workspace-only write scope、关闭 auto-dream、最大输出 4096 token、最多 50 个工具步骤、provider timeout 300 秒、单行 timeout 600 秒、stream=false、并行工具=false、SDK retry=0、Pico provider attempts=1、semantic rerun=0。只开放 `list_files`、`read_file`、`search`、`run_shell`、`write_file`、`patch_file` 和三个 todo 工具；子 agent、交互询问和 plan 工具不可用。
 
-`run_shell` 必须通过 bubblewrap，并对工具子进程添加 `--unshare-net`。工具进程只能写 fresh task workspace；当前 Python venv 只读挂载。provider transport 不进入该网络命名空间，仍由外层 client 联网。bubblewrap 或 network namespace 不可用时在首次 provider HTTP 之前停止。
+`run_shell` 必须通过 bubblewrap，并对工具子进程添加 `--unshare-net`。工具进程只能写 fresh task workspace；当前 Python venv 只读挂载。provider transport 不进入该网络命名空间，仍由外层 client 联网。启动验证只执行一次与正式配置相同的最小 marker 探针；工具路径、挂载和其他安全性质由离线测试覆盖，不在 live 前扩展为 sandbox conformance suite。
 
 ### Row Artifact 与结果解释
 
@@ -237,4 +242,4 @@ uv run --frozen --extra providers --python 3.12 \
   --verify-only
 ```
 
-`--verify-only` 验证配置、每条既有 row 的完整 checksum、audit/decision 合同、报告重算和 Markdown 重建。它不读取 provider locator 或 credential，不写文件，也不发起 provider HTTP。
+这里的 finalizer `--verify-only` 与前述 run-config CLI 是两个不同入口：它验证配置、每条既有 row 的完整 checksum、audit/decision 合同、报告重算和 Markdown 重建。它不读取 provider locator 或 credential，不写文件，也不发起 provider HTTP。

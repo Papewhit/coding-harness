@@ -6,8 +6,8 @@
 
 ## 当前状态
 
-- 当前阶段：P3——三任务 Pilot 与 G0 已停止并关闭；T01 测量无效，G0 未通过。
-- 阶段结论：T01 只执行一次，精确 provider 请求数为 0；证据没有 `model_requested`、工具调用或 workspace 修改，client 在模型执行前异常退出，但实际异常类型没有保留且外层 runner 将零请求异常误标为 provider。该 row 已永久分类为 `invalid`，T04/T07 按计划保持 `no result`，没有启动任何后续 live 命令。
+- 当前阶段：P3——正在纯离线收敛 `pilot-v3` 的唯一 live 启动验证职责并准备冻结新 source/config；尚未启动 `pilot-v3` row 或 provider HTTP。
+- 历史阶段结论：`pilot-v1` 的 T01 只执行一次并永久分类为 `invalid`；`pilot-v2` 在首条 row 创建前停止，三条 row 均为 `no result`。两批历史 Artifact 保持不可变。
 - 历史控制 checkpoint： `2876cd53e17fd2b6eb089dbfaf14cd67615498fc`。
 - 计划中的 P0 起点： `44677cd7f6a9535c1a74e8628078e9d4967594b5`。
 - 实际 P0 起始 commit： `758eeaf7360f09296bc8a87567b021e68ca097d7`。该提交只解除 Evaluation v2 启动暂停并更新文档状态；P0 在检查其 diff 后从该 clean commit 开始。
@@ -23,8 +23,8 @@
 - P2 结束 commit：承载本阶段关闭记录的独立 docs commit；完整 SHA 在提交后的交付消息中报告，不为回填而 amend。
 - 正式 Artifact： `F:\dev\llm\pico-eval-artifacts\evaluation-v2\module-baseline-v1\dcd8ea110c6c4dad5c09943fab26b8197142ae29`。
 - wrapper revision 使用量：`0/1`。`dcd8ea1` 是正式测量前由总体方案和 user guide 交付要求驱动的实现对齐，不是测量 wrapper 缺陷修订。
-- 当前 blocker：G0 未通过。`pilot-v1-T01-r1` 不得重跑或覆盖；P4A 未获授权且不能启动。
-- 下一动作：保持当前 Pilot Artifact 不变。只有在离线修复“pre-HTTP client 异常类型留存与失败分类”并冻结新的 source/config 后，才可由用户决定是否建立新的 Pilot cohort 和单独 live 授权。
+- 当前边界：P4A 不能启动；`pilot-v1`、`pilot-v2` 不得重跑、覆盖或重新分类。
+- 下一动作：提交并在新的 detached WSL clone 复验唯一启动验证实现，生成和展示 `pilot-v3` 配置及哈希，然后停止。只有用户明确要求开始 P3 后才执行冻结的 G0 命令。
 
 ## 历史无效测量
 
@@ -378,4 +378,20 @@ G0 未通过。P4A 不得启动。
 - 离线修复 commit：`f10b4b5ea822af7f0374260553ba610965498509`。WSL CPython 3.12.13 下，真实桥接、Evaluation v2 evidence、Pilot report 与 live evaluator 共 55 项 targeted tests 通过，scoped Ruff 通过。
 - `pilot-v2` 报告已由上述提交生成并通过 `--verify-only`：`g0_status=pending`、planned 3、final classified 0、no result 3，Markdown 可逐字节重建。valid-run rate 与 verified-run success 均无分母；provider 请求合计为 0，tool steps、repeated reads 与 Runtime elapsed time 没有可用样本。
 - 公开 Artifact 共 4 个文件：run config、旁路哈希和两份报告。实际 locator 与 credential 共 2 个敏感值的精确扫描命中 0；`public/rows` 目录不存在。
-- `pilot-v3` 已作为新的隔离 cohort 身份加入离线实现，但尚未获得授权。生成其 run config、建立 live clone 或执行任何命令前，必须先提交并验收本修复，再由用户明确授权新的 source/tree、配置哈希、三条 row 与独占输出目录。
+- `pilot-v3` 已作为新的隔离 cohort 身份加入离线实现。本次后续工作先提交并验收启动验证职责修复，再生成和展示新的 source/tree、配置哈希、三条 row 与独占输出目录；展示后停止，等待用户明确要求开始 P3。
+
+## P3 `pilot-v3` 启动验证职责收敛（预冻结）
+
+### 实现边界
+
+- run-config 生成器只要求当前 tracked source clean；Python 解释器别名、符号链接、clone 绝对路径、操作系统补丁、SDK/locator 当前状态只作为事实记录，不作为生成阻断。
+- `verify_run_config(path)` 和 run-config CLI 的 `--verify-only` 只检查 canonical JSON、既有 v1 schema 与旁路哈希；该 CLI 拒绝 live 选择参数，不读取 locator，不解析 provider，不探测 sandbox，也不构造 Runtime/client。
+- 新的 `validate_live_start` 是 row 创建和首次 provider HTTP 前唯一的机械启动验证器。它只检查配置/哈希、tracked source HEAD/tree、请求 row 与 Artifact 边界、locator 与公开 provider/profile/model，以及一次正式 bubblewrap `--unshare-net` marker 探针。
+- runner、row capture 和 live-task client 不再重建整份配置或重复 profile/sandbox 启动判断。row evidence validator 只处理运行后证据和分类。
+- 校验器不解析冻结 argv、不检查阶段完整 row 集合、不预构造 Runtime/client、不推导 HTTP 上限；已知 prompt `ValueError` 的真实生产桥接仍保留为可信的 `runtime / pre_request` 产品失败。
+
+### 离线状态与下一步
+
+- 本节所在实现 commit 是待冻结 source A；其完整 commit/tree 在提交后交付，并由下一次独立 docs commit 连同最终 run-config SHA-256 一并记录。
+- Evaluation v2 live-start、evidence 和生产桥接定向测试及 scoped Ruff 已在控制 checkout 通过；未调用 provider，provider HTTP 为 0。
+- 下一步是在新的 detached WSL clone 中复跑定向验收，生成唯一 `pilot-v3/<source-A>/public/run-config.*`，执行纯格式 `--verify-only` 并展示冻结命令。完成后停止，不自动执行 G0 或进入 P4A。
