@@ -6,8 +6,8 @@
 
 ## 当前状态
 
-- 当前阶段：P4B 已完成并停止；tinyconfig 与 miniqueue 共 18 条主评测行均已最终分类，P4C 尚未启动，其余 9 条 `baseline-v1` 主评测行为 `no result`。
-- 阶段结论：P4B 的 9 条测量全部为 `valid + passed`，T04–T06 均为 `stable-pass`。当前 cohort 共 17 条 `valid + passed`、1 条 `valid + failed / model_behavior`、0 条 `invalid`；G1 为 `pending`（18/27 final classified）。
+- 当前阶段：P4C 已完成并停止；27 条 `baseline-v1` 主评测行全部最终分类，P4 正式基线执行完成，P5 尚未启动。
+- 阶段结论：P4C 的 9 条测量全部为 `valid + passed`，T07–T09 均为 `stable-pass`。完整 cohort 共 26 条 `valid + passed`、1 条 `valid + failed / model_behavior`、0 条 `invalid`；G1 已通过（27/27 final classified）。
 - 历史控制 checkpoint： `2876cd53e17fd2b6eb089dbfaf14cd67615498fc`。
 - 计划中的 P0 起点： `44677cd7f6a9535c1a74e8628078e9d4967594b5`。
 - 实际 P0 起始 commit： `758eeaf7360f09296bc8a87567b021e68ca097d7`。该提交只解除 Evaluation v2 启动暂停并更新文档状态；P0 在检查其 diff 后从该 clean commit 开始。
@@ -24,8 +24,8 @@
 - P4 frozen source：`542f97a023218ee04c00225de994f152bfed748e`；tree：`34e75ea5ff6340948493c93ba449b8980c2a8f85`；Baseline run config SHA-256：`79435b0c961e775e7de0ad68eee950f322c7094ddd10da4aba17ab728040faff`。
 - 正式 Artifact： `F:\dev\llm\pico-eval-artifacts\evaluation-v2\module-baseline-v1\dcd8ea110c6c4dad5c09943fab26b8197142ae29`。
 - wrapper revision 使用量：`0/1`。`dcd8ea1` 是正式测量前由总体方案和 user guide 交付要求驱动的实现对齐，不是测量 wrapper 缺陷修订。
-- 当前边界：P4B 已停止，不能自动进入 P4C。`pilot-v1`、`pilot-v2`、`pilot-v3`、`pilot-v4` 及 P4A/P4B 的 18 条 row 均不得重跑、覆盖或重新分类；`baseline-v1` 配置及其 27 条 row 身份保持冻结。
-- 下一动作：只有用户明确要求开始 P4C 后，才在同一 frozen clone 中复核冻结身份并原样执行 run config 的 `p4c` 命令一次；不得重新生成或替换配置。
+- 当前边界：P4C 已停止，不能自动进入 P5。`pilot-v1`、`pilot-v2`、`pilot-v3`、`pilot-v4` 及 `baseline-v1` 的 27 条 row 均不得重跑、覆盖或重新分类；正式基线配置与证据保持冻结。
+- 下一动作：等待用户明确要求开始 P5；P5 只能从已封存的模块基线和 27 条 coding rows 生成首份项目评测基线报告，不得调用 provider 或改写 P4 证据。
 
 ## 历史无效测量
 
@@ -699,3 +699,69 @@ uv run --frozen --extra providers --python 3.12 python scripts/run_local_coding_
 
 - 当前没有实现、配置或测量 blocker；G1 尚未通过仅因为 P4C 的 9 条计划 row 尚未启动。
 - 只有用户明确要求开始 P4C 后，才复核同一 frozen source/tree、run config 哈希和 P4C row 缺失状态，并在 frozen clone 中原样执行一次 `p4c` 命令。完成 P4C 审计、指标、G1 结论、status 与阶段提交后停止，不自动进入 P5。
+
+## P4C logslice 正式基线（已完成）
+
+### 阶段结论
+
+- 已按冻结配置执行 logslice 的 T07–T09，每个任务 3 次独立重复，共 9 条主评测行；冻结 live 命令只启动一次，没有 retry、replacement row、语义重跑或额外 live 命令。
+- 9 条 row 均为 `valid + passed`，0 条 `valid + failed`、`invalid`、`pending audit`、`pending decision` 或 `no result`；T07、T08、T09 均为 `stable-pass`。
+- live 命令完成全部 9 条 row 并返回 exit 0。Runtime、provider、协议、测量和 deterministic verifier 均未出现失败。
+- 完整 `baseline-v1` 的 27 条主评测行全部最终分类，G1 通过。P4A 的一条模型行为失败按原分类保留，其余 26 条通过。
+- P4C 在此关闭，不自动进入 P5；本阶段没有生成 P5 报告。
+
+### 起始、结束与冻结身份
+
+- P4C 控制面起始 commit：`5d4a4afc25154d85c3ca5d7aa411346cbb777467`。
+- P4C 结束：承载本状态条目的 docs commit；完整 SHA 在提交后的交付消息中报告，不为回填而 amend。
+- frozen source commit：`542f97a023218ee04c00225de994f152bfed748e`；tree：`34e75ea5ff6340948493c93ba449b8980c2a8f85`。
+- fresh clone：`/home/papewhit/pico-eval-clones/p4-542f97a023218`；运行前后 tracked 状态 clean。
+- run config SHA-256：`79435b0c961e775e7de0ad68eee950f322c7094ddd10da4aba17ab728040faff`。
+- live 执行窗口：`2026-07-28T22:24:47.152225+08:00` 至 `2026-07-28T22:33:35.342524+08:00`。
+
+### 实际修改文件和 diff stat
+
+- `M docs/evaluation/evaluation-v2-status.md`
+- 汇总：1 file changed, 70 insertions(+), 4 deletions(-)。
+- 阶段提交只更新本状态文档；row、审计和 checksums 位于仓库外的正式 Artifact，不进入 Git diff。
+- user guide 无变化：本阶段没有新增或改变评测入口、参数、前置条件、调用范围、Artifact 结构或结果解释。
+
+### 执行过的命令与复核
+
+- 启动前确认控制仓库与 frozen clone clean，HEAD/tree、run config SHA-256 和旁路哈希均与冻结值一致；P4C 的 9 条 public/private row 均不存在，provider locator 存在且指向文件，未发现已运行的 P4C 进程。
+- 在 frozen clone 中原样执行一次 P4C 冻结命令：
+
+```text
+uv run --frozen --extra providers --python 3.12 python scripts/run_local_coding_tasks.py --run-config /mnt/f/dev/llm/pico-eval-artifacts/evaluation-v2/baseline-v1/542f97a023218ee04c00225de994f152bfed748e/public/run-config.json --cohort-id baseline-v1 --stage P4C --repo logslice --repetitions 3 --resume-missing
+```
+
+- Codex 逐行审计 `run-record.json`、`evidence-view.json` 和 verifier 结果；9 份审计均通过 schema 与确定性分类校验，追加后重新封存 checksums，无需用户裁决。
+- 独立执行 Baseline finalizer `--verify-only --stage P4C`，结果为 exit 0；P4C 9/9、cohort 27/27 final classified，checksums、审计、阶段指标、完整 cohort 指标和 G1 结论均可确定性重算。
+- 实际 locator 与 credential 共 2 个敏感值扫描 `public/` 326 个文件和 `reports/` 0 个文件，命中 0。
+- 9 条 P4C row 的 measurement error、protocol error、SDK retry 和 Pico retry 均为 0；provider 请求计数全部为 exact，native tool call/result ID 一一对应。
+
+### 新增 rows、完整 metrics 与 G1
+
+- 新增正式 Baseline rows：9；cohort final classified 27/27，`no result`、`pending audit` 和 `pending decision` 均为 0，G1 为 `passed`。
+- P4C valid-run rate：9/9（100%）；verified-run success：9/9（100%）。
+- P4C stable task status：T07、T08、T09 均为 `stable-pass`；failure category 为空。
+- P4C provider 请求：9/9 样本 complete，合计 106。
+- P4C tool steps：mean 13.33，median 11。
+- P4C repeated reads：总数 5，mean 0.56，median 1。
+- P4C Runtime elapsed time：mean 52,366.89 ms，median 44,830 ms。
+- 完整 cohort valid-run rate：27/27（100%）；verified-run success：26/27（96.30%）。
+- 完整 cohort stable task status：除 T02 为 `mixed-valid` 外，T01、T03–T09 均为 `stable-pass`。
+- 完整 cohort failure category：`model_behavior` 1；provider 请求合计 284。
+- 完整 cohort tool steps：mean 11.78，median 10；repeated reads 总数 21，mean 0.78，median 1；Runtime elapsed time mean 58,250.48 ms，median 54,892 ms。
+
+### 有效失败与 invalid rows
+
+- P4C 有效失败：0。
+- P4C invalid rows：0。
+- 完整 cohort 有效失败：1 条，即 P4A 的 `baseline-v1-T02-r1`，分类保持为 `valid + failed / model_behavior`。
+- 完整 cohort invalid rows：0。
+
+### 当前 blocker 与下一阶段的精确第一步
+
+- 当前没有实现、配置、测量或 G1 blocker；P4 的 27 条主评测行已全部关闭。
+- 等待用户明确要求开始 P5。P5 的精确第一步是只读验证已封存的模块基线与 `baseline-v1` Artifact，然后从这些事实生成项目评测基线报告；不得调用 provider，不得修改任何 P4 row、审计或分类。
