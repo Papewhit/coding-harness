@@ -94,7 +94,9 @@ public/modules/checksums.json
 
 ### 适用目的与不适用范围
 
-`scripts/run_local_coding_tasks.py` 现有离线模式保持不变；Evaluation v2 模式用于验证冻结的 9-task taskset、生成或只读核验隔离的 `pilot-vN` 与 `baseline-v1` run config，并在用户明确要求开始相应 P3/P4 阶段后启动真实 Pico Runtime。`pilot-v1`、`pilot-v2`、`pilot-v3` 是不可变历史批次，`pilot-v4` 是下一次纠正性观察的独立身份。
+`scripts/run_local_coding_tasks.py` 现有离线模式保持不变；Evaluation v2 模式用于验证冻结的 9-task taskset、生成或只读核验隔离的 `pilot-vN` 与 `baseline-v1` run config，并在用户明确要求开始相应 P3/P4 阶段后启动真实 Pico Runtime。`pilot-v1`、`pilot-v2`、`pilot-v3` 和 `pilot-v4` 均为不可变历史批次。
+
+P2 source `b51b4a1a38b76da6cfa8403366ffec54990cfefa` 下的旧 `baseline-v1` 配置早于 Evaluation prompt 入口规范化修复，不得用于 P4。P4 必须使用包含提交 `6460508c688383102f9dc205d8a04a5681b078dd` 的新 source 重新生成独立配置；该 source 的 live client 在调用 Runtime 前按标准用户入口语义去除 prompt 首尾空白。
 
 P2 和后续配置冻结只运行 fake client、hidden verifier 和确定性证据检查。生成或验证 run config 不解析 provider credential、不构造 provider transport，也不发起 provider HTTP。展示配置不是签名或单独接受步骤；用户明确要求开始 P3 时，G0 才由首条 T01 live row 验证。
 
@@ -120,6 +122,12 @@ uv run --frozen --extra providers --python 3.12 \
   python scripts/run_local_coding_tasks.py \
   --prepare-run-configs \
   --cohort-id pilot-v4 \
+  --output-root /mnt/f/dev/llm/pico-eval-artifacts/evaluation-v2
+
+uv run --frozen --extra providers --python 3.12 \
+  python scripts/run_local_coding_tasks.py \
+  --prepare-run-configs \
+  --cohort-id baseline-v1 \
   --output-root /mnt/f/dev/llm/pico-eval-artifacts/evaluation-v2
 ```
 
@@ -156,11 +164,14 @@ uv run --frozen --extra providers --python 3.12 \
 - `--cohort-id`：当前实现接受 `pilot-v1`、`pilot-v2`、`pilot-v3`、`pilot-v4` 或 `baseline-v1`，必须与配置一致；
 - `--stage`：供 row 记录的 `P3-G0`、`P3-remainder`、`P4A`、`P4B` 或 `P4C`；
 - `--task`、`--repo`：可重复使用的任务或仓库过滤器；
-- `--repetitions`：请求的重复次数，省略时为 1。
+- `--repetitions`：请求的重复次数，省略时为 1；
+- `--resume-missing`：只允许 `baseline-v1` 的冻结 P4 命令使用；从当前阶段选择中排除 private 或 public row 目录已经存在的身份。
 
 正式 live 命令在创建首条 row 和首次 provider HTTP 前只调用一次 `validate_live_start`。它只阻断五类情况：配置 JSON/schema/旁路哈希失败；tracked source 不 clean 或 HEAD/tree 不符；请求 row/Artifact 越界或目标 row 已存在；locator 不是文件或 provider/profile/model 不符；正式 bubblewrap 加 `--unshare-net` 的单次最小 marker 探针失败。它不重建配置、不构造 Runtime/client、不推导 HTTP 上限，也不要求请求集合等于某阶段的完整 row 集合。
 
-P3/P4 的顺序和完整 row 集合由计划与配置中的冻结命令约束；runner 只要求每条请求都在 `allowed_rows` 内，并按 repetition-major、task ID 升序执行。不得手工拼装遗漏 row 的替代命令；应原样使用 `run-config.json` 的 `launch_commands`。用户明确要求开始某阶段即允许执行该阶段计划内的冻结命令，不创建或检查授权文件、授权环境变量或 status 授权记录。
+P3/P4 的顺序和完整 row 集合由计划与配置中的冻结命令约束；runner 只要求每条请求都在 `allowed_rows` 内，并按 repetition-major、task ID 升序执行。P4 的冻结命令自始携带 `--resume-missing`：首次执行时九条 row 均不存在，因此执行完整阶段；若 measurement defect 触发停止，只有满足计划中的纯离线修复条件且用户明确要求继续后，才能原样重发同一命令，它只执行仍为 missing 的 row。任何已有 private 或 public row 目录的身份都会被跳过，不能用于重跑 invalid、failed 或 passed row。不得手工拼装遗漏 row 的替代命令。
+
+用户明确要求开始某阶段即允许执行该阶段计划内的冻结命令，不创建或检查授权文件、授权环境变量或 status 授权记录。仅因全部选中 row 已存在而没有 missing row 时，命令确定性输出空列表，不运行 live validator、Runtime 或 provider。
 
 live 启动时，`PICO_NATIVE_PROVIDER_CONFIG` 只在 launcher 进程内指向一个文件。若 WSL 未继承该变量，只在当前 Windows launcher 进程的 `WSLENV` 中追加 `PICO_NATIVE_PROVIDER_CONFIG/p`；不得把 locator 写入命令行、仓库、Artifact 或持久化 shell 配置。子进程会为实际执行再次读取 provider 配置，但不重复作 profile 启动判定。
 
@@ -243,3 +254,33 @@ uv run --frozen --extra providers --python 3.12 \
 ```
 
 这里的 finalizer `--verify-only` 与前述 run-config CLI 是两个不同入口：它验证配置、每条既有 row 的完整 checksum、audit/decision 合同、报告重算和 Markdown 重建。它不读取 provider locator 或 credential，不写文件，也不发起 provider HTTP。
+
+## P4 Baseline 审计与部分指标
+
+### 适用目的与边界
+
+`scripts/finalize_evaluation_v2_baseline.py` 为 `baseline-v1` 追加 Codex audit 或 user decision，并从既有 27 条冻结身份确定性计算当前 P4 阶段与整个 cohort 的摘要。它不生成 P5 的 `evaluation-report.json` 或 `evaluation-report.md`，不构造 Runtime，不读取 prompt，不调用 provider。
+
+### 追加审计或决定
+
+```bash
+uv run --frozen --extra providers --python 3.12 \
+  python scripts/finalize_evaluation_v2_baseline.py \
+  --run-config /mnt/f/dev/llm/pico-eval-artifacts/evaluation-v2/baseline-v1/<source-sha>/public/run-config.json \
+  --stage P4A \
+  --audit-input <codex-audit-input.json>
+```
+
+`--stage` 必须是 `P4A`、`P4B` 或 `P4C`；`--audit-input` 和 `--user-decision-input` 均可重复。输入使用与 Pilot 相同的通用 audit/decision schema，目标 row 必须属于冻结的 27 条 baseline identities。finalizer 先复核已有 checksum 和确定性事实，再 append-only 写入并重新封存当前公开 row；既有 audit 或 decision 拒绝覆盖。写入模式解析当前 provider 配置只为取得实际 locator/credential 值并拒绝其出现在新审计内容中，不发起 provider HTTP。
+
+### 只读复核与摘要
+
+```bash
+uv run --frozen --extra providers --python 3.12 \
+  python scripts/finalize_evaluation_v2_baseline.py \
+  --run-config /mnt/f/dev/llm/pico-eval-artifacts/evaluation-v2/baseline-v1/<source-sha>/public/run-config.json \
+  --stage P4A \
+  --verify-only
+```
+
+`--verify-only` 不接受 audit/decision 输入，不读取 provider 配置且不写文件。stdout JSON 同时包含本阶段九条 row 和整个 27-row cohort 的分类计数、valid-run rate、verified-run success、stable task status、failure category、provider 请求、tool steps、repeated reads、elapsed time 和 G1 状态。工具与耗时只聚合最终 valid row；invalid、no result、待审计和待决定均按指标文档单列。每阶段将这份确定性摘要发布到 status，P5 再从相同 row 证据生成唯一正式总报告。

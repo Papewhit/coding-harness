@@ -228,6 +228,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--repo", action="append", default=[])
     parser.add_argument("--repetitions", type=int)
     parser.add_argument(
+        "--resume-missing",
+        action="store_true",
+        help="For baseline-v1, execute only selected rows without existing artifacts.",
+    )
+    parser.add_argument(
         "--run-kind",
         action="append",
         choices=("synthetic", "probe", "formal"),
@@ -253,6 +258,7 @@ def main(argv: list[str] | None = None) -> int:
             or args.task
             or args.repo
             or args.repetitions is not None
+            or args.resume_missing
         ):
             raise SystemExit(
                 "--verify-only does not accept live selection parameters"
@@ -267,13 +273,15 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.run_config is not None:
         return _run_evaluation_v2(args)
+    if args.resume_missing:
+        raise SystemExit("--resume-missing requires a baseline-v1 run config")
     return _run_legacy(args)
 
 
 def _prepare_configs(args: argparse.Namespace) -> int:
     if args.output_root is None:
         raise SystemExit("--prepare-run-configs requires --output-root")
-    if args.run_config or args.client_command:
+    if args.run_config or args.client_command or args.resume_missing:
         raise SystemExit("config preparation cannot execute a client")
     rows = []
     cohort_ids = (
@@ -314,6 +322,22 @@ def _run_evaluation_v2(args: argparse.Namespace) -> int:
         for repetition in range(1, repetitions + 1)
         for task in tasks
     ]
+    cohort_root = args.run_config.resolve().parents[1]
+    if args.resume_missing:
+        if cohort_id != "baseline-v1":
+            raise SystemExit("--resume-missing is only supported for baseline-v1")
+        selected = [
+            (task, repetition)
+            for task, repetition in selected
+            if not _row_started(
+                cohort_root,
+                f"{cohort_id}-{task.task_id}-r{repetition}",
+            )
+        ]
+        if not selected:
+            verify_run_config(args.run_config)
+            print("[]")
+            return 0
     requested_rows = [
         (
             task.task_id,
@@ -322,7 +346,6 @@ def _run_evaluation_v2(args: argparse.Namespace) -> int:
         )
         for task, repetition in selected
     ]
-    cohort_root = args.run_config.resolve().parents[1]
     validation = validate_live_start(
         args.run_config,
         source_root=SOURCE_ROOT,
@@ -378,6 +401,15 @@ def _run_evaluation_v2(args: argparse.Namespace) -> int:
             break
     print(json.dumps(summaries, indent=2, sort_keys=True))
     return int(any(row["status"] != "passed" for row in summaries))
+
+
+def _row_started(cohort_root: Path, row_id: str) -> bool:
+    return any(
+        (
+            cohort_root / visibility / "rows" / row_id
+        ).exists()
+        for visibility in ("private", "public")
+    )
 
 
 def _run_legacy(args: argparse.Namespace) -> int:

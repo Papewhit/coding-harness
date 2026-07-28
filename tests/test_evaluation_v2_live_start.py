@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -370,3 +371,125 @@ def test_generator_records_environment_and_absent_locator_without_blocking(
     assert payload["private_config"]["env_defined"] is False
     assert payload["private_config"]["target_exists"] is False
     assert payload["private_config"]["target_is_file"] is False
+
+
+def test_resume_missing_skips_started_baseline_rows(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    config_path, cohort_root = write_config(
+        tmp_path,
+        monkeypatch,
+        cohort_id="baseline-v1",
+    )
+    (cohort_root / "public" / "rows" / "baseline-v1-T01-r1").mkdir(
+        parents=True
+    )
+    (cohort_root / "private" / "rows" / "baseline-v1-T02-r1").mkdir(
+        parents=True
+    )
+    payload = json.loads(config_path.read_text(encoding="utf-8"))
+    requested: list[tuple[str, int, str]] = []
+
+    def validate(*_args: object, **kwargs: object) -> SimpleNamespace:
+        requested.extend(kwargs["requested_rows"])
+        return SimpleNamespace(
+            payload=payload,
+            row_ids=tuple(row[2] for row in kwargs["requested_rows"]),
+            sensitive_values=(),
+        )
+
+    class FakeRunner:
+        def __init__(self, _root: Path) -> None:
+            pass
+
+        def run(
+            self,
+            task: object,
+            request: object,
+            _client: object,
+        ) -> SimpleNamespace:
+            return SimpleNamespace(
+                task_id=task.task_id,
+                run_id=request.row_id,
+                status="passed",
+                failure_category="none",
+            )
+
+    monkeypatch.setattr(cli, "validate_live_start", validate)
+    monkeypatch.setattr(cli, "CommandClient", lambda *_args, **_kwargs: object())
+    monkeypatch.setattr(cli, "LocalLiveTaskRunner", FakeRunner)
+
+    result = cli.main(
+        [
+            "--run-config",
+            str(config_path),
+            "--cohort-id",
+            "baseline-v1",
+            "--stage",
+            "P4A",
+            "--repo",
+            "tinyconfig",
+            "--repetitions",
+            "1",
+            "--resume-missing",
+        ]
+    )
+
+    assert result == 0
+    assert requested == [("T03", 1, "baseline-v1-T03-r1")]
+    output = json.loads(capsys.readouterr().out)
+    assert [row["row_id"] for row in output] == ["baseline-v1-T03-r1"]
+
+
+def test_resume_missing_is_baseline_only_and_noops_when_complete(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    pilot_config, _ = write_config(tmp_path, monkeypatch, cohort_id="pilot-v4")
+    with pytest.raises(SystemExit, match="baseline-v1"):
+        cli.main(
+            [
+                "--run-config",
+                str(pilot_config),
+                "--cohort-id",
+                "pilot-v4",
+                "--task",
+                "T01",
+                "--resume-missing",
+            ]
+        )
+
+    config_path, cohort_root = write_config(
+        tmp_path / "baseline",
+        monkeypatch,
+        cohort_id="baseline-v1",
+    )
+    for task_id in ("T01", "T02", "T03"):
+        (cohort_root / "public" / "rows" / f"baseline-v1-{task_id}-r1").mkdir(
+            parents=True
+        )
+    monkeypatch.setattr(
+        cli,
+        "validate_live_start",
+        lambda *_args, **_kwargs: pytest.fail("validator must not run"),
+    )
+
+    assert cli.main(
+        [
+            "--run-config",
+            str(config_path),
+            "--cohort-id",
+            "baseline-v1",
+            "--stage",
+            "P4A",
+            "--repo",
+            "tinyconfig",
+            "--repetitions",
+            "1",
+            "--resume-missing",
+        ]
+    ) == 0
+    assert capsys.readouterr().out.strip().endswith("[]")

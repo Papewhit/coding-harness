@@ -231,6 +231,25 @@ def test_corrective_pilot_config_has_new_rows_and_p3_only_commands(
     assert verify_run_config(config_path)["cohort_id"] == cohort_id
 
 
+def test_baseline_config_freezes_missing_row_resume_commands(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    config_path, _ = _write_config(
+        tmp_path,
+        monkeypatch,
+        cohort_id="baseline-v1",
+    )
+    payload = json.loads(config_path.read_text(encoding="utf-8"))
+
+    assert len(payload["allowed_rows"]) == 27
+    assert set(payload["launch_commands"]) == {"p4a", "p4b", "p4c"}
+    for command in payload["launch_commands"].values():
+        assert command["argv"][-1] == "--resume-missing"
+        assert command["display"].endswith("--resume-missing")
+    assert verify_run_config(config_path)["cohort_id"] == "baseline-v1"
+
+
 def test_run_config_normalizes_venv_python_alias(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:

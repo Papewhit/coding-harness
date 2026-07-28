@@ -80,6 +80,7 @@ def launch_commands(
                 "tinyconfig",
                 "--repetitions",
                 "3",
+                "--resume-missing",
             ],
             "p4b": [
                 *base,
@@ -89,6 +90,7 @@ def launch_commands(
                 "miniqueue",
                 "--repetitions",
                 "3",
+                "--resume-missing",
             ],
             "p4c": [
                 *base,
@@ -98,6 +100,7 @@ def launch_commands(
                 "logslice",
                 "--repetitions",
                 "3",
+                "--resume-missing",
             ],
         }
     )
