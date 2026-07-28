@@ -6,8 +6,8 @@
 
 ## 当前状态
 
-- 当前阶段：P2——最小真实编码桥接。
-- 阶段结论：审查修订实现和本地离线验证已完成，正等待在修订候选 source 的 WSL fresh clone 中完成最终复核并冻结新的 `pilot-v1`、`baseline-v1` 两份 run config。初始候选配置已作废，P2 尚未关闭，配置尚未获得用户接受，没有发起 provider HTTP，也没有进入 P3。
+- 当前阶段：P2——最小真实编码桥接已完成；等待对 P3 的独立 live 授权。
+- 阶段结论：修订 source 已通过本地和 WSL fresh-clone 离线验收，新的 `pilot-v1`、`baseline-v1` run config 已冻结、只读复核并获得用户明确接受。P2 已关闭，没有创建正式 row、没有发起 provider HTTP，也没有进入 P3。
 - 历史控制 checkpoint： `2876cd53e17fd2b6eb089dbfaf14cd67615498fc`。
 - 计划中的 P0 起点： `44677cd7f6a9535c1a74e8628078e9d4967594b5`。
 - 实际 P0 起始 commit： `758eeaf7360f09296bc8a87567b021e68ca097d7`。该提交只解除 Evaluation v2 启动暂停并更新文档状态；P0 在检查其 diff 后从该 clean commit 开始。
@@ -19,11 +19,12 @@
 - P1 实际结束 commit：`91a578d74439bd643b0dcb693a3b55a806b71f34`。
 - P2 实际起始 commit：`4a70016101ffab6f777e53f938c472b5fe1e405d`；它相对 P1 结束 commit 只重排 Markdown 和补充对应文档规则，不改变 Evaluation v2 语义。
 - P2 初始实现候选 source：`8c571834f6f297da3679aba1d279461bee06a517`，tree `614482ffa3515550878efeb87db05922ec5af07c`；用户接受前的审查发现两项证据完整性问题，因此该 source 及其两份配置已作废，不得用于 P3。
-- P2 修订实现候选 source：承载本状态更正条目的 commit；完整 SHA 和 tree 在提交后的交付消息中报告，不为回填而 amend。
+- P2 已接受 source：`b51b4a1a38b76da6cfa8403366ffec54990cfefa`，tree `8c5379d22ecef141af29291ba90a6d77db95207f`。
+- P2 结束 commit：承载本阶段关闭记录的独立 docs commit；完整 SHA 在提交后的交付消息中报告，不为回填而 amend。
 - 正式 Artifact： `F:\dev\llm\pico-eval-artifacts\evaluation-v2\module-baseline-v1\dcd8ea110c6c4dad5c09943fab26b8197142ae29`。
 - wrapper revision 使用量：`0/1`。`dcd8ea1` 是正式测量前由总体方案和 user guide 交付要求驱动的实现对齐，不是测量 wrapper 缺陷修订。
-- 当前 blocker：候选提交后的 WSL fresh-clone 复核、两份 run config 冻结以及用户对其内容和哈希的明确接受尚未完成。
-- 下一动作：提交 P2 实现候选，在其 detached WSL fresh clone 中使用 providers extra 复跑定向测试和 scoped Ruff；全部通过后，以该提交为 source 创建并只读验证两份 run config，展示全文、哈希、source/tree 和 scoped diff，随后停止等待用户接受。
+- 当前 blocker：P3 尚未获得独立 live 授权；P2 配置接受不构成该授权。
+- 下一动作：保持 provider HTTP 为 0。只有用户另行明确授权绑定已接受 source、tree 和 Pilot 配置哈希的 P3 后，才按冻结命令运行首条 T01 live row 验证 G0。
 
 ## 历史无效测量
 
@@ -225,7 +226,7 @@ R-03 的主要结论是测量装置缺陷：HSMOKE-V4-A 实际完成了 `read_fi
 
 创建实现候选提交并取得完整 commit/tree；在 detached WSL fresh clone 中执行最终离线验收。只有验收全部通过才生成两份配置；展示后停止，等待用户明确接受。P3 的第一步仍是单独授权且绑定已接受配置哈希的 T01 live row。
 
-## P2 审查修订记录（待新配置接受）
+## P2 审查修订记录（历史）
 
 ### 审查结论
 
@@ -241,9 +242,37 @@ R-03 的主要结论是测量装置缺陷：HSMOKE-V4-A 实际完成了 `read_fi
 - 将原超过 500 行的证据测试 fixture 拆到 `tests/evaluation_v2_helpers.py`；修订后的所有新实现和测试文件均不超过 500 行，函数不超过 100 行。
 - 修订 scoped diff：7 files changed, 577 insertions(+), 265 deletions(-)。
 
-### 当前状态与下一动作
+### 修订时状态与下一动作
 
 - 修订本地 targeted tests 为 34 passed；加入 architecture boundary 和 safety invariant 后为 45 passed。scoped Ruff、两个 CLI help 和 `git diff --check` 均通过。
 - 修订候选的 detached WSL fresh-clone 复核尚未执行。
 - 新候选提交后必须重新建立 detached WSL fresh clone，并以新 source/client 哈希创建新的 `pilot-v1/<source>` 和 `baseline-v1/<source>` 配置目录。
 - 旧配置保留为未接受的历史候选，不覆盖、不用于 live；P3 仍未授权，provider HTTP 仍为 0。
+
+## P2 阶段关闭记录（已完成）
+
+### 接受边界
+
+- 用户于 2026-07-28 明确接受修订 source 对应的两份 canonical run config。
+- 已接受 source 为 `b51b4a1a38b76da6cfa8403366ffec54990cfefa`，tree 为 `8c5379d22ecef141af29291ba90a6d77db95207f`。
+- Pilot 配置路径为 `F:\dev\llm\pico-eval-artifacts\evaluation-v2\pilot-v1\b51b4a1a38b76da6cfa8403366ffec54990cfefa\public\run-config.json`，文件字节 SHA-256 为 `827b4c786a6d5a98a9d53d1273422f7e4b0d9acb2f7f3d526ff5653aeb7d74c6`。
+- Baseline 配置路径为 `F:\dev\llm\pico-eval-artifacts\evaluation-v2\baseline-v1\b51b4a1a38b76da6cfa8403366ffec54990cfefa\public\run-config.json`，文件字节 SHA-256 为 `34e837412d36c3402afd11aee38636e62424186718716b278eef918a9b5954ac`。
+- 两个 source 目录均只含 `public/run-config.json` 和 `public/run-config.sha256`；没有 `private`、row 目录或 provider HTTP 记录。
+- 初始 source `8c571834f6f297da3679aba1d279461bee06a517` 的两份配置继续保留为未接受、不可运行的历史候选。
+- 本次接受只关闭 P2，不授权 P3，不等于 G0；G0 仍须由 P3 首条 T01 live row 验证。
+
+### 最终离线验收
+
+- detached WSL fresh clone 位于 `/home/papewhit/pico-eval-clones/p2-b51b4a1a38b76da6`，环境为 Ubuntu 26.04、CPython 3.12.13 和 OpenAI SDK 2.46.0。
+- `tests/test_live_task_evaluator.py`、`tests/test_evaluation_v2_evidence.py`、`tests/test_architecture_boundaries.py` 和 `tests/test_safety_invariants.py` 共 45 项测试通过。
+- scoped Ruff、两个 CLI `--help`、`git diff --check` 和两份 run config 的只读验证均通过。
+- 实际值扫描确认没有持久化 credential 或 locator；fake 路径没有调用 provider resolver/transport。
+- P2 正式 rows 为 0，真实产品 metrics 为 0，provider HTTP 请求为 0。
+- P2 user guide 已在 source 中与最终 CLI 和 Artifact 合同对齐，因此关闭提交不再修改 user guide。
+
+### 阶段结束
+
+- P2 结束 commit：承载本关闭记录的独立 docs commit；完整 SHA 在提交后的交付消息中报告，不 amend 已接受 source，也不回填两份配置。
+- 关闭提交只修改 `docs/evaluation/evaluation-v2-status.md`；精确 diff stat 为 1 file changed, 36 insertions(+), 7 deletions(-)。
+- 当前唯一 blocker 是尚未获得 P3 的独立 live 授权。
+- 下一阶段的精确第一步：用户另行明确授权 P3，并同时绑定 source `b51b4a1a38b76da6cfa8403366ffec54990cfefa`、tree `8c5379d22ecef141af29291ba90a6d77db95207f` 和 Pilot 配置 SHA-256 `827b4c786a6d5a98a9d53d1273422f7e4b0d9acb2f7f3d526ff5653aeb7d74c6` 后，才执行冻结配置中的 P3 G0 T01 命令；在此之前保持停止。
