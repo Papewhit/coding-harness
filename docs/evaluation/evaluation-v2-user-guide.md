@@ -189,3 +189,38 @@ public/rows/<row-id>/original/
 `evidence-view.json` 只做确定性导航：它从 session exchange、tool result、session events 和 trace 核对 call ID、工具名和终态，并记录原始路径与稳定位置；它不替代原件或 Codex 审计。private/public `checksums.json` 是完整文件 inventory，不只是已列文件的抽样哈希；验证同时检查 schema、唯一且安全的规范相对路径、实际文件集合、字节数和 SHA-256，任何未列或缺失文件都会失败。
 
 凭据检查使用本次实际 locator、credential 和测试 sentinel 的完整值做精确字节扫描，只持久化通过布尔值、扫描文件数和不含敏感值的位置。缺失原件、请求次数不精确、call/result 不闭合或扫描命中都会保留最小记录并标记 measurement failure。`product_result=passed/failed` 只表示 hidden verifier 的确定性结果；最终 `valid + passed`、`valid + failed` 或 `invalid` 分类仍按 evidence protocol 和后续审计产生。
+
+### P3 Pilot 审计与报告
+
+P3 使用独立的纯离线 finalizer 将 Codex 审计追加到已经完成捕获的 Pilot row，并生成一页 Pilot 报告。它不装配 Runtime、不读取任务 prompt、不调用 provider，也不修改 `run-record.json`、`evidence-view.json`、verifier 输出或原始 `.pico` 证据。
+
+```bash
+uv run --frozen --extra providers --python 3.12 \
+  python scripts/finalize_evaluation_v2_pilot.py \
+  --run-config /mnt/f/dev/llm/pico-eval-artifacts/evaluation-v2/pilot-v1/<source-sha>/public/run-config.json \
+  --audit-input <codex-audit-input.json>
+```
+
+`--audit-input` 可重复使用。输入必须使用 `pico-evaluation-v2-codex-audit-v1` schema，固定 row 身份、证据充分性、测量结果、产品结果、最终分类、失败类别、理由、证据引用和用户决定状态。finalizer 先验证已有 row checksum 和确定性事实，再原子写入 `public/rows/<row-id>/codex-audit.json`；既有 audit 拒绝覆盖。新增 audit 后只重新封存该 row 的公开 checksum，原始测量文件保持不变。
+
+Codex 审计只有在开放歧义确实需要用户判断时才能写入 `user_decision=required`。此时报告保留 `pending decision`，后续使用可重复的 `--user-decision-input <user-decision.json>` 追加决定；没有对应 audit 或 audit 不要求用户决定时，该输入会被拒绝。
+
+finalizer 每次从 row 事实和审计重新生成：
+
+```text
+reports/pilot-report.json
+reports/pilot-report.md
+```
+
+JSON 是机器可读单一数据源，Markdown 必须逐字节可重建。报告列出三条冻结 Pilot row；未启动 row 显示为 `no result`，不能解释为产品失败。指标只聚合最终 valid row；invalid row 的局部事实单独保留但不进入产品指标。
+
+只读复核命令为：
+
+```bash
+uv run --frozen --extra providers --python 3.12 \
+  python scripts/finalize_evaluation_v2_pilot.py \
+  --run-config /mnt/f/dev/llm/pico-eval-artifacts/evaluation-v2/pilot-v1/<source-sha>/public/run-config.json \
+  --verify-only
+```
+
+`--verify-only` 验证配置、每条既有 row 的完整 checksum、audit/decision 合同、报告重算和 Markdown 重建。它不读取 provider locator 或 credential，不写文件，也不发起 provider HTTP。

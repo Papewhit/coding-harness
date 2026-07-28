@@ -6,8 +6,8 @@
 
 ## 当前状态
 
-- 当前阶段：P2——最小真实编码桥接已完成；等待对 P3 的独立 live 授权。
-- 阶段结论：修订 source 已通过本地和 WSL fresh-clone 离线验收，新的 `pilot-v1`、`baseline-v1` run config 已冻结、只读复核并获得用户明确接受。P2 已关闭，没有创建正式 row、没有发起 provider HTTP，也没有进入 P3。
+- 当前阶段：P3——三任务 Pilot 与 G0 执行中；已获得只绑定冻结 Pilot 配置的完整 P3 live 授权，当前先完成离线审计与报告工具。
+- 阶段结论：P2 已关闭。P3 起始 commit 固定为 `32867e4be44ea76ecf2b65d2051462c26321d325`；live source、tree、profile、三条 row、输出目录和 HTTP 边界均保持 P2 冻结身份。首次 provider HTTP 尚未发生。
 - 历史控制 checkpoint： `2876cd53e17fd2b6eb089dbfaf14cd67615498fc`。
 - 计划中的 P0 起点： `44677cd7f6a9535c1a74e8628078e9d4967594b5`。
 - 实际 P0 起始 commit： `758eeaf7360f09296bc8a87567b021e68ca097d7`。该提交只解除 Evaluation v2 启动暂停并更新文档状态；P0 在检查其 diff 后从该 clean commit 开始。
@@ -23,8 +23,8 @@
 - P2 结束 commit：承载本阶段关闭记录的独立 docs commit；完整 SHA 在提交后的交付消息中报告，不为回填而 amend。
 - 正式 Artifact： `F:\dev\llm\pico-eval-artifacts\evaluation-v2\module-baseline-v1\dcd8ea110c6c4dad5c09943fab26b8197142ae29`。
 - wrapper revision 使用量：`0/1`。`dcd8ea1` 是正式测量前由总体方案和 user guide 交付要求驱动的实现对齐，不是测量 wrapper 缺陷修订。
-- 当前 blocker：P3 尚未获得独立 live 授权；P2 配置接受不构成该授权。
-- 下一动作：保持 provider HTTP 为 0。只有用户另行明确授权绑定已接受 source、tree 和 Pilot 配置哈希的 P3 后，才按冻结命令运行首条 T01 live row 验证 G0。
+- 当前 blocker：无。离线 Pilot finalizer 必须先通过 targeted tests、scoped Ruff、CLI help 和 user guide 对齐并提交。
+- 下一动作：提交纯离线 P3 finalizer 后重新执行冻结环境预检；全部通过才原样运行 `launch_commands.p3_g0`，且 T01 不得重跑。
 
 ## 历史无效测量
 
@@ -276,3 +276,24 @@ R-03 的主要结论是测量装置缺陷：HSMOKE-V4-A 实际完成了 `read_fi
 - 关闭提交只修改 `docs/evaluation/evaluation-v2-status.md`；精确 diff stat 为 1 file changed, 36 insertions(+), 7 deletions(-)。
 - 当前唯一 blocker 是尚未获得 P3 的独立 live 授权。
 - 下一阶段的精确第一步：用户另行明确授权 P3，并同时绑定 source `b51b4a1a38b76da6cfa8403366ffec54990cfefa`、tree `8c5379d22ecef141af29291ba90a6d77db95207f` 和 Pilot 配置 SHA-256 `827b4c786a6d5a98a9d53d1273422f7e4b0d9acb2f7f3d526ff5653aeb7d74c6` 后，才执行冻结配置中的 P3 G0 T01 命令；在此之前保持停止。
+
+## P3 阶段记录（执行中）
+
+### 授权与冻结边界
+
+- 用户已明确授权完整 P3；授权不延伸到 P4A。
+- P3 起始 commit：`32867e4be44ea76ecf2b65d2051462c26321d325`。
+- live source：`b51b4a1a38b76da6cfa8403366ffec54990cfefa`；tree：`8c5379d22ecef141af29291ba90a6d77db95207f`。
+- Pilot run config SHA-256：`827b4c786a6d5a98a9d53d1273422f7e4b0d9acb2f7f3d526ff5653aeb7d74c6`。
+- 只允许 `pilot-v1-T01-r1`、`pilot-v1-T04-r1`、`pilot-v1-T07-r1`；不允许语义重跑、replacement row、额外 preflight HTTP 或 P4 请求。
+
+### 当前进度
+
+- 新增纯离线 Pilot audit/report finalizer；它不参与 live Runtime，也不改变冻结 source、runner、prompt、taskset、verifier 或 provider 参数。
+- 新增测试覆盖部分/完整 Pilot、valid pass/fail、provider failure、invalid、pending decision、checksum 篡改、身份矛盾、敏感值和只读复核。
+- WSL 独立控制环境 targeted tests：新测试 6 passed；加入既有 Evaluation v2 evidence tests 后 26 passed。
+- scoped Ruff 通过。provider HTTP 请求仍为 0，正式 Pilot rows 仍为 0。
+
+### 下一动作
+
+完成 CLI `--help`、user guide、diff 检查并提交离线工具；随后执行冻结 live 环境预检。
