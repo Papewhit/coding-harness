@@ -6,8 +6,8 @@
 
 ## 当前状态
 
-- 当前阶段：P4C 已完成并停止；27 条 `baseline-v1` 主评测行全部最终分类，P4 正式基线执行完成，P5 尚未启动。
-- 阶段结论：P4C 的 9 条测量全部为 `valid + passed`，T07–T09 均为 `stable-pass`。完整 cohort 共 26 条 `valid + passed`、1 条 `valid + failed / model_behavior`、0 条 `invalid`；G1 已通过（27/27 final classified）。
+- 当前阶段：P5 已完成；正式基线报告已从封存的 P1/P4 Artifact 确定性生成并发布，G2 已通过。
+- 阶段结论：正式 coding cohort 为 27/27 valid、26/27 verified passed、1 条 `valid + failed / model_behavior`、0 条 invalid、284 次 provider 请求；外部 JSON/Markdown 与仓库 Markdown 镜像通过确定性重建和字节一致性校验。Prompt 规范化问题仅作为非指标边界观察记录。
 - 历史控制 checkpoint： `2876cd53e17fd2b6eb089dbfaf14cd67615498fc`。
 - 计划中的 P0 起点： `44677cd7f6a9535c1a74e8628078e9d4967594b5`。
 - 实际 P0 起始 commit： `758eeaf7360f09296bc8a87567b021e68ca097d7`。该提交只解除 Evaluation v2 启动暂停并更新文档状态；P0 在检查其 diff 后从该 clean commit 开始。
@@ -22,10 +22,15 @@
 - P2 已接受 source：`b51b4a1a38b76da6cfa8403366ffec54990cfefa`，tree `8c5379d22ecef141af29291ba90a6d77db95207f`。
 - P2 结束 commit：承载本阶段关闭记录的独立 docs commit；完整 SHA 在提交后的交付消息中报告，不为回填而 amend。
 - P4 frozen source：`542f97a023218ee04c00225de994f152bfed748e`；tree：`34e75ea5ff6340948493c93ba449b8980c2a8f85`；Baseline run config SHA-256：`79435b0c961e775e7de0ad68eee950f322c7094ddd10da4aba17ab728040faff`。
+- P5 起始 commit：`2545f113ad4160b4a99717d8e3aaebdb87a196f3`；起始 tree：`e01789d7dfad5ffba6b0017b3092456496fdc85d`。
+- P5 报告门实现 commit：`79032005cbc29d4a79fd9f96a23fb96db4cb9ca4`。
+- P5 结束：承载本状态条目与正式报告镜像的 docs commit；完整 SHA 在提交后的交付消息中报告，不为回填而 amend。
 - 正式 Artifact： `F:\dev\llm\pico-eval-artifacts\evaluation-v2\module-baseline-v1\dcd8ea110c6c4dad5c09943fab26b8197142ae29`。
+- 正式 Baseline Artifact：`F:\dev\llm\pico-eval-artifacts\evaluation-v2\baseline-v1\542f97a023218ee04c00225de994f152bfed748e`。
+- 正式报告：上述 Baseline Artifact 的 `reports/evaluation-report.json` 与 `reports/evaluation-report.md`；仓库镜像为 [`evaluation-report-v2.md`](evaluation-report-v2.md)。
 - wrapper revision 使用量：`0/1`。`dcd8ea1` 是正式测量前由总体方案和 user guide 交付要求驱动的实现对齐，不是测量 wrapper 缺陷修订。
-- 当前边界：P4C 已停止，不能自动进入 P5。`pilot-v1`、`pilot-v2`、`pilot-v3`、`pilot-v4` 及 `baseline-v1` 的 27 条 row 均不得重跑、覆盖或重新分类；正式基线配置与证据保持冻结。
-- 下一动作：等待用户明确要求开始 P5；P5 只能从已封存的模块基线和 27 条 coding rows 生成首份项目评测基线报告，不得调用 provider 或改写 P4 证据。
+- 当前边界：P5 与 Evaluation v2 正式基线交付已关闭。`pilot-v1`、`pilot-v2`、`pilot-v3`、`pilot-v4` 及 `baseline-v1` 的 27 条 row 均不得重跑、覆盖或重新分类；正式基线配置、证据与报告保持冻结。
+- 下一动作：无自动后续。Runtime prompt 规范化修复、Auto-dream、Native Resume 或 post-fix cohort 都需要独立计划和用户授权，不由本阶段启动。
 
 ## 历史无效测量
 
@@ -765,3 +770,57 @@ uv run --frozen --extra providers --python 3.12 python scripts/run_local_coding_
 
 - 当前没有实现、配置、测量或 G1 blocker；P4 的 27 条主评测行已全部关闭。
 - 等待用户明确要求开始 P5。P5 的精确第一步是只读验证已封存的模块基线与 `baseline-v1` Artifact，然后从这些事实生成项目评测基线报告；不得调用 provider，不得修改任何 P4 row、审计或分类。
+
+## P5 首份项目评测基线报告（已完成）
+
+### 阶段结论
+
+- 已从固定的 P1 `module-baseline-v1/dcd8ea1...` 与 P4 `baseline-v1/542f97a...` Artifact 生成唯一正式报告 JSON、外部 Markdown 和字节一致的仓库 Markdown 镜像。
+- 正式结果子树在加入边界观察前冻结，SHA-256 为 `2e086a112940358eaea8b86831c13c430c6984839650c05c3fb9fb7ef9631908`；加入 `prompt-normalization-scope` 后该哈希不变。
+- 最终公开候选使用实际 locator 与 API key 完整值扫描 413 个文件，命中 0；扫描 coverage SHA-256 为 `838834cd88c1a94daba4c2c1a2de1cc72649cdeb43c9fa0acbe0be18f524e3a6`。
+- 独立只读 verifier 重算证据、正式聚合、Pilot 引用、JSON 和 Markdown，结果为 `g2_deterministic=passed`。随后一次只读 claims-to-evidence review 返回“无未解决 Finding”，因此 G2 最终为 `passed`。
+- 全过程没有调用 provider、运行或修改 coding row、改变审计/历史分类、修复 Runtime 或创建补充批次。
+
+### 起始、实现与结束
+
+- P5 clean 起始 commit：`2545f113ad4160b4a99717d8e3aaebdb87a196f3`；tree：`e01789d7dfad5ffba6b0017b3092456496fdc85d`。
+- 报告门实现 commit：`79032005cbc29d4a79fd9f96a23fb96db4cb9ca4`。
+- P5 结束：承载最终 renderer 措辞、正式报告镜像和本状态条目的 docs commit；完整 SHA 在提交后的交付消息中报告。
+
+### 实际修改与产物
+
+- 实现提交修改 `pico/evaluation/baseline_summary.py`、`docs/evaluation/evaluation-v2-user-guide.md`，新增 `pico/evaluation/evaluation_report.py`、两个 P5 CLI 和 `tests/test_evaluation_v2_report.py`。
+- 发布提交修改 `pico/evaluation/evaluation_report.py`、`docs/evaluation/evaluation-report-v2.md` 和本状态文档。
+- 外部报告 JSON：`F:\dev\llm\pico-eval-artifacts\evaluation-v2\baseline-v1\542f97a023218ee04c00225de994f152bfed748e\reports\evaluation-report.json`，102345 bytes，SHA-256 `2a79b30b69db65c0e2a1a6ccd2aeedd0f67415f287dd3229fbb2ccb364a499b4`。
+- 外部报告 Markdown 与仓库镜像均为 20999 bytes，SHA-256 `1ac86d95a099c6d2f65b5df9d6ea28035b7ca498ab6dd90663f446c03f3ec2c0`。
+
+### 执行过的命令、测试与复核
+
+- 从 clean HEAD 记录起始 commit/tree；只读运行 P1 module verifier 与 P4C Baseline finalizer，前者确认 5 个 JSON、checksum 与 Markdown 重建，后者确认 G1 为 27/27 passed。
+- targeted aggregation tests 最终为 19 passed；renderer 措辞修正后报告专项测试为 13 passed。scoped Ruff 通过，两个 CLI 的实际 `--help` 均显示 `--run-config`、`--module-root` 和 `--publish-doc`。
+- 构建器先验证 27 条 public/private row checksum、audit/decision、原件路径、运行时扫描覆盖与 P1 module checksum，再冻结正式结果，最后只读验证 `pilot-v3`、`pilot-v4` 并加入边界观察。
+- 使用实际 locator/API key 执行最终公开扫描并生成报告；独立 `scripts/verify_evaluation_v2_report.py` 不读取 credential、不写文件、不调用 provider，复核结果为 27 planned/final、26 passed、1 failed、0 invalid、Markdown rebuilt、仓库镜像一致。
+- 发布前唯一一次全仓命令 `uv run --frozen --extra providers --python 3.12 pytest tests -q` 得到 654 passed、2 skipped、6 warnings，用时 232.24 秒。warnings 均来自既有 `datetime.utcnow()` deprecation。
+- 只读 claims-to-evidence review 核对 27 行、repo/task/failure 聚合、284 次请求、成本指标、P1 模块指标、三项改进机会、简历映射和 Prompt 双边界措辞；结论为“无未解决 Finding”。
+
+### 正式指标与改进机会
+
+- valid-run rate：27/27（100%）；verified-run success：26/27（96.30%）；invalid：0。
+- failure category：`model_behavior` 1；provider requests：284；T02 为 `mixed-valid`，T01、T03–T09 均为 `stable-pass`。
+- tool steps mean 11.78、median 10；repeated reads 总数 21、mean 0.78、median 1；Runtime elapsed mean 58,250.48 ms、median 54,892 ms。
+- 三项正式改进机会保持为 T02 边界正确性、T09 执行成本和 miniqueue 重复读取；Prompt 边界观察没有进入排序。
+- P1 module 指标保持独立分母：harness 12/12；context 平均压缩率 10.66%、current request 保留率 100%；memory_on repeated reads 0、correct rate 100%；resume_enabled success 90%、workspace drift detection 100%、false accept 0。
+
+### Prompt 边界观察
+
+- `pilot-v3` 的 3 条 `runtime/pre_request` 有效失败与 `pilot-v4` 规范化入口后的 3 条通过均按原分类保留；两个 Pilot source/bridge 不同，不构成严格 A/B，也不进入 `baseline-v1` 分母。
+- 以标准 one-shot、REPL、TUI 和正式 Evaluation bridge 组成的完整 Pico 产品为边界，入口 `strip()` 消解该路径，因此不是正式基线产品失败。
+- 以 Runtime/Pico API 为可独立调用模块，原始 request metadata 与整体 `strip()` 后 prompt 可能不一致，形成未明确声明或内部统一执行规范化的接口契约缺口，可条件式视为 Runtime bug。
+- 本阶段只报告该观察，不新增 Runtime characterization test、不修改产品，也不改变正式结果、前三项改进机会或简历结论。
+
+### 有效失败、invalid rows、blocker 与下一动作
+
+- 正式有效失败仍只有 `baseline-v1-T02-r1` 一条，分类保持 `valid + failed / model_behavior`。
+- invalid rows：0。
+- 当前 blocker：无；G1 与 G2 均已通过。
+- P5 与 Evaluation v2 正式基线交付关闭。任何 Runtime 修复、Auto-dream、Native Resume、补充或 post-fix cohort 都必须作为独立工作获得用户授权。

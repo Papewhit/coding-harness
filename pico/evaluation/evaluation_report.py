@@ -187,8 +187,9 @@ def render_evaluation_report(report: Mapping[str, Any]) -> str:
         "",
         "## 文档状态",
         "",
-        "这是 Evaluation v2 的正式基线报告。机器可读单一数据源为同目录的 "
-        "`evaluation-report.json`；本文及仓库镜像均由该 JSON 确定性生成。",
+        "这是 Evaluation v2 的正式基线报告。机器可读单一数据源是外部 "
+        "canonical Artifact 中的 `reports/evaluation-report.json`；外部 "
+        "Markdown 与本文仓库镜像均由该 JSON 确定性生成。",
         "",
         "仓库镜像中的 Artifact 相对链接以外部 canonical 报告所在目录为基准。",
         "",
