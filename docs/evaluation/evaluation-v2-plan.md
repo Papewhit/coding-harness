@@ -2,7 +2,7 @@
 
 ## 文档状态
 
-本文已于 2026-07-27 获用户批准，当前处于**已批准、可执行**状态，启动暂停已经解除。当前阶段、完成情况和精确下一动作以 [`evaluation-v2-status.md`](evaluation-v2-status.md) 为准；初始执行权限只覆盖 P0–P2 的离线工作，不包含任何真实 provider 请求。
+本文已于 2026-07-27 获用户批准，当前处于**已批准、可执行**状态，启动暂停已经解除。当前阶段、完成情况和精确下一动作以 [`evaluation-v2-status.md`](evaluation-v2-status.md) 为准。P3、P4A、P4B、P4C 不自动连续执行；用户明确要求开始其中一个阶段时，该启动指令同时允许执行本计划为该阶段规定的 provider HTTP 范围，不再另设一次 live 授权。
 
 本文规定阶段、顺序和 Gate。已经单独接受的 `docs/evaluation/evaluation-v2-evidence-protocol.md` 只维护证据与判定规则； `pico-evaluation-reset-plan-v2-zh.md` 只作为方案形成背景，不承担执行约束。本文现为唯一的活动执行计划。
 
@@ -25,7 +25,7 @@
 - **基线（baseline）**：产品修复前冻结并永久保留的一组评测行，用来与后续改进结果比较。
 - **批次（cohort）**：在同一 source、任务版本、provider 配置和参数下产生的一组评测行。例如 27 条正式 coding rows 共同组成 `baseline-v1` 批次。
 - **主评测行**：正式基线预先列出的 27 条评测行之一，身份固定为任务 T01–T09 各自的第 1、2、3 次运行。主评测行开始后即使测量无效，也保留原身份和结果，不用同名重跑覆盖。
-- **补充批次**：首份基线完成后，为回答新增问题而另行授权的一组评测行。它使用新的批次名和评测行身份，不能替代或改写主评测行。
+- **补充批次**：首份基线完成后，为回答新增问题而由用户另行决定建立的一组评测行。它使用新的批次名和评测行身份，不能替代或改写主评测行。
 - **评测器（evaluator）**：负责启动任务并记录客观事实的程序。它记录文件变化、测试输出、工具调用和请求次数，不自行判断开放式自然语言是否“表达得足够好”。
 - **隐藏检查程序（hidden verifier）**：执行任务的模型看不到、运行结束后才执行的检查程序。例如运行 mini repo 的测试来判断代码是否工作。
 - **判定规则（Oracle）**：把实际结果与预期结果比较的规则。例如检查旧命令已经消失、新命令已经出现。要求整句话逐字相同的规则称为 exact-string Oracle； W6R5-A 已证明它会误判语义等价的句子。
@@ -43,7 +43,7 @@
 - **结论—证据核对（claims-to-evidence review）**：逐条检查报告结论是否指向存在且匹配的证据，并核对样本数、公式和限制；它不重新设计评测。
 - **定向测试（targeted tests）**：只运行与当前修改直接相关的测试。
 - **限定范围的静态检查（scoped lint）**：只检查当前修改文件的格式和代码问题。
-- **运行配置文件（run config）**：P2 生成、用户在 live 运行前确认的 `public/run-config.json`。它固定 source、任务清单、profile、模型参数、重试、timeout、执行环境和输出目录；live 授权绑定其 SHA-256 哈希。
+- **运行配置文件（run config）**：执行阶段使用的 `public/run-config.json`。它固定 source、任务清单、profile、模型参数、重试、timeout、执行环境和输出目录。其 SHA-256 只用于检查文件是否意外变化，不代表用户签名或授权。
 
 ## 目标
 
@@ -51,9 +51,9 @@
 
 每个阶段由一个新的 Codex 顶层线程负责，使用 GPT-5.6 Sol 作为主要执行模型。阶段范围应规划为大约 2 小时可以产生一个用户能够直接检查的可见增量；两小时是规划粒度，不是必须停止的硬期限。只要流程仍在按既定范围正常推进，就可以继续完成当前阶段。
 
-这里不设置严格的 token、额度或时间上限。真正需要限制的是：递归审查、重复推理、无界返工，以及一次小问题触发整套阶段审查、状态冻结、交接和重新授权流程。
+这里不设置严格的 token、额度或时间上限。真正需要限制的是：递归审查、重复推理、无界返工，以及一次小问题触发整套阶段审查、状态冻结和交接流程。
 
-本文当前可执行范围只包括 P0–P5，并在 P5 完成 G2 检查、向用户报告后停止。Auto-dream、产品改进和 Native Resume 只保留为后续路线图，不属于本文授权的自动后续阶段。
+本文当前可执行范围只包括 P0–P5，并在 P5 完成 G2 检查、向用户报告后停止。Auto-dream、产品改进和 Native Resume 只保留为后续路线图，不属于本文的自动后续阶段。
 
 ## 固定决策
 
@@ -65,7 +65,7 @@
 - 只要 provider、Runtime、profile 和 SDK 身份没有变化，就复用 W6R4 的 `dashscope-o` profile selection 结论；公开 profile ID 固定为 `sha256:41ebb321c6332867f0bb020621b7e1c17f8c60430374c37c3a670c916326ee70`。不重新执行完整 profile reselection。P3 的第一条 T01 Pilot 同时验证 G0，不另发一次“预检”请求。
 - 产品失败是有效的评测数据。只有结果本身不可信时，才能判为测量缺陷。
 - 基线数据一经产生即不可覆盖。27 条主评测行中的 `invalid` 也不在同一基线内重跑；如以后需要补充观察，必须在 P5 之后经用户决定建立独立补充批次。产品修复后必须创建独立的 post-fix cohort，不得回写或美化原始 baseline。
-- 初始执行权限只覆盖 P0–P2 的离线工作，不授权 provider HTTP。P3、P4A、P4B、 P4C 分别需要一次明确的 live 授权；前一阶段的授权不能传递到后一阶段。
+- P3、P4A、P4B、P4C 分别由用户的阶段启动指令开始，前一阶段完成后不得自动进入后一阶段。阶段启动指令已经覆盖本计划为该阶段规定的 provider HTTP 范围，不再要求用户重复确认配置哈希、source/tree、row 范围或 HTTP 上限。
 
 ## 活动文档
 
@@ -92,10 +92,10 @@ P1–P4 的命令以 Ubuntu WSL2、Python 3.12 fresh clone 为规范环境；Win
 每个批次的实际根目录是 `<外部根目录>/<cohort-id>/<source-sha>`。本计划使用：
 
 - P1：`module-baseline-v1/<source-sha>`
-- P3：原始 cohort 为 `pilot-v1/<source-sha>`；每次获独立授权的纠正性观察依次使用新的 `pilot-vN/<source-sha>`。已使用的 `pilot-v1`、`pilot-v2` 与预留的 `pilot-v3` 禁止合并或互相覆盖
+- P3：原始 cohort 为 `pilot-v1/<source-sha>`；每次由用户决定继续的纠正性观察依次使用新的 `pilot-vN/<source-sha>`。已使用的 `pilot-v1`、`pilot-v2` 与预留的 `pilot-v3` 禁止合并或互相覆盖
 - P4A–P5：`baseline-v1/<source-sha>`
 
-`<source-sha>` 必须是启动该批次前用户接受的完整 Git commit SHA。批次目录在首次写入配置前必须不存在或为空；live 开始前可以只包含已接受的 run config，所有评测行目录都必须尚不存在。已产生的评测行目录不可变；确定性汇总报告可以从这些行重新生成，但不能反向改写行证据。补充批次不在本次执行范围内；若以后建立，必须使用新的 `cohort-id`。
+`<source-sha>` 必须是启动该批次时的完整 clean Git commit SHA，并写入 run config。批次目录在首次写入配置前必须不存在或为空；live 开始前可以只包含 run config，所有评测行目录都必须尚不存在。已产生的评测行目录不可变；确定性汇总报告可以从这些行重新生成，但不能反向改写行证据。补充批次不在本次执行范围内；若以后建立，必须使用新的 `cohort-id`。
 
 P2 必须为 `pilot-v1` 和 `baseline-v1` 各生成一份 `public/run-config.json` 及其 `public/run-config.sha256`。配置至少固定：
 
@@ -110,31 +110,35 @@ P2 必须为 `pilot-v1` 和 `baseline-v1` 各生成一份 `public/run-config.jso
 
 SDK 自动重试固定为 0，评测行不做自动语义重跑。某项参数若 provider 不支持，配置中必须明确写成“不适用”，不能省略后由执行者猜测。私有配置 locator 使用 `PICO_NATIVE_PROVIDER_CONFIG`，只通过 launcher 的进程内存带外注入规范 WSL 进程；配置文件只记录变量和目标文件的存在性、类型检查结果，绝不记录 locator 或 credential 值。若 WSL 已关闭 Windows 环境变量继承，launcher 只能在自身进程内设置 `WSLENV` 的 `PICO_NATIVE_PROVIDER_CONFIG/p` 映射，不得把 locator 写入仓库、 Artifact、命令行参数或持久化的 shell 配置。
 
-用户必须在 P3 前看到并接受这两份配置的内容与哈希。P3、P4A、P4B、P4C 的每次 live 授权都必须绑定：run-config 哈希、source/tree、profile ID、任务和重复编号、独占输出目录，以及该阶段允许的 provider HTTP 范围。任一绑定项变化都必须停止该阶段并重新取得授权。
+P2 结束时必须向用户展示两份配置的内容与哈希，供用户理解后续阶段会如何运行；这不是签名或单独授权步骤。用户随后明确要求开始 P3、P4A、P4B 或 P4C，即允许该阶段按照当时 run config 和本计划规定的 row 与 provider HTTP 范围执行。执行控制层不得创建授权文件、授权环境变量或其他声称能够证明对话授权的载体，也不得从 `evaluation-v2-status.md` 抽取授权信息。status 只永久记录实际使用的 source、tree、配置哈希、row 范围和 HTTP 次数。
 
 ### 验证职责与 Live 启动阻断条件
 
 验证职责必须唯一，不允许多个校验器对同一判断重复执行：
 
 - run-config 生成器只负责从 clean source 写出既有 schema、canonical JSON 和旁路哈希，不验证 live 环境，也不预测启动时可能出现的差异；
-- `validate_live_start` 是配置获用户接受后、创建首条 row 和首次 HTTP 前唯一可以阻止启动的校验器；正式 live 命令在实际使用配置时调用它一次。`--verify-only` 只是用户明确要求时使用的可选诊断，不是 live 前置步骤；它若被调用，必须复用同一个函数，不能实现另一套规则；
+- `validate_live_start` 是创建首条 row 和首次 HTTP 前唯一可以阻止启动的机械校验器；它不判断用户是否授权。正式 live 命令在实际使用配置时调用它一次；
+- `--verify-only` 只检查既有 run config 的 canonical JSON、既有 schema 和旁路哈希，不检查 live 环境，不接受或要求 stage、task、repo、repetition 参数，也不调用 `validate_live_start`；它是可选诊断，不是 live 前置步骤；
 - row evidence validator 只在 row 已经开始后依据 evidence protocol 规则 1–5 判断本行证据是否 valid，不得重跑启动检查或增加启动前置条件；
 - report verifier 只在批次结束后核对报告是否正确引用已有 row，并重算聚合值；它不得重新判定 row evidence、验证 live 环境或触发重跑。
 
-配置被接受后，HEAD、文件内容、输出目录、credential 和 sandbox 等可变状态可能发生变化，因此唯一允许的再次检查，是由 `validate_live_start` 在真正使用配置时统一复核这些可变状态一次。这是对使用时状态的检查，不是让另一个校验器重复验证配置。除此之外，同一判断不得在 launcher、client、runner、row finalizer 或 report 中再次执行。辅助函数可以收集事实，但不能自行决定退出、降级或新增检查。
+从生成配置到真正使用配置之间，HEAD、输出目录、credential 和 sandbox 等可变状态可能发生变化，因此唯一允许的再次检查，是由 `validate_live_start` 在真正使用配置时统一复核这些可变状态一次。这是对使用时状态的检查，不是让另一个校验器重复验证配置。除此之外，同一判断不得在 launcher、client、runner、row finalizer 或 report 中再次执行。辅助函数可以收集事实，但不能自行决定退出、降级或新增检查。
 
 `validate_live_start` 只允许因如下封闭列表内的检查失败而退出：
 
-1. run-config 不存在、不是合法 JSON，或者缺少本计划获批时既有 schema 已定义的执行字段；执行期间不得把新字段声明为必需。live 启动时没有覆盖当前阶段的明确授权，或者文件字节哈希不是用户已接受的哈希。
-2. 配置生成时 tracked 文件存在未提交修改；只读验证或 live 启动时，当前 Git HEAD/tree 不是 run-config 声明并由授权绑定的 source/tree。
-3. 请求的 cohort、row、task、repetition 或 Artifact 输出目录超出授权范围，或者目标 row 目录已经存在。
-4. 私有配置 locator 不存在、不是普通文件，或者解析出的公开 provider/profile/model 身份与授权绑定不一致。
-5. 实际的 SDK 自动重试、Pico provider attempts、stream、并行工具执行或允许的 provider HTTP 上限超过授权值。
-6. workspace 写入隔离、`run_shell` 网络隔离或必需 sandbox 不可用。
+1. run-config 不存在、不是合法 JSON、缺少本计划获批时既有 schema 已定义的执行字段，或者旁路哈希与实际文件字节不一致；执行期间不得把新字段声明为必需。
+2. live 启动时当前 tracked 文件存在未提交修改，或者当前 Git HEAD/tree 不是 run-config 声明的 source/tree。
+3. 请求的 cohort、row、task、repetition 或 Artifact 输出目录超出 run config 声明的范围，或者目标 row 目录已经存在。
+4. 私有配置 locator 不存在、不是普通文件，或者解析出的公开 provider/profile/model 身份与 run config 不一致。
+5. 使用与正式 `run_shell` 相同的 bubblewrap 路径执行一次最小探针时，不能携带 `--unshare-net` 成功启动并在临时 workspace 写入标记文件。该探针不得扩展为 sandbox conformance suite；工具路径、挂载和其他安全性质只由离线测试负责。
 
 这是封闭列表，不是示例。解释器可执行文件的字面路径、`python`/`python3` 名称、符号链接形式、clone 绝对路径、操作系统补丁版本、命令展示文本、JSON 字段顺序以及其他未列出的环境差异，只能作为运行事实记录，不能进入任何 validator。
 
-P3、P4A、P4B 和 P4C 必须复用同一个 `validate_live_start` 实现和同一组阻断代码；阶段只提供不同的授权数据，不得通过 stage 分支改变验证逻辑。执行者不得在实现、审查或执行期间新增阻断代码、重新生成整份配置进行逐字段相等比较，或因为发现新的环境差异而补充 validator。若执行者认为确实需要第 7 项阻断条件，必须先停止修改，向用户说明它防止的具体不可逆风险，并取得计划修改许可；在获得许可前应放过该差异并继续执行。
+`validate_live_start` 不得调用 run-config 生成器、重建整份配置、逐字段比较重建结果、构造 Runtime/client，或尝试在启动前观察 SDK retry、Pico retry、stream、并行工具执行和总 HTTP 次数。run config 是否被 client 原样消费由定向离线测试证明；实际 retry 与 HTTP 次数由 row evidence 在运行后记录。总 HTTP 次数不是 live 启动阻断条件，不得从 `max_tool_steps` 推导或为此新增配置字段。
+
+P3、P4A、P4B 和 P4C 必须复用同一个 `validate_live_start` 实现和同一组阻断代码；阶段只提供不同的 run config 和请求范围，不得通过 stage 分支改变验证逻辑。校验器只确认请求的每条 row 均在 run config 的 `allowed_rows` 内，不验证某阶段是否一次选中了完整且精确的 row 集合，也不解析 `launch_commands.argv`。P3/P4 的任务顺序由本文和冻结启动命令约束；遗漏的 row 由报告与 Gate 显示为 `missing`。
+
+执行者不得在实现、审查或执行期间新增阻断代码，或因为发现新的环境差异而补充 validator。若执行者认为确实需要第 6 项阻断条件，必须先停止修改，向用户说明它防止的具体不可逆风险，并取得计划修改许可；在获得许可前应放过该差异并继续执行。
 
 ## 证据边界
 
@@ -235,14 +239,19 @@ G1 通过要求这 27 条评测行全部实际产生最终分类： `valid + pas
 
 ### G2：评测证据就绪（Portfolio Ready）
 
-G2 通过要求确定性报告检查程序同时证明：
+G2 通过要求确定性报告检查与一次只读 review 共同完成，二者职责不得互相替代。
+
+确定性报告检查程序只证明：
 
 1. 27 条编码评测行都能定位到协议固定的原始证据、`evidence-view.json`、 `checksums.json` 和最终分类；报告引用的 P1 模块结果能定位到固定的五个 JSON 文件及其 `checksums.json`；
 2. 报告中的样本数、通过数、失败数、`invalid` 数和聚合指标可以从评测行记录重新计算，且重算值与报告一致；
-3. 所有公开证据链接存在，文件哈希可复算，最终公开目录的凭据扫描通过；
+3. 所有公开证据链接存在、文件哈希可复算，运行时凭据扫描记录存在且其覆盖文件哈希仍匹配；程序不得为了重新扫描而读取 credential；
 4. 需要 Codex 审计或用户决定的评测行具有对应记录，报告没有把待决定事项写成确定结论；
-5. P5 的一次只读 claims-to-evidence review 已完成，且没有未解决的“结论缺少证据” Finding。
-6. `evaluation-v2-user-guide.md` 已覆盖 P1–P5 实际交付的所有评测入口，其命令参数、调用范围、前置条件、产物入口和结果解释与最终 CLI `--help`、测试及 Artifact 结构一致。
+
+只读 reviewer 负责：
+
+5. 完成 claims-to-evidence review，并报告没有未解决的“结论缺少证据” Finding；
+6. 确认 `evaluation-v2-user-guide.md` 已覆盖 P1–P5 实际交付的所有评测入口，其命令参数、调用范围、前置条件、产物入口和结果解释与最终 CLI `--help`、测试及 Artifact 结构一致。
 
 ## 阶段 P0——停止旧控制面并恢复可见性
 
@@ -336,7 +345,7 @@ P2 不得丢弃上述可复用实现后从零重写 runner。
 
 1. 将现有 `repositories -> tasks` 嵌套 taskset 标准化为 `TaskSpec`；不得创建第二份重复 manifest。
 2. 实现一个薄 Pico client command：接收 prompt 和 workspace，调用真实 Runtime，并把 `ClientResult` 写入 `PICO_LIVE_EVIDENCE_PATH`。
-3. 按协议规则 2–5 保存私有原件、选择公开原始证据，并由确定性脚本生成 `run-record.json`、`evidence-view.json` 和 `checksums.json`；不得复制 raw SDK/provider 网络响应。同时生成前述 `public/run-config.json` 和哈希，供用户在 P3 前确认。
+3. 按协议规则 2–5 保存私有原件、选择公开原始证据，并由确定性脚本生成 `run-record.json`、`evidence-view.json` 和 `checksums.json`；不得复制 raw SDK/provider 网络响应。同时生成前述 `public/run-config.json` 和哈希，供用户在 P3 前查看。
 
 第 2 项的文件固定为 `scripts/run_pico_live_task_client.py`。它必须：
 
@@ -347,7 +356,7 @@ P2 不得丢弃上述可复用实现后从零重写 runner。
 - 对失败原样记录有限字段 `failure_origin`、`failure_stage` 和 `error_type`；外层只能追加 process exit code，不得覆盖这些字段或原始失败类别；
 - 保留 workspace 中本次运行产生的 `.pico` 原始文件，供 runner 在清理前按协议复制。
 
-`scripts/run_local_coding_tasks.py` 必须在保留现有离线接口的同时，为 Evaluation v2 明确接受 `--run-config`、`--cohort-id`、`--task`、`--repo` 和 `--repetitions`。 P2 在 run config 中保存 P3、P4A、P4B、P4C 的完整 WSL launch command；后续阶段只能填入已经绑定的 source/output 路径，不得临时拼装另一条命令。
+`scripts/run_local_coding_tasks.py` 必须在保留现有离线接口的同时，为 Evaluation v2 明确接受 `--run-config`、`--cohort-id`、`--task`、`--repo` 和 `--repetitions`。 P2 在 run config 中保存 P3、P4A、P4B、P4C 的完整 WSL launch command；后续阶段只能填入配置声明的 source/output 路径，不得临时拼装另一条命令。
 
 优先复用：
 
@@ -376,7 +385,7 @@ P2 不得丢弃上述可复用实现后从零重写 runner。
 
 ### 阶段出口
 
-P2 只有在 fake end-to-end、协议测试和 run config 检查全部通过后才能结束。结束时向用户展示 `pilot-v1` 与 `baseline-v1` 两份 run config 的内容、哈希和 scoped diff；用户未接受前不得进入 P3。
+P2 只有在 fake end-to-end、协议测试和 run config 检查全部通过后才能结束。结束时向用户展示 `pilot-v1` 与 `baseline-v1` 两份 run config 的内容、哈希和 scoped diff，然后停止。用户随后明确要求开始 P3 时即可进入 P3，不需要再回复一次配置接受或 live 授权。
 
 ## 阶段 P3——三任务 Pilot 与 G0
 
@@ -386,7 +395,7 @@ P2 只有在 fake end-to-end、协议测试和 run config 检查全部通过后�
 
 ### 执行内容
 
-- 在用户接受对应 Pilot run config 后，取得只绑定 P3 的一次 live 授权；初始 cohort 使用 `pilot-v1`，每次纠正性观察必须使用新的 `pilot-vN`、source、run config、输出目录和 row 身份；
+- 用户明确要求开始 P3 后直接按对应 Pilot run config 执行；初始 cohort 使用 `pilot-v1`，每次由用户决定继续的纠正性观察必须使用新的 `pilot-vN`、source、run config、输出目录和 row 身份；
 - 复用 `dashscope-o` 和已固定的公开 profile ID；
 - 固定运行 T01、T04、T07，各 1 次；先只运行 T01，由它直接完成 G0 测量；
 - 使用 run config 中固定的模型参数、预算、timeout、SDK 自动重试 0 和 Pico provider attempt/retry 设置；
@@ -401,7 +410,7 @@ P2 只有在 fake end-to-end、协议测试和 run config 检查全部通过后�
 - 任一行发生基础设施失败或 measurement defect 时，保留已经产生的最小记录，不做自动 provider HTTP 重试，也不覆盖该行；
 - 失败汇总采用固定优先级：测量记录损坏、原始 client/runtime 失败、协议失败、 verifier 失败、成功。后层不得覆盖前层；不能仅按 HTTP 请求数推断失败来源；
 - Pico Runtime 在构建首个请求前抛错，只要原始来源、阶段、异常类型、精确请求数和其他协议证据完整，就属于可信的产品失败，可审计为 `valid + failed`。client 无法启动或原始异常丢失时没有产品结论，必须记为 `invalid`；
-- 测量问题只能在停止 P3 后提出离线修复方案，不能自动进入新的 revision/reviewer 循环。任何 replacement live 运行都必须使用新的评测行身份和输出目录，并另行取得用户授权；原 `invalid` 行永久保留；
+- 测量问题只能在停止 P3 后提出离线修复方案，不能自动进入新的 revision/reviewer 循环。任何 replacement live 运行都必须使用新的评测行身份和输出目录；只有用户明确要求继续 P3 后才能执行，不再另设一次 live 授权；原 `invalid` 行永久保留；
 - 不得为让 Pilot 任务通过而修改 Pico 产品行为。
 
 评测桥接修复后的停止条件是：同类产品异常一旦能稳定形成可信的 `valid + failed`，即停止修补评测器并继续 Pilot；只有仍不能形成可信分类时，才视为新的 measurement defect。
@@ -420,7 +429,7 @@ T01 必须满足协议规则 1–5，并可从 `reports/pilot-report.md` 追溯�
 
 ### 共同规则
 
-- P4A、P4B、P4C 启动前分别取得一次 live 授权；每次授权只覆盖本阶段的 9 条主评测行，并绑定已接受的 `baseline-v1` run-config 哈希；
+- P4A、P4B、P4C 分别在用户明确要求开始相应阶段后执行；该启动指令覆盖本阶段计划内的 9 条主评测行，不再另行确认 `baseline-v1` run-config 哈希；
 - P4A 开始前冻结 runner、suite、profile、模型参数和预算，P4B/P4C 只能验证冻结身份未变，不能静默改动；
 - 主评测行 ID 固定为 `baseline-v1-<task-id>-r<1..3>`，例如 `baseline-v1-T01-r1`；
 - 每条评测行使用独立 fresh workspace；
@@ -433,7 +442,7 @@ T01 必须满足协议规则 1–5，并可从 `reports/pilot-report.md` 追溯�
   - 保留已经完成和已经无效的主评测行；
   - 若缺陷可能影响尚未启动的行，停止当前阶段；
   - 不自动建立 P4F、revision 或 reviewer；先向用户说明缺陷、受影响行和拟修改文件；
-  - 只有缺陷能从既有不可变原始证据做离线后处理修复、且 run config 完全不变时，用户接受修复后才可在新的 live 授权下继续未启动、仍为 `missing` 的主评测行；
+  - 只有缺陷能从既有不可变原始证据做离线后处理修复、且 run config 完全不变时，用户明确要求继续当前阶段后才可执行未启动、仍为 `missing` 的主评测行；不再另设一次 live 授权；
   - 若修复会改变 Pico Runtime、live client/runner、prompt、fixture、verifier、 profile、模型参数或证据捕获方式，则不得在 `baseline-v1` 中继续；本计划以 G1 未通过停止，由用户另行决定是否建立新基线；
   - 已启动后成为 `invalid` 的主评测行不得在 `baseline-v1` 内重跑；
   - 如需再次观察该任务，只能在 P5 后由用户决定是否建立新的补充批次；补充结果不改变 G1 的原主评测行分类。
@@ -482,7 +491,7 @@ Reviewer 不得：
 ### 验证
 
 - targeted aggregation tests；
-- `scripts/verify_evaluation_v2_report.py` 检查评测行引用、文件哈希、聚合重算、 Codex 审计/用户决定记录和公开凭据扫描结果；
+- `scripts/verify_evaluation_v2_report.py` 检查评测行引用、文件哈希、聚合重算、Codex 审计/用户决定记录，以及运行时已经产生的公开凭据扫描记录与其覆盖文件哈希；它不得为了重扫而读取 credential；
 - 检查 `reports/evaluation-report.md` 可由 `reports/evaluation-report.json` 确定性重建；
 - 发布或合并前运行一次全仓测试。
 
@@ -498,7 +507,10 @@ Reviewer 不得：
 
 ### G2 可验证条件
 
-运行 Gate 定义中的确定性报告检查程序，确认所有证据路径与哈希有效、聚合指标重算一致、公开凭据扫描通过、所需审计和用户决定记录齐全，并确认 claims-to-evidence review 没有未解决的“结论缺少证据” Finding。
+G2 由两个互不替代的条件共同组成：
+
+1. 运行 Gate 定义中的确定性报告检查程序，确认所有证据路径与哈希有效、聚合指标重算一致、运行时公开凭据扫描记录及其覆盖文件哈希有效，并且所需 Codex 审计和用户决定记录齐全。
+2. 只读 reviewer 完成 claims-to-evidence review，并报告没有未解决的“结论缺少证据” Finding。确定性程序只检查客观记录，不判断 reviewer 是否遗漏 Finding，也不为这项人工判断新增 Finding schema 或工作流。
 
 ### 本计划的终点
 
@@ -541,7 +553,7 @@ Resume 需要在 P5 后另建计划。候选工作包括 checkpoint schema、nat
 - 正常推进中的阶段可以继续完成，不得仅因到达两小时而中断；
 - 当工作偏离既定范围、开始重复返工或准备自动进入新一轮完整审查时，应先停止扩张范围并向用户报告；
 - 不得自动启动下一轮 audit、revision 或 reviewer 循环；
-- P3、P4A、P4B、P4C 必须在各自授权前停下并展示准确绑定；不得把计划批准、上一阶段批准或已有 credential 推断为 provider HTTP 授权；
+- P3、P4A、P4B、P4C 不得自动连续执行；用户明确要求开始某阶段，就是该阶段唯一需要的启动决定，并覆盖本计划规定的 provider HTTP 范围。不得再要求单独确认配置哈希、source/tree、row 范围或 HTTP 上限，也不得创建或解析授权载体；
 - live 阶段获得结果后，只完成该阶段的记录、审计和报告，不自动修改产品；
 - P5/G2 完成后必须停止并等待用户决定。
 
