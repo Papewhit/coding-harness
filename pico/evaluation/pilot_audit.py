@@ -52,13 +52,15 @@ def validate_audit(public_row: Path, audit: Mapping[str, Any]) -> None:
         raise ValueError("Codex audit identity is invalid")
     record = load_object(public_row / "run-record.json")
     view = optional_object(public_row / "evidence-view.json")
-    measurement_valid = is_measurement_valid(record, view)
-    expected_measurement = "valid" if measurement_valid else "invalid"
-    if audit.get("measurement_result") != expected_measurement:
-        raise ValueError("audit measurement result contradicts deterministic evidence")
+    mechanical_measurement_valid = is_measurement_valid(record, view)
+    measurement_result = audit.get("measurement_result")
+    if measurement_result not in {"valid", "invalid"}:
+        raise ValueError("audit measurement result is invalid")
+    if measurement_result == "valid" and not mechanical_measurement_valid:
+        raise ValueError("audit cannot promote mechanically invalid evidence to valid")
     sufficient = audit.get("evidence_sufficient")
-    if type(sufficient) is not bool or sufficient is not measurement_valid:
-        raise ValueError("audit evidence_sufficient contradicts measurement validity")
+    if type(sufficient) is not bool or sufficient is not (measurement_result == "valid"):
+        raise ValueError("audit evidence_sufficient contradicts its measurement result")
     if audit.get("failure_category") not in FAILURE_CATEGORIES:
         raise ValueError("audit failure category is invalid")
     if not isinstance(audit.get("reason"), str) or not audit["reason"].strip():
@@ -69,20 +71,21 @@ def validate_audit(public_row: Path, audit: Mapping[str, Any]) -> None:
     product = audit.get("product_result")
     if user_decision not in {"not_required", "required"}:
         raise ValueError("audit user_decision must be not_required or required")
+    if measurement_result == "invalid":
+        if (
+            classification != "invalid"
+            or product != "not_determined"
+            or audit.get("failure_category") != "measurement"
+            or user_decision != "not_required"
+        ):
+            raise ValueError("invalid measurement classification is inconsistent")
+        return
     if user_decision == "required":
         if classification != "pending decision":
             raise ValueError("an audit requiring a decision must remain pending")
         return
     if classification not in FINAL_CLASSIFICATIONS:
         raise ValueError("audit final classification is invalid")
-    if not measurement_valid:
-        if (
-            classification != "invalid"
-            or product != "not_determined"
-            or audit.get("failure_category") != "measurement"
-        ):
-            raise ValueError("invalid measurement classification is inconsistent")
-        return
     expected_product = deterministic_product_result(record, view)
     if product != expected_product:
         raise ValueError("audit product result contradicts deterministic evidence")

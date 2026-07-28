@@ -227,6 +227,25 @@ def test_invalid_t01_fails_g0_without_classifying_missing_rows(
     assert report["metrics"]["tool_steps"]["valid_samples"] == 0
 
 
+def test_codex_can_reject_mechanically_complete_but_insufficient_evidence(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    config, root = write_config(tmp_path, monkeypatch)
+    _make_row(root, "T01", verifier_passed=False, client_failure="provider")
+    audit = _audit(
+        tmp_path / "insufficient.json",
+        "T01",
+        measurement="invalid",
+    )
+
+    finalize_pilot(config, audit_inputs=[audit], generator=GENERATOR)
+    report = json.loads((root / "reports" / "pilot-report.json").read_text())
+
+    assert report["g0"]["status"] == "failed"
+    assert report["rows"][0]["final_classification"] == "invalid"
+    assert report["metrics"]["provider_requests"]["total"] == 1
+
+
 def test_pending_decision_can_be_appended_without_overwriting_audit(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
