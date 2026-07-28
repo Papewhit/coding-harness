@@ -6,7 +6,7 @@
 
 ## 当前状态
 
-- 当前阶段：P3——正在纯离线收敛 `pilot-v3` 的唯一 live 启动验证职责并准备冻结新 source/config；尚未启动 `pilot-v3` row 或 provider HTTP。
+- 当前阶段：P3——`pilot-v3` 的 source/config 已完成纯离线冻结，正在等待用户明确要求开始 P3；尚未启动 `pilot-v3` row 或 provider HTTP。
 - 历史阶段结论：`pilot-v1` 的 T01 只执行一次并永久分类为 `invalid`；`pilot-v2` 在首条 row 创建前停止，三条 row 均为 `no result`。两批历史 Artifact 保持不可变。
 - 历史控制 checkpoint： `2876cd53e17fd2b6eb089dbfaf14cd67615498fc`。
 - 计划中的 P0 起点： `44677cd7f6a9535c1a74e8628078e9d4967594b5`。
@@ -24,7 +24,7 @@
 - 正式 Artifact： `F:\dev\llm\pico-eval-artifacts\evaluation-v2\module-baseline-v1\dcd8ea110c6c4dad5c09943fab26b8197142ae29`。
 - wrapper revision 使用量：`0/1`。`dcd8ea1` 是正式测量前由总体方案和 user guide 交付要求驱动的实现对齐，不是测量 wrapper 缺陷修订。
 - 当前边界：P4A 不能启动；`pilot-v1`、`pilot-v2` 不得重跑、覆盖或重新分类。
-- 下一动作：提交并在新的 detached WSL clone 复验唯一启动验证实现，生成和展示 `pilot-v3` 配置及哈希，然后停止。只有用户明确要求开始 P3 后才执行冻结的 G0 命令。
+- 下一动作：保持 source、配置和历史 Pilot Artifact 不变并停止。用户明确要求开始 P3 后，只原样执行冻结配置的 `p3_g0` 命令；不预跑 `--verify-only` 或其他 preflight，不自动进入 P4A。
 
 ## 历史无效测量
 
@@ -380,7 +380,7 @@ G0 未通过。P4A 不得启动。
 - 公开 Artifact 共 4 个文件：run config、旁路哈希和两份报告。实际 locator 与 credential 共 2 个敏感值的精确扫描命中 0；`public/rows` 目录不存在。
 - `pilot-v3` 已作为新的隔离 cohort 身份加入离线实现。本次后续工作先提交并验收启动验证职责修复，再生成和展示新的 source/tree、配置哈希、三条 row 与独占输出目录；展示后停止，等待用户明确要求开始 P3。
 
-## P3 `pilot-v3` 启动验证职责收敛（预冻结）
+## P3 `pilot-v3` 启动验证职责收敛与配置冻结
 
 ### 实现边界
 
@@ -390,8 +390,33 @@ G0 未通过。P4A 不得启动。
 - runner、row capture 和 live-task client 不再重建整份配置或重复 profile/sandbox 启动判断。row evidence validator 只处理运行后证据和分类。
 - 校验器不解析冻结 argv、不检查阶段完整 row 集合、不预构造 Runtime/client、不推导 HTTP 上限；已知 prompt `ValueError` 的真实生产桥接仍保留为可信的 `runtime / pre_request` 产品失败。
 
-### 离线状态与下一步
+### 冻结身份
 
-- 本节所在实现 commit 是待冻结 source A；其完整 commit/tree 在提交后交付，并由下一次独立 docs commit 连同最终 run-config SHA-256 一并记录。
-- Evaluation v2 live-start、evidence 和生产桥接定向测试及 scoped Ruff 已在控制 checkout 通过；未调用 provider，provider HTTP 为 0。
-- 下一步是在新的 detached WSL clone 中复跑定向验收，生成唯一 `pilot-v3/<source-A>/public/run-config.*`，执行纯格式 `--verify-only` 并展示冻结命令。完成后停止，不自动执行 G0 或进入 P4A。
+- source commit：`e1c5652592588464bc808504188169053445d007`；tree：`d83406c26b77e5a3e0e86205c91e90a8b0db2eb7`。
+- run config SHA-256：`175a723bc5d7f8560203f9b2ae21a61dbf9dcab0c15bfb107d69f874ec50206f`。
+- profile：`dashscope-o`；profile ID：`sha256:41ebb321c6332867f0bb020621b7e1c17f8c60430374c37c3a670c916326ee70`；model：`qwen3.6-plus`；wire dialect：OpenAI Responses；SDK：OpenAI `2.46.0`。
+- planned rows：`pilot-v3-T01-r1`、`pilot-v3-T04-r1`、`pilot-v3-T07-r1`。
+- 独占输出目录：`F:\dev\llm\pico-eval-artifacts\evaluation-v2\pilot-v3\e1c5652592588464bc808504188169053445d007`。
+- 公开配置目录只有 `run-config.json` 与 `run-config.sha256`；`pilot-v1`、`pilot-v2` 的配置、row、报告和结论没有修改。
+
+### 离线验收
+
+- source A 在新的 detached WSL clone `/mnt/f/dev/llm/pico-eval-live-v3` 中复验；tracked 状态 clean，HEAD/tree 与上述冻结身份一致。
+- 复验环境记录为 Ubuntu 26.04、CPython 3.12.13、OpenAI SDK 2.46.0。Evaluation v2 live evaluator、evidence、Pilot report、生产桥接和 live-start 共 71 项定向测试通过，scoped Ruff 通过。
+- 配置生成后，run-config CLI 的纯格式 `--verify-only` 通过；独立 SHA-256 重算与旁路哈希一致。未调用 `validate_live_start`、sandbox 探针、Runtime/client 或 provider；provider HTTP 为 0。
+
+### 冻结命令与停止点
+
+G0：
+
+```text
+uv run --frozen --extra providers --python 3.12 python scripts/run_local_coding_tasks.py --run-config /mnt/f/dev/llm/pico-eval-artifacts/evaluation-v2/pilot-v3/e1c5652592588464bc808504188169053445d007/public/run-config.json --cohort-id pilot-v3 --stage P3-G0 --task T01 --repo tinyconfig --repetitions 1
+```
+
+remainder：
+
+```text
+uv run --frozen --extra providers --python 3.12 python scripts/run_local_coding_tasks.py --run-config /mnt/f/dev/llm/pico-eval-artifacts/evaluation-v2/pilot-v3/e1c5652592588464bc808504188169053445d007/public/run-config.json --cohort-id pilot-v3 --stage P3-remainder --task T04 --task T07 --repetitions 1
+```
+
+当前在此停止。用户明确要求开始 P3 后，只执行 `p3_g0`；T01 测量 valid 即通过 G0 并按计划决定是否继续原样执行 `p3_remainder`，不要求产品通过，不修改 Pico prompt bug，不自动进入 P4A。
