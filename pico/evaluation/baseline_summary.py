@@ -81,7 +81,7 @@ def build_baseline_summary(
     rows = build_coding_rows(root, config)
     selected_tasks = STAGE_TASKS[stage]
     stage_rows = [row for row in rows if row["task_id"] in selected_tasks]
-    cohort = _scope_summary(rows)
+    cohort = summarize_coding_rows(rows)
     return {
         "schema_version": SUMMARY_SCHEMA,
         "cohort_id": BASELINE_COHORT,
@@ -96,7 +96,7 @@ def build_baseline_summary(
             "id": stage,
             "repository": STAGE_REPOSITORIES[stage],
             "task_ids": list(selected_tasks),
-            **_scope_summary(stage_rows),
+            **summarize_coding_rows(stage_rows),
         },
         "cohort": cohort,
         "g1": {
@@ -112,7 +112,11 @@ def build_baseline_summary(
     }
 
 
-def _scope_summary(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+def summarize_coding_rows(
+    rows: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    """Aggregate one coding-row scope using the Evaluation v2 metric contract."""
+
     counts = Counter(str(row["status"]) for row in rows)
     classifications = [
         str(row["final_classification"])
@@ -197,6 +201,7 @@ __all__ = [
     "SUMMARY_SCHEMA",
     "build_baseline_summary",
     "finalize_baseline",
+    "summarize_coding_rows",
     "verified_baseline_config",
     "verify_baseline",
 ]

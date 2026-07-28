@@ -284,3 +284,54 @@ uv run --frozen --extra providers --python 3.12 \
 ```
 
 `--verify-only` 不接受 audit/decision 输入，不读取 provider 配置且不写文件。stdout JSON 同时包含本阶段九条 row 和整个 27-row cohort 的分类计数、valid-run rate、verified-run success、stable task status、failure category、provider 请求、tool steps、repeated reads、elapsed time 和 G1 状态。工具与耗时只聚合最终 valid row；invalid、no result、待审计和待决定均按指标文档单列。每阶段将这份确定性摘要发布到 status，P5 再从相同 row 证据生成唯一正式总报告。
+
+## P5 正式基线报告
+
+### 构建边界
+
+P5 只读消费已经封存的 `module-baseline-v1`、`baseline-v1` 以及用于边界观察的 `pilot-v3`、`pilot-v4` Artifact。它不运行 coding row、不构造 Runtime、不修改审计或历史分类，也不发起 provider HTTP。构建入口读取当前实际 provider locator 与 API key 的完整值仅用于最终公开候选字节的精确扫描；这些值不进入报告。
+
+正式指标只来自以下两个根目录：
+
+```text
+module-baseline-v1/dcd8ea110c6c4dad5c09943fab26b8197142ae29
+baseline-v1/542f97a023218ee04c00225de994f152bfed748e
+```
+
+`pilot-v3` 和 `pilot-v4` 仅支持 `prompt-normalization-scope` 边界观察，不进入正式成功率、排序、三项改进机会或简历结论。两个 Pilot 的 source 与 bridge 不同，因此不能解释为严格 A/B。
+
+### 构建与发布
+
+在已设置 `PICO_NATIVE_PROVIDER_CONFIG` 且该 locator 指向实际 provider 配置文件的进程中运行：
+
+```bash
+uv run --frozen --extra providers --python 3.12 \
+  python scripts/build_evaluation_v2_report.py \
+  --run-config /mnt/f/dev/llm/pico-eval-artifacts/evaluation-v2/baseline-v1/542f97a023218ee04c00225de994f152bfed748e/public/run-config.json \
+  --module-root /mnt/f/dev/llm/pico-eval-artifacts/evaluation-v2/module-baseline-v1/dcd8ea110c6c4dad5c09943fab26b8197142ae29 \
+  --publish-doc docs/evaluation/evaluation-report-v2.md
+```
+
+构建器先完成并哈希正式指标子树，再验证两个 Pilot 并添加独立边界观察。随后它对全部被引用的公开 Artifact 以及三个最终候选执行一次实际值扫描；任何命中都会在写入前终止。扫描通过后，构建器生成：
+
+```text
+baseline-v1/<source-sha>/reports/evaluation-report.json
+baseline-v1/<source-sha>/reports/evaluation-report.md
+docs/evaluation/evaluation-report-v2.md
+```
+
+JSON 是唯一机器可读数据源；两份 Markdown 都从它确定性渲染，并且字节一致。不得人工追加或修订 Markdown。
+
+### 只读复核
+
+```bash
+uv run --frozen --extra providers --python 3.12 \
+  python scripts/verify_evaluation_v2_report.py \
+  --run-config /mnt/f/dev/llm/pico-eval-artifacts/evaluation-v2/baseline-v1/542f97a023218ee04c00225de994f152bfed748e/public/run-config.json \
+  --module-root /mnt/f/dev/llm/pico-eval-artifacts/evaluation-v2/module-baseline-v1/dcd8ea110c6c4dad5c09943fab26b8197142ae29 \
+  --publish-doc docs/evaluation/evaluation-report-v2.md
+```
+
+verifier 不读取 locator 或 credential、不写文件、不调用 provider。它重新验证 run config、27 条 row 的 public/private checksum、audit/decision、原件路径与运行时凭据扫描覆盖，复核 P1 module checksum 和两个 Pilot 报告，再从证据重算完整 JSON、正式指标哈希与 Markdown，并要求仓库镜像与外部 Markdown 字节一致。
+
+G2 的确定性部分只有在上述复核通过时才成立。最终 G2 还要求一次只读 claims-to-evidence review 没有未解决的“结论缺少证据” Finding；review 不得自动修改报告、产品或历史 Artifact。
