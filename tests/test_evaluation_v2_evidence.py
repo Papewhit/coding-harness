@@ -195,7 +195,7 @@ def test_run_config_never_persists_locator_value(
     assert locator not in config_path.read_text(encoding="utf-8")
 
 
-@pytest.mark.parametrize("cohort_id", ["pilot-v2", "pilot-v3"])
+@pytest.mark.parametrize("cohort_id", ["pilot-v2", "pilot-v3", "pilot-v4"])
 def test_corrective_pilot_config_has_new_rows_and_p3_only_commands(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,

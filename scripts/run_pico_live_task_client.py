@@ -90,6 +90,9 @@ def run_live_task(
 ) -> int:
     """Execute the production Runtime path with an already selected transport client."""
 
+    prompt = prompt.strip()
+    if not prompt:
+        raise ValueError("live task prompt is empty after user-input normalization")
     expected_profile = run_config["profile"]["public_profile"]
 
     def persist_attempts(attempts: tuple[HttpAttempt, ...]) -> None:

@@ -94,7 +94,7 @@ public/modules/checksums.json
 
 ### 适用目的与不适用范围
 
-`scripts/run_local_coding_tasks.py` 现有离线模式保持不变；Evaluation v2 模式用于验证冻结的 9-task taskset、生成或只读核验隔离的 `pilot-vN` 与 `baseline-v1` run config，并在用户明确要求开始相应 P3/P4 阶段后启动真实 Pico Runtime。`pilot-v1`、`pilot-v2` 是不可变历史批次，`pilot-v3` 是下一次纠正性观察的独立身份。
+`scripts/run_local_coding_tasks.py` 现有离线模式保持不变；Evaluation v2 模式用于验证冻结的 9-task taskset、生成或只读核验隔离的 `pilot-vN` 与 `baseline-v1` run config，并在用户明确要求开始相应 P3/P4 阶段后启动真实 Pico Runtime。`pilot-v1`、`pilot-v2`、`pilot-v3` 是不可变历史批次，`pilot-v4` 是下一次纠正性观察的独立身份。
 
 P2 和后续配置冻结只运行 fake client、hidden verifier 和确定性证据检查。生成或验证 run config 不解析 provider credential、不构造 provider transport，也不发起 provider HTTP。展示配置不是签名或单独接受步骤；用户明确要求开始 P3 时，G0 才由首条 T01 live row 验证。
 
@@ -119,15 +119,15 @@ uv sync --frozen --extra providers --python 3.12
 uv run --frozen --extra providers --python 3.12 \
   python scripts/run_local_coding_tasks.py \
   --prepare-run-configs \
-  --cohort-id pilot-v3 \
+  --cohort-id pilot-v4 \
   --output-root /mnt/f/dev/llm/pico-eval-artifacts/evaluation-v2
 ```
 
 该命令只创建：
 
 ```text
-pilot-v3/<source-sha>/public/run-config.json
-pilot-v3/<source-sha>/public/run-config.sha256
+pilot-v4/<source-sha>/public/run-config.json
+pilot-v4/<source-sha>/public/run-config.sha256
 ```
 
 JSON 使用排序键、2 空格缩进和末尾换行；`.sha256` 是 JSON 文件字节的小写 SHA-256。配置固定 source/tree、taskset、`dashscope-o` public profile、`qwen3.6-plus`、OpenAI Responses、SDK 版本、预算、timeout、重试策略、工具白名单、bubblewrap 网络隔离、Artifact 路径、client 哈希、允许的 row 身份和 P3/P4 完整启动命令。配置只记录 locator 变量名及存在/文件类型检查结果，不记录 locator 或 credential 值。
@@ -137,7 +137,7 @@ JSON 使用排序键、2 空格缩进和末尾换行；`.sha256` 是 JSON 文件
 ```bash
 uv run --frozen --extra providers --python 3.12 \
   python scripts/run_local_coding_tasks.py \
-  --run-config /mnt/f/dev/llm/pico-eval-artifacts/evaluation-v2/pilot-v3/<source-sha>/public/run-config.json \
+  --run-config /mnt/f/dev/llm/pico-eval-artifacts/evaluation-v2/pilot-v4/<source-sha>/public/run-config.json \
   --verify-only
 
 uv run --frozen --extra providers --python 3.12 \
@@ -153,7 +153,7 @@ uv run --frozen --extra providers --python 3.12 \
 正式入口接受：
 
 - `--run-config`：冻结配置；
-- `--cohort-id`：当前实现接受 `pilot-v1`、`pilot-v2`、`pilot-v3` 或 `baseline-v1`，必须与配置一致；
+- `--cohort-id`：当前实现接受 `pilot-v1`、`pilot-v2`、`pilot-v3`、`pilot-v4` 或 `baseline-v1`，必须与配置一致；
 - `--stage`：供 row 记录的 `P3-G0`、`P3-remainder`、`P4A`、`P4B` 或 `P4C`；
 - `--task`、`--repo`：可重复使用的任务或仓库过滤器；
 - `--repetitions`：请求的重复次数，省略时为 1。
@@ -166,7 +166,7 @@ live 启动时，`PICO_NATIVE_PROVIDER_CONFIG` 只在 launcher 进程内指向�
 
 ### Runtime 与写入范围
 
-薄 client `scripts/run_pico_live_task_client.py` 从 `PICO_LIVE_TASK_PROMPT` 读取 prompt，把 provider-neutral `ClientResult` 原子合并到 `PICO_LIVE_EVIDENCE_PATH`。它直接装配现有 provider adapter 与 `Pico` Runtime，不使用 SDK Tool Runner 或 Agents Runner。
+薄 client `scripts/run_pico_live_task_client.py` 从 `PICO_LIVE_TASK_PROMPT` 读取 prompt，按非交互、REPL 和 Textual TUI 三个标准用户入口的共同语义先去除首尾空白，再把 prompt 交给 Pico Runtime；纯空白 prompt 在构建请求前拒绝。client 把 provider-neutral `ClientResult` 原子合并到 `PICO_LIVE_EVIDENCE_PATH`，直接装配现有 provider adapter 与 `Pico` Runtime，不使用 SDK Tool Runner 或 Agents Runner。
 
 固定 Runtime 策略为：`approval=auto`、workspace-only write scope、关闭 auto-dream、最大输出 4096 token、最多 50 个工具步骤、provider timeout 300 秒、单行 timeout 600 秒、stream=false、并行工具=false、SDK retry=0、Pico provider attempts=1、semantic rerun=0。只开放 `list_files`、`read_file`、`search`、`run_shell`、`write_file`、`patch_file` 和三个 todo 工具；子 agent、交互询问和 plan 工具不可用。
 

@@ -6,8 +6,8 @@
 
 ## 当前状态
 
-- 当前阶段：P3——`pilot-v3` 三任务 Pilot 已完成并关闭；G0 通过，三条 row 均为可信的 `valid + failed / product_behavior`。
-- 阶段结论：T01、T04、T07 均在 Pico Runtime 构建首个 provider 请求前抛出 `ValueError`；三条测量完整、精确 provider 请求总数为 0、无协议错误或敏感值命中。该产品 bug 没有在本批次修复。
+- 当前阶段：P3——用户已授权在修复 Evaluation prompt 入口语义后，以独立 `pilot-v4` source/config 重跑 T01、T04、T07；当前处于纯离线实现与冻结前验收。
+- 阶段结论：`pilot-v3` 的三条可信 `valid + failed / product_behavior` 保持不变。后续检查确认非交互、REPL 和 Textual TUI 都在进入 Runtime 前裁剪用户 prompt，而 Evaluation live bridge 未裁剪 task prompt；`pilot-v4` 只修复该评测入口差异，不修改 Pico 产品实现。
 - 历史控制 checkpoint： `2876cd53e17fd2b6eb089dbfaf14cd67615498fc`。
 - 计划中的 P0 起点： `44677cd7f6a9535c1a74e8628078e9d4967594b5`。
 - 实际 P0 起始 commit： `758eeaf7360f09296bc8a87567b021e68ca097d7`。该提交只解除 Evaluation v2 启动暂停并更新文档状态；P0 在检查其 diff 后从该 clean commit 开始。
@@ -23,8 +23,8 @@
 - P2 结束 commit：承载本阶段关闭记录的独立 docs commit；完整 SHA 在提交后的交付消息中报告，不为回填而 amend。
 - 正式 Artifact： `F:\dev\llm\pico-eval-artifacts\evaluation-v2\module-baseline-v1\dcd8ea110c6c4dad5c09943fab26b8197142ae29`。
 - wrapper revision 使用量：`0/1`。`dcd8ea1` 是正式测量前由总体方案和 user guide 交付要求驱动的实现对齐，不是测量 wrapper 缺陷修订。
-- 当前边界：P3 已停止；P4A 未启动，不能自动进入。`pilot-v1`、`pilot-v2`、`pilot-v3` 均不得重跑、覆盖或重新分类。
-- 下一动作：保持 source、配置和全部 Pilot Artifact 不变，由用户决定后续产品 bug 修复、独立 post-fix cohort 或 P4A 安排。
+- 当前边界：授权只覆盖新的 `pilot-v4-T01-r1`、`pilot-v4-T04-r1`、`pilot-v4-T07-r1`；P4A 未启动。`pilot-v1`、`pilot-v2`、`pilot-v3` 均不得重跑、覆盖或重新分类。
+- 下一动作：完成离线测试并提交新的 source，在 fresh detached WSL clone 生成 `pilot-v4` 配置，然后按冻结命令各执行一次 G0 与 remainder；不自动进入 P4A。
 
 ## 历史无效测量
 
@@ -441,3 +441,18 @@ uv run --frozen --extra providers --python 3.12 python scripts/run_local_coding_
 ### 阶段停止
 
 P3 在此关闭。保留已知 Pico prompt bug，不自动进入 P4A；若修复产品，应使用独立 post-fix cohort 验证，不修改或覆盖本次 Pilot 记录。
+
+## P3 `pilot-v4` Evaluation prompt 入口修复与重新执行
+
+### 发现与修复边界
+
+- 后续代码下探确认三个标准用户入口均在调用 Runtime 前去除用户 prompt 的首尾空白：非交互入口对拼接后的 argv 调用 `strip()`，REPL 对 `input()` 结果调用 `strip()`，Textual TUI 对输入框值调用 `strip()`。
+- Evaluation live bridge 先前直接把 taskset 中带末尾换行的原始 prompt 交给 Runtime。Runtime 的最终 prompt 装配会去除整体末尾空白，而请求上下文校验仍持有原始 task prompt，因此在首个 provider 请求前形成内部不一致；这不是标准用户入口可触发的同路径产品结果。
+- 本次只在 `scripts/run_pico_live_task_client.py` 的 Evaluation 边界复用标准入口语义：交给 Runtime 前调用 `strip()`，并拒绝裁剪后的空 prompt。不修改 Pico Runtime、prompt builder、request context 或 taskset。
+- 生产桥接离线测试使用真实 `CommandClient → 子进程 → live-task client → Pico Runtime → provider adapter` 路径，只把最终网络 transport 替换成确定性无网络实现；测试要求带首尾空白的原始 prompt 以裁剪后的精确值到达 wire request，并保留完整请求与 verifier 证据。
+
+### 授权与执行边界
+
+- 用户已授权在新的 source、run config、cohort 和 row 身份上重新执行 P3 三任务 Pilot。
+- 只允许 `pilot-v4-T01-r1`、`pilot-v4-T04-r1`、`pilot-v4-T07-r1`；每条冻结命令只执行一次，不创建 replacement row，不修改或重新分类旧 Pilot。
+- T01 测量有效即通过 G0，无论产品结果成功或失败；随后原样执行 T04/T07 remainder。完成审计和报告后停止，不自动进入 P4A。

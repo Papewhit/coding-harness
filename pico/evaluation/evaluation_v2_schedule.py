@@ -6,7 +6,7 @@ import shlex
 from typing import Any
 
 
-PILOT_COHORTS = frozenset({"pilot-v1", "pilot-v2", "pilot-v3"})
+PILOT_COHORTS = frozenset({"pilot-v1", "pilot-v2", "pilot-v3", "pilot-v4"})
 
 
 def allowed_rows(cohort_id: str) -> list[dict[str, Any]]:

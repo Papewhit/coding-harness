@@ -30,7 +30,7 @@ BRIDGE_CLIENT = ROOT / "tests" / "evaluation_v2_bridge_client.py"
     os.name == "nt" or shutil.which("bwrap") is None,
     reason="production bridge requires Linux bubblewrap",
 )
-def test_production_bridge_preserves_pre_request_runtime_failure(
+def test_production_bridge_normalizes_user_prompt_before_runtime(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -50,23 +50,27 @@ def test_production_bridge_preserves_pre_request_runtime_failure(
     record = evidence.artifact
     assert evidence.failure_category == "task"
     assert record["measurement_status"] == "complete"
-    assert record["provider_requests"] == {"count": 0, "exact": True}
-    assert record["client_result"]["failure_category"] == "task"
-    assert record["client_result"]["failure_origin"] == "runtime"
-    assert record["client_result"]["failure_stage"] == "pre_request"
-    assert record["client_result"]["error_type"] == "ValueError"
-    assert record["client_result"]["error"] == "ValueError"
-    assert record["client_result"]["http_attempts"] == []
+    assert record["provider_requests"] == {"count": 1, "exact": True}
+    assert record["client_result"]["failure_category"] == "none"
+    assert record["client_result"]["failure_origin"] == "none"
+    assert record["client_result"]["failure_stage"] == "none"
+    assert record["client_result"]["error_type"] == ""
+    assert record["client_result"]["error"] == ""
+    assert len(record["client_result"]["http_attempts"]) == 1
     assert record["client_result"]["http_attempts_exact"] is True
-    assert record["client_result"]["exit_code"] == 1
+    assert record["client_result"]["exit_code"] == 0
+    assert (
+        record["client_result"]["final_answer"]
+        == "Normalized prompt reached transport."
+    )
     assert record["failure"] == {
         "category": "task",
-        "error_type": "ValueError",
+        "error_type": "VerifierFailure",
         "exit_code": 1,
-        "origin": "runtime",
-        "provider_request_count": 0,
+        "origin": "verifier",
+        "provider_request_count": 1,
         "provider_request_count_exact": True,
-        "stage": "pre_request",
+        "stage": "verifier",
     }
 
 

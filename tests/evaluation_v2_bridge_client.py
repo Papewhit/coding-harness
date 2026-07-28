@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 from pathlib import Path
 import sys
@@ -14,6 +15,10 @@ if str(ROOT) not in sys.path:
 from pico.evaluation.evaluation_v2_config import CONFIG_LOCATOR_ENV  # noqa: E402
 from pico.providers import NativeProviderModelClient  # noqa: E402
 from pico.providers.openai_responses import OpenAIResponsesAdapter  # noqa: E402
+from pico.providers.provider_transport import (  # noqa: E402
+    HttpAttempt,
+    ProviderTransportResponse,
+)
 from scripts.run_pico_live_task_client import (  # noqa: E402
     EVIDENCE_ENV,
     PROMPT_ENV,
@@ -21,14 +26,60 @@ from scripts.run_pico_live_task_client import (  # noqa: E402
 )
 
 
-class UnreachableOfflineTransport:
-    """Deterministic no-network transport that the injected Runtime error precedes."""
+class DeterministicOfflineTransport:
+    """Prove normalized input reaches the production adapter without network."""
 
-    last_http_attempts: tuple[object, ...] = ()
+    last_http_attempts: tuple[HttpAttempt, ...] = ()
 
-    def create(self, request: object) -> object:
-        del request
-        raise AssertionError("offline transport must not be reached")
+    def create(self, request: object) -> ProviderTransportResponse:
+        if not isinstance(request, dict):
+            raise AssertionError("offline transport requires a wire request")
+        raw_prompt = os.environ[PROMPT_ENV]
+        normalized = raw_prompt.strip()
+        wire_input = request.get("input")
+        if raw_prompt == normalized:
+            raise AssertionError("bridge fixture must exercise outer whitespace")
+        if not isinstance(wire_input, str) or not wire_input.endswith(
+            f"Current user request:\n{normalized}"
+        ):
+            raise AssertionError("live bridge did not normalize prompt like user entrypoints")
+        self.last_http_attempts = (
+            HttpAttempt(
+                number=1,
+                method="POST",
+                url="https://offline.invalid/v1/responses",
+                status_code=200,
+                request_id="offline-bridge-request",
+            ),
+        )
+        payload = {
+            "id": "offline-bridge-response",
+            "status": "completed",
+            "model": "offline-bridge-model",
+            "output": [
+                {
+                    "type": "message",
+                    "id": "offline-bridge-message",
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "type": "output_text",
+                            "text": "Normalized prompt reached transport.",
+                        }
+                    ],
+                }
+            ],
+            "usage": {"input_tokens": 1, "output_tokens": 1},
+        }
+        raw = json.dumps(payload, sort_keys=True).encode("utf-8")
+        return ProviderTransportResponse(
+            payload=payload,
+            raw_bytes=raw,
+            status_code=200,
+            request_id="offline-bridge-request",
+            http_attempts=self.last_http_attempts,
+            sdk_retry_count=0,
+        )
 
     def close(self) -> None:
         return None
@@ -36,7 +87,7 @@ class UnreachableOfflineTransport:
 
 def main() -> int:
     profile_id = "sha256:" + "1" * 64
-    transport = UnreachableOfflineTransport()
+    transport = DeterministicOfflineTransport()
     inner = NativeProviderModelClient.__new__(NativeProviderModelClient)
     inner.model = "offline-bridge-model"
     inner.base_url = "https://offline.invalid/v1"
