@@ -93,7 +93,7 @@ def build_run_config(
     if not client_path.is_file():
         raise ValueError(f"live task client does not exist: {client_path}")
     inner_client_command = [
-        sys.executable,
+        _environment_python(),
         str(client_path),
         "--run-config",
         str(artifact_root / cohort_id / source_commit / "public" / "run-config.json"),
@@ -227,6 +227,14 @@ def _runtime_policy() -> dict[str, Any]:
         "shell_network_access": False,
         "shell_sandbox": {"mode": "required", "backend": "bubblewrap"},
     }
+
+
+def _environment_python() -> str:
+    """Use one stable venv interpreter spelling across direct and uv-run entry."""
+
+    relative = Path("Scripts/python.exe") if os.name == "nt" else Path("bin/python")
+    candidate = Path(sys.prefix) / relative
+    return str(candidate) if candidate.is_file() else sys.executable
 
 
 def write_run_config(

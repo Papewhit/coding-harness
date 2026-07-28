@@ -11,6 +11,7 @@ from pico.evaluation.pilot_audit import AUDIT_SCHEMA, DECISION_SCHEMA
 from pico.evaluation.pilot_report import (
     build_pilot_report,
     finalize_pilot,
+    initialize_pilot,
     verify_pilot,
 )
 from scripts import finalize_evaluation_v2_pilot as cli
@@ -207,6 +208,23 @@ def test_pilot_v2_report_uses_new_cohort_and_row_identities(
     ]
 
 
+def test_initialize_pilot_reports_all_rows_as_no_result(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    config, root = write_config(
+        tmp_path,
+        monkeypatch,
+        cohort_id="pilot-v2",
+    )
+
+    result = initialize_pilot(config, generator=GENERATOR)
+
+    assert result["g0_status"] == "pending"
+    assert result["rows"]["no_result"] == 3
+    assert (root / "reports" / "pilot-report.json").is_file()
+    assert verify_pilot(config)["markdown_rebuilt"] is True
+
+
 def test_full_pilot_reports_valid_failure_and_provider_failure(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -385,6 +403,36 @@ def test_cli_verify_only_does_not_resolve_provider_or_write(
         if path.is_file()
     }
     assert after == before
+
+
+def test_cli_initializes_no_result_report_without_provider_config(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    config, _ = write_config(
+        tmp_path,
+        monkeypatch,
+        cohort_id="pilot-v2",
+    )
+    monkeypatch.setattr(cli, "_generator_identity", lambda: GENERATOR)
+    monkeypatch.setattr(
+        cli,
+        "_sensitive_values",
+        lambda _path: pytest.fail(
+            "report initialization must not resolve provider config"
+        ),
+    )
+
+    assert (
+        cli.main(
+            [
+                "--run-config",
+                str(config),
+                "--initialize-report",
+            ]
+        )
+        == 0
+    )
+    assert verify_pilot(config)["rows"]["no_result"] == 3
 
 
 def test_finalizer_does_not_rebuild_frozen_client_with_control_interpreter(

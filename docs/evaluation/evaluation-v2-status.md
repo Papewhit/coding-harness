@@ -354,9 +354,25 @@ G0 未通过。P4A 不得启动。
 
 由用户决定是否授权使用新 source、新 run config、新 cohort 和新 row 身份进行修复后 live 观察。停止条件是首条 row 能形成可信的 `valid + failed` 或 `valid + passed`；出现可信产品失败时继续 cohort，不修改 Pico 产品直至通过。原 `pilot-v1-T01-r1` 永久保留为 invalid。
 
-## P3 `pilot-v2` 重新授权（执行中）
+## P3 `pilot-v2` 重新授权（已停止，未产生评测行）
+
+### 授权与冻结身份
 
 - 用户已授权在新 source 上再次开展完整 P3；授权仅覆盖 `pilot-v2-T01-r1`、`pilot-v2-T04-r1`、`pilot-v2-T07-r1`，不延伸至 P4。
-- 继续使用既有 provider profile、Runtime 预算、SDK retry 0、单次 row 和无语义重跑规则。T01 先执行 G0；可信的 `valid + failed` 与 `valid + passed` 同样通过 G0。
-- `pilot-v1` 的 source、配置、row、审计和报告保持不可变。`pilot-v2` 使用新 source、新 run config、独立 Artifact 目录和全新 row 身份。
-- 在冻结新 source 与 run config 前保持 provider HTTP 为 0。
+- live source：`bf16b97c1b6889023b530f82aef073286884ef10`；tree：`5be797cb9543aba14ceb2267bcf888f5b0b25de4`。
+- Pilot run config SHA-256：`398322eaed8e4d82bd4fffe49abbabee170591bb3747ca8b1992784f17298428`；profile ID：`sha256:41ebb321c6332867f0bb020621b7e1c17f8c60430374c37c3a670c916326ee70`。
+- 独占输出目录：`F:\dev\llm\pico-eval-artifacts\evaluation-v2\pilot-v2\bf16b97c1b6889023b530f82aef073286884ef10`。
+- `pilot-v1` 的 source、配置、row、审计和报告保持不可变。
+
+### 执行结论
+
+- fresh WSL clone、source/tree、CPython 3.12.13、OpenAI SDK 2.46.0、配置哈希、locator 文件、bubblewrap 网络隔离和三个 row 目录不存在等预检均通过。
+- 冻结的 `launch_commands.p3_g0` 只执行一次，在创建 T01 row 和首次 provider transport 之前退出：运行时重建配置将同一 venv 的解释器拼写为 `bin/python3`，冻结配置记录为 `bin/python`，精确身份检查因此报 `run config does not exactly match its source, environment, and schedule`。
+- 这是配置生成器的确定性身份缺陷，不是 Pico 产品结果。精确 provider HTTP 请求数为 0，新增 row 为 0；`pilot-v2` 三条计划 row 全部为 `no result`，G0 没有可判定的 T01，保持未通过/未完成。
+- 按一次性命令和禁止 replacement 的边界，没有重跑 T01，没有执行 `p3_remainder`，也没有启动 P4。
+
+### 离线收口与下一步
+
+- run config 现统一记录虚拟环境的稳定 `bin/python`（Windows 为 `Scripts/python.exe`）别名，避免 direct Python 与 `uv run` 对同一解释器采用不同字面路径。
+- Pilot finalizer 新增 `--initialize-report`，用于命令在首条 row 前停止时确定性生成全 `no result` 报告；该模式不解析 provider 配置、不写 row、不调用 provider。
+- `pilot-v3` 已作为新的隔离 cohort 身份加入离线实现，但尚未获得授权。生成其 run config、建立 live clone 或执行任何命令前，必须先提交并验收本修复，再由用户明确授权新的 source/tree、配置哈希、三条 row 与独占输出目录。

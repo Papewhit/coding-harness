@@ -378,6 +378,8 @@ def _validate_stage_selection(
         ("pilot-v1", "P3-remainder"): ("T04", "T07"),
         ("pilot-v2", "P3-G0"): ("T01",),
         ("pilot-v2", "P3-remainder"): ("T04", "T07"),
+        ("pilot-v3", "P3-G0"): ("T01",),
+        ("pilot-v3", "P3-remainder"): ("T04", "T07"),
         ("baseline-v1", "P4A"): ("T01", "T02", "T03"),
         ("baseline-v1", "P4B"): ("T04", "T05", "T06"),
         ("baseline-v1", "P4C"): ("T07", "T08", "T09"),

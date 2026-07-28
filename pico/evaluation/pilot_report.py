@@ -64,6 +64,32 @@ def finalize_pilot(
         decision = _load_object(path)
         _reject_sensitive(decision, sensitive_values)
         _append_decision(root, allowed, decision)
+    return _write_pilot_report(
+        run_config_path,
+        generator=generator,
+    )
+
+
+def initialize_pilot(
+    run_config_path: Path,
+    *,
+    generator: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Write a deterministic report even when no Pilot row was created."""
+
+    verified_config(run_config_path)
+    return _write_pilot_report(
+        run_config_path,
+        generator=generator,
+    )
+
+
+def _write_pilot_report(
+    run_config_path: Path,
+    *,
+    generator: Mapping[str, Any],
+) -> dict[str, Any]:
+    root = cohort_root(run_config_path)
     prior = _optional_object(root / REPORT_JSON)
     stable_generator = dict(prior.get("generator", generator)) if prior else dict(generator)
     report = build_pilot_report(run_config_path, generator=stable_generator)

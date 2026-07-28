@@ -13,7 +13,11 @@ from typing import Any
 
 from pico.config import resolve_provider_config
 from pico.evaluation.evaluation_v2_config import CONFIG_LOCATOR_ENV
-from pico.evaluation.pilot_report import finalize_pilot, verify_pilot
+from pico.evaluation.pilot_report import (
+    finalize_pilot,
+    initialize_pilot,
+    verify_pilot,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -24,6 +28,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--run-config", required=True, type=Path)
     parser.add_argument("--audit-input", action="append", default=[], type=Path)
     parser.add_argument("--user-decision-input", action="append", default=[], type=Path)
+    parser.add_argument("--initialize-report", action="store_true")
     parser.add_argument("--verify-only", action="store_true")
     return parser
 
@@ -31,9 +36,20 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     if args.verify_only:
-        if args.audit_input or args.user_decision_input:
-            raise SystemExit("--verify-only cannot accept audit or decision inputs")
+        if args.audit_input or args.user_decision_input or args.initialize_report:
+            raise SystemExit(
+                "--verify-only cannot accept audit, decision, or initialization inputs"
+            )
         result = verify_pilot(args.run_config)
+    elif args.initialize_report:
+        if args.audit_input or args.user_decision_input:
+            raise SystemExit(
+                "--initialize-report cannot accept audit or decision inputs"
+            )
+        result = initialize_pilot(
+            args.run_config,
+            generator=_generator_identity(),
+        )
     else:
         if not args.audit_input and not args.user_decision_input:
             raise SystemExit("finalization requires an audit or user-decision input")

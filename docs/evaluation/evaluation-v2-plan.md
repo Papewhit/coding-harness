@@ -92,7 +92,7 @@ P1–P4 的命令以 Ubuntu WSL2、Python 3.12 fresh clone 为规范环境；Win
 每个批次的实际根目录是 `<外部根目录>/<cohort-id>/<source-sha>`。本计划使用：
 
 - P1：`module-baseline-v1/<source-sha>`
-- P3：原始 cohort 为 `pilot-v1/<source-sha>`；评测桥接修复后的重新授权 cohort 为 `pilot-v2/<source-sha>`，两者禁止合并或互相覆盖
+- P3：原始 cohort 为 `pilot-v1/<source-sha>`；每次获独立授权的纠正性观察依次使用新的 `pilot-vN/<source-sha>`。已使用的 `pilot-v1`、`pilot-v2` 与预留的 `pilot-v3` 禁止合并或互相覆盖
 - P4A–P5：`baseline-v1/<source-sha>`
 
 `<source-sha>` 必须是启动该批次前用户接受的完整 Git commit SHA。批次目录在首次 写入配置前必须不存在或为空；live 开始前可以只包含已接受的 run config，所有 评测行目录都必须尚不存在。已产生的评测行目录不可变；确定性汇总报告可以从这些 行重新生成，但不能反向改写行证据。补充批次不在本次执行范围内；若以后建立，必须 使用新的 `cohort-id`。
@@ -362,7 +362,7 @@ P2 只有在 fake end-to-end、协议测试和 run config 检查全部通过后�
 
 ### 执行内容
 
-- 在用户接受对应 Pilot run config 后，取得只绑定 P3 的一次 live 授权；初始 cohort 使用 `pilot-v1`，评测桥接修复后的新 source 使用独立 `pilot-v2`；
+- 在用户接受对应 Pilot run config 后，取得只绑定 P3 的一次 live 授权；初始 cohort 使用 `pilot-v1`，每次纠正性观察必须使用新的 `pilot-vN`、source、run config、输出目录和 row 身份；
 - 复用 `dashscope-o` 和已固定的公开 profile ID；
 - 固定运行 T01、T04、T07，各 1 次；先只运行 T01，由它直接完成 G0 测量；
 - 使用 run config 中固定的模型参数、预算、timeout、SDK 自动重试 0 和 Pico provider attempt/retry 设置；
