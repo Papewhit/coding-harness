@@ -6,8 +6,8 @@
 
 ## 当前状态
 
-- 当前阶段：P3——`pilot-v3` 的 source/config 已完成纯离线冻结，正在等待用户明确要求开始 P3；尚未启动 `pilot-v3` row 或 provider HTTP。
-- 历史阶段结论：`pilot-v1` 的 T01 只执行一次并永久分类为 `invalid`；`pilot-v2` 在首条 row 创建前停止，三条 row 均为 `no result`。两批历史 Artifact 保持不可变。
+- 当前阶段：P3——`pilot-v3` 三任务 Pilot 已完成并关闭；G0 通过，三条 row 均为可信的 `valid + failed / product_behavior`。
+- 阶段结论：T01、T04、T07 均在 Pico Runtime 构建首个 provider 请求前抛出 `ValueError`；三条测量完整、精确 provider 请求总数为 0、无协议错误或敏感值命中。该产品 bug 没有在本批次修复。
 - 历史控制 checkpoint： `2876cd53e17fd2b6eb089dbfaf14cd67615498fc`。
 - 计划中的 P0 起点： `44677cd7f6a9535c1a74e8628078e9d4967594b5`。
 - 实际 P0 起始 commit： `758eeaf7360f09296bc8a87567b021e68ca097d7`。该提交只解除 Evaluation v2 启动暂停并更新文档状态；P0 在检查其 diff 后从该 clean commit 开始。
@@ -23,8 +23,8 @@
 - P2 结束 commit：承载本阶段关闭记录的独立 docs commit；完整 SHA 在提交后的交付消息中报告，不为回填而 amend。
 - 正式 Artifact： `F:\dev\llm\pico-eval-artifacts\evaluation-v2\module-baseline-v1\dcd8ea110c6c4dad5c09943fab26b8197142ae29`。
 - wrapper revision 使用量：`0/1`。`dcd8ea1` 是正式测量前由总体方案和 user guide 交付要求驱动的实现对齐，不是测量 wrapper 缺陷修订。
-- 当前边界：P4A 不能启动；`pilot-v1`、`pilot-v2` 不得重跑、覆盖或重新分类。
-- 下一动作：保持 source、配置和历史 Pilot Artifact 不变并停止。用户明确要求开始 P3 后，只原样执行冻结配置的 `p3_g0` 命令；不预跑 `--verify-only` 或其他 preflight，不自动进入 P4A。
+- 当前边界：P3 已停止；P4A 未启动，不能自动进入。`pilot-v1`、`pilot-v2`、`pilot-v3` 均不得重跑、覆盖或重新分类。
+- 下一动作：保持 source、配置和全部 Pilot Artifact 不变，由用户决定后续产品 bug 修复、独立 post-fix cohort 或 P4A 安排。
 
 ## 历史无效测量
 
@@ -405,7 +405,7 @@ G0 未通过。P4A 不得启动。
 - 复验环境记录为 Ubuntu 26.04、CPython 3.12.13、OpenAI SDK 2.46.0。Evaluation v2 live evaluator、evidence、Pilot report、生产桥接和 live-start 共 71 项定向测试通过，scoped Ruff 通过。
 - 配置生成后，run-config CLI 的纯格式 `--verify-only` 通过；独立 SHA-256 重算与旁路哈希一致。未调用 `validate_live_start`、sandbox 探针、Runtime/client 或 provider；provider HTTP 为 0。
 
-### 冻结命令与停止点
+### 冻结命令
 
 G0：
 
@@ -419,4 +419,25 @@ remainder：
 uv run --frozen --extra providers --python 3.12 python scripts/run_local_coding_tasks.py --run-config /mnt/f/dev/llm/pico-eval-artifacts/evaluation-v2/pilot-v3/e1c5652592588464bc808504188169053445d007/public/run-config.json --cohort-id pilot-v3 --stage P3-remainder --task T04 --task T07 --repetitions 1
 ```
 
-当前在此停止。用户明确要求开始 P3 后，只执行 `p3_g0`；T01 测量 valid 即通过 G0 并按计划决定是否继续原样执行 `p3_remainder`，不要求产品通过，不修改 Pico prompt bug，不自动进入 P4A。
+### Live 执行与审计结论
+
+- `p3_g0` 与 `p3_remainder` 各启动一次，没有 retry、replacement row 或额外 live 命令。Codex 外层终端等待均在 19 秒返回超时，但唯一 WSL 子进程继续运行至完成；执行者只监控原进程，没有重启命令。
+- T01 测量为 `complete`，原始失败为 `task / runtime / pre_request / ValueError`，provider 请求精确为 0。Codex 审计将其分类为 `valid + failed / product_behavior`；G0 因测量有效而通过。
+- G0 通过后原样执行 remainder。T04 与 T07 同样为 `complete`、`runtime / pre_request / ValueError`、精确 0 请求，并分别审计为 `valid + failed / product_behavior`。
+- 三条 row 均无 provider attempt、SDK retry、Pico retry、tool call 或任务 workspace 代码修改。hidden verifier 对未修改 fixture 失败是下游事实，不覆盖更早的 Runtime 失败来源。
+- 没有 invalid、no result、pending audit 或 pending decision；没有请求用户作开放式结果判断。
+
+### 指标与复核
+
+- final classified：3/3；valid passed 0；valid failed 3；invalid 0；no result 0。
+- valid-run rate：3/3（100%）；verified-run success：0/3（0%）。
+- failure category：`product_behavior` 3。
+- provider 请求总数：0；SDK retry 0；Pico retry 0。
+- repeated reads：总数 0，mean 0，median 0。tool steps 与 Runtime elapsed time 均为 unavailable，不作推断。
+- Pilot finalizer `--verify-only` 通过，G0 为 passed，报告 JSON 可确定性重算，Markdown 可逐字节重建。
+- 使用实际 locator 与 credential 共 2 个敏感值扫描 `public/` 35 个文件和 `reports/` 2 个文件，命中 0。
+- 报告入口：`F:\dev\llm\pico-eval-artifacts\evaluation-v2\pilot-v3\e1c5652592588464bc808504188169053445d007\reports\pilot-report.md`。
+
+### 阶段停止
+
+P3 在此关闭。保留已知 Pico prompt bug，不自动进入 P4A；若修复产品，应使用独立 post-fix cohort 验证，不修改或覆盖本次 Pilot 记录。
