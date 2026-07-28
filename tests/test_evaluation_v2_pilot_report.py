@@ -327,3 +327,19 @@ def test_cli_verify_only_does_not_resolve_provider_or_write(
         if path.is_file()
     }
     assert after == before
+
+
+def test_finalizer_does_not_rebuild_frozen_client_with_control_interpreter(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    config, root = write_config(tmp_path, monkeypatch)
+    _make_row(root, "T01")
+    audit = _audit(tmp_path / "audit.json", "T01")
+    monkeypatch.setattr(
+        "pico.evaluation.pilot_report.verify_run_config",
+        lambda path: {"cohort_id": "pilot-v1", "path": str(path)},
+    )
+
+    result = finalize_pilot(config, audit_inputs=[audit], generator=GENERATOR)
+
+    assert result["g0_status"] == "passed"

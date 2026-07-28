@@ -38,8 +38,7 @@ def cohort_root(run_config_path: Path) -> Path:
 
 def verified_config(run_config_path: Path) -> dict[str, Any]:
     payload = _load_object(run_config_path)
-    source_root = Path(str(payload.get("source", {}).get("workspace_root", "")))
-    verify_run_config(run_config_path, source_root=source_root)
+    verify_run_config(run_config_path)
     if payload.get("cohort_id") != "pilot-v1":
         raise ValueError("Pilot report requires the pilot-v1 run config")
     return payload
