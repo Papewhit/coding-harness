@@ -320,6 +320,7 @@ P2 不得丢弃上述可复用实现后从零重写 runner。
 - 从 `PICO_LIVE_TASK_PROMPT` 读取任务文本；
 - 调用真实 Pico Runtime 和现有 provider adapter，不得使用 SDK Tool Runner 或 Agents Runner；
 - 把 provider 请求次数和 `ClientResult` 原子写入 `PICO_LIVE_EVIDENCE_PATH`；
+- 对失败原样记录有限字段 `failure_origin`、`failure_stage` 和 `error_type`；外层只能追加 process exit code，不得覆盖这些字段或原始失败类别；
 - 保留 workspace 中本次运行产生的 `.pico` 原始文件，供 runner 在清理前按协议复制。
 
 `scripts/run_local_coding_tasks.py` 必须在保留现有离线接口的同时，为 Evaluation v2 明确接受 `--run-config`、`--cohort-id`、`--task`、`--repo` 和 `--repetitions`。 P2 在 run config 中保存 P3、P4A、P4B、P4C 的完整 WSL launch command；后续阶段 只能填入已经绑定的 source/output 路径，不得临时拼装另一条命令。
@@ -340,6 +341,7 @@ P2 不得丢弃上述可复用实现后从零重写 runner。
   - 私有原件哈希、确定性 evidence view，以及已知 credential/locator 在私有、 公开和日志中的零持久化检查；
   - run config 完整性、哈希和“不含 locator/credential 值”；
   - fake client 的 provider HTTP 次数必须为 0。
+- 另以真实 `CommandClient → 子进程 → live-task client → Pico Runtime` 路径执行离线桥接回归，只在最末端将 provider transport 换成确定性无网络实现。fake client 仍用于证据目录和 verifier 测试，但不得再作为生产桥接可靠性的证明。
 - `uv run ruff check pico/evaluation/live_tasks.py scripts/run_local_coding_tasks.py scripts/run_pico_live_task_client.py tests/test_live_task_evaluator.py tests/test_evaluation_v2_evidence.py`。
 
 ### 复杂度边界
@@ -373,8 +375,12 @@ P2 只有在 fake end-to-end、协议测试和 run config 检查全部通过后�
 - T01 若为 `invalid`，保留该行并立即停止 P3；不得启动 T04、T07；
 - T04 或 T07 为 `valid + failed` 时记录产品结果并继续；
 - 任一行发生基础设施失败或 measurement defect 时，保留已经产生的最小记录，不做 自动 provider HTTP 重试，也不覆盖该行；
+- 失败汇总采用固定优先级：测量记录损坏、原始 client/runtime 失败、协议失败、 verifier 失败、成功。后层不得覆盖前层；不能仅按 HTTP 请求数推断失败来源；
+- Pico Runtime 在构建首个请求前抛错，只要原始来源、阶段、异常类型、精确请求数和其他协议证据完整，就属于可信的产品失败，可审计为 `valid + failed`。client 无法启动或原始异常丢失时没有产品结论，必须记为 `invalid`；
 - 测量问题只能在停止 P3 后提出离线修复方案，不能自动进入新的 revision/reviewer 循环。任何 replacement live 运行都必须使用新的评测行身份和输出目录，并另行 取得用户授权；原 `invalid` 行永久保留；
 - 不得为让 Pilot 任务通过而修改 Pico 产品行为。
+
+评测桥接修复后的停止条件是：同类产品异常一旦能稳定形成可信的 `valid + failed`，即停止修补评测器并继续 Pilot；只有仍不能形成可信分类时，才视为新的 measurement defect。
 
 ### G0 通过条件
 

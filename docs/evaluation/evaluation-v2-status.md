@@ -340,6 +340,16 @@ R-03 的主要结论是测量装置缺陷：HSMOKE-V4-A 实际完成了 `read_fi
 
 G0 未通过。P4A 不得启动。
 
+### P3 后续评测桥接修复（纯离线）
+
+- 已确认产品根因是 current request 尾部换行被 prompt 组装的 `.strip()` 删除，随后精确保真检查在首个 `ModelRequest` 前抛出 `ValueError`。本次不修改 Pico prompt 行为。
+- live-task client 现在原子记录有限的 `failure_origin`、`failure_stage` 和 `error_type`。同一异常将机械记录为 `task / runtime / pre_request / ValueError`，精确 HTTP 次数为 0。
+- `CommandClient` 只追加 process exit code，不再把非零退出覆盖为 provider。client 无法启动、超时、原始失败记录缺失或字段矛盾时保留证据并令 row invalid，不产生产品结论。
+- 汇总采用单一固定优先级：测量记录损坏、原始 client/runtime 失败、协议失败、verifier 失败、成功。verifier 不再覆盖更早的 client/runtime 失败。
+- 新增真实 `CommandClient → 子进程 → live-task client → Pico Runtime` 的离线桥接测试；测试使用生产 `NativeProviderModelClient` 和 OpenAI Responses adapter，只把最末端 transport 替换成确定性无网络实现。当前 prompt bug 经整条路径后保留为可信 Runtime pre-request 失败。
+- WSL CPython 3.12.13 下，`test_live_task_evaluator.py`、Evaluation v2 evidence、Pilot report 和生产桥接共 49 项 targeted tests 通过；最后修改后的桥接 3 项复跑通过，scoped Ruff 通过。既有 Pilot finalizer `--verify-only` 仍为 G0 failed、1 invalid、2 no result，Markdown 可重建。
+- 本修复没有执行 provider HTTP，没有重跑、覆盖或重新分类 `pilot-v1-T01-r1`。既有 Pilot 报告和 G0 结论保持不变。
+
 ### 下一阶段的精确第一步
 
-先进行纯离线缺陷设计：在不改写本 row 的前提下，让 live client 在首次 HTTP 前异常时原子保存实际异常类型，并让 runner 区分零请求 infrastructure/client failure 与真实 provider failure。任何修复后的 live 观察必须使用新的 source、run config、cohort 和用户授权。
+由用户决定是否授权使用新 source、新 run config、新 cohort 和新 row 身份进行修复后 live 观察。停止条件是首条 row 能形成可信的 `valid + failed` 或 `valid + passed`；出现可信产品失败时继续 cohort，不修改 Pico 产品直至通过。原 `pilot-v1-T01-r1` 永久保留为 invalid。

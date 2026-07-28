@@ -50,6 +50,26 @@ class FailureCategory(str, Enum):
     MEASUREMENT = "measurement"
 
 
+class FailureOrigin(str, Enum):
+    """Component that first observed a client-side failure."""
+
+    NONE = "none"
+    CLIENT = "client"
+    RUNTIME = "runtime"
+    PROVIDER = "provider"
+    PROTOCOL = "protocol"
+
+
+class FailureStage(str, Enum):
+    """Finite execution stage for the original client-side failure."""
+
+    NONE = "none"
+    STARTUP = "startup"
+    PRE_REQUEST = "pre_request"
+    REQUEST = "request"
+    POST_REQUEST = "post_request"
+
+
 class LiveTaskError(RuntimeError):
     category = FailureCategory.INFRASTRUCTURE
 
@@ -138,13 +158,87 @@ class ClientResult:
     pico_retry_count: int = 0
     protocol_errors: tuple[str, ...] = ()
     error: str = ""
+    error_type: str = ""
     failure_category: FailureCategory = FailureCategory.NONE
+    failure_origin: FailureOrigin = FailureOrigin.NONE
+    failure_stage: FailureStage = FailureStage.NONE
     session_id: str = ""
     runtime_run_id: str = ""
     final_answer: str = ""
     http_attempts_exact: bool = True
     original_state_paths: tuple[str, ...] = ()
     exit_code: int | None = None
+
+
+def client_failure_record_errors(result: ClientResult) -> tuple[str, ...]:
+    """Validate the finite original-failure record without interpreting messages."""
+
+    category = result.failure_category
+    origin = result.failure_origin
+    stage = result.failure_stage
+    error_type = result.error_type.strip()
+    if category is FailureCategory.NONE:
+        if (
+            origin is not FailureOrigin.NONE
+            or stage is not FailureStage.NONE
+            or error_type
+            or result.error.strip()
+        ):
+            return ("successful client result contains failure metadata",)
+        return ()
+    errors = []
+    if origin is FailureOrigin.NONE:
+        errors.append("client failure has no original origin")
+    if stage is FailureStage.NONE:
+        errors.append("client failure has no original stage")
+    if not error_type:
+        errors.append("client failure has no original error_type")
+    expected = {
+        FailureOrigin.CLIENT: (
+            {FailureCategory.INFRASTRUCTURE},
+            {FailureStage.STARTUP},
+        ),
+        FailureOrigin.RUNTIME: (
+            {FailureCategory.TASK},
+            {FailureStage.PRE_REQUEST, FailureStage.POST_REQUEST},
+        ),
+        FailureOrigin.PROVIDER: (
+            {FailureCategory.PROVIDER},
+            {FailureStage.REQUEST},
+        ),
+        FailureOrigin.PROTOCOL: (
+            {FailureCategory.PROTOCOL},
+            {FailureStage.REQUEST, FailureStage.POST_REQUEST},
+        ),
+    }
+    allowed = expected.get(origin)
+    if allowed is not None:
+        categories, stages = allowed
+        if category not in categories:
+            errors.append("client failure category contradicts original origin")
+        if stage not in stages:
+            errors.append("client failure stage contradicts original origin")
+    return tuple(errors)
+
+
+def resolve_failure_category(
+    *,
+    measurement_errors: Sequence[str] = (),
+    client_result: ClientResult,
+    protocol_errors: Sequence[str] = (),
+    verifier_passed: bool | None = None,
+) -> FailureCategory:
+    """Apply the fixed measurement→client→protocol→verifier precedence."""
+
+    if measurement_errors:
+        return FailureCategory.MEASUREMENT
+    if client_result.failure_category is not FailureCategory.NONE:
+        return client_result.failure_category
+    if protocol_errors:
+        return FailureCategory.PROTOCOL
+    if verifier_passed is False:
+        return FailureCategory.TASK
+    return FailureCategory.NONE
 
 
 class LiveTaskClient(Protocol):
@@ -243,10 +337,11 @@ class LocalLiveTaskRunner:
             manifest_diff = compare_manifests(before, after)
             protocol = _native_evidence(client_result)
             protocol_failure = bool(protocol["protocol_errors"])
-            failure = client_result.failure_category
+            verifier_infrastructure_failure = False
             try:
                 verifier_result = self._verify(task.verifier, workspace)
             except InfrastructureFailure as exc:
+                verifier_infrastructure_failure = True
                 verifier_result = _VerifierResult(
                     passed=False,
                     returncode=-1,
@@ -254,12 +349,17 @@ class LocalLiveTaskRunner:
                     output=str(exc),
                     stderr=str(exc),
                 )
-                if failure is FailureCategory.NONE:
-                    failure = FailureCategory.INFRASTRUCTURE
-            if failure is FailureCategory.NONE and protocol_failure:
-                failure = FailureCategory.PROTOCOL
-            if failure is FailureCategory.NONE and not verifier_result.passed:
-                failure = FailureCategory.TASK
+            failure = resolve_failure_category(
+                client_result=client_result,
+                protocol_errors=protocol["protocol_errors"] if protocol_failure else (),
+                verifier_passed=verifier_result.passed,
+            )
+            if (
+                verifier_infrastructure_failure
+                and client_result.failure_category is FailureCategory.NONE
+                and not protocol_failure
+            ):
+                failure = FailureCategory.INFRASTRUCTURE
             status = "passed" if failure is FailureCategory.NONE else "failed"
             legacy = {
                 "task_id": task.task_id,
@@ -472,6 +572,8 @@ __all__ = [
     "ARTIFACT_CONTRACT_VERSION",
     "ClientResult",
     "FailureCategory",
+    "FailureOrigin",
+    "FailureStage",
     "HttpAttempt",
     "InfrastructureFailure",
     "LiveTaskClient",
@@ -482,7 +584,9 @@ __all__ = [
     "RunRequest",
     "TaskSpec",
     "compare_manifests",
+    "client_failure_record_errors",
     "load_task_specs",
+    "resolve_failure_category",
     "sanitize_trace",
     "select_tasks",
     "workspace_manifest",

@@ -12,6 +12,8 @@ from pico.evaluation.evaluation_v2_config import canonical_json, sha256_bytes
 from pico.evaluation.live_tasks import (
     ClientResult,
     FailureCategory,
+    FailureOrigin,
+    FailureStage,
     HttpAttempt,
     RunRequest,
 )
@@ -151,7 +153,10 @@ class FailedT01Client(FakeT01Client):
                 ),
             ),
             failure_category=FailureCategory.PROVIDER,
+            failure_origin=FailureOrigin.PROVIDER,
+            failure_stage=FailureStage.REQUEST,
             error="ServiceUnavailable",
+            error_type="ServiceUnavailable",
             exit_code=1,
         )
 

@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 import argparse
-from dataclasses import asdict
+from dataclasses import asdict, replace
 import json
 import os
 from pathlib import Path
@@ -25,7 +25,13 @@ from pico.evaluation.live_client import (
     build_client_result,
     required_network_sandbox,
 )
-from pico.evaluation.live_tasks import ClientResult, FailureCategory, HttpAttempt
+from pico.evaluation.live_tasks import (
+    ClientResult,
+    FailureCategory,
+    FailureOrigin,
+    FailureStage,
+    HttpAttempt,
+)
 from pico.evaluation.native_provider_profiles import (
     assert_provider_profile_matches,
     provider_session_identity,
@@ -53,7 +59,6 @@ def main(argv: list[str] | None = None) -> int:
         provider_config,
         locator,
     ) = _validated_live_inputs(args.run_config)
-    expected_profile = run_config["profile"]["public_profile"]
     inner = build_native_model_client(
         wire_dialect=provider_config.wire_dialect,
         model=provider_config.model,
@@ -64,6 +69,30 @@ def main(argv: list[str] | None = None) -> int:
         max_retries=0,
     )
     sensitive_values = tuple(value for value in (locator, provider_config.api_key) if value)
+    return run_live_task(
+        workspace=workspace,
+        evidence_path=evidence_path,
+        prompt=prompt,
+        run_config=run_config,
+        inner=inner,
+        session_identity=provider_session_identity(provider_config),
+        sensitive_values=sensitive_values,
+    )
+
+
+def run_live_task(
+    *,
+    workspace: Path,
+    evidence_path: Path,
+    prompt: str,
+    run_config: Mapping[str, Any],
+    inner: Any,
+    session_identity: Mapping[str, Any],
+    sensitive_values: tuple[str, ...] = (),
+) -> int:
+    """Execute the production Runtime path with an already selected transport client."""
+
+    expected_profile = run_config["profile"]["public_profile"]
 
     def persist_attempts(attempts: tuple[HttpAttempt, ...]) -> None:
         _merge_client_result(
@@ -76,12 +105,15 @@ def main(argv: list[str] | None = None) -> int:
                 "sdk_retry_count": 0,
                 "pico_retry_count": 0,
                 "failure_category": FailureCategory.NONE.value,
+                "failure_origin": FailureOrigin.NONE.value,
+                "failure_stage": FailureStage.NONE.value,
+                "error_type": "",
             },
             sensitive_values,
         )
 
     client = AuditedNativeClient(inner, persist_attempts=persist_attempts)
-    client._pico_profile_identity = provider_session_identity(provider_config)
+    client._pico_profile_identity = dict(session_identity)
     agent = None
     try:
         agent = _build_agent(
@@ -104,34 +136,74 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 0 if result.failure_category is FailureCategory.NONE else 1
     except Exception as exc:
-        result = (
-            build_client_result(
-                agent=agent,
-                client=client,
-                profile=expected_profile,
-                native_gate_hash=str(run_config["profile"]["native_gate_hash"]),
-                final_answer="",
-            )
-            if agent is not None
-            else ClientResult(
-                profile=expected_profile,
-                native_gate_hash=str(run_config["profile"]["native_gate_hash"]),
-                http_attempts=tuple(client.http_attempts),
-                error=type(exc).__name__,
-                failure_category=(
-                    FailureCategory.PROVIDER
-                    if client.http_attempts
-                    else FailureCategory.INFRASTRUCTURE
-                ),
-            )
+        result = _failed_client_result(
+            exc=exc,
+            agent=agent,
+            client=client,
+            profile=expected_profile,
+            native_gate_hash=str(run_config["profile"]["native_gate_hash"]),
         )
-        payload = _client_result_dict(result)
-        payload["error"] = type(exc).__name__
-        _merge_client_result(evidence_path, payload, sensitive_values)
+        _merge_client_result(
+            evidence_path,
+            _client_result_dict(result),
+            sensitive_values,
+        )
         print("live task client failed; inspect run-record.json", file=sys.stderr)
         return 1
     finally:
         client.close()
+
+
+def _failed_client_result(
+    *,
+    exc: Exception,
+    agent: Pico | None,
+    client: AuditedNativeClient,
+    profile: Mapping[str, Any],
+    native_gate_hash: str,
+) -> ClientResult:
+    error_type = type(exc).__name__
+    if agent is None:
+        return ClientResult(
+            profile=dict(profile),
+            native_gate_hash=native_gate_hash,
+            http_attempts=tuple(client.http_attempts),
+            error=error_type,
+            error_type=error_type,
+            failure_category=FailureCategory.INFRASTRUCTURE,
+            failure_origin=FailureOrigin.CLIENT,
+            failure_stage=FailureStage.STARTUP,
+            http_attempts_exact=True,
+        )
+    result = build_client_result(
+        agent=agent,
+        client=client,
+        profile=profile,
+        native_gate_hash=native_gate_hash,
+        final_answer="",
+    )
+    if client.failures:
+        return replace(
+            result,
+            error=error_type,
+            error_type=error_type,
+            failure_category=FailureCategory.PROVIDER,
+            failure_origin=FailureOrigin.PROVIDER,
+            failure_stage=FailureStage.REQUEST,
+        )
+    stage = (
+        FailureStage.PRE_REQUEST
+        if not client.requests
+        else FailureStage.POST_REQUEST
+    )
+    return replace(
+        result,
+        error=error_type,
+        error_type=error_type,
+        failure_category=FailureCategory.TASK,
+        failure_origin=FailureOrigin.RUNTIME,
+        failure_stage=stage,
+    )
 
 
 def _validated_live_inputs(
@@ -193,6 +265,8 @@ def _build_agent(
 def _client_result_dict(result: ClientResult) -> dict[str, Any]:
     payload = asdict(result)
     payload["failure_category"] = result.failure_category.value
+    payload["failure_origin"] = result.failure_origin.value
+    payload["failure_stage"] = result.failure_stage.value
     payload["http_attempts"] = [attempt.as_dict() for attempt in result.http_attempts]
     return payload
 

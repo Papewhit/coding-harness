@@ -29,6 +29,7 @@ from pico.evaluation.live_tasks import (
     RunRequest,
     TaskSpec,
     _native_evidence,
+    resolve_failure_category,
 )
 
 
@@ -96,13 +97,12 @@ def run_evaluation_v2_row(
         )
 
     protocol = _native_evidence(client_result)
-    failure = client_result.failure_category
-    if measurement_errors:
-        failure = FailureCategory.MEASUREMENT
-    elif protocol["protocol_errors"]:
-        failure = FailureCategory.PROTOCOL
-    elif verifier is not None and not verifier.passed:
-        failure = FailureCategory.TASK
+    failure = resolve_failure_category(
+        measurement_errors=measurement_errors,
+        client_result=client_result,
+        protocol_errors=protocol["protocol_errors"],
+        verifier_passed=verifier.passed if verifier is not None else None,
+    )
     status = "passed" if failure is FailureCategory.NONE else "failed"
     artifact = load_object(run_record_path)
     return RunEvidence(

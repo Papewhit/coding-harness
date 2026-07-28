@@ -6,7 +6,13 @@ from collections.abc import Callable, Mapping
 import time
 from typing import Any
 
-from pico.evaluation.live_tasks import ClientResult, FailureCategory, HttpAttempt
+from pico.evaluation.live_tasks import (
+    ClientResult,
+    FailureCategory,
+    FailureOrigin,
+    FailureStage,
+    HttpAttempt,
+)
 from pico.features.sandbox import SandboxConfig
 from pico.features.sandbox.runner import SandboxRunner
 from pico.providers.contracts import ModelRequest, ModelResponse
@@ -117,7 +123,14 @@ def build_client_result(
         sdk_retry_count=sdk_retries,
         pico_retry_count=pico_retries,
         error=client.failures[-1] if client.failures else "",
+        error_type=client.failures[-1] if client.failures else "",
         failure_category=failure,
+        failure_origin=(
+            FailureOrigin.PROVIDER if client.failures else FailureOrigin.NONE
+        ),
+        failure_stage=(
+            FailureStage.REQUEST if client.failures else FailureStage.NONE
+        ),
         session_id=str(agent.session.get("id", "")),
         runtime_run_id=runtime_run_id,
         final_answer=final_answer,

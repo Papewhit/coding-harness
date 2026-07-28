@@ -16,16 +16,20 @@ from pico.evaluation.evaluation_v2_config import (
     CONFIG_LOCATOR_ENV,
     SUPPORTED_COHORTS,
     TASKSET_PATH,
+    canonical_json,
     verify_run_config,
     write_run_config,
 )
 from pico.evaluation.live_tasks import (
     ClientResult,
     FailureCategory,
+    FailureOrigin,
+    FailureStage,
     HttpAttempt,
     InfrastructureFailure,
     LocalLiveTaskRunner,
     RunRequest,
+    client_failure_record_errors,
     load_task_specs,
     select_tasks,
 )
@@ -75,28 +79,36 @@ class CommandClient:
             )
         except subprocess.TimeoutExpired as exc:
             if evidence_path.is_file():
-                payload = _client_payload(evidence_path)
-                payload["failure_category"] = FailureCategory.INFRASTRUCTURE.value
-                payload["error"] = type(exc).__name__
-                payload["exit_code"] = -1
-                return _client_result(payload)
+                _record_exit_code(evidence_path, -1)
             raise InfrastructureFailure(
-                "client command timed out before writing request evidence"
+                "client command timed out before a trustworthy product result"
             ) from exc
         except (OSError, subprocess.SubprocessError) as exc:
             raise InfrastructureFailure(
                 f"client command could not run: {type(exc).__name__}"
             ) from exc
-        payload = _client_payload(evidence_path)
-        payload["exit_code"] = completed.returncode
-        if completed.returncode and payload.get("failure_category") in {
-            None,
-            "",
-            FailureCategory.NONE.value,
-        }:
-            payload["failure_category"] = FailureCategory.PROVIDER.value
-            payload["error"] = "client command returned a nonzero exit status"
-        return _client_result(payload)
+        _record_exit_code(evidence_path, completed.returncode)
+        result = _client_result(_client_payload(evidence_path))
+        record_errors = client_failure_record_errors(result)
+        if record_errors:
+            raise InfrastructureFailure(
+                "client command wrote invalid original failure evidence: "
+                + "; ".join(record_errors)
+            )
+        if completed.returncode:
+            if result.failure_category is FailureCategory.NONE:
+                raise InfrastructureFailure(
+                    "client command failed without classified original failure evidence"
+                )
+            if result.failure_origin is FailureOrigin.CLIENT:
+                raise InfrastructureFailure(
+                    "client infrastructure failed before a product result"
+                )
+        elif result.failure_category is not FailureCategory.NONE:
+            raise InfrastructureFailure(
+                "client command succeeded with contradictory failure evidence"
+            )
+        return result
 
 
 def _client_result(payload: Mapping[str, Any]) -> ClientResult:
@@ -128,7 +140,10 @@ def _client_result(payload: Mapping[str, Any]) -> ClientResult:
         pico_retry_count=int(payload.get("pico_retry_count", 0)),
         protocol_errors=tuple(map(str, payload.get("protocol_errors", []))),
         error=str(payload.get("error", "")),
+        error_type=str(payload.get("error_type", "")),
         failure_category=failure,
+        failure_origin=_failure_origin(payload),
+        failure_stage=_failure_stage(payload),
         session_id=str(payload.get("session_id", "")),
         runtime_run_id=str(payload.get("runtime_run_id", "")),
         final_answer=str(payload.get("final_answer", "")),
@@ -144,6 +159,28 @@ def _client_result(payload: Mapping[str, Any]) -> ClientResult:
     )
 
 
+def _failure_origin(payload: Mapping[str, Any]) -> FailureOrigin:
+    try:
+        return FailureOrigin(
+            str(payload.get("failure_origin", FailureOrigin.NONE.value))
+        )
+    except ValueError as exc:
+        raise InfrastructureFailure(
+            "client evidence has an unknown failure_origin"
+        ) from exc
+
+
+def _failure_stage(payload: Mapping[str, Any]) -> FailureStage:
+    try:
+        return FailureStage(
+            str(payload.get("failure_stage", FailureStage.NONE.value))
+        )
+    except ValueError as exc:
+        raise InfrastructureFailure(
+            "client evidence has an unknown failure_stage"
+        ) from exc
+
+
 def _client_payload(evidence_path: Path) -> dict[str, Any]:
     if not evidence_path.is_file():
         raise InfrastructureFailure("client did not write PICO_LIVE_EVIDENCE_PATH")
@@ -152,6 +189,23 @@ def _client_payload(evidence_path: Path) -> dict[str, Any]:
     if not isinstance(payload, Mapping):
         raise InfrastructureFailure("client evidence does not contain client_result")
     return dict(payload)
+
+
+def _record_exit_code(evidence_path: Path, exit_code: int) -> None:
+    """Append only the outer process exit code to existing client evidence."""
+
+    envelope = _load_object(evidence_path)
+    if isinstance(envelope.get("client_result"), Mapping):
+        payload = dict(envelope["client_result"])
+        payload["exit_code"] = exit_code
+        envelope["client_result"] = payload
+    elif "row" in envelope and "measurement_status" in envelope:
+        return
+    else:
+        envelope["exit_code"] = exit_code
+    temporary = evidence_path.with_name(evidence_path.name + ".exit.tmp")
+    temporary.write_bytes(canonical_json(envelope))
+    temporary.replace(evidence_path)
 
 
 def build_parser() -> argparse.ArgumentParser:

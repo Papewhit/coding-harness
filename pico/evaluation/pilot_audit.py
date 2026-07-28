@@ -135,7 +135,11 @@ def deterministic_product_result(
     record: Mapping[str, Any], view: Mapping[str, Any]
 ) -> str:
     failure = record.get("failure")
-    if isinstance(failure, Mapping) and failure.get("stage") == "client":
+    if isinstance(failure, Mapping) and failure.get("category") not in {
+        None,
+        "none",
+        "measurement",
+    }:
         return "failed"
     verifier = view.get("verifier", {})
     if type(verifier.get("passed")) is not bool:

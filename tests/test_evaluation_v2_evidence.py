@@ -20,7 +20,15 @@ from pico.evaluation.evaluation_v2_config import (
 )
 from pico.evaluation.evaluation_v2_evidence import checksums, verify_checksums
 from pico.evaluation.live_client import required_network_sandbox
-from pico.evaluation.live_tasks import LocalLiveTaskRunner, load_task_specs
+from pico.evaluation.live_tasks import (
+    ClientResult,
+    FailureCategory,
+    FailureOrigin,
+    FailureStage,
+    LocalLiveTaskRunner,
+    load_task_specs,
+    resolve_failure_category,
+)
 from tests.evaluation_v2_helpers import (
     DuplicateResultClient,
     ExplodingClient,
@@ -239,11 +247,124 @@ def test_provider_failure_preserves_exact_attempt_and_failure_stage(
     assert evidence.artifact["measurement_status"] == "complete"
     assert evidence.artifact["failure"] == {
         "category": "provider",
+        "error_type": "ServiceUnavailable",
         "exit_code": 1,
+        "origin": "provider",
         "provider_request_count": 1,
         "provider_request_count_exact": True,
-        "stage": "client",
+        "stage": "request",
     }
+
+
+def test_pre_request_runtime_failure_is_a_valid_product_failure(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    class PreRequestRuntimeFailure:
+        def run(
+            self,
+            workspace: Path,
+            prompt: str,
+            *,
+            evidence_path: Path | None = None,
+        ) -> ClientResult:
+            del workspace, prompt, evidence_path
+            return ClientResult(
+                profile={"provider": "fake"},
+                native_gate_hash="c" * 64,
+                error="ValueError",
+                error_type="ValueError",
+                failure_category=FailureCategory.TASK,
+                failure_origin=FailureOrigin.RUNTIME,
+                failure_stage=FailureStage.PRE_REQUEST,
+                http_attempts_exact=True,
+                exit_code=1,
+            )
+
+    config_path, cohort_root = _write_config(tmp_path, monkeypatch)
+    evidence = LocalLiveTaskRunner(cohort_root).run(
+        load_task_specs(TASKSET)[0],
+        _request(config_path),
+        PreRequestRuntimeFailure(),
+    )
+
+    assert evidence.failure_category == "task"
+    assert evidence.artifact["measurement_status"] == "complete"
+    assert evidence.artifact["product_result"] == "pending_audit"
+    assert evidence.artifact["provider_requests"] == {"count": 0, "exact": True}
+    assert evidence.artifact["failure"] == {
+        "category": "task",
+        "error_type": "ValueError",
+        "exit_code": 1,
+        "origin": "runtime",
+        "provider_request_count": 0,
+        "provider_request_count_exact": True,
+        "stage": "pre_request",
+    }
+
+
+def test_missing_original_failure_record_is_invalid(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    class IncompleteFailure:
+        def run(
+            self,
+            workspace: Path,
+            prompt: str,
+            *,
+            evidence_path: Path | None = None,
+        ) -> ClientResult:
+            del workspace, prompt, evidence_path
+            return ClientResult(
+                profile={"provider": "fake"},
+                native_gate_hash="c" * 64,
+                error="lost",
+                failure_category=FailureCategory.TASK,
+                http_attempts_exact=True,
+                exit_code=1,
+            )
+
+    config_path, cohort_root = _write_config(tmp_path, monkeypatch)
+    evidence = LocalLiveTaskRunner(cohort_root).run(
+        load_task_specs(TASKSET)[0],
+        _request(config_path),
+        IncompleteFailure(),
+    )
+
+    assert evidence.failure_category == "measurement"
+    assert evidence.artifact["measurement_status"] == "invalid"
+    assert any(
+        "original" in error for error in evidence.artifact["measurement_errors"]
+    )
+
+
+def test_failure_precedence_keeps_original_client_failure() -> None:
+    client_result = ClientResult(
+        profile={},
+        native_gate_hash="",
+        error="ServiceUnavailable",
+        error_type="ServiceUnavailable",
+        failure_category=FailureCategory.PROVIDER,
+        failure_origin=FailureOrigin.PROVIDER,
+        failure_stage=FailureStage.REQUEST,
+    )
+
+    assert (
+        resolve_failure_category(
+            client_result=client_result,
+            protocol_errors=("later protocol observation",),
+            verifier_passed=False,
+        )
+        is FailureCategory.PROVIDER
+    )
+    assert (
+        resolve_failure_category(
+            measurement_errors=("damaged record",),
+            client_result=client_result,
+            protocol_errors=("later protocol observation",),
+            verifier_passed=False,
+        )
+        is FailureCategory.MEASUREMENT
+    )
 
 
 def test_client_exception_preserves_minimum_invalid_record(

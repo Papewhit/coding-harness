@@ -34,11 +34,18 @@ def _make_row(
     run = row / "original" / ".pico" / "runs" / f"runtime-{task_id}"
     verifier.mkdir(parents=True)
     run.mkdir(parents=True)
+    request_count = 0 if client_failure == "task" else 1
     failure = (
         {
-            "stage": "client",
+            "origin": "runtime" if client_failure == "task" else "provider",
+            "stage": "pre_request" if client_failure == "task" else "request",
             "category": client_failure,
-            "provider_request_count": 1,
+            "error_type": (
+                "ValueError"
+                if client_failure == "task"
+                else "ServiceUnavailable"
+            ),
+            "provider_request_count": request_count,
             "provider_request_count_exact": True,
             "exit_code": 1,
         }
@@ -50,7 +57,7 @@ def _make_row(
         {
             "measurement_status": "complete" if measurement_valid else "invalid",
             "measurement_errors": [] if measurement_valid else ["synthetic defect"],
-            "provider_requests": {"count": 1, "exact": True},
+            "provider_requests": {"count": request_count, "exact": True},
             "credential_scan": {
                 "source_originals": {"passed": True},
                 "persisted_artifacts": {"passed": True},
@@ -62,7 +69,7 @@ def _make_row(
         row / "evidence-view.json",
         {
             "protocol_errors": [] if measurement_valid else ["call mismatch"],
-            "provider_requests": {"count": 1, "exact": True},
+            "provider_requests": {"count": request_count, "exact": True},
             "verifier": {"passed": verifier_passed, "returncode": 0 if verifier_passed else 1},
         },
     )
@@ -205,6 +212,29 @@ def test_full_pilot_reports_valid_failure_and_provider_failure(
         "provider": 1,
     }
     assert report["metrics"]["provider_requests"]["total"] == 3
+
+
+def test_runtime_pre_request_failure_passes_g0_as_valid_failed(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    config, root = write_config(tmp_path, monkeypatch)
+    _make_row(root, "T01", verifier_passed=True, client_failure="task")
+    audit = _audit(
+        tmp_path / "runtime-failure.json",
+        "T01",
+        product="failed",
+        category="product_behavior",
+    )
+
+    finalize_pilot(config, audit_inputs=[audit], generator=GENERATOR)
+    report = json.loads((root / "reports" / "pilot-report.json").read_text())
+
+    assert report["g0"]["status"] == "passed"
+    assert report["counts"]["valid_failed"] == 1
+    assert report["metrics"]["failure_category_counts"] == {
+        "product_behavior": 1
+    }
+    assert report["metrics"]["provider_requests"]["total"] == 0
 
 
 def test_invalid_t01_fails_g0_without_classifying_missing_rows(

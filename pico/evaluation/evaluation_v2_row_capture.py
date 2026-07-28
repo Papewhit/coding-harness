@@ -22,10 +22,13 @@ from pico.evaluation.evaluation_v2_evidence import (
 from pico.evaluation.live_tasks import (
     ClientResult,
     FailureCategory,
+    FailureOrigin,
+    FailureStage,
     HttpAttempt,
     InfrastructureFailure,
     RunRequest,
     TaskSpec,
+    client_failure_record_errors,
 )
 from pico.evaluation.live_utils import compare_manifests, workspace_manifest
 
@@ -127,6 +130,11 @@ def finalize_row(
         measurement_errors.append("known sensitive value found in Pico original state")
     if not capture.client_result.http_attempts_exact:
         measurement_errors.append("provider request count is not exact")
+    measurement_errors.extend(client_failure_record_errors(capture.client_result))
+    if capture.client_result.failure_origin is FailureOrigin.CLIENT:
+        measurement_errors.append(
+            "client infrastructure failure prevents a product conclusion"
+        )
     view = build_evidence_view(
         private_row=private_row,
         public_row=public_row,
@@ -166,7 +174,7 @@ def finalize_row(
                 if capture.verifier.passed
                 else "failed"
             ),
-            "failure": _row_failure(capture),
+            "failure": _row_failure(capture, measurement_errors),
         },
         request.sensitive_values,
     )
@@ -176,23 +184,38 @@ def finalize_row(
     verify_checksums(public_row / "checksums.json", public_row)
 
 
-def _row_failure(capture: RowCapture) -> dict[str, Any] | None:
+def _row_failure(
+    capture: RowCapture, measurement_errors: list[str]
+) -> dict[str, Any] | None:
     result = capture.client_result
     common = {
         "provider_request_count": len(result.http_attempts),
         "provider_request_count_exact": result.http_attempts_exact,
     }
+    if measurement_errors:
+        return {
+            "origin": "measurement",
+            "stage": "evidence",
+            "category": FailureCategory.MEASUREMENT.value,
+            "error_type": "MeasurementError",
+            "exit_code": result.exit_code,
+            **common,
+        }
     if result.failure_category is not FailureCategory.NONE:
         return {
-            "stage": "client",
+            "origin": result.failure_origin.value,
+            "stage": result.failure_stage.value,
             "category": result.failure_category.value,
+            "error_type": result.error_type,
             "exit_code": result.exit_code,
             **common,
         }
     if not capture.verifier.passed:
         return {
+            "origin": "verifier",
             "stage": "verifier",
             "category": FailureCategory.TASK.value,
+            "error_type": "VerifierFailure",
             "exit_code": capture.verifier.returncode,
             **common,
         }
@@ -343,6 +366,8 @@ def _is_blocked(relative: str, blocked_paths: set[str]) -> bool:
 def client_result_dict(result: ClientResult) -> dict[str, Any]:
     payload = asdict(result)
     payload["failure_category"] = result.failure_category.value
+    payload["failure_origin"] = result.failure_origin.value
+    payload["failure_stage"] = result.failure_stage.value
     payload["http_attempts"] = [attempt.as_dict() for attempt in result.http_attempts]
     return payload
 
@@ -364,6 +389,8 @@ def recover_client_result(record: Mapping[str, Any]) -> ClientResult:
     if type(exact) is not bool:
         raise ValueError("persisted request-count exactness flag is not boolean")
     category = FailureCategory(str(payload.get("failure_category", "none")))
+    origin = FailureOrigin(str(payload.get("failure_origin", "none")))
+    stage = FailureStage(str(payload.get("failure_stage", "none")))
     result = ClientResult(
         profile=dict(payload.get("profile", {})),
         native_gate_hash=str(payload.get("native_gate_hash", "")),
@@ -375,7 +402,10 @@ def recover_client_result(record: Mapping[str, Any]) -> ClientResult:
         pico_retry_count=int(payload.get("pico_retry_count", 0)),
         protocol_errors=tuple(map(str, payload.get("protocol_errors", []))),
         error=str(payload.get("error", "")),
+        error_type=str(payload.get("error_type", "")),
         failure_category=category,
+        failure_origin=origin,
+        failure_stage=stage,
         session_id=str(payload.get("session_id", "")),
         runtime_run_id=str(payload.get("runtime_run_id", "")),
         final_answer=str(payload.get("final_answer", "")),
@@ -387,6 +417,12 @@ def recover_client_result(record: Mapping[str, Any]) -> ClientResult:
             else None
         ),
     )
+    failure_errors = client_failure_record_errors(result)
+    if failure_errors:
+        raise ValueError(
+            "persisted client failure record is invalid: "
+            + "; ".join(failure_errors)
+        )
     _validate_persisted_request_summary(record, result)
     return result
 
