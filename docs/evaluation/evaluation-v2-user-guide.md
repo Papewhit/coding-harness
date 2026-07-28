@@ -2,7 +2,7 @@
 
 ## 文档角色
 
-本文记录当前已经交付的 Evaluation v2 用户入口、运行边界和结果解释。阶段顺序与授权 见 [`evaluation-v2-plan.md`](evaluation-v2-plan.md)，指标公式见 [`evaluation-v2-metrics.md`](evaluation-v2-metrics.md)，证据与分类规则见 [`evaluation-v2-evidence-protocol.md`](evaluation-v2-evidence-protocol.md)。
+本文记录当前已经交付的 Evaluation v2 用户入口、运行边界和结果解释。阶段顺序与授权见 [`evaluation-v2-plan.md`](evaluation-v2-plan.md)，指标公式见 [`evaluation-v2-metrics.md`](evaluation-v2-metrics.md)，证据与分类规则见 [`evaluation-v2-evidence-protocol.md`](evaluation-v2-evidence-protocol.md)。
 
 本文只描述当前可用接口，不保留已经失效的旧参数或旧命令。
 
@@ -12,7 +12,7 @@
 
 `scripts/run_evaluation_v2_modules.py` 用于生成或复核 context、working memory、 recovery 和 harness regression 的确定性模块基线。
 
-它不运行真实端到端编码任务，不执行 `pilot-v1` 或 `baseline-v1`，不能衡量真实模型 或 provider 的编码成功率，也不提供 P3/P4 live 授权。
+它不运行真实端到端编码任务，不执行 `pilot-v1` 或 `baseline-v1`，不能衡量真实模型或 provider 的编码成功率，也不提供 P3/P4 live 授权。
 
 ### 生成命令
 
@@ -30,7 +30,7 @@ uv run --frozen --python 3.12 python scripts/run_evaluation_v2_modules.py \
 - 当前完整 Git HEAD 等于 `<source-sha>`，且 `<source-sha>` 是 40 位小写 commit SHA；
 - 目标目录不存在或为空。
 
-目标目录第一次产生内容后不得覆盖或复用。运行中途失败时保留已有内容，不删除后 重跑同一目录。
+目标目录第一次产生内容后不得覆盖或复用。运行中途失败时保留已有内容，不删除后重跑同一目录。
 
 ### 只验证既有 Artifact
 
@@ -40,7 +40,7 @@ uv run --frozen --python 3.12 python scripts/run_evaluation_v2_modules.py \
   --verify-only
 ```
 
-`--verify-only` 只读取既有 Artifact。它从输出目录名取得 source SHA，再与报告记录 互相核对；不要求当前 checkout clean，也不要求当前 HEAD 等于 Artifact source。 它不会运行 evaluator、写入或修复 Artifact、读取 provider 配置或发起 provider HTTP。
+`--verify-only` 只读取既有 Artifact。它从输出目录名取得 source SHA，再与报告记录互相核对；不要求当前 checkout clean，也不要求当前 HEAD 等于 Artifact source。它不会运行 evaluator、写入或修复 Artifact、读取 provider 配置或发起 provider HTTP。
 
 复核内容包括固定五个 JSON 的路径、字节数和 SHA-256，报告 schema、cohort、source 与离线证据边界，以及 Markdown 是否能从报告 JSON 确定性重建。
 
@@ -80,7 +80,7 @@ public/modules/recovery-ablation-v2.json
 public/modules/checksums.json
 ```
 
-报告 JSON 记录 cohort、完整 source SHA、样本量、模块指标、公式引用、排除项和证据 路径；Markdown 必须由该 JSON 生成。`checksums.json` 覆盖四个模块 JSON 和报告 JSON，不把自身计入清单。
+报告 JSON 记录 cohort、完整 source SHA、样本量、模块指标、公式引用、排除项和证据路径；Markdown 必须由该 JSON 生成。`checksums.json` 覆盖四个模块 JSON 和报告 JSON，不把自身计入清单。
 
 ### 结果解释
 
@@ -88,7 +88,7 @@ public/modules/checksums.json
 - Context、memory 和 recovery 指标只说明对应模块在确定性实验中的行为。
 - `provider_http_requests: 0` 表示该批次没有真实 provider 请求，不代表 provider 能力或质量。
 - `is_end_to_end_coding_result: false` 表示这些结果不得进入 `pilot-v1` 或 `baseline-v1` 的真实编码成功率分母。
-- 单项指标异常或 harness 产品失败应原样记录，不能为了得到通过结果而修改产品或 覆盖本批次。
+- 单项指标异常或 harness 产品失败应原样记录，不能为了得到通过结果而修改产品或覆盖本批次。
 
 ## P2 编码任务桥接与 run config
 

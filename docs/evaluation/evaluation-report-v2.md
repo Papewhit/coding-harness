@@ -2,9 +2,9 @@
 
 ## 文档状态
 
-这是 P0 创建的无数据占位骨架。当前没有 Evaluation v2 模块结果、Pilot 结果或正式 编码基线结果，因此本文不包含成功率、效果结论或简历结论。
+这是 P0 创建的无数据占位骨架。当前没有 Evaluation v2 模块结果、Pilot 结果或正式编码基线结果，因此本文不包含成功率、效果结论或简历结论。
 
-P5 必须先从不可变证据生成 `reports/evaluation-report.json`，再由确定性程序生成 `reports/evaluation-report.md`。届时本文件只能由该 Markdown 报告整体发布替换， 不得人工填写另一套数字或结论。
+P5 必须先从不可变证据生成 `reports/evaluation-report.json`，再由确定性程序生成 `reports/evaluation-report.md`。届时本文件只能由该 Markdown 报告整体发布替换，不得人工填写另一套数字或结论。
 
 执行计划、证据协议、指标口径和当前进度分别见：
 
