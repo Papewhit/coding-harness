@@ -6,8 +6,8 @@
 
 ## 当前状态
 
-- 当前阶段：P3——`pilot-v4` 三任务 Pilot 已完成并关闭；G0 通过，T01、T04、T07 均为 `valid + passed`。
-- 阶段结论：非交互、REPL 和 Textual TUI 都在进入 Runtime 前裁剪用户 prompt，而旧 Evaluation live bridge 未裁剪 task prompt。`pilot-v4` 只修复该评测入口差异，没有修改 Pico 产品实现；修复后三条任务的测量、client 和 hidden verifier 均通过。
+- 当前阶段：P4 正式基线前置冻结已完成；P4A 尚未启动，27 条 `baseline-v1` 主评测行均为 `no result`。
+- 阶段结论：已在包含 Evaluation prompt 入口规范化修复的新 source 上补齐正式 baseline 审计摘要和 missing-row 安全续跑，完成 fresh WSL2 离线验收并生成新的 canonical `baseline-v1` 配置。旧 P2 source 下的 baseline 配置不得用于 P4。
 - 历史控制 checkpoint： `2876cd53e17fd2b6eb089dbfaf14cd67615498fc`。
 - 计划中的 P0 起点： `44677cd7f6a9535c1a74e8628078e9d4967594b5`。
 - 实际 P0 起始 commit： `758eeaf7360f09296bc8a87567b021e68ca097d7`。该提交只解除 Evaluation v2 启动暂停并更新文档状态；P0 在检查其 diff 后从该 clean commit 开始。
@@ -21,10 +21,11 @@
 - P2 初始实现候选 source：`8c571834f6f297da3679aba1d279461bee06a517`，tree `614482ffa3515550878efeb87db05922ec5af07c`；用户接受前的审查发现两项证据完整性问题，因此该 source 及其两份配置已作废，不得用于 P3。
 - P2 已接受 source：`b51b4a1a38b76da6cfa8403366ffec54990cfefa`，tree `8c5379d22ecef141af29291ba90a6d77db95207f`。
 - P2 结束 commit：承载本阶段关闭记录的独立 docs commit；完整 SHA 在提交后的交付消息中报告，不为回填而 amend。
+- P4 frozen source：`542f97a023218ee04c00225de994f152bfed748e`；tree：`34e75ea5ff6340948493c93ba449b8980c2a8f85`；Baseline run config SHA-256：`79435b0c961e775e7de0ad68eee950f322c7094ddd10da4aba17ab728040faff`。
 - 正式 Artifact： `F:\dev\llm\pico-eval-artifacts\evaluation-v2\module-baseline-v1\dcd8ea110c6c4dad5c09943fab26b8197142ae29`。
 - wrapper revision 使用量：`0/1`。`dcd8ea1` 是正式测量前由总体方案和 user guide 交付要求驱动的实现对齐，不是测量 wrapper 缺陷修订。
-- 当前边界：P3 已停止；P4A 未启动，不能自动进入。`pilot-v1`、`pilot-v2`、`pilot-v3`、`pilot-v4` 均不得重跑、覆盖或重新分类。
-- 下一动作：保持 source、配置和全部 Pilot Artifact 不变；只有用户明确要求开始 P4A 后，才能按独立 `baseline-v1` 配置与阶段边界继续。
+- 当前边界：P3 已停止；P4A 未启动，不能自动进入。`pilot-v1`、`pilot-v2`、`pilot-v3`、`pilot-v4` 均不得重跑、覆盖或重新分类；新 `baseline-v1` 配置及其 27 条 row 身份已经冻结。
+- 下一动作：只有用户明确要求开始 P4A 后，才在 frozen clone 中原样执行 run config 的 `p4a` 命令；不得先运行 P4B/P4C，不再重新生成或替换配置。
 
 ## 历史无效测量
 
@@ -501,3 +502,76 @@ uv run --frozen --extra providers --python 3.12 python scripts/run_local_coding_
 ### 阶段停止
 
 P3 在此关闭。`pilot-v4` 表明 Evaluation prompt 入口修复后，三任务 Pilot 的测量与产品验证均通过；不自动进入 P4A。
+
+## P4 正式基线前置冻结（已完成，未启动 P4A）
+
+### 阶段结论
+
+- 已将 Pilot 中通用的 audit append、row facts 和指标提取拆为共享 coding-report 层，并新增只处理 `baseline-v1` 的纯离线 finalizer；它输出当前阶段与 27-row cohort 的确定性摘要，不提前生成 P5 总报告。
+- P4 冻结命令统一携带 `--resume-missing`。首次运行选择阶段全部 9 条 row；若计划允许的 measurement defect 纯离线修复后由用户明确继续，同一命令只执行 private/public 目录均不存在的 missing rows，不能覆盖或重跑既有 row。
+- `validate_live_start` 的五项封闭阻断条件和职责没有改变；Pilot 配置、报告及历史 Artifact 保持兼容。
+- P4 source 包含 `6460508c688383102f9dc205d8a04a5681b078dd` 的 prompt 入口规范化修复。九份任务文档即使保留末尾换行，也会在 live client 调用 Runtime 前按标准用户入口语义裁剪。
+- P2 source `b51b4a1a38b76da6cfa8403366ffec54990cfefa` 下的 Baseline 配置绑定修复前 client SHA-256 `f7adf7167effe015a9b59e5f7ed41d6760c6cd555ce29f52b442673d3cfd3bf0`，现明确禁止用于 P4。
+
+### 起始、实现与冻结身份
+
+- 前置冻结起始 commit：`604924e74e46f912048c9e74f1506bf8431b4cf6`。
+- frozen source commit：`542f97a023218ee04c00225de994f152bfed748e`；tree：`34e75ea5ff6340948493c93ba449b8980c2a8f85`。
+- frozen source 的 live client SHA-256：`fdc7aafd1128d0471d880d1a8e06244cf499de1ae2c2474ed92b728a17b9c1cf`。
+- fresh clone：`/home/papewhit/pico-eval-clones/p4-542f97a023218`；tracked 状态 clean。
+- Baseline 配置：`F:\dev\llm\pico-eval-artifacts\evaluation-v2\baseline-v1\542f97a023218ee04c00225de994f152bfed748e\public\run-config.json`。
+- run config SHA-256：`79435b0c961e775e7de0ad68eee950f322c7094ddd10da4aba17ab728040faff`。
+- profile：`dashscope-o`；profile ID：`sha256:41ebb321c6332867f0bb020621b7e1c17f8c60430374c37c3a670c916326ee70`；model：`qwen3.6-plus`；wire dialect：OpenAI Responses；SDK：OpenAI `2.46.0`。
+- 前置冻结结束：承载本状态条目的 docs commit；完整 SHA 在提交后的交付消息中报告，不为回填而 amend。
+
+### 实际修改文件和 diff stat
+
+- 新增 `pico/evaluation/coding_report.py`、`pico/evaluation/baseline_summary.py`、`scripts/finalize_evaluation_v2_baseline.py` 和 `tests/test_evaluation_v2_baseline_summary.py`。
+- 更新 P4 schedule、local coding runner、Pilot report、live-start/evidence tests 和 user guide。
+- 实现 commit 汇总：10 files changed, 1203 insertions(+), 235 deletions(-)。
+- 本状态记录只更新 `evaluation-v2-status.md`，不改变 frozen source、run config 或 Artifact。
+
+### 执行过的命令与测试
+
+- Windows `uv run` 因仓库 `.venv/lib64` 权限问题在测试启动前退出；按 `docs/annoying-uv-codex.md` 改用 WSL，重建本地 `.venv` 后继续。该故障没有运行测试、provider 或 P4 row。
+- 当前工作区首轮新增 baseline tests 为 5 passed；Baseline 与 Pilot report 合并回归为 17 passed；最终定向组为 81 passed，scoped Ruff 和两个 CLI `--help` 检查通过。
+- 在 fresh clone 中使用 CPython 3.12.13 和 OpenAI SDK 2.46.0 复跑同一 81 项定向测试，结果为 81 passed；scoped Ruff 通过。
+- fresh clone 的 source/tree、prompt 修复祖先关系、client 哈希和 clean tracked 状态均已复核。
+- run-config `--verify-only` 通过；Baseline finalizer `--verify-only --stage P4A` 得到 stage `no result=9`、cohort `no result=27`、G1 `pending`。
+- 独立重算配置 SHA-256 与旁路哈希一致；使用当前实际 locator 与 credential 值扫描配置，命中 0。Artifact 目录只有 `run-config.json` 和 `run-config.sha256`。
+
+### 冻结命令
+
+P4A：
+
+```text
+uv run --frozen --extra providers --python 3.12 python scripts/run_local_coding_tasks.py --run-config /mnt/f/dev/llm/pico-eval-artifacts/evaluation-v2/baseline-v1/542f97a023218ee04c00225de994f152bfed748e/public/run-config.json --cohort-id baseline-v1 --stage P4A --repo tinyconfig --repetitions 3 --resume-missing
+```
+
+P4B：
+
+```text
+uv run --frozen --extra providers --python 3.12 python scripts/run_local_coding_tasks.py --run-config /mnt/f/dev/llm/pico-eval-artifacts/evaluation-v2/baseline-v1/542f97a023218ee04c00225de994f152bfed748e/public/run-config.json --cohort-id baseline-v1 --stage P4B --repo miniqueue --repetitions 3 --resume-missing
+```
+
+P4C：
+
+```text
+uv run --frozen --extra providers --python 3.12 python scripts/run_local_coding_tasks.py --run-config /mnt/f/dev/llm/pico-eval-artifacts/evaluation-v2/baseline-v1/542f97a023218ee04c00225de994f152bfed748e/public/run-config.json --cohort-id baseline-v1 --stage P4C --repo logslice --repetitions 3 --resume-missing
+```
+
+### 新增 rows 与 metrics
+
+- 新增正式 Baseline rows：0；provider HTTP：0。
+- 计划身份：27；`valid + passed` 0；`valid + failed` 0；`invalid` 0；`no result` 27。
+- valid-run rate 与 verified-run success 均无分母，不可计算；stable task status 九项均为 `insufficient-evidence`；G1 为 `pending`。
+
+### 有效产品失败与 invalid rows
+
+- 有效产品失败：0。
+- invalid rows：0。
+
+### 当前 blocker 与下一阶段的精确第一步
+
+- 当前没有实现或配置 blocker。P4A 尚未获得单独的阶段启动指令。
+- 用户明确要求开始 P4A 后，在 frozen clone 中只执行上述 `p4a` 命令一次；该指令覆盖计划内 9 条 row 的 provider HTTP 范围。完成 row 审计、部分指标、status 与阶段提交后停止，不自动进入 P4B。
