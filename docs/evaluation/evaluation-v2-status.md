@@ -6,8 +6,8 @@
 
 ## 当前状态
 
-- 当前阶段：P3——用户已授权在修复 Evaluation prompt 入口语义后，以独立 `pilot-v4` source/config 重跑 T01、T04、T07；当前处于纯离线实现与冻结前验收。
-- 阶段结论：`pilot-v3` 的三条可信 `valid + failed / product_behavior` 保持不变。后续检查确认非交互、REPL 和 Textual TUI 都在进入 Runtime 前裁剪用户 prompt，而 Evaluation live bridge 未裁剪 task prompt；`pilot-v4` 只修复该评测入口差异，不修改 Pico 产品实现。
+- 当前阶段：P3——`pilot-v4` 三任务 Pilot 已完成并关闭；G0 通过，T01、T04、T07 均为 `valid + passed`。
+- 阶段结论：非交互、REPL 和 Textual TUI 都在进入 Runtime 前裁剪用户 prompt，而旧 Evaluation live bridge 未裁剪 task prompt。`pilot-v4` 只修复该评测入口差异，没有修改 Pico 产品实现；修复后三条任务的测量、client 和 hidden verifier 均通过。
 - 历史控制 checkpoint： `2876cd53e17fd2b6eb089dbfaf14cd67615498fc`。
 - 计划中的 P0 起点： `44677cd7f6a9535c1a74e8628078e9d4967594b5`。
 - 实际 P0 起始 commit： `758eeaf7360f09296bc8a87567b021e68ca097d7`。该提交只解除 Evaluation v2 启动暂停并更新文档状态；P0 在检查其 diff 后从该 clean commit 开始。
@@ -23,8 +23,8 @@
 - P2 结束 commit：承载本阶段关闭记录的独立 docs commit；完整 SHA 在提交后的交付消息中报告，不为回填而 amend。
 - 正式 Artifact： `F:\dev\llm\pico-eval-artifacts\evaluation-v2\module-baseline-v1\dcd8ea110c6c4dad5c09943fab26b8197142ae29`。
 - wrapper revision 使用量：`0/1`。`dcd8ea1` 是正式测量前由总体方案和 user guide 交付要求驱动的实现对齐，不是测量 wrapper 缺陷修订。
-- 当前边界：授权只覆盖新的 `pilot-v4-T01-r1`、`pilot-v4-T04-r1`、`pilot-v4-T07-r1`；P4A 未启动。`pilot-v1`、`pilot-v2`、`pilot-v3` 均不得重跑、覆盖或重新分类。
-- 下一动作：完成离线测试并提交新的 source，在 fresh detached WSL clone 生成 `pilot-v4` 配置，然后按冻结命令各执行一次 G0 与 remainder；不自动进入 P4A。
+- 当前边界：P3 已停止；P4A 未启动，不能自动进入。`pilot-v1`、`pilot-v2`、`pilot-v3`、`pilot-v4` 均不得重跑、覆盖或重新分类。
+- 下一动作：保持 source、配置和全部 Pilot Artifact 不变；只有用户明确要求开始 P4A 后，才能按独立 `baseline-v1` 配置与阶段边界继续。
 
 ## 历史无效测量
 
@@ -456,3 +456,48 @@ P3 在此关闭。保留已知 Pico prompt bug，不自动进入 P4A；若修复
 - 用户已授权在新的 source、run config、cohort 和 row 身份上重新执行 P3 三任务 Pilot。
 - 只允许 `pilot-v4-T01-r1`、`pilot-v4-T04-r1`、`pilot-v4-T07-r1`；每条冻结命令只执行一次，不创建 replacement row，不修改或重新分类旧 Pilot。
 - T01 测量有效即通过 G0，无论产品结果成功或失败；随后原样执行 T04/T07 remainder。完成审计和报告后停止，不自动进入 P4A。
+
+### 冻结身份与离线验收
+
+- source commit：`6460508c688383102f9dc205d8a04a5681b078dd`；tree：`487ca361a80ebdab9d661876db8d8985f64396a7`。
+- run config SHA-256：`e4c4187207ad18022e3ce154bf7e5bed7761f24f8431ea02ce842d9ea372f19a`。
+- profile：`dashscope-o`；profile ID：`sha256:41ebb321c6332867f0bb020621b7e1c17f8c60430374c37c3a670c916326ee70`；model：`qwen3.6-plus`；wire dialect：OpenAI Responses。
+- 独占输出目录：`F:\dev\llm\pico-eval-artifacts\evaluation-v2\pilot-v4\6460508c688383102f9dc205d8a04a5681b078dd`。
+- source 在新的 detached WSL clone `/mnt/f/dev/llm/pico-eval-live-v4` 中复验；tracked 状态 clean，CPython 3.12.13、OpenAI SDK 2.46.0，72 项 Evaluation v2 定向测试和 scoped Ruff 通过。
+- 配置生成及纯格式 `--verify-only` 期间没有运行 live validator、Runtime 或 provider；provider HTTP 为 0。
+
+### 冻结命令
+
+G0：
+
+```text
+uv run --frozen --extra providers --python 3.12 python scripts/run_local_coding_tasks.py --run-config /mnt/f/dev/llm/pico-eval-artifacts/evaluation-v2/pilot-v4/6460508c688383102f9dc205d8a04a5681b078dd/public/run-config.json --cohort-id pilot-v4 --stage P3-G0 --task T01 --repo tinyconfig --repetitions 1
+```
+
+remainder：
+
+```text
+uv run --frozen --extra providers --python 3.12 python scripts/run_local_coding_tasks.py --run-config /mnt/f/dev/llm/pico-eval-artifacts/evaluation-v2/pilot-v4/6460508c688383102f9dc205d8a04a5681b078dd/public/run-config.json --cohort-id pilot-v4 --stage P3-remainder --task T04 --task T07 --repetitions 1
+```
+
+### Live 执行与审计结论
+
+- `p3_g0` 与 `p3_remainder` 的冻结命令各实际执行一次，没有 retry、replacement row、语义重跑或额外 live 命令。
+- T01 测量完整，client exit 0，精确 provider 请求 7 次，hidden verifier 通过；审计为 `valid + passed`，因此 G0 通过。
+- G0 通过后原样执行 remainder。T04 与 T07 均测量完整、client exit 0、hidden verifier 通过，精确 provider 请求分别为 9 和 10 次；二者均审计为 `valid + passed`。
+- 三条 row 均无 client failure、protocol error、measurement error、SDK retry、Pico retry 或敏感值命中；没有 invalid、no result、pending audit 或 pending decision。
+
+### 指标与只读复核
+
+- final classified：3/3；valid passed 3；valid failed 0；invalid 0；no result 0。
+- valid-run rate：3/3（100%）；verified-run success：3/3（100%）；failure category 为空。
+- provider 请求总数：26；SDK retry 0；Pico retry 0。
+- tool steps：6、11、9，mean 8.67，median 9。repeated reads：1、2、1，总数 4，mean 1.33，median 1。
+- Runtime elapsed time：64,417、71,252、50,217 ms，mean 61,962 ms，median 64,417 ms。
+- Pilot finalizer `--verify-only` 通过，G0 为 passed，报告 JSON 可确定性重算，Markdown 可逐字节重建。
+- 使用实际 locator 与 credential 共 2 个敏感值扫描 `public/` 38 个文件和 `reports/` 2 个文件，命中 0。
+- 报告入口：`F:\dev\llm\pico-eval-artifacts\evaluation-v2\pilot-v4\6460508c688383102f9dc205d8a04a5681b078dd\reports\pilot-report.md`。
+
+### 阶段停止
+
+P3 在此关闭。`pilot-v4` 表明 Evaluation prompt 入口修复后，三任务 Pilot 的测量与产品验证均通过；不自动进入 P4A。
