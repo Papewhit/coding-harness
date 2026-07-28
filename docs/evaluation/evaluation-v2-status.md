@@ -6,8 +6,8 @@
 
 ## 当前状态
 
-- 当前阶段：P3——三任务 Pilot 与 G0 执行中；已获得只绑定冻结 Pilot 配置的完整 P3 live 授权，当前先完成离线审计与报告工具。
-- 阶段结论：P2 已关闭。P3 起始 commit 固定为 `32867e4be44ea76ecf2b65d2051462c26321d325`；live source、tree、profile、三条 row、输出目录和 HTTP 边界均保持 P2 冻结身份。首次 provider HTTP 尚未发生。
+- 当前阶段：P3——三任务 Pilot 与 G0 已停止并关闭；T01 测量无效，G0 未通过。
+- 阶段结论：T01 只执行一次，精确 provider 请求数为 0；证据没有 `model_requested`、工具调用或 workspace 修改，client 在模型执行前异常退出，但实际异常类型没有保留且外层 runner 将零请求异常误标为 provider。该 row 已永久分类为 `invalid`，T04/T07 按计划保持 `no result`，没有启动任何后续 live 命令。
 - 历史控制 checkpoint： `2876cd53e17fd2b6eb089dbfaf14cd67615498fc`。
 - 计划中的 P0 起点： `44677cd7f6a9535c1a74e8628078e9d4967594b5`。
 - 实际 P0 起始 commit： `758eeaf7360f09296bc8a87567b021e68ca097d7`。该提交只解除 Evaluation v2 启动暂停并更新文档状态；P0 在检查其 diff 后从该 clean commit 开始。
@@ -23,8 +23,8 @@
 - P2 结束 commit：承载本阶段关闭记录的独立 docs commit；完整 SHA 在提交后的交付消息中报告，不为回填而 amend。
 - 正式 Artifact： `F:\dev\llm\pico-eval-artifacts\evaluation-v2\module-baseline-v1\dcd8ea110c6c4dad5c09943fab26b8197142ae29`。
 - wrapper revision 使用量：`0/1`。`dcd8ea1` 是正式测量前由总体方案和 user guide 交付要求驱动的实现对齐，不是测量 wrapper 缺陷修订。
-- 当前 blocker：无。离线 Pilot finalizer 必须先通过 targeted tests、scoped Ruff、CLI help 和 user guide 对齐并提交。
-- 下一动作：提交纯离线 P3 finalizer 后重新执行冻结环境预检；全部通过才原样运行 `launch_commands.p3_g0`，且 T01 不得重跑。
+- 当前 blocker：G0 未通过。`pilot-v1-T01-r1` 不得重跑或覆盖；P4A 未获授权且不能启动。
+- 下一动作：保持当前 Pilot Artifact 不变。只有在离线修复“pre-HTTP client 异常类型留存与失败分类”并冻结新的 source/config 后，才可由用户决定是否建立新的 Pilot cohort 和单独 live 授权。
 
 ## 历史无效测量
 
@@ -277,7 +277,7 @@ R-03 的主要结论是测量装置缺陷：HSMOKE-V4-A 实际完成了 `read_fi
 - 当前唯一 blocker 是尚未获得 P3 的独立 live 授权。
 - 下一阶段的精确第一步：用户另行明确授权 P3，并同时绑定 source `b51b4a1a38b76da6cfa8403366ffec54990cfefa`、tree `8c5379d22ecef141af29291ba90a6d77db95207f` 和 Pilot 配置 SHA-256 `827b4c786a6d5a98a9d53d1273422f7e4b0d9acb2f7f3d526ff5653aeb7d74c6` 后，才执行冻结配置中的 P3 G0 T01 命令；在此之前保持停止。
 
-## P3 阶段记录（执行中）
+## P3 阶段记录（已完成，G0 未通过）
 
 ### 授权与冻结边界
 
@@ -287,13 +287,59 @@ R-03 的主要结论是测量装置缺陷：HSMOKE-V4-A 实际完成了 `read_fi
 - Pilot run config SHA-256：`827b4c786a6d5a98a9d53d1273422f7e4b0d9acb2f7f3d526ff5653aeb7d74c6`。
 - 只允许 `pilot-v1-T01-r1`、`pilot-v1-T04-r1`、`pilot-v1-T07-r1`；不允许语义重跑、replacement row、额外 preflight HTTP 或 P4 请求。
 
-### 当前进度
+### 阶段结论
 
 - 新增纯离线 Pilot audit/report finalizer；它不参与 live Runtime，也不改变冻结 source、runner、prompt、taskset、verifier 或 provider 参数。
-- 新增测试覆盖部分/完整 Pilot、valid pass/fail、provider failure、invalid、pending decision、checksum 篡改、身份矛盾、敏感值和只读复核。
-- WSL 独立控制环境 targeted tests：新测试 6 passed；加入既有 Evaluation v2 evidence tests 后 26 passed。
-- scoped Ruff 通过。provider HTTP 请求仍为 0，正式 Pilot rows 仍为 0。
+- T01 只运行一次。runner 进程退出码为 1，命令摘要先显示 `failure_category=task`；原始 `run-record.json` 同时记录 client category 为 `provider`、精确 HTTP 次数为 0、无 call ID、无最终回答和无 workspace 修改。
+- 私有 trace 只有 `run_started`，session events 只到 context usage，没有 `model_requested`。client 的原始异常类型没有进入持久证据，因而无法解释为何模型 transport 从未启动。
+- hidden verifier 对未修改的 base fixture 失败，不构成 Pico 产品失败证据。Codex 审计将 T01 分类为 `invalid`；G0 未通过，P3 按计划立即停止，T04/T07 没有启动。
+- `reports/pilot-report.json` 是机器可读单一来源，`pilot-report.md` 已从它确定性生成。finalizer 只读复核和新增公开文件的实际敏感值扫描均通过。
 
-### 下一动作
+### 起始与结束 commit
 
-完成 CLI `--help`、user guide、diff 检查并提交离线工具；随后执行冻结 live 环境预检。
+- P3 起始 commit：`32867e4be44ea76ecf2b65d2051462c26321d325`。
+- 离线 finalizer 实现：`7d5ec3ba0339effeae8095f37b227cfceffd9cef`。
+- 审计边界修复：`9af69dba6151e1e83034bcdd45ca07070fb2d14d`，允许 Codex 将机械捕获完成但仍缺少关键解释证据的 row 判为 invalid，同时禁止把机械 invalid 提升为 valid。
+- 控制/live 解释器解耦修复：`9a2c4c78f8cd28cebae60ef0190640356a91fb57`；完整 source/environment 重建仍由冻结 live 预检负责。
+- P3 结束：承载本状态条目的 commit；完整 SHA 在提交后的交付消息中报告。
+
+### 实际修改文件和 diff stat
+
+- 新增 `pico/evaluation/pilot_audit.py`、`pico/evaluation/pilot_report.py`、`scripts/finalize_evaluation_v2_pilot.py` 和 `tests/test_evaluation_v2_pilot_report.py`。
+- 更新本 status 和 `evaluation-v2-user-guide.md`。
+- 没有修改冻结 live source、run config、taskset、verifier、Runtime、provider adapter 或 `.codex/eval/**`。
+- 阶段汇总：6 files changed, 1180 insertions(+), 4 deletions(-)。
+
+### 执行过的命令与测试
+
+- 离线 finalizer 初始测试为 6 passed；加入既有 evidence tests 后为 26 passed，scoped Ruff 和实际 CLI `--help` 通过。
+- T01 后新增“机械 complete 仍可由 Codex 判定证据不足”和“控制解释器不得重建 live client command”回归测试；最终 Pilot targeted tests 为 8 passed，连同既有 Evaluation v2 evidence tests 共 28 passed，scoped Ruff 通过。
+- 冻结预检确认：控制 checkout clean；live clone HEAD/tree 正确且 clean；CPython 3.12.13、OpenAI SDK 2.46.0、config SHA-256、私有 profile、locator 文件、bubblewrap `--unshare-net` 和三个 row 目录均符合冻结配置。
+- 唯一 live 命令是 run config 的 `launch_commands.p3_g0`。没有运行 `p3_remainder`，没有 retry、replacement row、额外 preflight HTTP 或 P4 请求。
+- finalizer `--verify-only` 结果为 `g0_status=failed`、Markdown 可重建。公开 row 13 个文件和 reports 2 个文件的实际 locator/credential 精确扫描均通过。
+
+### 新增 rows 与 metrics
+
+- 新增正式 Pilot row：1，`pilot-v1-T01-r1`。
+- 最终分类：invalid 1；valid passed 0；valid failed 0；no result 2；pending 0。
+- valid-run rate：0/1（0%）；verified-run success：无 valid 分母，不可计算。
+- 精确 provider HTTP 请求：0。SDK retry 0，Pico retry 0。
+- tool steps、repeated reads 和 Runtime elapsed time 没有 valid 样本，不发布聚合值。
+- 报告入口：`F:\dev\llm\pico-eval-artifacts\evaluation-v2\pilot-v1\b51b4a1a38b76da6cfa8403366ffec54990cfefa\reports\pilot-report.md`。
+
+### 有效产品失败
+
+0。hidden verifier 的失败发生在模型未执行、workspace 未修改的前提下，不能记作有效产品失败。
+
+### invalid rows
+
+- `pilot-v1-T01-r1`：invalid。原因是 pre-HTTP client 异常的原始类型没有留存，并被外层 runner 误标为 provider；现有证据不足以解释结果。
+- 该 row 永久保留，不得在 `pilot-v1` 内重跑或覆盖。
+
+### 当前 blocker
+
+G0 未通过。P4A 不得启动。
+
+### 下一阶段的精确第一步
+
+先进行纯离线缺陷设计：在不改写本 row 的前提下，让 live client 在首次 HTTP 前异常时原子保存实际异常类型，并让 runner 区分零请求 infrastructure/client failure 与真实 provider failure。任何修复后的 live 观察必须使用新的 source、run config、cohort 和用户授权。
