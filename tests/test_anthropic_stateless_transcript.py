@@ -264,3 +264,53 @@ def test_continuation_is_json_safe_and_legacy_v1_fails_before_transport() -> Non
             )
         )
     assert legacy_transport.requests == []
+
+
+def test_runtime_notice_continues_after_anthropic_final_without_tool_results() -> None:
+    first_content = [{"type": "text", "text": "premature final"}]
+    transport = _QueueTransport(
+        [
+            _response(
+                first_content,
+                response_id="message-final-1",
+                stop_reason="end_turn",
+            ),
+            _response(
+                [{"type": "text", "text": "plan written"}],
+                response_id="message-final-2",
+                stop_reason="end_turn",
+            ),
+        ]
+    )
+    adapter = AnthropicMessagesAdapter(
+        transport,
+        model="claude-test",
+        profile_id="anthropic-messages:stateless-test",
+    )
+    first = adapter.request(
+        ModelRequest(
+            prompt=RUNTIME_PROMPT,
+            max_output_tokens=128,
+            tools=(_tool("read_file"),),
+        )
+    )
+    notice_prompt = (
+        RUNTIME_PROMPT
+        + "\n\nRuntime notice:\nWrite the active plan artifact before finishing."
+    )
+
+    second = adapter.request(
+        ModelRequest(
+            prompt=notice_prompt,
+            max_output_tokens=128,
+            tools=(_tool("read_file"),),
+            continuation=first.continuation,
+        )
+    )
+
+    assert transport.requests[1]["messages"] == [
+        {"role": "user", "content": RUNTIME_PROMPT},
+        {"role": "assistant", "content": first_content},
+        {"role": "user", "content": notice_prompt},
+    ]
+    assert second.text == "plan written"

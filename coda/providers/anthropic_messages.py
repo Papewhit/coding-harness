@@ -238,16 +238,24 @@ class AnthropicMessagesAdapter:
                 raise AnthropicMessagesProtocolError(
                     "Anthropic transcript continuation requires an original prompt"
                 )
-            if request.prompt != original_prompt:
-                raise AnthropicMessagesProtocolError(
-                    "Anthropic continuation prompt does not match the original Runtime prompt"
-                )
             messages = list(transcript)
             call_ids = _validate_transcript(
                 messages,
                 original_prompt=original_prompt,
                 allow_unresolved_final=True,
             )
+            if request.prompt != original_prompt:
+                if call_ids or request.tool_results:
+                    raise AnthropicMessagesProtocolError(
+                        "Anthropic Runtime prompt cannot change while tool results are pending"
+                    )
+                messages.append({"role": "user", "content": request.prompt})
+                _validate_transcript(
+                    messages,
+                    original_prompt=original_prompt,
+                    allow_unresolved_final=False,
+                )
+                return messages
         else:
             if assistant_blocks is None:  # pragma: no cover - normalized by helper
                 raise AnthropicMessagesProtocolError(
@@ -457,6 +465,16 @@ def _validate_transcript(
         if index == 0:
             continue
         content = message.get("content")
+        if expected_role == "user" and isinstance(content, str):
+            if unresolved:
+                raise AnthropicMessagesProtocolError(
+                    "each Anthropic tool_use_id must have exactly one tool result"
+                )
+            if not content:
+                raise AnthropicMessagesProtocolError(
+                    f"Anthropic transcript message {index} content must not be empty"
+                )
+            continue
         if not isinstance(content, list):
             raise AnthropicMessagesProtocolError(
                 f"Anthropic transcript message {index} content must be a list"
@@ -477,11 +495,6 @@ def _validate_transcript(
                 )
             seen_call_ids.update(call_ids)
             unresolved = call_ids
-            if index < len(messages) - 1 and not call_ids:
-                raise AnthropicMessagesProtocolError(
-                    "Anthropic transcript cannot continue after an assistant message "
-                    "without tool_use blocks"
-                )
         else:
             result_ids = _tool_result_ids(
                 blocks,
@@ -495,7 +508,7 @@ def _validate_transcript(
                 raise AnthropicMessagesProtocolError(
                     f"Anthropic transcript repeats tool_result ID {duplicate!r}"
                 )
-            if result_ids != unresolved:
+            if not unresolved or result_ids != unresolved:
                 raise AnthropicMessagesProtocolError(
                     "each Anthropic tool_use_id must have exactly one ordered tool result"
                 )
