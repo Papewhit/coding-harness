@@ -112,6 +112,29 @@ def test_native_runtime_keeps_rejections_in_the_safety_chain(tmp_path) -> None:
     assert journal_result["status"] == "rejected"
 
 
+def test_completed_turn_continuation_is_not_reused_for_next_user_turn(
+    tmp_path,
+) -> None:
+    continuation = native_continuation({"response_id": "first-turn"})
+    agent = _agent(
+        tmp_path,
+        [
+            native_final_response("First complete.", continuation=continuation),
+            native_final_response("Second complete."),
+        ],
+    )
+
+    assert agent.ask("First request.") == "First complete."
+    assert agent.ask("Second request.") == "Second complete."
+
+    assert agent.model_client.requests[0].continuation is None
+    assert agent.model_client.requests[1].continuation is None
+    assert [event["event"] for event in agent.session["model_exchange"]["events"]] == [
+        "model_final",
+        "model_final",
+    ]
+
+
 def test_cli_factory_selects_native_adapter_and_exposes_retry_configuration() -> None:
     config = ProviderConfig(
         name="local",

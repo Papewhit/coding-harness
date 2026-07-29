@@ -50,6 +50,9 @@ class NativeSessionRecorder:
         self.events: list[dict[str, Any]] = []
 
     def latest_continuation(self) -> ProviderContinuation | None:
+        native = self.agent.session.get("native_runtime")
+        if not isinstance(native, Mapping) or native.get("active_batch") is None:
+            return None
         return self.journal.latest_continuation(self.profile)
 
     def persist(self, snapshot: dict[str, Any]) -> None:
