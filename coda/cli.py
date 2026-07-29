@@ -55,15 +55,19 @@ DEFAULT_SECRET_ENV_NAMES = (
     "GH_PAT",
 )
 
-WELCOME_ART = (
-    "        /\\___/\\\\",
-    "       (  o o  )",
-    "       /   ^   \\\\",
-    "      /|       |\\\\",
+CODA_NAME = "coda"
+CODA_SUBTITLE = "local coding agent"
+CODA_STATUS = "calm shell, ready for work"
+CODA_BANNER_ART = (
+    "       |",
+    "    .--|--.",
+    "   /   |   \\",
+    "---|---+---|---",
+    "   \\   |   /",
+    "    '--|--'",
+    "       |",
 )
-WELCOME_NAME = "coda"
-WELCOME_SUBTITLE = "local coding agent"
-WELCOME_STATUS = "calm shell, ready for work"
+
 HELP_DETAILS = (
     command_help_text()
     + "\n\n"
@@ -201,12 +205,13 @@ def build_welcome(agent: Coda, model: str, host: str) -> str:
         return f"| {left}{' ' * gap}{right} |"
 
     line = divider("=")
-    rows = [center(text) for text in WELCOME_ART]
+    art_width = max(map(len, CODA_BANNER_ART))
+    rows = [center(text.ljust(art_width)) for text in CODA_BANNER_ART]
     rows.extend(
         [
-            center(WELCOME_NAME),
-            center(WELCOME_SUBTITLE),
-            center(WELCOME_STATUS),
+            center(CODA_NAME),
+            center(CODA_SUBTITLE),
+            center(CODA_STATUS),
             divider("-"),
             row(""),
             row("WORKSPACE  " + middle(agent.workspace.cwd, inner - 11)),

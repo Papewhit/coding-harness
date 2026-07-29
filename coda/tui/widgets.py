@@ -9,15 +9,8 @@ from textual.containers import VerticalScroll
 from textual.widget import Widget
 from textual.widgets import Collapsible, Input, Markdown, Static
 
+from ..cli import CODA_BANNER_ART, CODA_NAME, CODA_SUBTITLE
 from ..commands.slash import SlashCommand, suggest_commands
-
-
-CODA_MARK = [
-    r"        /\___/\\",
-    r"       (  o o  )",
-    r"       /   ^   \\",
-    r"      /|       |\\",
-]
 
 
 def format_tool_args(name: str, args: dict | None) -> str:
@@ -67,12 +60,12 @@ class WelcomeBanner(Static):
         accent = "#9ec5fe"
         rows = [
             Text.assemble(
-                Text("coda", style=f"bold {accent}"),
-                Text("  local coding agent", style=muted),
+                Text(CODA_NAME, style=f"bold {accent}"),
+                Text(f"  {CODA_SUBTITLE}", style=muted),
             ),
             Text(""),
         ]
-        rows.extend(Text(line, style=accent) for line in CODA_MARK)
+        rows.extend(Text(line, style=accent) for line in CODA_BANNER_ART)
         rows.extend(
             [
                 Text(""),
