@@ -1337,15 +1337,23 @@ allowed-tools: read_file
             and event.get("tool_name") == "write_file"
             for event in events
         )
+        write_denied = any(
+            event.get("event") == "permission_decision"
+            and event.get("tool_name") == "write_file"
+            and event.get("decision") == "deny"
+            and event.get("reason") == "tool_not_allowed"
+            for event in events
+        )
         checks = [
             check("command_exit_0", command.returncode == 0),
             check("blocked_file_absent", not (workspace / "blocked.txt").exists()),
             check(
                 "tool_schema_restricted",
-                restricted and not write_started,
+                restricted and (not write_started or write_denied),
                 {
                     "restricted": restricted,
                     "write_started": write_started,
+                    "write_denied": write_denied,
                 },
             ),
         ]
