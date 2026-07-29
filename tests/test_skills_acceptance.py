@@ -232,6 +232,7 @@ Inspect $ARGUMENTS.
         encoding="utf-8",
     )
     agent = build_agent(tmp_path, [final("fork result")])
+    del agent.model_client._coda_profile_identity
     agent.record(
         {
             "role": "user",

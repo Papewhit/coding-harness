@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Generator
+from collections.abc import Generator, Mapping
 from contextlib import contextmanager
 from typing import TYPE_CHECKING, Any
 
@@ -31,6 +31,9 @@ def invoke_skill(agent: Coda, name: str, arguments: str = "") -> str:
 
 
 def _run_fork(agent: Coda, skill: Skill, prompt: str) -> str:
+    parent_profile = agent.session.get("provider_profile")
+    if not isinstance(parent_profile, Mapping):
+        raise ValueError("fork skill parent requires a locked provider_profile")
     child = type(agent)(
         model_client=agent.model_client,
         workspace=agent.workspace,
@@ -45,6 +48,11 @@ def _run_fork(agent: Coda, skill: Skill, prompt: str) -> str:
         secret_env_names=agent.secret_env_names,
         feature_flags=agent.feature_flags,
     )
+    child.session["provider_profile"] = {
+        **{key: value for key, value in parent_profile.items() if key != "tool_schema"},
+        "tool_schema": child.tool_signature(),
+    }
+    child.session_path = child.session_store.save(child.session)
     with _model_override(child, skill.model), _skill_tool_profile(child, skill):
         answer = child.ask(prompt)
     agent.session_event_bus.emit("skill_fork_completed", {"skill": skill.name, "child_session_id": child.session["id"]})

@@ -1325,14 +1325,28 @@ allowed-tools: read_file
             max_new_tokens=1024,
             timeout=300,
         )
+        events = self.evidence(workspace).session_events
+        restricted = any(
+            event.get("event") == "skill_invoked"
+            and event.get("skill") == "readonly"
+            and event.get("allowed_tools") == ["read_file"]
+            for event in events
+        )
+        write_started = any(
+            event.get("event") == "tool_started"
+            and event.get("tool_name") == "write_file"
+            for event in events
+        )
         checks = [
             check("command_exit_0", command.returncode == 0),
             check("blocked_file_absent", not (workspace / "blocked.txt").exists()),
             check(
-                "tool_not_allowed",
-                self.evidence(workspace).has_session_event(
-                    "permission_decision", decision="deny", reason="tool_not_allowed"
-                ),
+                "tool_schema_restricted",
+                restricted and not write_started,
+                {
+                    "restricted": restricted,
+                    "write_started": write_started,
+                },
             ),
         ]
         return self.result(
