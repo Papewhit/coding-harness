@@ -1,0 +1,131 @@
+{
+  "schema_version": "pico-eval-commit-map-v1",
+  "wave": "W6R",
+  "wave_base_sha": "48a39193580e48acee3fea5c3bfa107e46443d04",
+  "upstream_canonical_sha": "c0638104ae39994e648387243e474037bcfb967f",
+  "upstream_metadata_sha": "8dc42e09b3582417bfec95a8092504dc16f81d3c",
+  "control_overlay_commit_sha": "48a39193580e48acee3fea5c3bfa107e46443d04",
+  "run_snapshot_sha": null,
+  "integration_order": [
+    "TOOL-051-L",
+    "EVAL-052-H",
+    "TOOL-053-A",
+    "TOOL-054-G"
+  ],
+  "entries": {
+    "TOOL-051-L": {
+      "worker_thread_uuid": "019f8d5a-2731-7e31-8059-6b2b6b627a32",
+      "prompt_sha256": "538e4b6ba26e281f63a54d398f46d0d34d15624087268d7744140491f824e044",
+      "worker_branch": "codex/w6r-tool-051-l",
+      "worker_head": "3ec41e77396137f24b7b420d8545f78d018db02d",
+      "worker_commits": [
+        "cc5c18c8734301655dc1d0d841972067701c9c2e",
+        "3ec41e77396137f24b7b420d8545f78d018db02d"
+      ],
+      "canonical_commits": [
+        "ee00ac7a356f12a1856d058209aa98e53856ea90",
+        "770f255bc19b9f89a45793d0bf3a8980710cad2b"
+      ],
+      "stable_patch_ids": [
+        "084df602a69cc3dfe62423b164cafef0471f642f",
+        "8d7e7bf74f4d4115d7fec35ca2bf276c0ba4beee"
+      ],
+      "handoff_sha256": "64d276287e7921a620e0e9e80e3e59b89c97be8f79ea97599767bbf93eb6c9d7",
+      "outcome": "accepted"
+    },
+    "EVAL-052-H": {
+      "worker_thread_uuid": "019f8d73-2787-7c62-8a11-a2c68adf0b8c",
+      "prompt_sha256": "3c01b13d258b19f13282dcfb206bbd250c57a11f3ec71cab3e3627b98cf9e246",
+      "worker_branch": "codex/w6r-eval-052-h",
+      "dependency_commits": [
+        "cc5c18c8734301655dc1d0d841972067701c9c2e"
+      ],
+      "applied_dependency_commits": [
+        "a2d271511dd5d0b7e32196de5e243c5d9bd1e38a"
+      ],
+      "worker_head": "aaf30ba23279f4c3dabb3023f6808ebda9a616c1",
+      "worker_commits": [
+        "d3f22239ef797a4e685790ed73584e0c582249ab",
+        "aaf30ba23279f4c3dabb3023f6808ebda9a616c1"
+      ],
+      "canonical_commits": [
+        "3717806c4bce448c8ebf89ef1500e0a1d06f62dd",
+        "cb3907b2edb4ec5da6885f7cba74bb7eb3e6ca5f"
+      ],
+      "stable_patch_ids": [
+        "97789245c812198324dae4d258f2e109db16ef85",
+        "162c7badb69a8c8d5d0313f215224fd047fd3c76"
+      ],
+      "handoff_sha256": "660d01fbdb45af6663d3a8f937a06acf92b7c78ff2d34f84ec4e8955c5e2b5db",
+      "outcome": "accepted"
+    },
+    "TOOL-053-A": {
+      "worker_thread_uuid": "019f8d81-b0ae-7d43-8e9b-688f8a563d7e",
+      "prompt_sha256": "2a70f976e7f4c562756d9d515327a90577dfd26285dd2b805791724e49e93245",
+      "worker_branch": "codex/w6r-tool-053-a",
+      "dependency_commits": [
+        "cc5c18c8734301655dc1d0d841972067701c9c2e",
+        "d3f22239ef797a4e685790ed73584e0c582249ab"
+      ],
+      "applied_dependency_commits": [
+        "c58ddaaf3d303fcabff4a08efd47ba4769e652cb",
+        "d089790a69f8aebeb10b2967199accb0c3e6bab0"
+      ],
+      "audited_source_head": "d089790a69f8aebeb10b2967199accb0c3e6bab0",
+      "worker_head": "5612d56f033f1f330d05c0ae46bd310fbfabb8a6",
+      "worker_commits": [
+        "5612d56f033f1f330d05c0ae46bd310fbfabb8a6"
+      ],
+      "canonical_commits": [
+        "475c0d6479b559f9d97f188b6d6c1216aacf50e2"
+      ],
+      "stable_patch_ids": [
+        "7801a27771b029346d898a5d244ee509d071e221"
+      ],
+      "handoff_sha256": "f6c0bc418876a9cbeb16d9617bd1cb724aa2a00736bcf5130324543cce5d8938",
+      "audit_report_sha256": "24e95f24f5bfcce771c22fd20f426ef2aa7da82bfffbcbb16a6f40180ba13f4c",
+      "outcome": "accepted_audit_passed"
+    },
+    "TOOL-054-G": {
+      "worker_thread_uuid": "019f8d95-32d7-7953-9e8d-1b8be7faf0f6",
+      "prompt_sha256": "d98473fe94c10914aaf4dc27b55d7d2f4047a7ff672bcb156b13f30cc423c20b",
+      "prompt_hash_basis": "UTF-8 codexDelegation.input",
+      "worker_branch": "codex/w6r-tool-054-g",
+      "dependency_commits": [
+        "cc5c18c8734301655dc1d0d841972067701c9c2e",
+        "d3f22239ef797a4e685790ed73584e0c582249ab"
+      ],
+      "applied_dependency_commits": [
+        "54ea23c8d05fb8e9eea5e3a271066534c29ffa71",
+        "7eb736b3af73c5a82cb46ee3828b6e29a9ebb909"
+      ],
+      "dependency_applied_tree": "08f05c340bb2caa65c8de5ced5200e4d0b6b1b78",
+      "worker_head": "099147e8910322f824e02baa6163003c9ef825b6",
+      "worker_commits": [
+        "099147e8910322f824e02baa6163003c9ef825b6"
+      ],
+      "canonical_commits": [
+        "f626fc58838b3862090d888f08702061f4764458"
+      ],
+      "stable_patch_ids": [
+        "ed1812b1e0775520ecebbd3498f2b41227a350e1"
+      ],
+      "handoff_sha256": "3f6cd3346dc19073e378cccb6d90e2a24a7cd7160cec508751b7c56647d531cd",
+      "freeze_proposal_sha256": "cf581557effcedc9c77caceb2542bdcaf30e9d12ef08d1878d0c19dc54309b49",
+      "status_proposal_sha256": "d92c6ceed2f59c58ecdbab5387ecbbc89d10d7f2062f21126294d53ea4b4bd75",
+      "gate_report_sha256": "8be0a1e8a1bee9e00448d0dfe97aacd1b83111f66ab4d4bc590ca976897d6333",
+      "run_snapshot_approved": false,
+      "proposed_run_snapshot_sha": null,
+      "gate_status": "blocked",
+      "outcome": "completed_blocked_gate"
+    }
+  },
+  "worker_bundle": {
+    "path": "F:/dev/llm/pico-eval-artifacts/wave-bundles/W6R-workers.bundle",
+    "sha256": "3d8d0127cfbf2f575e98cfb77663186dcd80c96fe00b39276f8c34829f1fad16",
+    "size_bytes": 16625656,
+    "ref_count": 4,
+    "verified_complete_history": true
+  },
+  "updated_at": "2026-07-23T14:49:07.6349745+08:00"
+}

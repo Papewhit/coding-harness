@@ -1,0 +1,154 @@
+{
+  "schema_version": "pico-eval-freeze-proposal-v1",
+  "ticket_id": "TOOL-058-G",
+  "instance_id": "W6R2-TOOL-058-G-01",
+  "wave": "W6R2",
+  "role": "gate_integrator/wsl-native-preflight-and-run-snapshot",
+  "status": "complete",
+  "gate_status": "passed",
+  "immutable_base_sha": "6b4fa94948888b7c95dfbe4cd0134205356decba",
+  "candidate_source_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+  "candidate_source_tree": "158cd2abde04d20e0544c4615db3cb0676f8fc83",
+  "proposed_immutable_run_snapshot_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+  "dependency_commits": [
+    {
+      "ticket_id": "TOOL-055-E",
+      "original": "50f728ba824a142ba0d64a5f820c80bbc1942496",
+      "applied": "28a200055a6595392a0d67065fb774ec12fcac12",
+      "stable_patch_id": "86f900fa077405162cfa49435551f500cfb2c344"
+    },
+    {
+      "ticket_id": "EVAL-056-H",
+      "original": "c7a4a16cd124349448952063894f81d18c0b50c9",
+      "applied": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+      "stable_patch_id": "cb8100e853515f99195e7a37f58cf690d6dc46f5"
+    }
+  ],
+  "dependency_handoff_hashes": {
+    "TOOL-042-G-R2": "c4b0dbd9549b33397e6377d421fd59193619cf655b10a3c78185ef34abdf3c1e",
+    "TOOL-055-E": "733e9488b787dc0bf07d6b5f8d51b2ec502e2682feed8e139baa8cedd0c033d4",
+    "EVAL-056-H": "88dd58e2a7a726c18bc584b92538de259b02e698d15c079830be858ccacc05f5",
+    "TOOL-057-A": "ccffc5d5c4450afe2e2d994ecc8dd37e4b9f709a6b6a740c2a662d917ccc893f",
+    "W6R-wave-handoff": "84e0e7f57fb52de5a9aa13ed2f94e6d8ea8dd73287efb9cf8eecef50c701eb5b"
+  },
+  "source_state_hashes": {
+    "formal_status": "ba98e3804b3a6f6a466a933f3fa6330e5bf539ef5bb07b73267dbd6b3cde92e0",
+    "formal_freeze": "b4893c10887bb774dda860a5f4b13ec6fa9b8c014e0cb0257e409c0f27df6ba6"
+  },
+  "gate_artifact": {
+    "root": "F:/dev/llm/pico-eval-artifacts/native-provider-preflight/W6R2-TOOL-058-G-01",
+    "gate_report_sha256": "7d59bbfdce5eccc3ebc70691abb68b65e0c4536b71fd8158d0fd119dbf51afd9",
+    "inventory_sha256": "4e8df2eb9beb1cd8174b32442d936650df4d9b0806d5d13953e8134507055705",
+    "inventory_file_count": 25,
+    "inventory_aggregate_sha256": "f4bded69b10c7d22f10e08ee57138fdc2452e37d07333175db5ac968bd1d6a9b",
+    "artifact_manifest_sha256": "ef90bbc59ff7d92d78cc725594d1adecdbf0c3fba47ad9cc3b43ffb263a5ba9a",
+    "source_provenance_sha256": "76d91d46848931a505c5d3eaecf4d321108099273b92ceb47459b9d7dd1156cb",
+    "environment_manifest_sha256": "2567634ef8e4487fef75cc430931d731cec061e7517a2fa82ef29d934e81f5a0",
+    "command_results_sha256": "7d7a3bd08a84ad1800045974a1e21922d2ad7921cf12e744c5661bae65faa21f",
+    "bundle_verification_sha256": "a081da2f4597b9e4f776a418769cfad76cc148ead31ee6e511607cdaae3a08ee",
+    "profile_bindings_sha256": "4acbc76c1c34ecfeb85cc9b1e9eacd5a5a29c4d25f5d30cd4012073fcb141035",
+    "dependency_audit_verification_sha256": "a24b3e6149356b3a699787c4e619de7d2eb2d4348fb3f1ae6f25d054b699b3f0"
+  },
+  "freeze_proposal": {
+    "native_conformance_preflight": {
+      "version": "pico-native-provider-preflight-gate-w6r2-v1",
+      "status": "complete",
+      "run_snapshot_approved_for_live_conformance": true,
+      "proposed_run_snapshot_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+      "source": {
+        "sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+        "tree": "158cd2abde04d20e0544c4615db3cb0676f8fc83"
+      },
+      "bindings": {
+        "cases": {
+          "path": "benchmarks/v3/native-provider/cases.json",
+          "git_blob_oid": "f513f6e15c521104b12fe348dc280f73624acd56",
+          "canonical_checkout_sha256": "92f746b113a88ceb652e4e8ec651021b1358d9922ab91c0dad34e62c0068b9e3",
+          "git_blob_sha256": "b20cdf446a21e20db035213c9308b47daa252cb9b0aadbebf7ec5747750e9f4d"
+        },
+        "evaluator": {
+          "path": "pico/evaluation/native_provider.py",
+          "git_blob_oid": "244bf13a0c77cea907d7c6bc98afbf5d3299670b",
+          "git_blob_sha256": "777313f0966224b82071ceff4d7acad633031fcde87eb63a97e5c468c89f0eec"
+        },
+        "production_runner": {
+          "path": "pico/evaluation/native_provider_live.py",
+          "git_blob_oid": "cfd9a0c654e0200ea9ca437bd8c3fd1a92d58587",
+          "git_blob_sha256": "35e4573b5275015eb6caabde6a8c6baa9a17740742b5aa155baf93fb21de56e8"
+        },
+        "formal_cli": {
+          "path": "scripts/run_native_provider_conformance.py",
+          "git_blob_oid": "d615afafd7cbb02d75e571a06c82b7e6d16a9821",
+          "git_blob_sha256": "834f87bc9ee04fac6c4247aab7f352c6d6f21bc92da3c4121bb2303ce6f6a95d"
+        },
+        "public_profile_builder": {
+          "module_git_blob_sha256": "186c5cd950f7418c8a9fb0f80b3f06ce190f3b0ab1e5b54a4d042159ee991be5",
+          "cli_git_blob_sha256": "58e64b5321aee07b585fb78548434e4f7b7dbab59fd0d8452e34b7c599785005"
+        },
+        "bundle_schema_version": "pico-native-provider-conformance-bundle-v2",
+        "public_profiles": [
+          {
+            "provider": "dashscope-o",
+            "status": "bound",
+            "profile_id": "sha256:41ebb321c6332867f0bb020621b7e1c17f8c60430374c37c3a670c916326ee70",
+            "canonical_sha256": "499655acd72b0c10f0bd0a938a032060fb7a5b776e74e478742078da1a137331",
+            "wire_dialect": "openai-responses"
+          },
+          {
+            "provider": "dashscope-a",
+            "status": "bound",
+            "profile_id": "sha256:fccbdcb07f4c3fff931d5c7540673ca8aafc1e57a8389b5042a377916d670fd9",
+            "canonical_sha256": "3ec252354cae811672d4af618be3cb2aa1911f6e766ae577db56189712a2574f",
+            "wire_dialect": "anthropic-messages"
+          },
+          {
+            "provider": "deepseek",
+            "status": "bound",
+            "profile_id": "sha256:d7f29754016394922b48edb3ac4211d3920c333e386e7cf4d76f0ff178beb4a5",
+            "canonical_sha256": "5e4a4c3af56f492ee066835b8657748ec430cc6f11f8f0aebe39d2ea4cfac2e6",
+            "wire_dialect": "anthropic-messages"
+          }
+        ],
+        "sdk_transport_decision_sha256": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+        "sdk_dependency_lock_sha256": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+        "sdk_versions": {
+          "openai": "2.46.0",
+          "anthropic": "0.117.0"
+        },
+        "sdk_max_retries": 0,
+        "reviewer_handoff_sha256": "ccffc5d5c4450afe2e2d994ecc8dd37e4b9f709a6b6a740c2a662d917ccc893f",
+        "reviewer_audit_report_sha256": "0726c7daf6023322b7b1c3e3abfdab20209128c91d7940f915bec6df42f26482",
+        "reviewer_audit_inventory_sha256": "7fa96fdcfa46dc1ed0f9d6a6e354614c5116a94b8963e27c057eace507046100",
+        "read_only_verifier_sha256": "a9cc6a85be6287bbf3fbd2c2eb0d16efc7f898a2140da01aa4f0edb47e16e27c",
+        "three_repetition_generator_sha256": "96d109548b0a7e1b770c626928519803602e6a5269848c66515f71cd7f7e5c81"
+      },
+      "gate_result": {
+        "wsl_python": "3.12.13",
+        "wsl_uv": "0.11.31 user-level",
+        "wsl_ruff": "passed",
+        "wsl_targeted": "36 passed",
+        "wsl_protected": "27 passed",
+        "wsl_deterministic": "97 passed",
+        "wsl_full_suite": "516 passed, 2 pre-existing live-provider opt-in skipped, 6 warnings",
+        "bound_profile_count": 3,
+        "dialect_case_repetition_matrix": "8 cases x 3 repetitions x 2 dialects",
+        "passing_rows_per_dialect": "24/24",
+        "call_id_result_match_per_dialect": "36/36",
+        "batch_completeness_per_dialect": "33/33",
+        "safety_chain_completeness_per_dialect": "36/36",
+        "negative_matrix_controls": "3/3 rejected",
+        "inventory_verified": "25/25",
+        "format_validation": "18 JSON, 2 JSONL, 6 XML",
+        "credential_scan_match_count": 0,
+        "live_provider_http_attempt_count": 0,
+        "all_required_tests_passed": true
+      },
+      "blocking_defects": []
+    }
+  },
+  "promotion_allowed": true,
+  "canonical_state_write_required": true,
+  "canonical_status_written": false,
+  "canonical_freeze_written": false,
+  "canonical_state_owner": "W6R2 Wave Integrator"
+}

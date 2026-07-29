@@ -1,0 +1,211 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "EVAL-056-H",
+  "instance_id": "W6R2-EVAL-056-H-01",
+  "wave": "W6R2",
+  "role": "implementer/native-harness-evidence-and-private-config-contract",
+  "status": "complete",
+  "source_thread_id": "019f8e25-2f02-73d0-9a55-3ce4ffa1bb1f",
+  "base_sha": "6b4fa94948888b7c95dfbe4cd0134205356decba",
+  "wave_base_sha": "6b4fa94948888b7c95dfbe4cd0134205356decba",
+  "starting_ref": "codex/w6r2-wave-base",
+  "starting_ref_verified_target": "6b4fa94948888b7c95dfbe4cd0134205356decba",
+  "head_sha": "c7a4a16cd124349448952063894f81d18c0b50c9",
+  "head_sha_semantics": "Implementation-content head before the metadata-only commit containing this handoff; the containing commit is the final retained worker branch HEAD.",
+  "branch": "codex/w6r2-eval-056-h",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/ca3c/pico",
+  "dependency_commits": [
+    "50f728ba824a142ba0d64a5f820c80bbc1942496"
+  ],
+  "applied_dependency_commits": [
+    {
+      "original_commit": "50f728ba824a142ba0d64a5f820c80bbc1942496",
+      "applied_commit": "b268e575917084ce05626b10a7ac42069d4525f4",
+      "stable_patch_id": "86f900fa077405162cfa49435551f500cfb2c344"
+    }
+  ],
+  "own_commits": [
+    "c7a4a16cd124349448952063894f81d18c0b50c9"
+  ],
+  "metadata_commit_semantics": "The commit containing this handoff is metadata-only; its self-referential SHA is intentionally not embedded in this file.",
+  "dependency_handoff_hashes": {
+    "TOOL-055-E": "733e9488b787dc0bf07d6b5f8d51b2ec502e2682feed8e139baa8cedd0c033d4",
+    "EVAL-052-H": "660d01fbdb45af6663d3a8f937a06acf92b7c78ff2d34f84ec4e8955c5e2b5db",
+    "W6R-wave-handoff": "84e0e7f57fb52de5a9aa13ed2f94e6d8ea8dd73287efb9cf8eecef50c701eb5b"
+  },
+  "allowed_write_paths": [
+    "pico/evaluation/native_provider.py",
+    "scripts/run_native_provider_conformance.py",
+    "tests/test_native_provider_evaluator.py",
+    "tests/test_native_provider_cli.py",
+    ".codex/eval/handoffs/EVAL-056-H.json"
+  ],
+  "files_changed": [
+    "pico/evaluation/native_provider.py",
+    "tests/test_native_provider_evaluator.py",
+    "tests/test_native_provider_cli.py",
+    ".codex/eval/handoffs/EVAL-056-H.json"
+  ],
+  "dependency_files_applied": [
+    "pico/evaluation/native_provider_live.py",
+    "pico/core/tool_executor.py",
+    "tests/test_native_provider_live.py",
+    "tests/test_native_safety_chain_evidence.py"
+  ],
+  "implementation": {
+    "launch_contract": {
+      "provider_argument": "Local Pico profile name only.",
+      "expected_profile_argument": "Frozen sanitized public profile JSON only.",
+      "private_config_locator": "PICO_NATIVE_PROVIDER_CONFIG",
+      "locator_required": true,
+      "locator_value_persisted": false,
+      "config_file_hash_persisted": false,
+      "credential_or_raw_url_persisted": false,
+      "preflight_failures": "Missing locator, non-file/unreadable config, invalid public profile, or private/public identity mismatch fail closed as a zero-row not_computable bundle."
+    },
+    "safety_evidence": {
+      "schema_version": "pico-native-safety-chain-evidence-v1",
+      "ordered_stages": [
+        "validate",
+        "repetition",
+        "permission",
+        "policy",
+        "execute"
+      ],
+      "bindings": [
+        "row_id",
+        "case_id",
+        "repetition",
+        "provider call_id",
+        "tool_name"
+      ],
+      "validation": "The provider-neutral evaluator independently verifies stage prefix order, stage indexes, globally unique increasing sequence values, call/result binding, tool identity, terminal rejection or execute semantics, and marks incomplete chains as protocol-level safety_chain_bypass failures.",
+      "aggregate_metrics": [
+        "safety_chain_completeness",
+        "safety_chain_bypass_count"
+      ]
+    },
+    "bundle_contract": {
+      "schema_version": "pico-native-provider-conformance-bundle-v2",
+      "files": [
+        "manifest.json",
+        "rows.jsonl",
+        "evidence-index.json",
+        "summary.json"
+      ],
+      "evidence_index": "Contains one independently hashed entry per native call with full ordered stages and complete/bypass verdict.",
+      "post_write_verification": "All JSON and JSONL files are reparsed from staged bytes and again after atomic publication; manifest file hashes, row hashes, per-call evidence hashes, safety verdicts, bypass aggregates, and summary aggregates are recomputed.",
+      "dialect_parity": "OpenAI Responses and Anthropic Messages consume the same provider-neutral row schema, metrics, evidence index, and validation rules."
+    }
+  },
+  "tests": [
+    {
+      "command": "uv run pytest tests/test_native_provider_evaluator.py tests/test_native_provider_cli.py -q",
+      "result": "passed",
+      "details": "23 passed. Covers ordered evidence, missing/reordered/unbound bypass detection, per-call bundle index, post-write hashes, self-reported verdict rejection, both dialect schemas, locator missing/non-file, public/private mismatch, zero-row failure, and successful sanitized launch."
+    },
+    {
+      "command": "uv run python scripts/run_native_provider_conformance.py --help",
+      "result": "passed",
+      "details": "Exit 0; only the frozen case-set, provider, expected-profile, repetitions, artifact-dir, and diagnostic case options are exposed."
+    },
+    {
+      "command": "uv run ruff check pico/evaluation/native_provider.py scripts/run_native_provider_conformance.py tests/test_native_provider_evaluator.py tests/test_native_provider_cli.py",
+      "result": "passed",
+      "details": "All checks passed."
+    },
+    {
+      "command": "uv run pytest tests/test_native_provider_live.py tests/test_native_safety_chain_evidence.py tests/test_native_runtime_integration.py tests/test_native_tool_loop.py tests/test_permissions_acceptance.py tests/test_architecture_boundaries.py tests/test_native_provider_profile_cli.py -q",
+      "result": "passed",
+      "details": "34 passed. Adjacent native live-runner, safety-chain, Runtime, tool-loop, permissions, architecture, and public-profile regressions remain green."
+    },
+    {
+      "command": "git diff --check; git diff --cached --check; own-write-path audit; frozen cases and FREEZE hash audit",
+      "result": "passed",
+      "details": "No whitespace errors; ticket-owned implementation changes are confined to three delegated source/test paths plus this handoff; frozen cases and formal FREEZE are unchanged."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "pico/evaluation/native_provider.py",
+      "sha256": "7708e3ee558e06f13b3b637444b51dda846f904e5b0cd54a609d6081eb84c9e5",
+      "git_blob_oid": "244bf13a0c77cea907d7c6bc98afbf5d3299670b",
+      "hash_basis": "implementation_head_file_bytes"
+    },
+    {
+      "path": "scripts/run_native_provider_conformance.py",
+      "sha256": "6aa1a5f8ceaf739a9e456f787fc33519c679a7a54a2434c3f6defd4940179100",
+      "git_blob_oid": "d615afafd7cbb02d75e571a06c82b7e6d16a9821",
+      "hash_basis": "unchanged_launch_contract_file_bytes"
+    },
+    {
+      "path": "tests/test_native_provider_evaluator.py",
+      "sha256": "5c3699a75e0c14dbae05cd96f24c694356ef02c2fcdf79e77e652631c1621b8d",
+      "git_blob_oid": "117ad1c734273da3a6bb2882da0739d8ac58803d",
+      "hash_basis": "implementation_head_file_bytes"
+    },
+    {
+      "path": "tests/test_native_provider_cli.py",
+      "sha256": "56b71f154caab9060f47715ab799aa7957f0d337f762e447e711111bf936bea0",
+      "git_blob_oid": "594dbabe6ba22c47c27cc2ac4b4d7b42c03ff764",
+      "hash_basis": "implementation_head_file_bytes"
+    },
+    {
+      "path": ".codex/eval/handoffs/EVAL-056-H.json",
+      "persistence": "Metadata-only commit generated after the immutable implementation content commit."
+    }
+  ],
+  "frozen_hashes": {
+    "formal_freeze": "b4893c10887bb774dda860a5f4b13ec6fa9b8c014e0cb0257e409c0f27df6ba6",
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "sdk_dependency_lock": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+    "public_profile_schema": "c664de9fc4ba4abfa1c5ee4450425e9ef5e3b638d990c2fc42e343d9a63a1625",
+    "public_profile_example": "135095b602ffd386a4227bce817a5edd0242a8b2df68dc50ca42d44ec106de3f",
+    "native_deterministic_gate": "2fc1ebbe4d64c5be80e7fe063584915f12aabf3a8f8c08796d2cf009e94849a5",
+    "provider_selection": "e51ec2b3fd45c6f22f87e1db619c1c2cfc3fdc2304821ca92540fd24479f71df",
+    "cases_sha256": "92f746b113a88ceb652e4e8ec651021b1358d9922ab91c0dad34e62c0068b9e3",
+    "cases_git_blob_oid": "f513f6e15c521104b12fe348dc280f73624acd56"
+  },
+  "native_protocol_observations": {
+    "observation_scope": "Offline evaluator, CLI, and production native runner regressions over deterministic fake transports only. No real provider HTTP, live artifact, formal effectiveness evaluation, human smoke, Resume evaluation, TOOL-057-A, or Gate was run.",
+    "wire_dialects": [
+      "openai-responses",
+      "anthropic-messages"
+    ],
+    "row_schema_and_metric_parity": true,
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count_in_passing_matrix": 0,
+    "adverse_safety_bypass_detection": "passed",
+    "real_http_attempt_count": 0,
+    "sdk_tool_runner_used": false,
+    "sdk_agent_runner_used": false,
+    "sdk_managed_pico_tool_execution_used": false,
+    "display_text_parsed_as_protocol": false
+  },
+  "defects": [],
+  "risks": [
+    "No real endpoint was contacted, so provider eligibility, selected profile, and recovered Gate N1 remain unresolved for separately authorized downstream tickets.",
+    "The evaluator intentionally accepts a shorter ordered safety prefix only when the corresponding tool result is an error with a non-empty code and the terminal stage is rejected; successful calls require all five stages and execute=completed.",
+    "Windows is a best-effort development lane; canonical Ubuntu WSL2/Python 3.12 validation remains the Wave Integrator or later gate owner's responsibility."
+  ],
+  "ownership_change_request": null,
+  "status_proposal": {
+    "ticket_id": "EVAL-056-H",
+    "status": "complete",
+    "head_sha": "c7a4a16cd124349448952063894f81d18c0b50c9",
+    "reason": "The formal native bundle now carries independently verified, call-bound ordered safety-chain evidence and the frozen private-config launch contract fails closed without persisting locator or secret configuration identity."
+  },
+  "freeze_proposal": null,
+  "formal_status_written": false,
+  "formal_freeze_written": false,
+  "live_artifacts_generated": false,
+  "live_provider_http_sent": false,
+  "tool_057_a_started": false,
+  "gate_started": false,
+  "ready_for_integration": true
+}

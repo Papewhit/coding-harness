@@ -1,0 +1,43 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-050-QA-R",
+  "instance_id": "W6-TOOL-050-QA-R-01",
+  "wave": "W6",
+  "role": "run_shard",
+  "status": "blocked",
+  "base_sha": "dd8a677782f90c749a422ee066daa1afcb36c516",
+  "head_sha": "dd8a677782f90c749a422ee066daa1afcb36c516",
+  "dependency_commits": [],
+  "own_commits": [],
+  "files_changed": [],
+  "commands_run": [
+    {"command": "git rev-parse HEAD; git status --porcelain", "exit_code": 0, "details": "Initial and final HEAD equal the required run snapshot; worktree clean."},
+    {"command": "profile key presence check against F:/dev/llm/pico/.pico.toml", "exit_code": 0, "details": "providers.dashscope-a exists; no profile values or credentials were emitted."},
+    {"command": "uv run python scripts/run_native_provider_conformance.py --help", "exit_code": 0, "details": "CLI requires --cases and --runner-plugin, and has no --repetitions option."},
+    {"command": "uv run python scripts/run_native_provider_conformance.py --profile dashscope-a --repetitions 3 --output <artifact-directory>", "exit_code": 2, "details": "Parser stopped before execution because --cases and --runner-plugin are required; no HTTP attempt occurred."}
+  ],
+  "tests": [{"command": "frozen runner CLI parsing", "result": "failed", "details": "Ticket invocation is incompatible with the snapshot CLI and cannot produce a compliant live run without prohibited new implementation."}],
+  "outputs": [
+    {"path": "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/dd8a677782f90c749a422ee066daa1afcb36c516/TOOL-050-QA-R/manifest.json", "sha256": "c4cde64ac86c344f3f4589507b02e2c96f9b044a6ffad3013759cb2df73641d1"},
+    {"path": "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/dd8a677782f90c749a422ee066daa1afcb36c516/TOOL-050-QA-R/rows.jsonl", "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "row_count": 0},
+    {"path": "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/dd8a677782f90c749a422ee066daa1afcb36c516/TOOL-050-QA-R/evidence-index.json", "sha256": "a945adb197fe0e01b4d636d00218300951176d0defa8d2d82999a83924a07937"}
+  ],
+  "artifact_summary": {"row_count": 0, "http_attempt_count": 0, "failure_classification": {"infrastructure": 1, "provider": 0, "protocol": 0}, "exclusion": "frozen_runner_cli_incompatible"},
+  "frozen_hashes": {
+    "formal_freeze": "538f7644f91611abcbe4822a497490e0bb6d4ffa0d39286e871c92afdd81e70e",
+    "w5r2_handoff": "101e6006e0d67c693ebe439078cbbb82779810f54dee8a3cce51256c38a44f95",
+    "native_gate_handoff": "c4b0dbd9549b33397e6377d421fd59193619cf655b10a3c78185ef34abdf3c1e",
+    "evaluator_handoff": "5eef3b00058eb07ec33527ff6e33ba628dea5ec27967a0ae0caf6b60e1cb2936",
+    "adapter_handoff": "90c8ed270c670109b57e63984e4e5f4288b35f8c1ec11a06321a834e950cd2a9",
+    "frozen_cases": "92f746b113a88ceb652e4e8ec651021b1358d9922ab91c0dad34e62c0068b9e3"
+  },
+  "prompt_correction": {"field": "adapter_handoff_sha256", "original": "e58681f156f8f1fe5a76fbd44f0ece623c69972b711637360e63b1e7ecbaae7d", "corrected": "90c8ed270c670109b57e63984e4e5f4288b35f8c1ec11a06321a834e950cd2a9", "effect": "Control-plane correction only; no HTTP attempt or shard retry occurred."},
+  "native_protocol_observations": {"text_envelope_seen_count": 0, "implicit_sdk_retry_seen": false, "call_id_result_mismatch_count": 0, "duplicate_call_after_result_count": 0, "unknown_block_loss_count": 0, "safety_chain_bypass_count": 0, "continuation": {"hashes": [], "types": [], "count": 0}, "sdk_tool_runner_used": false, "sdk_agent_runner_used": false, "sdk_managed_pico_tool_execution_used": false},
+  "execution_scope": {"live_provider_run": false, "formal_effectiveness_run": false, "resume_run": false},
+  "defects": [{"code": "frozen_runner_cli_ticket_command_drift", "detail": "Snapshot runner needs a public profile JSON and external runner plugin, but the approved input supplies only a local TOML profile name and unsupported repetition flag."}],
+  "risks": ["Live native conformance remains unmeasured for dashscope-a.", "A future authorized run needs a separately frozen runner invocation, sanitized public profile binding, and runner plugin; this shard must not be retried from this prompt."],
+  "status_proposal": {"ticket_id": "TOOL-050-QA-R", "status": "blocked", "reason": "Infrastructure/CLI incompatibility before HTTP; all required evidence retained."},
+  "freeze_proposal": null,
+  "ownership_change_request": {"requested_owner": "Wave Integrator or new evaluator/runner ticket", "request": "Freeze a compatible config-profile binding and live runner plugin/invocation. Do not alter this shard or its frozen inputs."},
+  "ready_for_integration": false
+}

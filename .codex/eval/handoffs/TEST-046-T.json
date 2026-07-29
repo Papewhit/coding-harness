@@ -1,0 +1,120 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TEST-046-T",
+  "instance_id": "W5R2-TEST-046-T-01",
+  "wave": "W5R2",
+  "role": "implementer / TUI native-profile fixture recovery",
+  "status": "complete",
+  "source_thread_id": "019f8967-207e-7461-82aa-dcc2239049ab",
+  "base_sha": "aab051fbf30c50df3af6ed2df5954717e104eac0",
+  "head_sha": "3632767d25b6739aff75248b274c99ac5936db62",
+  "head_sha_semantics": "Final implementation head before the metadata-only commit that adds this handoff.",
+  "branch": "codex/eval-v3-w5r2-test-046-t",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/8eb6/pico",
+  "canonical_dependency_commits": [
+    "3f95f6ae5bdec56e75367cfcad1aadb9526332dd",
+    "7dd7a08440848b01cc3863dd286610e3cc7ce7b2"
+  ],
+  "applied_dependency_commits": [
+    "7d6f9aad7089c9578d1daa87dae6ab7102912225",
+    "06506398270bb760a38bdd960d3a024ba2ae5357"
+  ],
+  "dependency_patch_ids": {
+    "3f95f6ae5bdec56e75367cfcad1aadb9526332dd": "abff381049a1a73af408652b9577fa03c365278a",
+    "7d6f9aad7089c9578d1daa87dae6ab7102912225": "abff381049a1a73af408652b9577fa03c365278a",
+    "7dd7a08440848b01cc3863dd286610e3cc7ce7b2": "6d12db5933be1bad9a2220c3cb5b536e92ba0d72",
+    "06506398270bb760a38bdd960d3a024ba2ae5357": "6d12db5933be1bad9a2220c3cb5b536e92ba0d72"
+  },
+  "dependency_handoff_hashes": {
+    "W5R-wave-handoff": "bcc4432477409529a46085441c4717188b77ab3aea5943565f3a7dd552da2665",
+    "TEST-046-P": "f061aa3e8bfc28c93616f57eb63416afe9b774c3038dc0aa5361186c257eab75"
+  },
+  "dependency_artifact_hashes": {
+    "TEST-046-P": "f8b564b44c62d29481b20a30f17ac09fcb0afa2e269cbf04b364576f1cf48bec"
+  },
+  "own_commits": [
+    "3632767d25b6739aff75248b274c99ac5936db62"
+  ],
+  "files_changed": [
+    "tests/test_tui.py",
+    ".codex/eval/handoffs/TEST-046-T.json"
+  ],
+  "tests": [
+    {
+      "environment": "Windows / CPython 3.12.13",
+      "command": "uv run pytest tests/test_tui.py -q",
+      "result": "passed",
+      "details": "19 passed in 22.50s; the seven prioritized final rendering, welcome/chat visibility, transcript layout, tool card, approval, ask-user, and subagent interactions reached and passed their original assertions."
+    },
+    {
+      "environment": "Windows / CPython 3.12.13",
+      "command": "uv run ruff check tests/test_tui.py",
+      "result": "passed",
+      "details": "All checks passed."
+    },
+    {
+      "environment": "Windows / CPython 3.12.13",
+      "command": "AST comparison of dependency HEAD 0650639:tests/test_tui.py with the working implementation",
+      "result": "passed",
+      "details": "All 19 test names and all 73 assertion ASTs are identical."
+    },
+    {
+      "environment": "Windows",
+      "command": "rg -n \"pytestmark|autouse|skip|xfail|monkeypatch.*NativeSessionRecorder|testing\\.ScriptedModelClient|pytest_collection\" tests/test_tui.py",
+      "result": "passed_no_matches",
+      "details": "rg exit 1 is the expected no-match result."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/w5r2-tui-profile/W5R2-TEST-046-T-01/fixture-recovery-report.json",
+      "sha256": "bae3fc49ebddc58296a9b85ef60dab8ea87d7ba6ff5ed3a4d9778a25e0edcef5",
+      "role": "fixture recovery, integrity, dependency, and native-profile evidence"
+    }
+  ],
+  "hashes": {
+    "test_tui_source": "0fe22b0d5e3b3ccc53862cd8f4a72d5f3da85a52f1e6082672517fb49fccde05",
+    "implementation_patch_id": "a3e8b1cbb0a9ac433c94d94a24c292dddfe4c30c",
+    "formal_freeze": "dbedbc07dcc042546ec37392fb17214b2947bdbfe757d872bb438b9f7cca6f8e",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "sdk_dependency_lock": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+    "native_scripted_fixtures": "ff2a8febe36730b6c18d096312f9455dce0793c9d1f975ffb941c726706904cf",
+    "scripted_provider_profile_fixture_source": "6fec517d2c29795096d1d4227e26b14b35310b7b1120c5c9b77d46ae07155390",
+    "native_deterministic_gate_report": "fab078c630df496a65a4835f4a0ed601240a039caca684b04e3dd8cbb315a5c4"
+  },
+  "acceptance_checklist": {
+    "only_tui_fixture_construction_modified": true,
+    "production_tui_modified": false,
+    "timeouts_modified": false,
+    "existing_test_names_preserved": true,
+    "existing_assertion_asts_preserved": true,
+    "interaction_semantics_preserved": true,
+    "global_or_autouse_patch_added": false,
+    "skip_or_xfail_added": false,
+    "all_original_tui_assertions_pass": true,
+    "canonical_status_or_freeze_written": false
+  },
+  "native_protocol_observations": {
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0,
+    "sdk_tool_runner_used": false,
+    "sdk_agent_runner_used": false,
+    "sdk_managed_pico_tool_execution_used": false
+  },
+  "defects": [],
+  "risks": [],
+  "status_proposal": {
+    "ticket_id": "TEST-046-T",
+    "status": "complete",
+    "head_sha": "3632767d25b6739aff75248b274c99ac5936db62",
+    "reason": "The TUI builder now explicitly locks the scripted-native provider profile and all original TUI interactions pass unchanged."
+  },
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}

@@ -1,0 +1,250 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-053-A",
+  "instance_id": "W6R-TOOL-053-A-01",
+  "wave": "W6R",
+  "role": "reviewer/native-conformance-harness-safety-evidence-audit",
+  "status": "complete",
+  "source_thread_id": "019f8d54-adce-7be2-a422-a8ac0535307c",
+  "base_sha": "48a39193580e48acee3fea5c3bfa107e46443d04",
+  "wave_base_sha": "48a39193580e48acee3fea5c3bfa107e46443d04",
+  "starting_ref": "codex/w6r-wave-base",
+  "starting_ref_verified_target": "48a39193580e48acee3fea5c3bfa107e46443d04",
+  "head_sha": "d089790a69f8aebeb10b2967199accb0c3e6bab0",
+  "head_sha_semantics": "Exact audited content head after applying only the two dependency implementation commits and before the metadata-only commit containing this handoff.",
+  "branch": "codex/w6r-tool-053-a",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/f506/pico",
+  "dependency_commits": [
+    "cc5c18c8734301655dc1d0d841972067701c9c2e",
+    "d3f22239ef797a4e685790ed73584e0c582249ab"
+  ],
+  "applied_dependency_commits": [
+    {
+      "original_commit": "cc5c18c8734301655dc1d0d841972067701c9c2e",
+      "applied_commit": "c58ddaaf3d303fcabff4a08efd47ba4769e652cb",
+      "stable_patch_id": "084df602a69cc3dfe62423b164cafef0471f642f"
+    },
+    {
+      "original_commit": "d3f22239ef797a4e685790ed73584e0c582249ab",
+      "applied_commit": "d089790a69f8aebeb10b2967199accb0c3e6bab0",
+      "stable_patch_id": "97789245c812198324dae4d258f2e109db16ef85"
+    }
+  ],
+  "own_commits": [],
+  "metadata_commit_semantics": "The commit containing this handoff is the ticket's only own commit; its self-referential SHA is intentionally not embedded in the file.",
+  "dependency_handoff_hashes": {
+    "TOOL-051-L": "64d276287e7921a620e0e9e80e3e59b89c97be8f79ea97599767bbf93eb6c9d7",
+    "EVAL-052-H": "660d01fbdb45af6663d3a8f937a06acf92b7c78ff2d34f84ec4e8955c5e2b5db",
+    "W6-wave-handoff": "6055eca111fe08ebd11448e41550402096b017b34d50e2efde1aea906de8fc4f",
+    "formal-FREEZE": "b4893c10887bb774dda860a5f4b13ec6fa9b8c014e0cb0257e409c0f27df6ba6"
+  },
+  "allowed_write_paths": [
+    "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R-TOOL-053-A-01/**",
+    ".codex/eval/handoffs/TOOL-053-A.json"
+  ],
+  "files_changed": [
+    ".codex/eval/handoffs/TOOL-053-A.json"
+  ],
+  "audit_artifact": {
+    "root": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R-TOOL-053-A-01",
+    "audit_report": {
+      "path": "audit-report.json",
+      "sha256": "24e95f24f5bfcce771c22fd20f426ef2aa7da82bfffbcbb16a6f40180ba13f4c"
+    },
+    "command_results": {
+      "path": "command-results.json",
+      "sha256": "626dfce8daf2787a6fba32c3a842d1e5cbaf88ac0a9b53b670f01dd35f2cd255"
+    },
+    "credential_scan": {
+      "path": "credential-scan.json",
+      "sha256": "136f05222b70a71db179cd7f9ab4d60d167f4de438192ee843eb323438cbcf85",
+      "scanned_file_count": 27,
+      "match_count": 0,
+      "passed": true
+    },
+    "hash_inventory": {
+      "path": "audit-hashes.json",
+      "sha256": "e6522711ca97e4c91d8f042451f6caeb35b51652b54d496dce6abf3698f6f88f",
+      "hash_basis": "file_bytes; inventory intentionally excludes its own self-referential hash"
+    },
+    "openai_dynamic_audit_script": {
+      "path": "openai-eight-case-audit.py",
+      "sha256": "9d5e042965c0c08e6834ed969960d3f546a77a709868c51aab562bb6b7bbd2bf"
+    },
+    "openai_parser_poison_result": {
+      "path": "native-parser-poison-proof/openai-eight-case-result.json",
+      "sha256": "adf1129a4935761131a829bb4df08ac231edac74402b24f569d33585b00bea0e"
+    },
+    "multi_repetition_verification": {
+      "path": "multi-repetition-bundle-verification.json",
+      "sha256": "b59b92e98e82d833f06d0dbf65c22c14506610229872a9fad21b6cfbe0c29299"
+    },
+    "multi_repetition_bundle": {
+      "path": "multi-repetition-openai/openai-eight-case-bundle",
+      "repetitions": 2,
+      "row_count": 16,
+      "file_sha256": {
+        "manifest.json": "8c9c64872db666d6c4cc0ecc950e538957d17b01473b99b6b03344cf3c740046",
+        "rows.jsonl": "94907233f20d0b15135fefec8af39a0d8688a6fd749f9fd98bbb6d7787a93355",
+        "evidence-index.json": "35b4b5c91449d0123f6d840c11a3dba99b12a377f7def84818268542fe0f2942",
+        "summary.json": "070f43aab3ad3d7f18d2fd7f8f9cef247900f43c46f060dad95c6b32b5d07b7f"
+      },
+      "row_keys_exact": true,
+      "row_hashes_match": true,
+      "manifest_file_hashes_match": true,
+      "aggregate_recomputed_equal": true
+    },
+    "missing_locator_bundle": {
+      "path": "missing-locator-bundle",
+      "run_status": "preflight_failure",
+      "computability": "not_computable",
+      "row_count": 0,
+      "real_http_attempt_count": 0
+    }
+  },
+  "audit_findings": {
+    "script_to_runtime_chain": "scripts/run_native_provider_conformance.py -> fixed NativeProviderLiveRunner -> build_native_model_client -> production adapter/client -> Engine.run_turn native dispatch -> run_native_turn -> run_native_tool_loop -> Pico.run_tool -> tool_executor.run_tool",
+    "safety_chain_order": [
+      "validate",
+      "repetition",
+      "permission",
+      "policy",
+      "execute"
+    ],
+    "formal_runner_injection": false,
+    "formal_config_option": false,
+    "sdk_tool_runner_used": false,
+    "sdk_agent_runner_used": false,
+    "sdk_managed_pico_tool_execution_used": false,
+    "executable_text_fallback_reached": false,
+    "legacy_parser_poison_probe": "passed",
+    "config_locator_fail_closed": true,
+    "config_path_persisted": false,
+    "config_file_hash_persisted": false,
+    "api_key_persisted": false,
+    "raw_url_persisted": false,
+    "credential_scan_passed": true,
+    "frozen_cases_unchanged": true
+  },
+  "tests": [
+    {
+      "command": "uv run pytest tests/test_native_provider_live.py -q",
+      "result": "passed",
+      "details": "5 passed; repository-owned production Anthropic adapter/fixed Runtime suite covers all eight frozen cases and adverse controls."
+    },
+    {
+      "command": "uv run pytest tests/test_native_provider_profile_cli.py -q",
+      "result": "passed",
+      "details": "3 passed."
+    },
+    {
+      "command": "uv run pytest tests/test_native_provider_evaluator.py tests/test_native_runtime_integration.py tests/test_anthropic_messages_tools.py tests/test_openai_responses_tools.py -q",
+      "result": "passed",
+      "details": "45 passed."
+    },
+    {
+      "command": "uv run pytest tests/test_native_provider_evaluator.py tests/test_native_provider_cli.py -q",
+      "result": "passed",
+      "details": "19 passed, including formal CLI fail-closed locator, fixed runner, exclusive artifact publication, and public-artifact sanitization."
+    },
+    {
+      "command": "uv run pytest tests/test_native_provider_live.py tests/test_native_provider_profile_cli.py tests/test_native_runtime_integration.py tests/test_anthropic_messages_tools.py tests/test_openai_responses_tools.py tests/test_architecture_boundaries.py tests/test_permissions_acceptance.py -q",
+      "result": "passed",
+      "details": "53 passed."
+    },
+    {
+      "command": "uv run pytest tests/test_native_provider_evaluator.py tests/test_native_runtime_integration.py tests/test_anthropic_messages_tools.py tests/test_openai_responses_tools.py tests/test_safety_invariants.py -q",
+      "result": "baseline_failures_only",
+      "details": "48 passed, 7 unchanged Windows-only failures: symlink privilege, Path.home after cleared home variables, and POSIX quoting under cmd.exe."
+    },
+    {
+      "command": "uv run pytest tests/test_native_provider_live.py tests/test_native_provider_profile_cli.py tests/test_native_runtime_integration.py tests/test_anthropic_messages_tools.py tests/test_openai_responses_tools.py tests/test_architecture_boundaries.py tests/test_tool_policy_acceptance.py tests/test_permissions_acceptance.py tests/test_safety_invariants.py -q",
+      "result": "baseline_failures_only",
+      "details": "61 passed, 10 unchanged Windows-only failures: path separator expectation, unavailable POSIX head/tail/grep, cmd.exe quoting, symlink privilege, and Path.home after cleared home variables. All implicated paths are unchanged from the wave base."
+    },
+    {
+      "command": "uv run ruff check .",
+      "result": "passed",
+      "details": "All checks passed."
+    },
+    {
+      "command": "git diff --check; git diff --cached --check",
+      "result": "passed",
+      "details": "No whitespace errors."
+    },
+    {
+      "command": "external OpenAI 8-case fixed-runner audit plus legacy-parser poison probe",
+      "result": "passed",
+      "details": "Production OpenAI adapter and fixed Runtime passed 8/8; call/result 12/12, batches 11/11, 19 fake HTTP-attempt records, no text envelope, retry, unknown-block loss, safety bypass, legacy parser call, or real HTTP."
+    },
+    {
+      "command": "external 2-repetition OpenAI bundle rebuild and independent verifier",
+      "result": "passed",
+      "details": "16/16 rows; call/result 24/24, batches 22/22; exact four files, keys, hashes, order, uniqueness, and aggregate verified."
+    }
+  ],
+  "frozen_hashes": {
+    "formal_freeze": "b4893c10887bb774dda860a5f4b13ec6fa9b8c014e0cb0257e409c0f27df6ba6",
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "sdk_dependency_lock": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+    "public_profile_schema": "c664de9fc4ba4abfa1c5ee4450425e9ef5e3b638d990c2fc42e343d9a63a1625",
+    "public_profile_example": "135095b602ffd386a4227bce817a5edd0242a8b2df68dc50ca42d44ec106de3f",
+    "selected_provider_profile": null,
+    "native_deterministic_gate": "2fc1ebbe4d64c5be80e7fe063584915f12aabf3a8f8c08796d2cf009e94849a5",
+    "provider_selection": "e51ec2b3fd45c6f22f87e1db619c1c2cfc3fdc2304821ca92540fd24479f71df",
+    "native_resume_gate": null,
+    "cases_sha256": "92f746b113a88ceb652e4e8ec651021b1358d9922ab91c0dad34e62c0068b9e3",
+    "cases_git_blob_oid": "f513f6e15c521104b12fe348dc280f73624acd56"
+  },
+  "native_protocol_observations": {
+    "observation_scope": "Offline production Pico/Engine with production Anthropic and OpenAI adapters over deterministic no-network fake wire transports. No real provider HTTP, formal effectiveness evaluation, human smoke, preflight Gate ticket, or Resume evaluation was run.",
+    "wire_dialects": [
+      "anthropic-messages",
+      "openai-responses"
+    ],
+    "passing_frozen_cases_per_dialect": "8/8",
+    "real_http_attempt_count": 0,
+    "call_id_result_match_per_dialect": "12/12",
+    "batch_completeness_per_dialect": "11/11",
+    "multi_repetition_call_id_result_match": "24/24",
+    "multi_repetition_batch_completeness": "22/22",
+    "opaque_continuation_roundtrip_per_dialect": "1/1",
+    "unknown_block_loss_count": 0,
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "pico_retry_count": 0,
+    "safety_chain_bypass_count": 0,
+    "sdk_tool_runner_used": false,
+    "sdk_agent_runner_used": false,
+    "sdk_managed_pico_tool_execution_used": false,
+    "display_text_parsed_as_protocol": false
+  },
+  "blocking_defects": [],
+  "defects": [],
+  "risks": [
+    "The committed eight-case fixed-runner regression test covers Anthropic only. Equivalent OpenAI behavior is proven in the external immutable audit artifact, but future repository regressions would benefit from a parametrized OpenAI case matrix.",
+    "Built-in safety_chain evidence does not persist validate/repetition stages or explicitly validate event order. This review supplies direct dynamic order instrumentation; first-class order evidence would strengthen future self-auditing.",
+    "Seven/ten wider safety/tool-policy tests retain pre-existing Windows platform failures; all implicated paths are unchanged from the wave base and protected native/architecture/permissions suites pass.",
+    "No real endpoint was contacted, so provider eligibility, selected profile, and recovered Gate N1 remain unresolved for separately authorized downstream work."
+  ],
+  "ownership_change_request": {
+    "blocking": false,
+    "owner": "future scoped harness-maintenance ticket",
+    "request": "Add repository-owned OpenAI eight-case fixed-runner regression coverage and persist explicit validate/repetition/order evidence without changing frozen cases."
+  },
+  "status_proposal": {
+    "ticket_id": "TOOL-053-A",
+    "status": "complete",
+    "head_sha": "d089790a69f8aebeb10b2967199accb0c3e6bab0",
+    "reason": "All hard reviewer audit conditions passed with two-dialect offline production Runtime evidence, exact safety-chain instrumentation, fail-closed locator/publication proof, rebuilt multi-repetition bundle verification, credential scan, and unchanged frozen cases."
+  },
+  "freeze_proposal": null,
+  "formal_status_written": false,
+  "formal_freeze_written": false,
+  "downstream_ticket_started": false,
+  "ready_for_preflight_gate": true,
+  "ready_for_integration": true
+}

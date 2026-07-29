@@ -16,7 +16,7 @@ if str(ROOT) not in sys.path:
 from pico import Pico, SessionStore, WorkspaceContext  # noqa: E402
 from pico.config import resolve_provider_config  # noqa: E402
 from pico.features.skills_runtime import invoke_skill  # noqa: E402
-from pico.providers import AnthropicCompatibleModelClient, OpenAICompatibleModelClient  # noqa: E402
+from pico.providers import build_native_model_client, native_provider_profile  # noqa: E402
 
 SUMMARY_JSON = "business-scenario-dogfood.json"
 SUMMARY_MARKDOWN = "business-scenario-dogfood.md"
@@ -69,7 +69,9 @@ def run_dogfood(
         ),
     ]
     summary = {
-        "status": "passed" if all(item["status"] == "passed" for item in scenarios) else "failed",
+        "status": "passed"
+        if all(item["status"] == "passed" for item in scenarios)
+        else "failed",
         "scenario_count": len(scenarios),
         "provider": provider_meta,
         "scenarios": scenarios,
@@ -78,8 +80,12 @@ def run_dogfood(
             "markdown": SUMMARY_MARKDOWN,
         },
     }
-    (output_dir / SUMMARY_JSON).write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    (output_dir / SUMMARY_MARKDOWN).write_text(render_markdown(summary) + "\n", encoding="utf-8")
+    (output_dir / SUMMARY_JSON).write_text(
+        json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
+    (output_dir / SUMMARY_MARKDOWN).write_text(
+        render_markdown(summary) + "\n", encoding="utf-8"
+    )
     return summary
 
 
@@ -108,14 +114,22 @@ def render_markdown(summary):
     return "\n".join(lines)
 
 
-def _run_scenario(output_dir, scenario_id, runner, client_factory, max_steps, max_new_tokens):
+def _run_scenario(
+    output_dir, scenario_id, runner, client_factory, max_steps, max_new_tokens
+):
     workspace = output_dir / "workspaces" / scenario_id
     if workspace.exists():
         _remove_tree(workspace)
     workspace.mkdir(parents=True, exist_ok=True)
     try:
-        record = runner(output_dir, workspace, client_factory, max_steps, max_new_tokens)
-        record["status"] = "passed" if all(check["status"] == "passed" for check in record["checks"]) else "failed"
+        record = runner(
+            output_dir, workspace, client_factory, max_steps, max_new_tokens
+        )
+        record["status"] = (
+            "passed"
+            if all(check["status"] == "passed" for check in record["checks"])
+            else "failed"
+        )
         return record
     except Exception as exc:
         return {
@@ -123,11 +137,15 @@ def _run_scenario(output_dir, scenario_id, runner, client_factory, max_steps, ma
             "status": "failed",
             "workspace_relpath": _relpath(workspace, output_dir),
             "error": str(exc),
-            "checks": [{"name": "scenario_exception", "status": "failed", "detail": str(exc)}],
+            "checks": [
+                {"name": "scenario_exception", "status": "failed", "detail": str(exc)}
+            ],
         }
 
 
-def _scenario_order_pricing_bugfix(output_dir, workspace, client_factory, max_steps, max_new_tokens):
+def _scenario_order_pricing_bugfix(
+    output_dir, workspace, client_factory, max_steps, max_new_tokens
+):
     src = workspace / "src"
     tests = workspace / "tests"
     src.mkdir()
@@ -144,9 +162,11 @@ def _scenario_order_pricing_bugfix(output_dir, workspace, client_factory, max_st
         "    assert calculate_total(100, 15, 8.5) == 93.5\n",
         encoding="utf-8",
     )
-    agent = _build_agent(workspace, client_factory, max_steps=max_steps, max_new_tokens=max_new_tokens)
+    agent = _build_agent(
+        workspace, client_factory, max_steps=max_steps, max_new_tokens=max_new_tokens
+    )
     answer = agent.ask(
-        "订单总价折扣计算错了。请严格按下面步骤执行，每次只返回一个 <tool> 或最后一个 <final>："
+        "订单总价折扣计算错了。请严格按下面步骤使用原生工具，完成后给出最终答复："
         "1) read_file tests/test_order_pricing.py start=1 end=40。"
         "2) read_file src/order_pricing.py start=1 end=40。"
         "3) patch_file src/order_pricing.py，把 `return round(subtotal + discount + tax, 2)` "
@@ -161,17 +181,29 @@ def _scenario_order_pricing_bugfix(output_dir, workspace, client_factory, max_st
         "order_pricing_bugfix",
         checks=[
             _check("answer_nonempty", bool(answer.strip()), answer),
-            _check("pricing_fixed", "subtotal - discount + tax" in (src / "order_pricing.py").read_text(encoding="utf-8")),
+            _check(
+                "pricing_fixed",
+                "subtotal - discount + tax"
+                in (src / "order_pricing.py").read_text(encoding="utf-8"),
+            ),
             _check("pytest_ran", _history_contains(agent, "run_shell", "passed")),
             _check("external_pytest", _run_pytest(workspace).returncode == 0),
         ],
     )
 
 
-def _scenario_release_readiness_review(output_dir, workspace, client_factory, max_steps, max_new_tokens):
-    (workspace / "README.md").write_text("# Billing API\n\nRelease candidate for tenant billing.\n", encoding="utf-8")
-    (workspace / ".env.example").write_text("DATABASE_URL=\nSTRIPE_API_KEY=\n", encoding="utf-8")
-    (workspace / "deploy.md").write_text("- migrations applied\n- rollback owner assigned\n", encoding="utf-8")
+def _scenario_release_readiness_review(
+    output_dir, workspace, client_factory, max_steps, max_new_tokens
+):
+    (workspace / "README.md").write_text(
+        "# Billing API\n\nRelease candidate for tenant billing.\n", encoding="utf-8"
+    )
+    (workspace / ".env.example").write_text(
+        "DATABASE_URL=\nSTRIPE_API_KEY=\n", encoding="utf-8"
+    )
+    (workspace / "deploy.md").write_text(
+        "- migrations applied\n- rollback owner assigned\n", encoding="utf-8"
+    )
     skill_dir = workspace / ".pico" / "skills" / "release"
     skill_dir.mkdir(parents=True)
     (skill_dir / "SKILL.md").write_text(
@@ -185,7 +217,9 @@ blocking/non-blocking checklist to reports/release-readiness.md. Do not edit sou
 """,
         encoding="utf-8",
     )
-    agent = _build_agent(workspace, client_factory, max_steps=max_steps, max_new_tokens=max_new_tokens)
+    agent = _build_agent(
+        workspace, client_factory, max_steps=max_steps, max_new_tokens=max_new_tokens
+    )
     answer = invoke_skill(agent, "release", "billing-api")
     events = _read_events(agent)
     report = workspace / "reports" / "release-readiness.md"
@@ -197,27 +231,47 @@ blocking/non-blocking checklist to reports/release-readiness.md. Do not edit sou
         "release_readiness_review",
         checks=[
             _check("answer_nonempty", bool(answer.strip()), answer),
-            _check("skill_invoked", any(event["event"] == "skill_invoked" for event in events)),
-            _check("skill_completed", any(event["event"] == "skill_completed" for event in events)),
+            _check(
+                "skill_invoked",
+                any(event["event"] == "skill_invoked" for event in events),
+            ),
+            _check(
+                "skill_completed",
+                any(event["event"] == "skill_completed" for event in events),
+            ),
             _check("report_written", report.is_file()),
             _check(
                 "report_mentions_config_gap",
-                any(token in report_text.upper() for token in ("WEBHOOK", "SECRET", "STRIPE", "API_KEY", "DATABASE_URL")),
+                any(
+                    token in report_text.upper()
+                    for token in (
+                        "WEBHOOK",
+                        "SECRET",
+                        "STRIPE",
+                        "API_KEY",
+                        "DATABASE_URL",
+                    )
+                ),
             ),
-            _check("business_files_unchanged", "PAYMENT_WEBHOOK_SECRET" not in (workspace / ".env.example").read_text(encoding="utf-8")),
+            _check(
+                "business_files_unchanged",
+                "PAYMENT_WEBHOOK_SECRET"
+                not in (workspace / ".env.example").read_text(encoding="utf-8"),
+            ),
         ],
     )
 
 
-def _scenario_incident_resume_fix(output_dir, workspace, client_factory, max_steps, max_new_tokens):
+def _scenario_incident_resume_fix(
+    output_dir, workspace, client_factory, max_steps, max_new_tokens
+):
     src = workspace / "src"
     tests = workspace / "tests"
     src.mkdir()
     tests.mkdir()
     (src / "__init__.py").write_text("", encoding="utf-8")
     (src / "incident_router.py").write_text(
-        "def classify_latency(ms):\n"
-        "    return 'ok' if ms < 1000 else 'page'\n",
+        "def classify_latency(ms):\n    return 'ok' if ms < 1000 else 'page'\n",
         encoding="utf-8",
     )
     (tests / "test_incident_router.py").write_text(
@@ -236,8 +290,9 @@ def _scenario_incident_resume_fix(output_dir, workspace, client_factory, max_ste
         max_steps=max_steps,
         max_new_tokens=max_new_tokens,
     )
+    _lock_native_profile(first)
     first_answer = first.ask(
-        "线上延迟告警误分级。请严格按下面步骤执行，每次只返回一个 <tool> 或最后一个 <final>："
+        "线上延迟告警误分级。请严格按下面步骤使用原生工具，完成后给出最终答复："
         "1) todo_add content='Fix latency incident routing' status='in_progress' priority='high'。"
         "2) read_file tests/test_incident_router.py start=1 end=80。"
         "3) read_file src/incident_router.py start=1 end=80。"
@@ -252,8 +307,9 @@ def _scenario_incident_resume_fix(output_dir, workspace, client_factory, max_ste
         max_steps=max_steps,
         max_new_tokens=max_new_tokens,
     )
+    _lock_native_profile(resumed)
     answer = resumed.ask(
-        "继续刚才的事故修复。请严格按下面步骤执行，每次只返回一个 <tool> 或最后一个 <final>："
+        "继续刚才的事故修复。请严格按下面步骤使用原生工具，完成后给出最终答复："
         "1) patch_file src/incident_router.py，把 `return 'ok' if ms < 1000 else 'page'` "
         "替换为 `return 'ok' if ms < 500 else 'degraded' if ms < 1000 else 'page'`。"
         "2) run_shell `uv run --with pytest python -m pytest -q`。"
@@ -269,8 +325,17 @@ def _scenario_incident_resume_fix(output_dir, workspace, client_factory, max_ste
             _check("first_answer_nonempty", bool(first_answer.strip()), first_answer),
             _check("answer_nonempty", bool(answer.strip()), answer),
             _check("same_session", resumed.session["id"] == first.session["id"]),
-            _check("todo_done", any(item.get("status") == "done" for item in resumed.session.get("todos", {}).get("items", []))),
-            _check("incident_fixed", "degraded" in (src / "incident_router.py").read_text(encoding="utf-8")),
+            _check(
+                "todo_done",
+                any(
+                    item.get("status") == "done"
+                    for item in resumed.session.get("todos", {}).get("items", [])
+                ),
+            ),
+            _check(
+                "incident_fixed",
+                "degraded" in (src / "incident_router.py").read_text(encoding="utf-8"),
+            ),
             _check("pytest_ran", _history_contains(resumed, "run_shell", "passed")),
             _check("external_pytest", _run_pytest(workspace).returncode == 0),
         ],
@@ -278,7 +343,7 @@ def _scenario_incident_resume_fix(output_dir, workspace, client_factory, max_ste
 
 
 def _build_agent(workspace, client_factory, max_steps=8, max_new_tokens=1024):
-    return Pico(
+    agent = Pico(
         model_client=client_factory(),
         workspace=_scenario_workspace(workspace),
         session_store=SessionStore(workspace / ".pico" / "sessions"),
@@ -286,13 +351,25 @@ def _build_agent(workspace, client_factory, max_steps=8, max_new_tokens=1024):
         max_steps=max_steps,
         max_new_tokens=max_new_tokens,
     )
+    _lock_native_profile(agent)
+    return agent
+
+
+def _lock_native_profile(agent):
+    identity = dict(agent.model_client._pico_profile_identity)
+    identity["tool_schema"] = agent.tool_signature()
+    existing = agent.session.get("provider_profile")
+    agent.session["provider_profile"] = dict(existing or identity)
+    agent.session_path = agent.session_store.save(agent.session)
 
 
 def _scenario_workspace(workspace):
     return WorkspaceContext.build(workspace, repo_root_override=workspace)
 
 
-def _build_client_factory(*, config_path=None, provider=None, model=None, base_url=None, api_key=None):
+def _build_client_factory(
+    *, config_path=None, provider=None, model=None, base_url=None, api_key=None
+):
     config = resolve_provider_config(
         provider,
         start=ROOT,
@@ -302,26 +379,25 @@ def _build_client_factory(*, config_path=None, provider=None, model=None, base_u
         api_key=api_key,
     )
     if not config.api_key:
-        raise ValueError(f"provider {config.name!r} has no api key; configure .pico.toml or pass --api-key")
+        raise ValueError(
+            f"provider {config.name!r} has no api key; configure .pico.toml or pass --api-key"
+        )
 
     def factory():
-        if config.protocol == "openai":
-            return OpenAICompatibleModelClient(
-                model=config.model,
-                base_url=config.base_url,
-                api_key=config.api_key,
-                temperature=0,
-                timeout=300,
-            )
-        if config.protocol == "anthropic":
-            return AnthropicCompatibleModelClient(
-                model=config.model,
-                base_url=config.base_url,
-                api_key=config.api_key,
-                temperature=0,
-                timeout=300,
-            )
-        raise ValueError(f"unknown provider protocol: {config.protocol}")
+        client = build_native_model_client(
+            wire_dialect=config.wire_dialect,
+            model=config.model,
+            base_url=config.base_url,
+            api_key=config.api_key,
+            profile_id=config.public_identity()["profile_id"],
+            timeout=300,
+            max_retries=0,
+        )
+        client._pico_profile_identity = {
+            **config.public_identity(),
+            **native_provider_profile(config.wire_dialect),
+        }
+        return client
 
     return factory, {
         "name": config.name,
@@ -357,7 +433,9 @@ def _finalize(output_dir, workspace, agent, scenario_id, checks):
 def _read_events(agent):
     return [
         json.loads(line)
-        for line in agent.session_event_bus.path.read_text(encoding="utf-8").splitlines()
+        for line in agent.session_event_bus.path.read_text(
+            encoding="utf-8"
+        ).splitlines()
         if line.strip()
     ]
 
@@ -384,7 +462,11 @@ def _run_pytest(workspace):
 
 
 def _check(name, condition, detail=""):
-    return {"name": name, "status": "passed" if condition else "failed", "detail": str(detail)}
+    return {
+        "name": name,
+        "status": "passed" if condition else "failed",
+        "detail": str(detail),
+    }
 
 
 def _relpath(path, root):
@@ -392,7 +474,9 @@ def _relpath(path, root):
 
 
 def _remove_tree(path):
-    for child in sorted(path.rglob("*"), key=lambda item: len(item.parts), reverse=True):
+    for child in sorted(
+        path.rglob("*"), key=lambda item: len(item.parts), reverse=True
+    ):
         if child.is_dir():
             child.rmdir()
         else:
@@ -401,15 +485,42 @@ def _remove_tree(path):
 
 
 def build_arg_parser():
-    parser = argparse.ArgumentParser(description="Run Pico business scenario dogfood against a real provider.")
-    parser.add_argument("--output-dir", default="/tmp/pico-business-scenario-dogfood", help="Directory for workspaces and summary artifacts.")
-    parser.add_argument("--config", default=None, help="Path to a Pico TOML config file.")
+    parser = argparse.ArgumentParser(
+        description="Run Pico business scenario dogfood against a real provider."
+    )
+    parser.add_argument(
+        "--output-dir",
+        default="/tmp/pico-business-scenario-dogfood",
+        help="Directory for workspaces and summary artifacts.",
+    )
+    parser.add_argument(
+        "--config", default=None, help="Path to a Pico TOML config file."
+    )
     parser.add_argument("--provider", default=None, help="Provider profile to use.")
-    parser.add_argument("--api-key", default=None, help="API key override for the selected provider profile.")
-    parser.add_argument("--base-url", default=None, help="Base URL override for the selected provider profile.")
-    parser.add_argument("--model", default=None, help="Model override for the selected provider profile.")
-    parser.add_argument("--max-steps", type=int, default=8, help="Max Pico steps per scenario turn.")
-    parser.add_argument("--max-new-tokens", type=int, default=1024, help="Max provider output tokens per model turn.")
+    parser.add_argument(
+        "--api-key",
+        default=None,
+        help="API key override for the selected provider profile.",
+    )
+    parser.add_argument(
+        "--base-url",
+        default=None,
+        help="Base URL override for the selected provider profile.",
+    )
+    parser.add_argument(
+        "--model",
+        default=None,
+        help="Model override for the selected provider profile.",
+    )
+    parser.add_argument(
+        "--max-steps", type=int, default=8, help="Max Pico steps per scenario turn."
+    )
+    parser.add_argument(
+        "--max-new-tokens",
+        type=int,
+        default=1024,
+        help="Max provider output tokens per model turn.",
+    )
     return parser
 
 
@@ -425,7 +536,12 @@ def main(argv=None):
         max_steps=args.max_steps,
         max_new_tokens=args.max_new_tokens,
     )
-    print(json.dumps({"status": summary["status"], "scenario_count": summary["scenario_count"]}, sort_keys=True))
+    print(
+        json.dumps(
+            {"status": summary["status"], "scenario_count": summary["scenario_count"]},
+            sort_keys=True,
+        )
+    )
     return 0 if summary["status"] == "passed" else 1
 
 

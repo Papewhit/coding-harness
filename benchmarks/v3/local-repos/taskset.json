@@ -1,0 +1,129 @@
+{
+  "schema_version": "pico-local-repo-taskset-v1",
+  "taskset_id": "pico-local-python-v1",
+  "version": 1,
+  "language": "python",
+  "execution_policy": {
+    "network_access": false,
+    "workspace_source": "disposable_copy_of_base_snapshot",
+    "workspace_visible_content": [
+      "base_snapshot"
+    ],
+    "workspace_excluded_content": [
+      "task_doc",
+      "hidden_verifier",
+      "reference_patch"
+    ],
+    "path_root": "benchmarks/v3/local-repos"
+  },
+  "repositories": [
+    {
+      "id": "tinyconfig",
+      "base_snapshot": "repos/tinyconfig",
+      "tasks": [
+        {
+          "id": "T01",
+          "title": "Parse a boolean environment value",
+          "task_doc": "task_docs/tinyconfig/T01-boolean-env.md",
+          "hidden_verifier": "hidden_verifiers/tinyconfig/verify_t01.py",
+          "reference_patch": "reference_patches/tinyconfig/T01-boolean-env.patch",
+          "expected_files_changed": [
+            "tinyconfig/config.py"
+          ]
+        },
+        {
+          "id": "T02",
+          "title": "Support nested configuration keys",
+          "task_doc": "task_docs/tinyconfig/T02-nested-keys.md",
+          "hidden_verifier": "hidden_verifiers/tinyconfig/verify_t02.py",
+          "reference_patch": "reference_patches/tinyconfig/T02-nested-keys.patch",
+          "expected_files_changed": [
+            "tinyconfig/config.py"
+          ]
+        },
+        {
+          "id": "T03",
+          "title": "Keep validation errors stable and secret-safe",
+          "task_doc": "task_docs/tinyconfig/T03-safe-validation-errors.md",
+          "hidden_verifier": "hidden_verifiers/tinyconfig/verify_t03.py",
+          "reference_patch": "reference_patches/tinyconfig/T03-safe-validation-errors.patch",
+          "expected_files_changed": [
+            "tinyconfig/config.py"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "miniqueue",
+      "base_snapshot": "repos/miniqueue",
+      "tasks": [
+        {
+          "id": "T04",
+          "title": "Retry boundary",
+          "task_doc": "task_docs/miniqueue/T04-retry-boundary.md",
+          "hidden_verifier": "hidden_verifiers/miniqueue/verify_t04_retry_boundary.py",
+          "reference_patch": "reference_patches/miniqueue/T04-retry-boundary.patch",
+          "expected_files_changed": [
+            "miniqueue/queue.py"
+          ]
+        },
+        {
+          "id": "T05",
+          "title": "Pending order and limit",
+          "task_doc": "task_docs/miniqueue/T05-pending-order-limit.md",
+          "hidden_verifier": "hidden_verifiers/miniqueue/verify_t05_pending_order_limit.py",
+          "reference_patch": "reference_patches/miniqueue/T05-pending-order-limit.patch",
+          "expected_files_changed": [
+            "miniqueue/queue.py"
+          ]
+        },
+        {
+          "id": "T06",
+          "title": "Expired lease reclaim",
+          "task_doc": "task_docs/miniqueue/T06-expired-lease-reclaim.md",
+          "hidden_verifier": "hidden_verifiers/miniqueue/verify_t06_expired_lease_reclaim.py",
+          "reference_patch": "reference_patches/miniqueue/T06-expired-lease-reclaim.patch",
+          "expected_files_changed": [
+            "miniqueue/queue.py"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "logslice",
+      "base_snapshot": "repos/logslice",
+      "tasks": [
+        {
+          "id": "T07",
+          "title": "Message delimiter",
+          "task_doc": "task_docs/logslice/T07-message-delimiter.md",
+          "hidden_verifier": "hidden_verifiers/logslice/verify_t07_message_delimiter.py",
+          "reference_patch": "reference_patches/logslice/T07-message-delimiter.patch",
+          "expected_files_changed": [
+            "logslice/formatter.py"
+          ]
+        },
+        {
+          "id": "T08",
+          "title": "Minimum level",
+          "task_doc": "task_docs/logslice/T08-minimum-level.md",
+          "hidden_verifier": "hidden_verifiers/logslice/verify_t08_minimum_level.py",
+          "reference_patch": "reference_patches/logslice/T08-minimum-level.patch",
+          "expected_files_changed": [
+            "logslice/formatter.py"
+          ]
+        },
+        {
+          "id": "T09",
+          "title": "CLI invalid timestamp",
+          "task_doc": "task_docs/logslice/T09-cli-invalid-timestamp.md",
+          "hidden_verifier": "hidden_verifiers/logslice/verify_t09_cli_invalid_timestamp.py",
+          "reference_patch": "reference_patches/logslice/T09-cli-invalid-timestamp.patch",
+          "expected_files_changed": [
+            "logslice/cli.py"
+          ]
+        }
+      ]
+    }
+  ]
+}

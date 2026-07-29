@@ -1,0 +1,2839 @@
+{
+  "schema_version": "pico-eval-plan-v4",
+  "control_revision": "eval-control-v4.2",
+  "project": "pico-v3-evaluation-native-tools",
+  "integration_branch": "eval/v3-integration",
+  "legacy_plan_role": "design_reference_only",
+  "enums": {
+    "roles": [
+      "program_supervisor",
+      "integrator",
+      "implementer",
+      "reviewer"
+    ],
+    "workflow_actions": [
+      "dispatch",
+      "execute",
+      "review",
+      "integrate",
+      "accept",
+      "mark_not_applicable",
+      "remediate",
+      "close"
+    ],
+    "thread_types": [
+      "implementer",
+      "fixture_builder",
+      "reviewer",
+      "integrator",
+      "run_shard"
+    ],
+    "execution_modes": [
+      "model_thread",
+      "local_process",
+      "current_integrator"
+    ],
+    "ticket_states": [
+      "pending",
+      "running",
+      "needs_remediation",
+      "accepted",
+      "not_applicable",
+      "blocked"
+    ],
+    "wave_states": [
+      "not_started",
+      "running",
+      "waiting",
+      "passed",
+      "blocked"
+    ],
+    "gate_states": [
+      "pending",
+      "accepted",
+      "rejected"
+    ],
+    "waiting_reasons": [
+      "none",
+      "user_decision",
+      "credential_or_access",
+      "external_service"
+    ],
+    "not_applicable_reasons": [
+      "required_gate_rejected",
+      "optional_branch_not_selected"
+    ],
+    "finding_types": [
+      "implementation_defect",
+      "measurement_defect",
+      "evaluation_failure",
+      "change_request"
+    ],
+    "review_verdicts": [
+      "accepted",
+      "findings"
+    ],
+    "thread_type_execution": {
+      "implementer": "model_thread executed by role implementer",
+      "fixture_builder": "model_thread executed by role implementer",
+      "reviewer": "model_thread executed by role reviewer",
+      "integrator": "current_integrator; no new model Thread",
+      "run_shard": "local_process; no model Thread"
+    }
+  },
+  "concurrency": {
+    "recommended_max_model_threads": 3,
+    "hard_max_model_threads_without_replanning": 6,
+    "recommended_max_live_processes": 3,
+    "integrator_continuity_across_waves": true,
+    "core_file_single_owner": true
+  },
+  "orchestration": {
+    "program_supervisor_thread": "persistent_top_level_user_visible",
+    "integrator_thread": "single_wave_top_level_user_visible",
+    "supervisor_integrator_relation": "independent_top_level_threads",
+    "supervisor_integrator_transport": "codex_cross_thread_message",
+    "supervisor_integrator_agent_parent_child": false,
+    "program_supervisor_orchestrates_execution": false,
+    "integrator_may_manage_implementer_reviewer_subthreads": true,
+    "next_wave_integrator_started_by": "user",
+    "decision_escalation": "integrator_self_resolve_then_program_supervisor_then_user",
+    "ticket_thread_rule": "Ticket is not a Thread lifetime; one implementer Thread may execute an explicit ordered Ticket sequence",
+    "run_shard_rule": "run_shard instances are local Processes; all instances of one logical Ticket produce one Ticket handoff",
+    "current_state": ".codex/eval/CURRENT.md",
+    "historical_status": ".codex/eval/state/STATUS.json is historical through W6R3 and is not updated with live state",
+    "cross_wave_handoff": "CURRENT.md plus exact source SHA, FREEZE hash, latest authoritative Wave handoff and Artifact hashes"
+  },
+  "gates": {
+    "native_eval_ready": {
+      "state_values": [
+        "pending",
+        "accepted",
+        "rejected"
+      ],
+      "authority": "W6R4 profile reselection plus the latest versioned authorized human smoke recovery and program_supervisor decision",
+      "accepted_required_for": "formal online effectiveness evaluation"
+    },
+    "native_resume_ready": {
+      "state_values": [
+        "pending",
+        "accepted",
+        "rejected"
+      ],
+      "authority": "TOOL-062-G",
+      "accepted_required_for": "formal process-interruption and Resume evaluation"
+    }
+  },
+  "global_exclusive_paths": [
+    ".codex/eval/CURRENT.md",
+    ".codex/eval/state/STATUS.json",
+    ".codex/eval/state/FREEZE.json",
+    "pico/evaluation/__init__.py",
+    "pyproject.toml",
+    "uv.lock",
+    "pico/providers/contracts.py",
+    "benchmarks/v3/local-repos/taskset.json",
+    "benchmarks/v3/context-assets/cases.json",
+    "benchmarks/v3/native-provider/selection.json"
+  ],
+  "waves": [
+    {
+      "id": "W0",
+      "name": "Bootstrap, native baseline and artifact contract",
+      "serial": true,
+      "tickets": [
+        "EVAL-000",
+        "EVAL-001"
+      ],
+      "integration_order": [
+        "EVAL-000",
+        "EVAL-001"
+      ],
+      "gate": "bootstrap SHA, dirty diff hash, native baseline and artifact contract frozen"
+    },
+    {
+      "id": "W1",
+      "name": "Parallel native/evaluation foundations",
+      "serial": false,
+      "tickets": [
+        "TOOL-010",
+        "TOOL-011",
+        "TOOL-012-I",
+        "TOOL-012-O",
+        "TOOL-012-A",
+        "EVAL-020",
+        "EVAL-021-A",
+        "EVAL-021-B",
+        "EVAL-022",
+        "EVAL-030",
+        "EVAL-040-A",
+        "EVAL-040-B",
+        "EVAL-040-C",
+        "EVAL-041"
+      ],
+      "launch_policy": "start up to 6; honor dynamic dependencies and single-owner paths",
+      "integration_order": [
+        "TOOL-010",
+        "TOOL-011",
+        "TOOL-012-I",
+        "TOOL-012-O",
+        "TOOL-012-A",
+        "EVAL-020",
+        "EVAL-021-A",
+        "EVAL-021-B",
+        "EVAL-022",
+        "EVAL-030",
+        "EVAL-041",
+        "EVAL-040-A",
+        "EVAL-040-B",
+        "EVAL-040-C"
+      ],
+      "gate": "native contracts and SDK probe harnesses ready; independent fixtures progressing; no online effectiveness claims"
+    },
+    {
+      "id": "W2",
+      "name": "SDK spike runs, fixture assembly and deterministic evaluator foundations",
+      "serial": false,
+      "tickets": [
+        "TOOL-012-QO-R",
+        "TOOL-012-QA-R",
+        "TOOL-012-DA-R",
+        "TOOL-013-S",
+        "TOOL-015",
+        "EVAL-031-I",
+        "EVAL-031-A",
+        "EVAL-031-B",
+        "EVAL-040-M",
+        "EVAL-080"
+      ],
+      "dynamic_dependencies": [
+        "TOOL-013-S waits for all three SDK shards",
+        "EVAL-040-M waits for three repo fragments"
+      ],
+      "integration_order": [
+        "TOOL-015",
+        "EVAL-031-I",
+        "EVAL-031-A",
+        "EVAL-031-B",
+        "EVAL-040-M",
+        "EVAL-080",
+        "TOOL-013-S"
+      ],
+      "gate": "SDK transport decision, taskset and evaluator foundations frozen"
+    },
+    {
+      "id": "W3",
+      "name": "SDK dependency lock, native adapters and provider profile model",
+      "serial": false,
+      "tickets": [
+        "TOOL-019-D",
+        "TOOL-020-O",
+        "TOOL-020-A",
+        "TOOL-021-P"
+      ],
+      "dynamic_dependencies": [
+        "adapters wait for TOOL-019-D"
+      ],
+      "integration_order": [
+        "TOOL-019-D",
+        "TOOL-020-O",
+        "TOOL-020-A",
+        "TOOL-021-P"
+      ],
+      "gate": "both dialect adapters pass contract tests; no SDK runner; capabilities explicit"
+    },
+    {
+      "id": "W4",
+      "name": "Parallel native core exchange integration",
+      "serial": false,
+      "tickets": [
+        "TOOL-030-E",
+        "TOOL-031-S",
+        "TOOL-032-C"
+      ],
+      "integration_order": [
+        "TOOL-031-S",
+        "TOOL-030-E",
+        "TOOL-032-C"
+      ],
+      "gate": "engine, session exchange and structured request lanes merged with disjoint ownership"
+    },
+    {
+      "id": "W5",
+      "name": "Runtime wiring, text protocol removal and deterministic gates",
+      "serial": false,
+      "tickets": [
+        "TOOL-040-I",
+        "TOOL-041-M",
+        "TOOL-049-I",
+        "EVAL-031-G",
+        "TOOL-042-G"
+      ],
+      "dynamic_dependencies": [
+        "TOOL-041-M waits for TOOL-040-I",
+        "TOOL-049-I and EVAL-031-G may run after TOOL-041-M",
+        "TOOL-042-G waits for all"
+      ],
+      "integration_order": [
+        "TOOL-040-I",
+        "TOOL-041-M",
+        "TOOL-049-I",
+        "EVAL-031-G",
+        "TOOL-042-G"
+      ],
+      "gate": "deterministic native loop complete; Runtime has no text fallback; Context structured gate frozen"
+    },
+    {
+      "id": "W5R",
+      "name": "Blocked W5 remediation and deterministic gate recovery",
+      "serial": false,
+      "tickets": [
+        "TOOL-043-R",
+        "TOOL-044-F",
+        "ARCH-045-B",
+        "CHORE-045-L",
+        "EVAL-032-F",
+        "TOOL-042-G-R1"
+      ],
+      "dynamic_dependencies": [
+        "TOOL-043-R, TOOL-044-F, ARCH-045-B and CHORE-045-L start from the same W5R base with disjoint ownership",
+        "TOOL-044-F must prove the blocked retry regression remains observable before TOOL-043-R is applied",
+        "EVAL-032-F waits for all source, fixture, budget and lint remediation",
+        "TOOL-042-G-R1 waits for EVAL-032-F and every remediation ticket"
+      ],
+      "integration_order": [
+        "TOOL-044-F",
+        "ARCH-045-B",
+        "CHORE-045-L",
+        "TOOL-043-R",
+        "EVAL-032-F",
+        "TOOL-042-G-R1"
+      ],
+      "gate": "protected tests exercise native fixtures without global monkey patches; retry-after-read and repository gates pass; Context Git-blob binding is reproducible; WSL deterministic run snapshot frozen"
+    },
+    {
+      "id": "W5R2",
+      "name": "Architecture tripwire recalibration and explicit provider-profile recovery",
+      "serial": false,
+      "tickets": [
+        "ARCH-046-T",
+        "TEST-046-P",
+        "TOOL-046-W",
+        "TEST-046-T",
+        "TOOL-042-G-R2"
+      ],
+      "dynamic_dependencies": [
+        "ARCH-046-T and TEST-046-P start from the same W5R2 base with disjoint ownership",
+        "TOOL-046-W and TEST-046-T wait for TEST-046-P explicit profile fixtures",
+        "TOOL-042-G-R2 waits for every W5R2 remediation ticket"
+      ],
+      "integration_order": [
+        "ARCH-046-T",
+        "TEST-046-P",
+        "TOOL-046-W",
+        "TEST-046-T",
+        "TOOL-042-G-R2"
+      ],
+      "gate": "all architecture growth-tripwire violations are reported together; explicit provider profiles cover ordinary, worker and TUI tests; fresh WSL deterministic and full repository suites exit zero"
+    },
+    {
+      "id": "W6",
+      "name": "Live native conformance and provider selection",
+      "serial": false,
+      "tickets": [
+        "TOOL-050-QO-R",
+        "TOOL-050-QA-R",
+        "TOOL-050-DA-R",
+        "TOOL-050-S"
+      ],
+      "dynamic_dependencies": [
+        "TOOL-050-S waits for all configured shards; unconfigured profile requires explicit exclusion"
+      ],
+      "gate": "Gate N1 native_eval_ready accepted or all formal online lanes blocked"
+    },
+    {
+      "id": "W6R",
+      "name": "Native conformance harness repair and Gate N1 recovery",
+      "serial": false,
+      "tickets": [
+        "TOOL-051-L",
+        "EVAL-052-H",
+        "TOOL-053-A",
+        "TOOL-054-G"
+      ],
+      "dynamic_dependencies": [
+        "TOOL-051-L implements the fixed production live runner and public-profile binding without changing frozen cases",
+        "EVAL-052-H waits for TOOL-051-L and aligns the harness CLI, repetition dimension and artifact bundle",
+        "TOOL-053-A performs a read-only safety and evidence audit after both implementation tickets",
+        "TOOL-054-G waits for the audit, reruns deterministic gates and either proposes a new immutable run snapshot or closes W6R as blocked"
+      ],
+      "integration_order": [
+        "TOOL-051-L",
+        "EVAL-052-H",
+        "TOOL-053-A",
+        "TOOL-054-G"
+      ],
+      "gate": "fixed live runner and versioned harness are implemented and audited; the preflight result is preserved even when the run snapshot is blocked"
+    },
+    {
+      "id": "W6R2",
+      "name": "WSL canonical native conformance evidence recovery",
+      "serial": false,
+      "tickets": [
+        "TOOL-055-E",
+        "EVAL-056-H",
+        "TOOL-057-A",
+        "TOOL-058-G",
+        "TOOL-050-QO-R2",
+        "TOOL-050-QA-R2",
+        "TOOL-050-DA-R2",
+        "TOOL-050-S-R1"
+      ],
+      "dynamic_dependencies": [
+        "TOOL-055-E makes repository-owned OpenAI Responses coverage as strict as Anthropic Messages and emits ordered safety-chain evidence",
+        "EVAL-056-H waits for TOOL-055-E and binds ordered evidence plus the public PICO_NATIVE_PROVIDER_CONFIG environment-variable contract into the harness; the private locator value remains out of band and is never persisted",
+        "TOOL-057-A performs a read-only dual-dialect and evidence-closure audit",
+        "TOOL-058-G uses only an Ubuntu WSL2/Python 3.12 fresh clone as the canonical Gate; Windows is optional and non-blocking",
+        "the three R2 provider shards start in parallel only after TOOL-058-G is accepted and all run in WSL from one immutable snapshot",
+        "TOOL-050-S-R1 waits for all configured R2 shards and stops before W7 for user-authorized human smoke"
+      ],
+      "integration_order": [
+        "TOOL-055-E",
+        "EVAL-056-H",
+        "TOOL-057-A",
+        "TOOL-058-G",
+        "TOOL-050-QO-R2",
+        "TOOL-050-QA-R2",
+        "TOOL-050-DA-R2",
+        "TOOL-050-S-R1"
+      ],
+      "gate": "WSL canonical preflight passes with symmetric dual-dialect evidence; Gate N1 selects at least one complete profile or all formal online lanes remain blocked; W7 requires explicit user approval after human smoke"
+    },
+    {
+      "id": "W6R3",
+      "name": "Oracle v2, Responses stateless transcript and deterministic recovery",
+      "serial": false,
+      "tickets": [
+        "EVAL-059-O",
+        "TEST-059-C",
+        "TOOL-059-O",
+        "EVAL-059-H",
+        "TOOL-059-R",
+        "AUDIT-059-A",
+        "TOOL-059-A-R1",
+        "TOOL-059-G"
+      ],
+      "dynamic_dependencies": [
+        "EVAL-059-O versions and freezes Oracle v2 before any product fix; W6R2 cases, rows, selection and smoke evidence remain immutable",
+        "TEST-059-C applies the accepted Oracle commit and records the Responses context-loss red baseline before TOOL-059-O",
+        "TOOL-059-O waits for TEST-059-C and changes only the OpenAI Responses Adapter",
+        "EVAL-059-H and TOOL-059-R may run in parallel after EVAL-059-O with disjoint ownership",
+        "AUDIT-059-A first review findings enter W6R3 remediation cycle 1 rather than closing the Wave",
+        "TEST-059-C, TOOL-059-O and EVAL-059-H findings return to their original worker threads; each updates the same per-ticket handoff with a superseding revision",
+        "TOOL-059-A-R1 is the only new remediation ticket because W6R3 had no current Anthropic owner; it records its red baseline before the source fix",
+        "The existing AUDIT-059-A reviewer thread reruns from the repaired immutable candidate and updates the same review handoff",
+        "TOOL-059-G waits for the latest accepted AUDIT-059-A handoff revision, runs only WSL deterministic gates and emits a W6R4 recovery snapshot without provider HTTP",
+        "The old W6R3 handoff, bundle and canonical tag remain historical; final remediation close uses the explicit r1 handoff, commit map, bundle and tag names"
+      ],
+      "integration_order": [
+        "EVAL-059-O",
+        "TEST-059-C",
+        "TOOL-059-O",
+        "EVAL-059-H",
+        "TOOL-059-R",
+        "AUDIT-059-A",
+        "TOOL-059-A-R1",
+        "TOOL-059-G"
+      ],
+      "gate": "Oracle v2 and historical adjudication remain frozen; both dialects preserve complete stateless transcripts; Responses call/result closure and human-smoke v3 pass read-only review and a fresh WSL Gate; readable final r1 commit map, worker bundle and tag verify; W7 remains blocked pending W6R4 reselection and a new accepted human smoke"
+    },
+    {
+      "id": "W6R4",
+      "name": "Profile reselection and authorized human smoke",
+      "serial": true,
+      "tickets": [],
+      "integration_order": [],
+      "execution_owner": "integrator",
+      "procedure_file": "waves/W6R4-profile-reselection-human-smoke.md",
+      "entry_binding": "CURRENT.md source SHA and W6R3-wave-handoff-r2.json",
+      "gate": "profile reselection and one authorized human smoke produce an accepted or rejected native_eval_ready decision; no source Ticket is created"
+    },
+    {
+      "id": "W6R5",
+      "name": "Grounded human smoke and durable trajectory recovery",
+      "serial": true,
+      "tickets": [
+        "EVAL-063-H",
+        "AUDIT-063-A",
+        "TOOL-063-G",
+        "EVAL-063-R",
+        "EVAL-063-M"
+      ],
+      "dynamic_dependencies": [
+        "EVAL-063-H versions the underspecified HSMOKE-V3-A contract as grounded v4 and retains durable public .pico session-event/run evidence without copying private session continuation",
+        "AUDIT-063-A waits for EVAL-063-H and performs read-only review of grounded semantics, durable evidence closure, sensitive-data boundaries, and W6R4 historical immutability",
+        "TOOL-063-G waits for the audit, runs only deterministic WSL checks with zero provider HTTP attempts, and proves W6R4 selection reuse from unchanged production and selection-critical identities",
+        "EVAL-063-R starts only after a new explicit live authorization and runs one local Process using the W6R4 selected profile",
+        "EVAL-063-M waits for EVAL-063-R, separates measurement validity from semantic outcome, obtains the program_supervisor decision, and writes the superseding native_eval_ready conclusion"
+      ],
+      "integration_order": [
+        "EVAL-063-H",
+        "AUDIT-063-A",
+        "TOOL-063-G",
+        "EVAL-063-R",
+        "EVAL-063-M"
+      ],
+      "procedure_file": "waves/W6R5-human-smoke-measurement-recovery.md",
+      "entry_binding": "W6R4 close source, selection, handoff, smoke artifacts, and the approved post-W6R4 change_request",
+      "gate": "grounded human-smoke v4 and durable public trajectory produce a new accepted or rejected native_eval_ready decision without rewriting W6R4 history"
+    },
+    {
+      "id": "W7",
+      "name": "Evaluation pilots and native Resume implementation",
+      "serial": false,
+      "tickets": [
+        "EVAL-021-R[x2]",
+        "EVAL-021-M",
+        "EVAL-050-P[x3]",
+        "EVAL-050-R",
+        "TOOL-060-R",
+        "TOOL-061-T",
+        "EVAL-060"
+      ],
+      "dynamic_dependencies": [
+        "All formal online Processes require native_eval_ready=accepted and bind the accepted W6R4 selection plus the accepted W6R5 handoff/source/human-smoke-v4 hashes",
+        "TOOL-061-T and EVAL-060 wait for TOOL-060-R",
+        "EVAL-021-R[x2] and EVAL-050-P[x3] are local Processes; EVAL-021-M is executed by the current integrator",
+        "TOOL-061-T and EVAL-060 may share one ordered implementer Thread or use two parallel implementer Threads when paths do not conflict"
+      ],
+      "gate": "dream evidence and local Pilot reviewed; native Resume deterministic contract and interruption runner accepted; valid evaluation failures are retained",
+      "entry_gates": [
+        "native_eval_ready"
+      ]
+    },
+    {
+      "id": "W8",
+      "name": "Final local baseline, native restart conformance and Resume predicate freeze",
+      "serial": false,
+      "tickets": [
+        "EVAL-050-F[x3]",
+        "EVAL-050-M",
+        "TOOL-062-R",
+        "TOOL-062-G",
+        "EVAL-061-P",
+        "EVAL-070-I"
+      ],
+      "dynamic_dependencies": [
+        "EVAL-050-F[x3] and TOOL-062-R are local Processes",
+        "TOOL-062-G waits for selected-profile restart evidence and is executed by the current integrator",
+        "EVAL-061-P runs only when native_resume_ready=accepted; when the Gate is rejected it is marked not_applicable with reason required_gate_rejected",
+        "EVAL-070-I implements the runner only and does not start formal live Rows"
+      ],
+      "gate": "27 final local rows aggregated; native_resume_ready has an accepted or rejected decision; when accepted, Resume tasks/predicates are frozen",
+      "entry_gates": [
+        "native_eval_ready"
+      ]
+    },
+    {
+      "id": "W9",
+      "name": "Resume and optional Context ablation live runs",
+      "serial": false,
+      "tickets": [
+        "EVAL-061-R[x3]",
+        "EVAL-061-M",
+        "EVAL-070-S",
+        "EVAL-070-R[x2-4]",
+        "EVAL-070-M"
+      ],
+      "gate": "applicable Resume evidence aggregated; optional Context Ablation completed or its Tickets marked not_applicable by an explicit reason and binding",
+      "entry_gates": [
+        "native_eval_ready"
+      ],
+      "dynamic_dependencies": [
+        "EVAL-061-R[x3] requires native_resume_ready=accepted",
+        "When native_resume_ready=rejected, EVAL-061-R, EVAL-061-M, EVAL-070-S, EVAL-070-R, and EVAL-070-M are marked not_applicable with reason required_gate_rejected",
+        "EVAL-061-R[x3] and EVAL-070-R[x2-4] are local Processes and each logical Ticket produces one handoff",
+        "When native_resume_ready=accepted, the optional Context Ablation branch starts only after an explicit program_supervisor decision; if not selected, EVAL-070-S, EVAL-070-R, and EVAL-070-M are marked not_applicable with reason optional_branch_not_selected"
+      ]
+    },
+    {
+      "id": "W10",
+      "name": "Evidence, audit and release gate",
+      "serial": true,
+      "tickets": [
+        "EVAL-081-A",
+        "EVAL-081-R",
+        "EVAL-081-G"
+      ],
+      "integration_order": [
+        "EVAL-081-A",
+        "EVAL-081-R",
+        "EVAL-081-G"
+      ],
+      "gate": "evidence bundle, independent audit and release Gate accepted; claims remain scoped to available evidence and rejected Gates are reported",
+      "entry_gates": [
+        "native_eval_ready"
+      ],
+      "dynamic_dependencies": [
+        "native_resume_ready must be decided before W10 starts, but it may be accepted or rejected",
+        "EVAL-081-A may consume EVAL-061-M=not_applicable when native_resume_ready=rejected and must omit unsupported Resume claims",
+        "EVAL-081-A, EVAL-081-R, and EVAL-081-G continue after a rejected native_resume_ready Gate and report that result as a limitation"
+      ]
+    }
+  ],
+  "tickets": {
+    "EVAL-000": {
+      "title": "Preflight、Native 基线与可复现 Bootstrap Snapshot",
+      "thread_type": "integrator",
+      "wave": "W0",
+      "depends_on": [],
+      "ticket_file": "tickets/EVAL-000.md",
+      "allowed_write_paths": [
+        ".codex/eval/proposals/EVAL-000.status.json",
+        ".codex/eval/state/preflight.json",
+        ".codex/eval/state/native-baseline.json",
+        ".codex/eval/handoffs/EVAL-000.json"
+      ],
+      "forbidden_write_paths": [
+        "除保留既有 dirty 修改所需的 bootstrap commit 外，不实现产品或 Evaluation 功能"
+      ]
+    },
+    "EVAL-001": {
+      "title": "统一 Artifact Contract、Native Protocol 字段与脱敏基础设施",
+      "thread_type": "implementer",
+      "wave": "W0",
+      "depends_on": [
+        "EVAL-000"
+      ],
+      "ticket_file": "tickets/EVAL-001.md",
+      "allowed_write_paths": [
+        "pico/evaluation/contracts.py",
+        "tests/test_evaluation_contracts.py",
+        ".codex/eval/handoffs/EVAL-001.json"
+      ],
+      "forbidden_write_paths": [
+        ".codex/eval/state/STATUS.json",
+        ".codex/eval/state/FREEZE.json",
+        "pico/evaluation/__init__.py",
+        "pico/evaluation/metrics.py",
+        "产品 Runtime"
+      ]
+    },
+    "EVAL-020": {
+      "title": "Auto-dream Fixture Schema、Atomic Oracle 与 Runner Core",
+      "thread_type": "implementer",
+      "wave": "W1",
+      "depends_on": [
+        "EVAL-001"
+      ],
+      "ticket_file": "tickets/EVAL-020.md",
+      "allowed_write_paths": [
+        "pico/evaluation/dream_eval.py",
+        "scripts/run_dream_evaluation.py",
+        "tests/test_dream_evaluator.py",
+        "benchmarks/v3/auto-dream/schema.json",
+        ".codex/eval/handoffs/EVAL-020.json"
+      ],
+      "forbidden_write_paths": [
+        ".codex/eval/state/STATUS.json",
+        ".codex/eval/state/FREEZE.json",
+        "pico/evaluation/__init__.py",
+        "tests/test_architecture_boundaries.py",
+        "tests/test_safety_invariants.py",
+        "tests/test_tool_policy_acceptance.py",
+        "tests/test_permissions_acceptance.py",
+        "pico/features/memory.py",
+        "tests/test_memory.py"
+      ]
+    },
+    "EVAL-021-A": {
+      "title": "Auto-dream 语义 Fixtures D01–D04",
+      "thread_type": "fixture_builder",
+      "wave": "W1",
+      "depends_on": [
+        "EVAL-020"
+      ],
+      "ticket_file": "tickets/EVAL-021-A.md",
+      "allowed_write_paths": [
+        "benchmarks/v3/auto-dream/fixtures/D01/**",
+        "benchmarks/v3/auto-dream/fixtures/D02/**",
+        "benchmarks/v3/auto-dream/fixtures/D03/**",
+        "benchmarks/v3/auto-dream/fixtures/D04/**",
+        "benchmarks/v3/auto-dream/fragments/D01-D04.json",
+        ".codex/eval/handoffs/EVAL-021-A.json"
+      ],
+      "forbidden_write_paths": [
+        ".codex/eval/state/STATUS.json",
+        ".codex/eval/state/FREEZE.json",
+        "pico/evaluation/__init__.py",
+        "tests/test_architecture_boundaries.py",
+        "tests/test_safety_invariants.py",
+        "tests/test_tool_policy_acceptance.py",
+        "tests/test_permissions_acceptance.py",
+        "pico/evaluation/dream_eval.py",
+        "benchmarks/v3/auto-dream/cases.json"
+      ]
+    },
+    "EVAL-021-B": {
+      "title": "Auto-dream 语义 Fixtures D05–D08",
+      "thread_type": "fixture_builder",
+      "wave": "W1",
+      "depends_on": [
+        "EVAL-020"
+      ],
+      "ticket_file": "tickets/EVAL-021-B.md",
+      "allowed_write_paths": [
+        "benchmarks/v3/auto-dream/fixtures/D05/**",
+        "benchmarks/v3/auto-dream/fixtures/D06/**",
+        "benchmarks/v3/auto-dream/fixtures/D07/**",
+        "benchmarks/v3/auto-dream/fixtures/D08/**",
+        "benchmarks/v3/auto-dream/fragments/D05-D08.json",
+        ".codex/eval/handoffs/EVAL-021-B.json"
+      ],
+      "forbidden_write_paths": [
+        ".codex/eval/state/STATUS.json",
+        ".codex/eval/state/FREEZE.json",
+        "pico/evaluation/__init__.py",
+        "tests/test_architecture_boundaries.py",
+        "tests/test_safety_invariants.py",
+        "tests/test_tool_policy_acceptance.py",
+        "tests/test_permissions_acceptance.py",
+        "pico/evaluation/dream_eval.py",
+        "benchmarks/v3/auto-dream/cases.json"
+      ]
+    },
+    "EVAL-022": {
+      "title": "Auto-dream 生命周期确定性证据",
+      "thread_type": "implementer",
+      "wave": "W1",
+      "depends_on": [
+        "EVAL-001"
+      ],
+      "ticket_file": "tickets/EVAL-022.md",
+      "allowed_write_paths": [
+        "pico/evaluation/dream_lifecycle_eval.py",
+        "tests/test_dream_lifecycle_evaluator.py",
+        "benchmarks/v3/auto-dream/lifecycle.json",
+        ".codex/eval/handoffs/EVAL-022.json"
+      ],
+      "forbidden_write_paths": [
+        ".codex/eval/state/STATUS.json",
+        ".codex/eval/state/FREEZE.json",
+        "pico/evaluation/__init__.py",
+        "tests/test_architecture_boundaries.py",
+        "tests/test_safety_invariants.py",
+        "tests/test_tool_policy_acceptance.py",
+        "tests/test_permissions_acceptance.py",
+        "pico/features/memory.py",
+        "tests/test_memory.py"
+      ]
+    },
+    "EVAL-021-R": {
+      "title": "Auto-dream Native Live Run Shard",
+      "thread_type": "run_shard",
+      "wave": "W7",
+      "depends_on": [
+        "TOOL-050-S-R1",
+        "EVAL-020",
+        "EVAL-021-A",
+        "EVAL-021-B",
+        "EVAL-022"
+      ],
+      "ticket_file": "tickets/EVAL-021-R.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/phase-1-auto-dream/<RUN_SHA>/<SHARD_ID>/**",
+        ".codex/eval/handoffs/EVAL-021-R.json"
+      ],
+      "forbidden_write_paths": [
+        "所有源码与 frozen fixtures"
+      ],
+      "required_gates": [
+        "native_eval_ready"
+      ]
+    },
+    "EVAL-021-M": {
+      "title": "Auto-dream 结果聚合与 Freeze",
+      "thread_type": "integrator",
+      "wave": "W7",
+      "depends_on": [
+        "EVAL-021-R"
+      ],
+      "ticket_file": "tickets/EVAL-021-M.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/phase-1-auto-dream/summary.json",
+        "<ARTIFACT_ROOT>/phase-1-auto-dream/summary.md",
+        ".codex/eval/handoffs/EVAL-021-M.json",
+        ".codex/eval/state/FREEZE.json"
+      ],
+      "forbidden_write_paths": [
+        "Dream 产品源码",
+        "frozen fixtures/oracle",
+        "raw rows"
+      ]
+    },
+    "EVAL-030": {
+      "title": "Structured Context Asset Contract",
+      "thread_type": "implementer",
+      "wave": "W1",
+      "depends_on": [
+        "TOOL-010",
+        "TOOL-011"
+      ],
+      "ticket_file": "tickets/EVAL-030.md",
+      "allowed_write_paths": [
+        "benchmarks/v3/context-assets/assets.json",
+        "docs/metrics/pico-v3-context-asset-contract.md",
+        ".codex/eval/handoffs/EVAL-030.json"
+      ],
+      "forbidden_write_paths": [
+        ".codex/eval/state/STATUS.json",
+        ".codex/eval/state/FREEZE.json",
+        "pico/evaluation/__init__.py",
+        "tests/test_architecture_boundaries.py",
+        "tests/test_safety_invariants.py",
+        "tests/test_tool_policy_acceptance.py",
+        "tests/test_permissions_acceptance.py",
+        "pico/core/context_manager.py",
+        "pico/core/runtime.py"
+      ]
+    },
+    "EVAL-031-I": {
+      "title": "Structured Context Asset Evaluator Core",
+      "thread_type": "implementer",
+      "wave": "W2",
+      "depends_on": [
+        "EVAL-030",
+        "TOOL-010"
+      ],
+      "ticket_file": "tickets/EVAL-031-I.md",
+      "allowed_write_paths": [
+        "pico/evaluation/context_eval.py",
+        "scripts/run_context_asset_evaluation.py",
+        "tests/test_context_asset_evaluator.py",
+        ".codex/eval/handoffs/EVAL-031-I.json"
+      ],
+      "forbidden_write_paths": [
+        ".codex/eval/state/STATUS.json",
+        ".codex/eval/state/FREEZE.json",
+        "pico/evaluation/__init__.py",
+        "tests/test_architecture_boundaries.py",
+        "tests/test_safety_invariants.py",
+        "tests/test_tool_policy_acceptance.py",
+        "tests/test_permissions_acceptance.py",
+        "pico/core/context_manager.py",
+        "pico/core/runtime.py"
+      ]
+    },
+    "EVAL-031-A": {
+      "title": "Context Cases C01–C08 单资产正常预算",
+      "thread_type": "fixture_builder",
+      "wave": "W2",
+      "depends_on": [
+        "EVAL-030"
+      ],
+      "ticket_file": "tickets/EVAL-031-A.md",
+      "allowed_write_paths": [
+        "benchmarks/v3/context-assets/fixtures/C01/**",
+        "benchmarks/v3/context-assets/fixtures/C02/**",
+        "benchmarks/v3/context-assets/fixtures/C03/**",
+        "benchmarks/v3/context-assets/fixtures/C04/**",
+        "benchmarks/v3/context-assets/fixtures/C05/**",
+        "benchmarks/v3/context-assets/fixtures/C06/**",
+        "benchmarks/v3/context-assets/fixtures/C07/**",
+        "benchmarks/v3/context-assets/fixtures/C08/**",
+        "benchmarks/v3/context-assets/fragments/C01-C08.json",
+        ".codex/eval/handoffs/EVAL-031-A.json"
+      ],
+      "forbidden_write_paths": [
+        ".codex/eval/state/STATUS.json",
+        ".codex/eval/state/FREEZE.json",
+        "pico/evaluation/__init__.py",
+        "tests/test_architecture_boundaries.py",
+        "tests/test_safety_invariants.py",
+        "tests/test_tool_policy_acceptance.py",
+        "tests/test_permissions_acceptance.py",
+        "benchmarks/v3/context-assets/cases.json"
+      ]
+    },
+    "EVAL-031-B": {
+      "title": "Context Cases C09–C15 组合与预算压力",
+      "thread_type": "fixture_builder",
+      "wave": "W2",
+      "depends_on": [
+        "EVAL-030"
+      ],
+      "ticket_file": "tickets/EVAL-031-B.md",
+      "allowed_write_paths": [
+        "benchmarks/v3/context-assets/fixtures/C09/**",
+        "benchmarks/v3/context-assets/fixtures/C10/**",
+        "benchmarks/v3/context-assets/fixtures/C11/**",
+        "benchmarks/v3/context-assets/fixtures/C12/**",
+        "benchmarks/v3/context-assets/fixtures/C13/**",
+        "benchmarks/v3/context-assets/fixtures/C14/**",
+        "benchmarks/v3/context-assets/fixtures/C15/**",
+        "benchmarks/v3/context-assets/fragments/C09-C15.json",
+        ".codex/eval/handoffs/EVAL-031-B.json"
+      ],
+      "forbidden_write_paths": [
+        ".codex/eval/state/STATUS.json",
+        ".codex/eval/state/FREEZE.json",
+        "pico/evaluation/__init__.py",
+        "tests/test_architecture_boundaries.py",
+        "tests/test_safety_invariants.py",
+        "tests/test_tool_policy_acceptance.py",
+        "tests/test_permissions_acceptance.py",
+        "benchmarks/v3/context-assets/cases.json"
+      ]
+    },
+    "EVAL-031-G": {
+      "title": "Structured Context Deterministic Integration Gate",
+      "thread_type": "integrator",
+      "wave": "W5",
+      "depends_on": [
+        "EVAL-031-I",
+        "EVAL-031-A",
+        "EVAL-031-B",
+        "TOOL-041-M"
+      ],
+      "ticket_file": "tickets/EVAL-031-G.md",
+      "allowed_write_paths": [
+        "benchmarks/v3/context-assets/cases.json",
+        "<ARTIFACT_ROOT>/phase-2-context-assets/**",
+        ".codex/eval/proposals/EVAL-031-G.freeze.json",
+        ".codex/eval/handoffs/EVAL-031-G.json"
+      ],
+      "forbidden_write_paths": [
+        "frozen fragments",
+        "产品 Runtime"
+      ]
+    },
+    "EVAL-040-A": {
+      "title": "Mini Repo tinyconfig：T01, T02, T03",
+      "thread_type": "fixture_builder",
+      "wave": "W1",
+      "depends_on": [
+        "EVAL-001"
+      ],
+      "ticket_file": "tickets/EVAL-040-A.md",
+      "allowed_write_paths": [
+        "benchmarks/v3/local-repos/repos/tinyconfig/**",
+        "benchmarks/v3/local-repos/hidden_verifiers/tinyconfig/**",
+        "benchmarks/v3/local-repos/reference_patches/tinyconfig/**",
+        "benchmarks/v3/local-repos/task_docs/tinyconfig/**",
+        "benchmarks/v3/local-repos/fragments/tinyconfig.json",
+        ".codex/eval/handoffs/EVAL-040-A.json"
+      ],
+      "forbidden_write_paths": [
+        ".codex/eval/state/STATUS.json",
+        ".codex/eval/state/FREEZE.json",
+        "pico/evaluation/__init__.py",
+        "tests/test_architecture_boundaries.py",
+        "tests/test_safety_invariants.py",
+        "tests/test_tool_policy_acceptance.py",
+        "tests/test_permissions_acceptance.py",
+        "benchmarks/v3/local-repos/taskset.json",
+        "pico/evaluation/live_tasks.py"
+      ]
+    },
+    "EVAL-040-B": {
+      "title": "Mini Repo miniqueue：T04, T05, T06",
+      "thread_type": "fixture_builder",
+      "wave": "W1",
+      "depends_on": [
+        "EVAL-001"
+      ],
+      "ticket_file": "tickets/EVAL-040-B.md",
+      "allowed_write_paths": [
+        "benchmarks/v3/local-repos/repos/miniqueue/**",
+        "benchmarks/v3/local-repos/hidden_verifiers/miniqueue/**",
+        "benchmarks/v3/local-repos/reference_patches/miniqueue/**",
+        "benchmarks/v3/local-repos/task_docs/miniqueue/**",
+        "benchmarks/v3/local-repos/fragments/miniqueue.json",
+        ".codex/eval/handoffs/EVAL-040-B.json"
+      ],
+      "forbidden_write_paths": [
+        ".codex/eval/state/STATUS.json",
+        ".codex/eval/state/FREEZE.json",
+        "pico/evaluation/__init__.py",
+        "tests/test_architecture_boundaries.py",
+        "tests/test_safety_invariants.py",
+        "tests/test_tool_policy_acceptance.py",
+        "tests/test_permissions_acceptance.py",
+        "benchmarks/v3/local-repos/taskset.json",
+        "pico/evaluation/live_tasks.py"
+      ]
+    },
+    "EVAL-040-C": {
+      "title": "Mini Repo logslice：T07, T08, T09",
+      "thread_type": "fixture_builder",
+      "wave": "W1",
+      "depends_on": [
+        "EVAL-001"
+      ],
+      "ticket_file": "tickets/EVAL-040-C.md",
+      "allowed_write_paths": [
+        "benchmarks/v3/local-repos/repos/logslice/**",
+        "benchmarks/v3/local-repos/hidden_verifiers/logslice/**",
+        "benchmarks/v3/local-repos/reference_patches/logslice/**",
+        "benchmarks/v3/local-repos/task_docs/logslice/**",
+        "benchmarks/v3/local-repos/fragments/logslice.json",
+        ".codex/eval/handoffs/EVAL-040-C.json"
+      ],
+      "forbidden_write_paths": [
+        ".codex/eval/state/STATUS.json",
+        ".codex/eval/state/FREEZE.json",
+        "pico/evaluation/__init__.py",
+        "tests/test_architecture_boundaries.py",
+        "tests/test_safety_invariants.py",
+        "tests/test_tool_policy_acceptance.py",
+        "tests/test_permissions_acceptance.py",
+        "benchmarks/v3/local-repos/taskset.json",
+        "pico/evaluation/live_tasks.py"
+      ]
+    },
+    "EVAL-040-M": {
+      "title": "组装并冻结 3 Repo / 9 Task Taskset",
+      "thread_type": "integrator",
+      "wave": "W2",
+      "depends_on": [
+        "EVAL-040-A",
+        "EVAL-040-B",
+        "EVAL-040-C"
+      ],
+      "ticket_file": "tickets/EVAL-040-M.md",
+      "allowed_write_paths": [
+        "benchmarks/v3/local-repos/taskset.json",
+        "benchmarks/v3/local-repos/taskset.lock.json",
+        ".codex/eval/proposals/EVAL-040-M.freeze.json",
+        ".codex/eval/handoffs/EVAL-040-M.json"
+      ],
+      "forbidden_write_paths": [
+        "各 repo frozen 内容，除非退回对应 builder ticket"
+      ]
+    },
+    "EVAL-041": {
+      "title": "Local Live Task Runner、Native Evidence 与 Hidden Verifier 隔离",
+      "thread_type": "implementer",
+      "wave": "W1",
+      "depends_on": [
+        "EVAL-001",
+        "TOOL-010"
+      ],
+      "ticket_file": "tickets/EVAL-041.md",
+      "allowed_write_paths": [
+        "pico/evaluation/live_tasks.py",
+        "scripts/run_local_coding_tasks.py",
+        "tests/test_live_task_evaluator.py",
+        "tests/fixtures/live_task_runner/**",
+        ".codex/eval/handoffs/EVAL-041.json"
+      ],
+      "forbidden_write_paths": [
+        ".codex/eval/state/STATUS.json",
+        ".codex/eval/state/FREEZE.json",
+        "pico/evaluation/__init__.py",
+        "tests/test_architecture_boundaries.py",
+        "tests/test_safety_invariants.py",
+        "tests/test_tool_policy_acceptance.py",
+        "tests/test_permissions_acceptance.py",
+        "benchmarks/v3/local-repos/taskset.json"
+      ]
+    },
+    "EVAL-050-P": {
+      "title": "Local Task Native Pilot Run Shard",
+      "thread_type": "run_shard",
+      "wave": "W7",
+      "depends_on": [
+        "TOOL-050-S-R1",
+        "EVAL-040-M",
+        "EVAL-041"
+      ],
+      "ticket_file": "tickets/EVAL-050-P.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/phase-4-local-tasks-pilot/<RUN_SHA>/<REPO_SHARD>/**",
+        ".codex/eval/handoffs/EVAL-050-P.json"
+      ],
+      "forbidden_write_paths": [
+        "所有源码、taskset、verifier"
+      ],
+      "required_gates": [
+        "native_eval_ready"
+      ]
+    },
+    "EVAL-050-R": {
+      "title": "Local Task Pilot Review 与正式参数冻结",
+      "thread_type": "reviewer",
+      "wave": "W7",
+      "depends_on": [
+        "EVAL-050-P"
+      ],
+      "ticket_file": "tickets/EVAL-050-R.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/phase-4-local-tasks-pilot/review.md",
+        ".codex/eval/proposals/EVAL-050-R.freeze.json",
+        ".codex/eval/handoffs/EVAL-050-R.json"
+      ],
+      "forbidden_write_paths": [
+        "产品源码、taskset、raw rows"
+      ]
+    },
+    "EVAL-050-F": {
+      "title": "Local Task Native Final Run Shard",
+      "thread_type": "run_shard",
+      "wave": "W8",
+      "depends_on": [
+        "TOOL-050-S-R1",
+        "EVAL-050-R"
+      ],
+      "ticket_file": "tickets/EVAL-050-F.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/phase-4-local-tasks-final/<RUN_SHA>/<REPO_SHARD>/**",
+        ".codex/eval/handoffs/EVAL-050-F.json"
+      ],
+      "forbidden_write_paths": [
+        "所有源码、taskset、verifier"
+      ],
+      "required_gates": [
+        "native_eval_ready"
+      ]
+    },
+    "EVAL-050-M": {
+      "title": "Local Task Final 聚合与 Baseline Freeze",
+      "thread_type": "integrator",
+      "wave": "W8",
+      "depends_on": [
+        "EVAL-050-F"
+      ],
+      "ticket_file": "tickets/EVAL-050-M.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/phase-4-local-tasks-final/summary.json",
+        "<ARTIFACT_ROOT>/phase-4-local-tasks-final/summary.md",
+        ".codex/eval/handoffs/EVAL-050-M.json",
+        ".codex/eval/state/FREEZE.json"
+      ],
+      "forbidden_write_paths": [
+        "产品源码、raw rows、taskset"
+      ]
+    },
+    "EVAL-060": {
+      "title": "Native 事件驱动的外部进程中断 Runner",
+      "thread_type": "implementer",
+      "wave": "W7",
+      "depends_on": [
+        "TOOL-060-R",
+        "EVAL-040-M",
+        "EVAL-041"
+      ],
+      "ticket_file": "tickets/EVAL-060.md",
+      "allowed_write_paths": [
+        "pico/evaluation/interruption_eval.py",
+        "scripts/run_interruption_evaluation.py",
+        "scripts/_run_live_task_child.py",
+        "tests/test_interruption_evaluator.py",
+        ".codex/eval/handoffs/EVAL-060.json"
+      ],
+      "forbidden_write_paths": [
+        "pico/core/runtime_checkpoints.py",
+        "provider adapters",
+        "frozen taskset"
+      ]
+    },
+    "EVAL-061-P": {
+      "title": "Resume Pilot 与 Native 中断谓词冻结",
+      "thread_type": "reviewer",
+      "wave": "W8",
+      "depends_on": [
+        "EVAL-050-R",
+        "EVAL-060",
+        "TOOL-062-G"
+      ],
+      "ticket_file": "tickets/EVAL-061-P.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/phase-5-resume-pilot/**",
+        ".codex/eval/proposals/EVAL-061-P.freeze.json",
+        ".codex/eval/handoffs/EVAL-061-P.json"
+      ],
+      "forbidden_write_paths": [
+        "taskset、runner source、产品 Runtime"
+      ],
+      "required_gates": [
+        "native_eval_ready",
+        "native_resume_ready"
+      ]
+    },
+    "EVAL-061-R": {
+      "title": "Native Resume Paired Live Run Shard",
+      "thread_type": "run_shard",
+      "wave": "W9",
+      "depends_on": [
+        "TOOL-050-S-R1",
+        "TOOL-062-G",
+        "EVAL-061-P"
+      ],
+      "ticket_file": "tickets/EVAL-061-R.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/phase-5-resume/<RUN_SHA>/<TASK_SHARD>/**",
+        ".codex/eval/handoffs/EVAL-061-R.json"
+      ],
+      "forbidden_write_paths": [
+        "所有源码、frozen predicates/taskset"
+      ],
+      "required_gates": [
+        "native_eval_ready",
+        "native_resume_ready"
+      ]
+    },
+    "EVAL-061-M": {
+      "title": "Native Resume Paired 聚合",
+      "thread_type": "integrator",
+      "wave": "W9",
+      "depends_on": [
+        "EVAL-061-R"
+      ],
+      "ticket_file": "tickets/EVAL-061-M.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/phase-5-resume/summary.json",
+        "<ARTIFACT_ROOT>/phase-5-resume/summary.md",
+        ".codex/eval/handoffs/EVAL-061-M.json",
+        ".codex/eval/state/FREEZE.json"
+      ],
+      "forbidden_write_paths": [
+        "产品源码、raw rows、frozen predicates"
+      ],
+      "required_gates": [
+        "native_eval_ready",
+        "native_resume_ready"
+      ]
+    },
+    "EVAL-070-I": {
+      "title": "Structured Context Grouped Ablation Hook 与 Runner",
+      "thread_type": "implementer",
+      "wave": "W8",
+      "depends_on": [
+        "EVAL-031-G",
+        "EVAL-040-M",
+        "EVAL-041",
+        "TOOL-050-S-R1"
+      ],
+      "ticket_file": "tickets/EVAL-070-I.md",
+      "allowed_write_paths": [
+        "pico/evaluation/context_ablation.py",
+        "scripts/run_context_task_ablation.py",
+        "tests/test_context_ablation_evaluator.py",
+        ".codex/eval/handoffs/EVAL-070-I.json"
+      ],
+      "forbidden_write_paths": [
+        "pico/core/context_manager.py",
+        "pico/core/runtime.py",
+        "provider adapters",
+        "frozen taskset"
+      ]
+    },
+    "EVAL-070-S": {
+      "title": "Context Ablation Case Selection",
+      "thread_type": "reviewer",
+      "wave": "W9",
+      "depends_on": [
+        "EVAL-050-M",
+        "EVAL-061-M",
+        "EVAL-070-I"
+      ],
+      "ticket_file": "tickets/EVAL-070-S.md",
+      "allowed_write_paths": [
+        "benchmarks/v3/context-ablation/selection.json",
+        ".codex/eval/proposals/EVAL-070-S.freeze.json",
+        ".codex/eval/handoffs/EVAL-070-S.json"
+      ],
+      "forbidden_write_paths": [
+        "frozen taskset、Runtime、结果 rows"
+      ],
+      "required_gates": [
+        "native_eval_ready",
+        "native_resume_ready"
+      ]
+    },
+    "EVAL-070-R": {
+      "title": "Native Context Ablation Live Run Shard",
+      "thread_type": "run_shard",
+      "wave": "W9",
+      "depends_on": [
+        "TOOL-050-S-R1",
+        "EVAL-070-S"
+      ],
+      "ticket_file": "tickets/EVAL-070-R.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/phase-6-context-ablation/<RUN_SHA>/<GROUP_SHARD>/**",
+        ".codex/eval/handoffs/EVAL-070-R.json"
+      ],
+      "forbidden_write_paths": [
+        "所有源码、frozen taskset/selection"
+      ],
+      "required_gates": [
+        "native_eval_ready",
+        "native_resume_ready"
+      ]
+    },
+    "EVAL-070-M": {
+      "title": "Context Ablation 聚合",
+      "thread_type": "integrator",
+      "wave": "W9",
+      "depends_on": [
+        "EVAL-070-R"
+      ],
+      "ticket_file": "tickets/EVAL-070-M.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/phase-6-context-ablation/summary.json",
+        "<ARTIFACT_ROOT>/phase-6-context-ablation/summary.md",
+        ".codex/eval/handoffs/EVAL-070-M.json"
+      ],
+      "forbidden_write_paths": [
+        "源码、raw rows、selection"
+      ],
+      "required_gates": [
+        "native_eval_ready",
+        "native_resume_ready"
+      ]
+    },
+    "EVAL-080": {
+      "title": "Evidence Bundle、Native Claim Registry 与 Hash Compatibility",
+      "thread_type": "implementer",
+      "wave": "W2",
+      "depends_on": [
+        "EVAL-001"
+      ],
+      "ticket_file": "tickets/EVAL-080.md",
+      "allowed_write_paths": [
+        "pico/evaluation/evidence_bundle.py",
+        "scripts/build_v3_evidence_bundle.py",
+        "tests/test_evidence_bundle.py",
+        "tests/fixtures/evidence_bundle/**",
+        ".codex/eval/handoffs/EVAL-080.json"
+      ],
+      "forbidden_write_paths": [
+        "产品 Runtime",
+        ".codex/eval/state/STATUS.json",
+        ".codex/eval/state/FREEZE.json"
+      ]
+    },
+    "EVAL-081-A": {
+      "title": "最终 Evidence Bundle 与简历 Claim 生成",
+      "thread_type": "integrator",
+      "wave": "W10",
+      "depends_on": [
+        "TOOL-050-S-R1",
+        "TOOL-062-G",
+        "EVAL-021-M",
+        "EVAL-031-G",
+        "EVAL-050-M",
+        "EVAL-061-M",
+        "EVAL-080"
+      ],
+      "ticket_file": "tickets/EVAL-081-A.md",
+      "allowed_write_paths": [
+        "docs/metrics/pico-v3-evaluation-report.md",
+        "docs/metrics/pico-v3-resume-claims.md",
+        "docs/metrics/pico-v3-native-tool-calling.md",
+        "docs/metrics/pico-v3-evaluation-limitations.md",
+        "<ARTIFACT_ROOT>/release-<id>/**",
+        ".codex/eval/handoffs/EVAL-081-A.json"
+      ],
+      "forbidden_write_paths": [
+        "frozen evaluator/taskset/raw artifacts"
+      ],
+      "required_gates": [
+        "native_eval_ready"
+      ],
+      "allowed_not_applicable_dependencies": [
+        "EVAL-061-M"
+      ]
+    },
+    "EVAL-081-R": {
+      "title": "独立 Evidence 与 Native Protocol Audit",
+      "thread_type": "reviewer",
+      "wave": "W10",
+      "depends_on": [
+        "EVAL-081-A"
+      ],
+      "ticket_file": "tickets/EVAL-081-R.md",
+      "allowed_write_paths": [
+        "docs/metrics/pico-v3-evaluation-audit.md",
+        ".codex/eval/handoffs/EVAL-081-R.json"
+      ],
+      "forbidden_write_paths": [
+        "产品源码、raw artifact"
+      ]
+    },
+    "EVAL-081-G": {
+      "title": "最终 Full Gate 与集成收口",
+      "thread_type": "integrator",
+      "wave": "W10",
+      "depends_on": [
+        "EVAL-081-R"
+      ],
+      "ticket_file": "tickets/EVAL-081-G.md",
+      "allowed_write_paths": [
+        ".codex/eval/handoffs/EVAL-081-G.json",
+        ".codex/eval/state/FREEZE.json"
+      ],
+      "forbidden_write_paths": [
+        "frozen fixture/oracle/taskset，除非版本升级并重跑"
+      ],
+      "required_gates": [
+        "native_eval_ready"
+      ]
+    },
+    "TOOL-010": {
+      "title": "Provider-neutral Native Model/Tool Contract",
+      "thread_type": "implementer",
+      "wave": "W1",
+      "depends_on": [
+        "EVAL-001"
+      ],
+      "ticket_file": "tickets/TOOL-010.md",
+      "allowed_write_paths": [
+        "pico/providers/contracts.py",
+        "pico/providers/base.py",
+        "tests/test_provider_contracts.py",
+        "docs/architecture/native-tool-contract.md",
+        ".codex/eval/handoffs/TOOL-010.json"
+      ],
+      "forbidden_write_paths": [
+        "pico/core/**",
+        "pico/tools/**",
+        "pyproject.toml",
+        "uv.lock"
+      ]
+    },
+    "TOOL-011": {
+      "title": "Tool Schema 单一事实源与 Strict Normalization",
+      "thread_type": "implementer",
+      "wave": "W1",
+      "depends_on": [
+        "EVAL-001"
+      ],
+      "ticket_file": "tickets/TOOL-011.md",
+      "allowed_write_paths": [
+        "pico/tools/definitions.py",
+        "pico/tools/base.py",
+        "pico/tools/registry.py",
+        "pico/tools/schemas.py",
+        "tests/test_tool_schema_export.py",
+        ".codex/eval/handoffs/TOOL-011.json"
+      ],
+      "forbidden_write_paths": [
+        "pico/core/**",
+        "pico/providers/**",
+        "pyproject.toml",
+        "uv.lock"
+      ]
+    },
+    "TOOL-012-I": {
+      "title": "SDK Viability Probe 通用 Harness",
+      "thread_type": "implementer",
+      "wave": "W1",
+      "depends_on": [
+        "EVAL-001"
+      ],
+      "ticket_file": "tickets/TOOL-012-I.md",
+      "allowed_write_paths": [
+        "pico/evaluation/sdk_probe.py",
+        "scripts/run_sdk_viability_probe.py",
+        "tests/test_sdk_probe.py",
+        "benchmarks/v3/sdk-viability/**",
+        ".codex/eval/handoffs/TOOL-012-I.json"
+      ],
+      "forbidden_write_paths": [
+        "pyproject.toml",
+        "uv.lock",
+        "pico/providers/**",
+        "产品 Runtime"
+      ]
+    },
+    "TOOL-012-O": {
+      "title": "OpenAI SDK Probe Plugin",
+      "thread_type": "implementer",
+      "wave": "W1",
+      "depends_on": [
+        "TOOL-012-I"
+      ],
+      "ticket_file": "tickets/TOOL-012-O.md",
+      "allowed_write_paths": [
+        "pico/evaluation/sdk_probe_openai.py",
+        "tests/test_sdk_probe_openai.py",
+        ".codex/eval/handoffs/TOOL-012-O.json"
+      ],
+      "forbidden_write_paths": [
+        "pyproject.toml",
+        "uv.lock",
+        "pico/providers/**",
+        "产品 Runtime"
+      ]
+    },
+    "TOOL-012-A": {
+      "title": "Anthropic SDK Probe Plugin",
+      "thread_type": "implementer",
+      "wave": "W1",
+      "depends_on": [
+        "TOOL-012-I"
+      ],
+      "ticket_file": "tickets/TOOL-012-A.md",
+      "allowed_write_paths": [
+        "pico/evaluation/sdk_probe_anthropic.py",
+        "tests/test_sdk_probe_anthropic.py",
+        ".codex/eval/handoffs/TOOL-012-A.json"
+      ],
+      "forbidden_write_paths": [
+        "pyproject.toml",
+        "uv.lock",
+        "pico/providers/**",
+        "产品 Runtime"
+      ]
+    },
+    "TOOL-012-QO-R": {
+      "title": "SDK Spike：Qwen / OpenAI Responses",
+      "thread_type": "run_shard",
+      "wave": "W2",
+      "depends_on": [
+        "TOOL-012-O"
+      ],
+      "ticket_file": "tickets/TOOL-012-QO-R.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-sdk-spike/<RUN_SHA>/TOOL-012-QO-R/**",
+        ".codex/eval/handoffs/TOOL-012-QO-R.json"
+      ],
+      "forbidden_write_paths": [
+        "所有源码与配置文件"
+      ]
+    },
+    "TOOL-012-QA-R": {
+      "title": "SDK Spike：Qwen / Anthropic Messages",
+      "thread_type": "run_shard",
+      "wave": "W2",
+      "depends_on": [
+        "TOOL-012-A"
+      ],
+      "ticket_file": "tickets/TOOL-012-QA-R.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-sdk-spike/<RUN_SHA>/TOOL-012-QA-R/**",
+        ".codex/eval/handoffs/TOOL-012-QA-R.json"
+      ],
+      "forbidden_write_paths": [
+        "所有源码与配置文件"
+      ]
+    },
+    "TOOL-012-DA-R": {
+      "title": "SDK Spike：DeepSeek / Anthropic Messages",
+      "thread_type": "run_shard",
+      "wave": "W2",
+      "depends_on": [
+        "TOOL-012-A"
+      ],
+      "ticket_file": "tickets/TOOL-012-DA-R.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-sdk-spike/<RUN_SHA>/TOOL-012-DA-R/**",
+        ".codex/eval/handoffs/TOOL-012-DA-R.json"
+      ],
+      "forbidden_write_paths": [
+        "所有源码与配置文件"
+      ]
+    },
+    "TOOL-013-S": {
+      "title": "SDK Transport Decision Freeze",
+      "thread_type": "integrator",
+      "wave": "W2",
+      "depends_on": [
+        "TOOL-012-QO-R",
+        "TOOL-012-QA-R",
+        "TOOL-012-DA-R"
+      ],
+      "ticket_file": "tickets/TOOL-013-S.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-sdk-spike/decision.json",
+        "<ARTIFACT_ROOT>/native-sdk-spike/decision.md",
+        ".codex/eval/proposals/TOOL-013-S.freeze.json",
+        ".codex/eval/handoffs/TOOL-013-S.json"
+      ],
+      "forbidden_write_paths": [
+        "产品源码",
+        "probe raw rows"
+      ]
+    },
+    "TOOL-015": {
+      "title": "Scripted Native Model Client 与结构化 Fixtures",
+      "thread_type": "implementer",
+      "wave": "W2",
+      "depends_on": [
+        "TOOL-010"
+      ],
+      "ticket_file": "tickets/TOOL-015.md",
+      "allowed_write_paths": [
+        "pico/testing.py",
+        "tests/test_native_model_fixtures.py",
+        ".codex/eval/handoffs/TOOL-015.json"
+      ],
+      "forbidden_write_paths": [
+        "pico/core/**",
+        "pico/providers/clients.py",
+        "在线 provider 配置"
+      ]
+    },
+    "TOOL-019-D": {
+      "title": "SDK 依赖锁、Lazy Import 与 Transport Wrapper",
+      "thread_type": "implementer",
+      "wave": "W3",
+      "depends_on": [
+        "TOOL-013-S"
+      ],
+      "ticket_file": "tickets/TOOL-019-D.md",
+      "allowed_write_paths": [
+        "pyproject.toml",
+        "uv.lock",
+        "pico/providers/provider_transport.py",
+        "pico/providers/sdk_imports.py",
+        "tests/test_provider_transport.py",
+        ".codex/eval/handoffs/TOOL-019-D.json"
+      ],
+      "forbidden_write_paths": [
+        "pico/core/**",
+        "dialect adapter 文件",
+        "SDK Tool/Agent Runner"
+      ]
+    },
+    "TOOL-020-O": {
+      "title": "OpenAI Responses Native Adapter",
+      "thread_type": "implementer",
+      "wave": "W3",
+      "depends_on": [
+        "TOOL-010",
+        "TOOL-011",
+        "TOOL-013-S",
+        "TOOL-019-D"
+      ],
+      "ticket_file": "tickets/TOOL-020-O.md",
+      "allowed_write_paths": [
+        "pico/providers/openai_responses.py",
+        "tests/test_openai_responses_tools.py",
+        ".codex/eval/handoffs/TOOL-020-O.json"
+      ],
+      "forbidden_write_paths": [
+        "pico/core/**",
+        "pico/providers/anthropic_messages.py",
+        "SDK Tool/Agent Runner"
+      ]
+    },
+    "TOOL-020-A": {
+      "title": "Anthropic Messages Native Adapter",
+      "thread_type": "implementer",
+      "wave": "W3",
+      "depends_on": [
+        "TOOL-010",
+        "TOOL-011",
+        "TOOL-013-S",
+        "TOOL-019-D"
+      ],
+      "ticket_file": "tickets/TOOL-020-A.md",
+      "allowed_write_paths": [
+        "pico/providers/anthropic_messages.py",
+        "tests/test_anthropic_messages_tools.py",
+        ".codex/eval/handoffs/TOOL-020-A.json"
+      ],
+      "forbidden_write_paths": [
+        "pico/core/**",
+        "pico/providers/openai_responses.py",
+        "SDK Tool/Agent Runner"
+      ]
+    },
+    "TOOL-021-P": {
+      "title": "Provider Profile、Wire Dialect 与 Capability Validation",
+      "thread_type": "implementer",
+      "wave": "W3",
+      "depends_on": [
+        "TOOL-010",
+        "TOOL-013-S"
+      ],
+      "ticket_file": "tickets/TOOL-021-P.md",
+      "allowed_write_paths": [
+        ".pico.toml.example",
+        "pico/config/__init__.py",
+        "pico/providers/__init__.py",
+        "pico/cli.py",
+        "tests/test_provider_protocol.py",
+        "docs/configuration.md",
+        ".codex/eval/handoffs/TOOL-021-P.json"
+      ],
+      "forbidden_write_paths": [
+        "pico/core/**",
+        "adapter 实现文件",
+        "本地密钥配置"
+      ]
+    },
+    "TOOL-030-E": {
+      "title": "Engine Native Tool Batch Loop",
+      "thread_type": "implementer",
+      "wave": "W4",
+      "depends_on": [
+        "TOOL-010",
+        "TOOL-011",
+        "TOOL-015"
+      ],
+      "ticket_file": "tickets/TOOL-030-E.md",
+      "allowed_write_paths": [
+        "pico/core/engine.py",
+        "pico/core/engine_helpers.py",
+        "pico/core/tool_call_batch.py",
+        "pico/core/model_errors.py",
+        "pico/core/runtime_events.py",
+        "tests/test_native_tool_loop.py",
+        ".codex/eval/handoffs/TOOL-030-E.json"
+      ],
+      "forbidden_write_paths": [
+        "pico/core/runtime.py",
+        "pico/core/runtime_checkpoints.py",
+        "provider adapter 文件"
+      ]
+    },
+    "TOOL-031-S": {
+      "title": "Session Exchange Events 与 Private Continuation Persistence",
+      "thread_type": "implementer",
+      "wave": "W4",
+      "depends_on": [
+        "TOOL-010",
+        "TOOL-015"
+      ],
+      "ticket_file": "tickets/TOOL-031-S.md",
+      "allowed_write_paths": [
+        "pico/core/model_exchange.py",
+        "pico/core/turn_history.py",
+        "pico/core/session_events.py",
+        "pico/core/session_lifecycle.py",
+        "pico/core/run_store.py",
+        "pico/core/runtime_consumers.py",
+        "tests/test_native_session_exchange.py",
+        ".codex/eval/handoffs/TOOL-031-S.json"
+      ],
+      "forbidden_write_paths": [
+        "pico/core/runtime.py",
+        "pico/core/runtime_checkpoints.py",
+        "provider adapter 文件"
+      ]
+    },
+    "TOOL-032-C": {
+      "title": "Structured ModelRequest Context 与 Prompt 协议拆除",
+      "thread_type": "implementer",
+      "wave": "W4",
+      "depends_on": [
+        "TOOL-010",
+        "TOOL-011",
+        "EVAL-030"
+      ],
+      "ticket_file": "tickets/TOOL-032-C.md",
+      "allowed_write_paths": [
+        "pico/core/request_context.py",
+        "pico/core/context_manager.py",
+        "pico/core/runtime.py",
+        "pico/core/compact.py",
+        "pico/core/context_usage.py",
+        "pico/core/tool_profiles.py",
+        "tests/test_native_request_context.py",
+        ".codex/eval/handoffs/TOOL-032-C.json"
+      ],
+      "forbidden_write_paths": [
+        "pico/core/engine.py",
+        "pico/core/runtime_checkpoints.py",
+        "provider adapter 文件",
+        "tests/test_architecture_boundaries.py"
+      ]
+    },
+    "TOOL-040-I": {
+      "title": "Native Adapter/Core Runtime Wiring",
+      "thread_type": "implementer",
+      "wave": "W5",
+      "depends_on": [
+        "TOOL-020-O",
+        "TOOL-020-A",
+        "TOOL-021-P",
+        "TOOL-030-E",
+        "TOOL-031-S",
+        "TOOL-032-C"
+      ],
+      "ticket_file": "tickets/TOOL-040-I.md",
+      "allowed_write_paths": [
+        "pico/providers/clients.py",
+        "pico/providers/base.py",
+        "pico/providers/__init__.py",
+        "pico/core/runtime.py",
+        "pico/core/engine.py",
+        "pico/core/engine_helpers.py",
+        "pico/core/session_lifecycle.py",
+        "pico/cli.py",
+        "tests/test_native_runtime_integration.py",
+        ".codex/eval/handoffs/TOOL-040-I.json"
+      ],
+      "forbidden_write_paths": [
+        "pico/core/runtime_checkpoints.py",
+        "frozen evaluator/fixtures",
+        "tests/test_architecture_boundaries.py"
+      ]
+    },
+    "TOOL-041-M": {
+      "title": "Legacy Text Protocol 删除与 Fixture 机械迁移",
+      "thread_type": "implementer",
+      "wave": "W5",
+      "depends_on": [
+        "TOOL-040-I",
+        "TOOL-015"
+      ],
+      "ticket_file": "tickets/TOOL-041-M.md",
+      "allowed_write_paths": [
+        "pico/core/model_output.py",
+        "pico/core/runtime.py",
+        "pico/core/engine_helpers.py",
+        "pico/evaluation/evaluator.py",
+        "pico/evaluation/metrics.py",
+        "pico/tools/agents.py",
+        "pico/tools/ask_user.py",
+        "pico/tools/plan.py",
+        "pico/tools/registry.py",
+        "pico/tools/todos.py",
+        "scripts/run_business_scenario_dogfood.py",
+        "scripts/run_real_session_acceptance.py",
+        "scripts/run_v3_human_scenario_gate.py",
+        "tests/**",
+        ".codex/eval/handoffs/TOOL-041-M.json"
+      ],
+      "forbidden_write_paths": [
+        "pico/core/runtime_checkpoints.py",
+        "native contracts/adapters",
+        "tests/test_architecture_boundaries.py",
+        "tests/test_safety_invariants.py",
+        "tests/test_tool_policy_acceptance.py",
+        "tests/test_permissions_acceptance.py 的断言语义削弱"
+      ]
+    },
+    "TOOL-049-I": {
+      "title": "Native Provider Conformance Evaluator 与 Runner",
+      "thread_type": "implementer",
+      "wave": "W5",
+      "depends_on": [
+        "TOOL-040-I",
+        "EVAL-001"
+      ],
+      "ticket_file": "tickets/TOOL-049-I.md",
+      "allowed_write_paths": [
+        "pico/evaluation/native_provider.py",
+        "scripts/run_native_provider_conformance.py",
+        "tests/test_native_provider_evaluator.py",
+        "benchmarks/v3/native-provider/**",
+        ".codex/eval/handoffs/TOOL-049-I.json"
+      ],
+      "forbidden_write_paths": [
+        "provider adapter/Core Runtime",
+        "本地密钥配置",
+        ".codex/eval/state/FREEZE.json"
+      ]
+    },
+    "TOOL-042-G": {
+      "title": "Deterministic Native Eval-ready Gate",
+      "thread_type": "integrator",
+      "wave": "W5",
+      "depends_on": [
+        "TOOL-041-M",
+        "TOOL-049-I",
+        "EVAL-031-G"
+      ],
+      "ticket_file": "tickets/TOOL-042-G.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-deterministic-gate/**",
+        ".codex/eval/proposals/TOOL-042-G.freeze.json",
+        ".codex/eval/handoffs/TOOL-042-G.json"
+      ],
+      "forbidden_write_paths": [
+        "产品源码",
+        "frozen evaluator/fixtures"
+      ]
+    },
+    "TOOL-043-R": {
+      "title": "Structured Retry-after-read Policy Remediation",
+      "thread_type": "implementer",
+      "wave": "W5R",
+      "depends_on": [
+        "TOOL-040-I",
+        "TOOL-041-M"
+      ],
+      "ticket_file": "tickets/TOOL-043-R.md",
+      "allowed_write_paths": [
+        "pico/core/tool_repetition.py",
+        "pico/core/session_lifecycle.py",
+        "tests/test_native_tool_repetition.py",
+        ".codex/eval/handoffs/TOOL-043-R.json"
+      ],
+      "forbidden_write_paths": [
+        "protected tests",
+        "权限、validation、approval 或 ToolPolicy 执行顺序",
+        "provider adapters",
+        "文本结果解析 fallback"
+      ]
+    },
+    "TOOL-044-F": {
+      "title": "Protected Native Fixture Migration Without Global Patches",
+      "thread_type": "implementer",
+      "wave": "W5R",
+      "depends_on": [
+        "TOOL-041-M"
+      ],
+      "ticket_file": "tickets/TOOL-044-F.md",
+      "allowed_write_paths": [
+        "tests/conftest.py",
+        "tests/native_fixtures.py",
+        "tests/test_tool_policy_acceptance.py",
+        "tests/test_safety_invariants.py",
+        "tests/test_permissions_acceptance.py",
+        "tests/test_fixture_migration_integrity.py",
+        "<ARTIFACT_ROOT>/w5r-fixture-migration/**",
+        ".codex/eval/handoffs/TOOL-044-F.json"
+      ],
+      "forbidden_write_paths": [
+        "production source",
+        "protected test names, assertions or safety semantics",
+        "skip/xfail/conditional bypass",
+        "autouse monkey patches or hidden legacy protocol adapters"
+      ]
+    },
+    "ARCH-045-B": {
+      "title": "Worker Manager Architecture Budget Decision",
+      "thread_type": "implementer",
+      "wave": "W5R",
+      "depends_on": [
+        "TOOL-041-M"
+      ],
+      "ticket_file": "tickets/ARCH-045-B.md",
+      "allowed_write_paths": [
+        "tests/test_architecture_boundaries.py",
+        "docs/architecture/core-module-budgets.md",
+        ".codex/eval/handoffs/ARCH-045-B.json"
+      ],
+      "forbidden_write_paths": [
+        "pico/core/worker_manager.py",
+        "其他模块的架构预算",
+        "其他架构断言"
+      ]
+    },
+    "CHORE-045-L": {
+      "title": "Readable Session Repository Ruff Baseline Repair",
+      "thread_type": "implementer",
+      "wave": "W5R",
+      "depends_on": [
+        "TOOL-041-M"
+      ],
+      "ticket_file": "tickets/CHORE-045-L.md",
+      "allowed_write_paths": [
+        "scripts/readable_session.py",
+        ".codex/eval/handoffs/CHORE-045-L.json"
+      ],
+      "forbidden_write_paths": [
+        "脚本行为或输出格式变化",
+        "Ruff 配置",
+        "noqa 或规则禁用"
+      ]
+    },
+    "EVAL-032-F": {
+      "title": "Versioned Structured Context Freeze Binding Repair",
+      "thread_type": "integrator",
+      "wave": "W5R",
+      "depends_on": [
+        "TOOL-043-R",
+        "TOOL-044-F",
+        "ARCH-045-B",
+        "CHORE-045-L",
+        "EVAL-031-G"
+      ],
+      "ticket_file": "tickets/EVAL-032-F.md",
+      "allowed_write_paths": [
+        "benchmarks/v3/context-assets/cases-v2.binding.json",
+        "scripts/verify_context_freeze.py",
+        "tests/test_context_freeze_integrity.py",
+        "<ARTIFACT_ROOT>/phase-2-context-assets-w5r/**",
+        ".codex/eval/proposals/EVAL-032-F.freeze.json",
+        ".codex/eval/handoffs/EVAL-032-F.json"
+      ],
+      "forbidden_write_paths": [
+        "benchmarks/v3/context-assets/cases.json",
+        "frozen fragments",
+        "产品 Runtime",
+        "覆盖或静默删除旧 d69dfc 声明"
+      ]
+    },
+    "TOOL-042-G-R1": {
+      "title": "Deterministic Native Eval-ready Gate Recovery R1",
+      "thread_type": "integrator",
+      "wave": "W5R",
+      "depends_on": [
+        "TOOL-043-R",
+        "TOOL-044-F",
+        "ARCH-045-B",
+        "CHORE-045-L",
+        "EVAL-032-F",
+        "TOOL-049-I"
+      ],
+      "ticket_file": "tickets/TOOL-042-G-R1.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-deterministic-gate-w5r/**",
+        ".codex/eval/proposals/TOOL-042-G-R1.freeze.json",
+        ".codex/eval/proposals/TOOL-042-G-R1.status.json",
+        ".codex/eval/handoffs/TOOL-042-G-R1.json"
+      ],
+      "forbidden_write_paths": [
+        "产品源码、tests、fixtures",
+        "skip/xfail/失败重分类",
+        "sudo 或系统级包安装",
+        "正式在线 provider evaluation"
+      ]
+    },
+    "ARCH-046-T": {
+      "title": "Core Module Growth Tripwire Recalibration",
+      "thread_type": "implementer",
+      "wave": "W5R2",
+      "depends_on": [
+        "ARCH-045-B",
+        "TOOL-042-G-R1"
+      ],
+      "ticket_file": "tickets/ARCH-046-T.md",
+      "allowed_write_paths": [
+        "tests/test_architecture_boundaries.py",
+        "docs/architecture/core-module-budgets.md",
+        "<ARTIFACT_ROOT>/w5r2-architecture-tripwire/**",
+        ".codex/eval/handoffs/ARCH-046-T.json"
+      ],
+      "forbidden_write_paths": [
+        "产品源码",
+        "其他测试",
+        "通过删除 tracked modules 绕过审计"
+      ]
+    },
+    "TEST-046-P": {
+      "title": "Explicit Scripted Provider Profile Migration",
+      "thread_type": "implementer",
+      "wave": "W5R2",
+      "depends_on": [
+        "TOOL-044-F",
+        "TOOL-042-G-R1"
+      ],
+      "ticket_file": "tickets/TEST-046-P.md",
+      "allowed_write_paths": [
+        "tests/native_fixtures.py",
+        "tests/test_pico.py",
+        "tests/test_engine_acceptance.py",
+        "tests/test_context_governance_acceptance.py",
+        "tests/test_release_smoke.py",
+        "tests/test_v3_runtime.py",
+        "tests/test_skills_acceptance.py",
+        "tests/test_runtime_evidence_acceptance.py",
+        "tests/test_usage.py",
+        "tests/test_todo_ledger_acceptance.py",
+        "tests/test_provider_profile_fixture_integrity.py",
+        "<ARTIFACT_ROOT>/w5r2-provider-profile-migration/**",
+        ".codex/eval/handoffs/TEST-046-P.json"
+      ],
+      "forbidden_write_paths": [
+        "production source",
+        "tests/conftest.py",
+        "既有测试名称、断言或安全语义",
+        "autouse/global monkey patch",
+        "Runtime provider_profile fallback"
+      ]
+    },
+    "TOOL-046-W": {
+      "title": "Worker Child Provider Profile Contract",
+      "thread_type": "implementer",
+      "wave": "W5R2",
+      "depends_on": [
+        "TEST-046-P",
+        "TOOL-049-I"
+      ],
+      "ticket_file": "tickets/TOOL-046-W.md",
+      "allowed_write_paths": [
+        "pico/core/worker_runtime.py",
+        "tests/test_agent_workers_acceptance.py",
+        "tests/test_native_worker_profile.py",
+        "<ARTIFACT_ROOT>/w5r2-worker-profile/**",
+        ".codex/eval/handoffs/TOOL-046-W.json"
+      ],
+      "forbidden_write_paths": [
+        "provider adapters",
+        "session_lifecycle provider_profile requirement",
+        "worker event assertions、timeouts 或 safety semantics 的弱化",
+        "SDK objects persisted into Core/Session"
+      ]
+    },
+    "TEST-046-T": {
+      "title": "Explicit TUI Native Profile Fixture Recovery",
+      "thread_type": "implementer",
+      "wave": "W5R2",
+      "depends_on": [
+        "TEST-046-P"
+      ],
+      "ticket_file": "tickets/TEST-046-T.md",
+      "allowed_write_paths": [
+        "tests/test_tui.py",
+        "<ARTIFACT_ROOT>/w5r2-tui-profile/**",
+        ".codex/eval/handoffs/TEST-046-T.json"
+      ],
+      "forbidden_write_paths": [
+        "production TUI source",
+        "timeout 放大",
+        "既有测试名称、断言或交互语义",
+        "autouse/global monkey patch"
+      ]
+    },
+    "TOOL-042-G-R2": {
+      "title": "Deterministic Native Eval-ready Gate Recovery R2",
+      "thread_type": "integrator",
+      "wave": "W5R2",
+      "depends_on": [
+        "TOOL-042-G-R1",
+        "ARCH-046-T",
+        "TEST-046-P",
+        "TOOL-046-W",
+        "TEST-046-T",
+        "EVAL-032-F",
+        "TOOL-049-I"
+      ],
+      "ticket_file": "tickets/TOOL-042-G-R2.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-deterministic-gate-w5r2/**",
+        ".codex/eval/proposals/TOOL-042-G-R2.freeze.json",
+        ".codex/eval/proposals/TOOL-042-G-R2.status.json",
+        ".codex/eval/handoffs/TOOL-042-G-R2.json"
+      ],
+      "forbidden_write_paths": [
+        "产品源码、tests、fixtures、bindings",
+        "skip/xfail/失败重分类",
+        "sudo 或系统级包安装",
+        "live provider 或正式效果评测"
+      ]
+    },
+    "TOOL-050-QO-R": {
+      "title": "Native Conformance：Qwen / OpenAI Responses",
+      "thread_type": "run_shard",
+      "wave": "W6",
+      "depends_on": [
+        "TOOL-042-G-R2",
+        "TOOL-049-I",
+        "TOOL-020-O"
+      ],
+      "ticket_file": "tickets/TOOL-050-QO-R.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-provider-conformance/<RUN_SHA>/TOOL-050-QO-R/**",
+        ".codex/eval/handoffs/TOOL-050-QO-R.json"
+      ],
+      "forbidden_write_paths": [
+        "所有源码、frozen conformance cases、本地配置写入"
+      ]
+    },
+    "TOOL-050-QA-R": {
+      "title": "Native Conformance：Qwen / Anthropic Messages",
+      "thread_type": "run_shard",
+      "wave": "W6",
+      "depends_on": [
+        "TOOL-042-G-R2",
+        "TOOL-049-I",
+        "TOOL-020-A"
+      ],
+      "ticket_file": "tickets/TOOL-050-QA-R.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-provider-conformance/<RUN_SHA>/TOOL-050-QA-R/**",
+        ".codex/eval/handoffs/TOOL-050-QA-R.json"
+      ],
+      "forbidden_write_paths": [
+        "所有源码、frozen conformance cases、本地配置写入"
+      ]
+    },
+    "TOOL-050-DA-R": {
+      "title": "Native Conformance：DeepSeek / Anthropic Messages",
+      "thread_type": "run_shard",
+      "wave": "W6",
+      "depends_on": [
+        "TOOL-042-G-R2",
+        "TOOL-049-I",
+        "TOOL-020-A"
+      ],
+      "ticket_file": "tickets/TOOL-050-DA-R.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-provider-conformance/<RUN_SHA>/TOOL-050-DA-R/**",
+        ".codex/eval/handoffs/TOOL-050-DA-R.json"
+      ],
+      "forbidden_write_paths": [
+        "所有源码、frozen conformance cases、本地配置写入"
+      ]
+    },
+    "TOOL-050-S": {
+      "title": "Native Provider Profile Selection（Gate N1）",
+      "thread_type": "integrator",
+      "wave": "W6",
+      "depends_on": [
+        "TOOL-050-QO-R",
+        "TOOL-050-QA-R",
+        "TOOL-050-DA-R"
+      ],
+      "ticket_file": "tickets/TOOL-050-S.md",
+      "allowed_write_paths": [
+        "benchmarks/v3/native-provider/selection.json",
+        "<ARTIFACT_ROOT>/native-provider-conformance/summary.json",
+        "<ARTIFACT_ROOT>/native-provider-conformance/summary.md",
+        ".codex/eval/proposals/TOOL-050-S.freeze.json",
+        ".codex/eval/proposals/TOOL-050-S.status.json",
+        ".codex/eval/handoffs/TOOL-050-S.json"
+      ],
+      "forbidden_write_paths": [
+        "产品源码",
+        "raw rows",
+        "conformance cases"
+      ]
+    },
+    "TOOL-051-L": {
+      "title": "Fixed Production Native Conformance Live Runner",
+      "thread_type": "implementer",
+      "wave": "W6R",
+      "depends_on": [
+        "TOOL-042-G-R2",
+        "TOOL-040-I",
+        "TOOL-049-I",
+        "TOOL-050-S"
+      ],
+      "ticket_file": "tickets/TOOL-051-L.md",
+      "allowed_write_paths": [
+        "pico/evaluation/native_provider_live.py",
+        "pico/evaluation/native_provider_profiles.py",
+        "scripts/build_native_provider_profile.py",
+        "tests/test_native_provider_live.py",
+        "tests/test_native_provider_profile_cli.py",
+        "benchmarks/v3/native-provider/profile.schema.json",
+        "benchmarks/v3/native-provider/profile.example.json",
+        ".codex/eval/handoffs/TOOL-051-L.json"
+      ],
+      "forbidden_write_paths": [
+        "benchmarks/v3/native-provider/cases.json",
+        "pico/cli.py",
+        "provider adapters、Core Runtime、ToolPolicy",
+        "动态 runner plugin 或 SDK-managed tool execution",
+        "本地配置与凭据写入"
+      ]
+    },
+    "EVAL-052-H": {
+      "title": "Versioned Native Conformance Harness Contract",
+      "thread_type": "implementer",
+      "wave": "W6R",
+      "depends_on": [
+        "TOOL-051-L",
+        "TOOL-049-I",
+        "TOOL-050-S"
+      ],
+      "ticket_file": "tickets/EVAL-052-H.md",
+      "allowed_write_paths": [
+        "pico/evaluation/native_provider.py",
+        "scripts/run_native_provider_conformance.py",
+        "tests/test_native_provider_evaluator.py",
+        "tests/test_native_provider_cli.py",
+        ".codex/eval/handoffs/EVAL-052-H.json"
+      ],
+      "forbidden_write_paths": [
+        "benchmarks/v3/native-provider/cases.json",
+        "pico/cli.py、pico/config/**、provider adapters",
+        "全局 evaluation artifact contract",
+        "任意 module:callable formal runner injection"
+      ]
+    },
+    "TOOL-053-A": {
+      "title": "Native Conformance Harness Safety and Evidence Audit",
+      "thread_type": "reviewer",
+      "wave": "W6R",
+      "depends_on": [
+        "TOOL-051-L",
+        "EVAL-052-H"
+      ],
+      "ticket_file": "tickets/TOOL-053-A.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-provider-harness-audit/**",
+        ".codex/eval/handoffs/TOOL-053-A.json"
+      ],
+      "forbidden_write_paths": [
+        "所有产品、evaluator、test 与 frozen input 源码",
+        "STATUS.json、FREEZE.json",
+        "live provider HTTP"
+      ]
+    },
+    "TOOL-054-G": {
+      "title": "Native Conformance Deterministic Preflight and Run Snapshot Gate",
+      "thread_type": "integrator",
+      "wave": "W6R",
+      "depends_on": [
+        "TOOL-042-G-R2",
+        "TOOL-051-L",
+        "EVAL-052-H",
+        "TOOL-053-A"
+      ],
+      "ticket_file": "tickets/TOOL-054-G.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-provider-preflight/**",
+        ".codex/eval/proposals/TOOL-054-G.freeze.json",
+        ".codex/eval/proposals/TOOL-054-G.status.json",
+        ".codex/eval/handoffs/TOOL-054-G.json"
+      ],
+      "forbidden_write_paths": [
+        "产品源码、tests、frozen cases",
+        "正式 live provider conformance HTTP",
+        "raw URL、API key 或其他 credential artifact",
+        "STATUS.json、FREEZE.json"
+      ]
+    },
+    "TOOL-055-E": {
+      "title": "Dual-Dialect Runner Parity and Safety-chain Evidence",
+      "thread_type": "implementer",
+      "wave": "W6R2",
+      "depends_on": [
+        "TOOL-051-L",
+        "EVAL-052-H",
+        "TOOL-053-A"
+      ],
+      "ticket_file": "tickets/TOOL-055-E.md",
+      "allowed_write_paths": [
+        "pico/evaluation/native_provider_live.py",
+        "pico/core/tool_executor.py",
+        "tests/test_native_provider_live.py",
+        "tests/test_native_safety_chain_evidence.py",
+        ".codex/eval/handoffs/TOOL-055-E.json"
+      ],
+      "forbidden_write_paths": [
+        "benchmarks/v3/native-provider/cases.json",
+        "provider adapters、ToolPolicy 规则、permission 行为",
+        "pico/evaluation/native_provider.py 与正式 artifact writer",
+        "本地配置、public profile 与凭据"
+      ]
+    },
+    "EVAL-056-H": {
+      "title": "Native Harness Evidence and Private-config Contract",
+      "thread_type": "implementer",
+      "wave": "W6R2",
+      "depends_on": [
+        "TOOL-055-E",
+        "EVAL-052-H"
+      ],
+      "ticket_file": "tickets/EVAL-056-H.md",
+      "allowed_write_paths": [
+        "pico/evaluation/native_provider.py",
+        "scripts/run_native_provider_conformance.py",
+        "tests/test_native_provider_evaluator.py",
+        "tests/test_native_provider_cli.py",
+        ".codex/eval/handoffs/EVAL-056-H.json"
+      ],
+      "forbidden_write_paths": [
+        "benchmarks/v3/native-provider/cases.json",
+        "pico/cli.py、pico/config/**、provider adapters",
+        "动态 runner injection、SDK-managed tool execution",
+        "本地配置、credential、raw URL 或配置路径写入公开 artifact"
+      ]
+    },
+    "TOOL-057-A": {
+      "title": "Dual-Dialect Evidence Closure Audit",
+      "thread_type": "reviewer",
+      "wave": "W6R2",
+      "depends_on": [
+        "TOOL-055-E",
+        "EVAL-056-H"
+      ],
+      "ticket_file": "tickets/TOOL-057-A.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-provider-harness-audit/W6R2-TOOL-057-A-01/**",
+        ".codex/eval/handoffs/TOOL-057-A.json"
+      ],
+      "forbidden_write_paths": [
+        "所有产品、evaluator、tests 与 frozen inputs",
+        "STATUS.json、FREEZE.json",
+        "live provider HTTP"
+      ]
+    },
+    "TOOL-058-G": {
+      "title": "WSL Canonical Native Preflight and Run Snapshot Gate",
+      "thread_type": "integrator",
+      "wave": "W6R2",
+      "depends_on": [
+        "TOOL-042-G-R2",
+        "TOOL-055-E",
+        "EVAL-056-H",
+        "TOOL-057-A"
+      ],
+      "ticket_file": "tickets/TOOL-058-G.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-provider-preflight/W6R2-TOOL-058-G-01/**",
+        ".codex/eval/proposals/TOOL-058-G.freeze.json",
+        ".codex/eval/proposals/TOOL-058-G.status.json",
+        ".codex/eval/handoffs/TOOL-058-G.json"
+      ],
+      "forbidden_write_paths": [
+        "产品源码、tests、frozen cases",
+        "live provider HTTP",
+        "raw URL、credential、private config path",
+        "STATUS.json、FREEZE.json"
+      ]
+    },
+    "TOOL-050-QO-R2": {
+      "title": "Recovered Native Conformance：Qwen / OpenAI Responses",
+      "thread_type": "run_shard",
+      "wave": "W6R2",
+      "depends_on": [
+        "TOOL-058-G",
+        "EVAL-056-H",
+        "TOOL-020-O"
+      ],
+      "ticket_file": "tickets/TOOL-050-QO-R2.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-provider-conformance/<RUN_SHA>/TOOL-050-QO-R2/**",
+        ".codex/eval/handoffs/TOOL-050-QO-R2.json"
+      ],
+      "forbidden_write_paths": [
+        "所有源码、frozen cases、public profile manifests、本地配置写入"
+      ]
+    },
+    "TOOL-050-QA-R2": {
+      "title": "Recovered Native Conformance：Qwen / Anthropic Messages",
+      "thread_type": "run_shard",
+      "wave": "W6R2",
+      "depends_on": [
+        "TOOL-058-G",
+        "EVAL-056-H",
+        "TOOL-020-A"
+      ],
+      "ticket_file": "tickets/TOOL-050-QA-R2.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-provider-conformance/<RUN_SHA>/TOOL-050-QA-R2/**",
+        ".codex/eval/handoffs/TOOL-050-QA-R2.json"
+      ],
+      "forbidden_write_paths": [
+        "所有源码、frozen cases、public profile manifests、本地配置写入"
+      ]
+    },
+    "TOOL-050-DA-R2": {
+      "title": "Recovered Native Conformance：DeepSeek / Anthropic Messages",
+      "thread_type": "run_shard",
+      "wave": "W6R2",
+      "depends_on": [
+        "TOOL-058-G",
+        "EVAL-056-H",
+        "TOOL-020-A"
+      ],
+      "ticket_file": "tickets/TOOL-050-DA-R2.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-provider-conformance/<RUN_SHA>/TOOL-050-DA-R2/**",
+        ".codex/eval/handoffs/TOOL-050-DA-R2.json"
+      ],
+      "forbidden_write_paths": [
+        "所有源码、frozen cases、public profile manifests、本地配置写入"
+      ]
+    },
+    "TOOL-050-S-R1": {
+      "title": "Recovered Native Provider Profile Selection（Gate N1）",
+      "thread_type": "integrator",
+      "wave": "W6R2",
+      "depends_on": [
+        "TOOL-050-QO-R2",
+        "TOOL-050-QA-R2",
+        "TOOL-050-DA-R2"
+      ],
+      "ticket_file": "tickets/TOOL-050-S-R1.md",
+      "allowed_write_paths": [
+        "benchmarks/v3/native-provider/selection-w6r2.json",
+        "<ARTIFACT_ROOT>/native-provider-conformance/<RUN_SHA>/selection/**",
+        ".codex/eval/proposals/TOOL-050-S-R1.freeze.json",
+        ".codex/eval/proposals/TOOL-050-S-R1.status.json",
+        ".codex/eval/handoffs/TOOL-050-S-R1.json"
+      ],
+      "forbidden_write_paths": [
+        "W6 selection.json 与 W6 artifacts",
+        "产品源码、raw rows、conformance cases、public profile manifests",
+        "STATUS.json、FREEZE.json"
+      ]
+    },
+    "EVAL-059-O": {
+      "title": "Native Provider Oracle v2 与历史证据审定",
+      "thread_type": "fixture_builder",
+      "wave": "W6R3",
+      "depends_on": [
+        "TOOL-050-S-R1"
+      ],
+      "ticket_file": "tickets/EVAL-059-O.md",
+      "allowed_write_paths": [
+        "benchmarks/v3/native-provider/cases-v2.json",
+        "pico/evaluation/native_provider.py",
+        "pico/evaluation/native_provider_live.py",
+        "tests/test_native_provider_evaluator.py",
+        "tests/test_native_provider_live.py",
+        "<ARTIFACT_ROOT>/native-provider-oracle-v2/**",
+        ".codex/eval/proposals/EVAL-059-O.freeze.json",
+        ".codex/eval/proposals/EVAL-059-O.status.json",
+        ".codex/eval/handoffs/EVAL-059-O.json"
+      ],
+      "forbidden_write_paths": [
+        "W6/W6R/W6R2 frozen inputs, rows, selection and artifacts",
+        "Provider adapters、Runtime/Core",
+        "STATUS.json、FREEZE.json"
+      ]
+    },
+    "TEST-059-C": {
+      "title": "Responses Stateless Transcript Red Tests",
+      "thread_type": "implementer",
+      "wave": "W6R3",
+      "depends_on": [
+        "EVAL-059-O"
+      ],
+      "ticket_file": "tickets/TEST-059-C.md",
+      "allowed_write_paths": [
+        "tests/test_openai_responses_tools.py",
+        "tests/test_native_runtime_integration.py",
+        "tests/test_native_stateless_transcript.py",
+        ".codex/eval/handoffs/TEST-059-C.json"
+      ],
+      "forbidden_write_paths": [
+        "pico/**",
+        "frozen cases/evaluator/metrics",
+        "STATUS.json、FREEZE.json"
+      ]
+    },
+    "TOOL-059-O": {
+      "title": "OpenAI Responses 完整无状态 Transcript 修复",
+      "thread_type": "implementer",
+      "wave": "W6R3",
+      "depends_on": [
+        "EVAL-059-O",
+        "TEST-059-C"
+      ],
+      "ticket_file": "tickets/TOOL-059-O.md",
+      "allowed_write_paths": [
+        "pico/providers/openai_responses.py",
+        ".codex/eval/handoffs/TOOL-059-O.json"
+      ],
+      "forbidden_write_paths": [
+        "Core/Runtime、Anthropic Adapter",
+        "Oracle v2、frozen cases 与 TEST-059-C tests",
+        "STATUS.json、FREEZE.json"
+      ]
+    },
+    "EVAL-059-H": {
+      "title": "Human-smoke v2 Manifest、Runner 与 Verifier",
+      "thread_type": "fixture_builder",
+      "wave": "W6R3",
+      "depends_on": [
+        "EVAL-059-O"
+      ],
+      "ticket_file": "tickets/EVAL-059-H.md",
+      "allowed_write_paths": [
+        "benchmarks/v3/native-provider/human-smoke-v2.json",
+        "scripts/run_v3_native_human_smoke.py",
+        "tests/test_v3_native_human_smoke.py",
+        "benchmarks/v3/native-provider/human-smoke-v3.json",
+        "scripts/run_v3_native_human_smoke_v3.py",
+        "tests/test_v3_native_human_smoke_v3.py",
+        "<ARTIFACT_ROOT>/native-provider-human-smoke-adjudication/**",
+        "<ARTIFACT_ROOT>/native-provider-human-smoke-v3/**",
+        ".codex/eval/proposals/EVAL-059-H.freeze.json",
+        ".codex/eval/handoffs/EVAL-059-H.json"
+      ],
+      "revision_2_allowed_write_paths": [
+        "benchmarks/v3/native-provider/human-smoke-v3.json",
+        "scripts/run_v3_native_human_smoke_v3.py",
+        "tests/test_v3_native_human_smoke_v3.py",
+        "<ARTIFACT_ROOT>/native-provider-human-smoke-v3/**",
+        ".codex/eval/proposals/EVAL-059-H.freeze.json",
+        ".codex/eval/handoffs/EVAL-059-H.json"
+      ],
+      "revision_2_forbidden_write_paths": [
+        "human-smoke v2 files 与历史 artifacts"
+      ],
+      "forbidden_write_paths": [
+        "Provider adapters、Runtime/Core",
+        "W6R2 human-smoke 原始目录与 evidence",
+        "STATUS.json、FREEZE.json"
+      ]
+    },
+    "TOOL-059-R": {
+      "title": "Repetition Path Fingerprint 规范化",
+      "thread_type": "implementer",
+      "wave": "W6R3",
+      "depends_on": [
+        "EVAL-059-O"
+      ],
+      "ticket_file": "tickets/TOOL-059-R.md",
+      "allowed_write_paths": [
+        "pico/core/tool_repetition.py",
+        "pico/core/runtime.py",
+        "tests/test_native_tool_repetition.py",
+        ".codex/eval/handoffs/TOOL-059-R.json"
+      ],
+      "forbidden_write_paths": [
+        "Provider adapters、evaluation oracle/fixtures",
+        "permission、ToolPolicy 与 workspace containment 实现",
+        "STATUS.json、FREEZE.json"
+      ]
+    },
+    "AUDIT-059-A": {
+      "title": "Oracle v2 与 Responses Recovery 只读复审",
+      "thread_type": "reviewer",
+      "wave": "W6R3",
+      "depends_on": [
+        "EVAL-059-O",
+        "TEST-059-C",
+        "TOOL-059-O",
+        "EVAL-059-H",
+        "TOOL-059-R"
+      ],
+      "ticket_file": "tickets/AUDIT-059-A.md",
+      "allowed_write_paths": [
+        ".codex/eval/handoffs/AUDIT-059-A.json"
+      ],
+      "revision_requirements": {
+        "minimum_revision": 2,
+        "candidate_must_include": [
+          "TEST-059-C revision 2",
+          "TOOL-059-O revision 2",
+          "EVAL-059-H revision 2",
+          "TOOL-059-A-R1"
+        ]
+      },
+      "forbidden_write_paths": [
+        "除 handoff 外的所有路径"
+      ]
+    },
+    "TOOL-059-A-R1": {
+      "title": "Anthropic 完整无状态 Transcript 修复",
+      "thread_type": "implementer",
+      "wave": "W6R3",
+      "depends_on": [
+        "AUDIT-059-A"
+      ],
+      "ticket_file": "tickets/TOOL-059-A-R1.md",
+      "allowed_write_paths": [
+        "pico/providers/anthropic_messages.py",
+        "tests/test_anthropic_stateless_transcript.py",
+        ".codex/eval/handoffs/TOOL-059-A-R1.json"
+      ],
+      "forbidden_write_paths": [
+        "OpenAI Responses Adapter、Core/Runtime",
+        "其他 tests、Oracle、cases、human-smoke fixtures",
+        "STATUS.json、FREEZE.json"
+      ]
+    },
+    "TOOL-059-G": {
+      "title": "W6R3 Deterministic Recovery Gate",
+      "thread_type": "integrator",
+      "wave": "W6R3",
+      "depends_on": [
+        "AUDIT-059-A"
+      ],
+      "handoff_requirements": {
+        "AUDIT-059-A": {
+          "minimum_revision": 2,
+          "status": "accepted"
+        }
+      },
+      "ticket_file": "tickets/TOOL-059-G.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-deterministic-gate/W6R3-TOOL-059-G-01/**",
+        ".codex/eval/proposals/TOOL-059-G.freeze.json",
+        ".codex/eval/proposals/TOOL-059-G.status.json",
+        ".codex/eval/handoffs/TOOL-059-G.json"
+      ],
+      "forbidden_write_paths": [
+        "所有产品源码、tests、Oracle、fixtures",
+        "STATUS.json、FREEZE.json"
+      ]
+    },
+    "EVAL-063-H": {
+      "title": "Grounded Human-smoke v4 与 Durable Public Trajectory",
+      "thread_type": "fixture_builder",
+      "wave": "W6R5",
+      "depends_on": [
+        "EVAL-059-H"
+      ],
+      "ticket_file": "tickets/EVAL-063-H.md",
+      "allowed_write_paths": [
+        "benchmarks/v3/native-provider/human-smoke-v4.json",
+        "scripts/run_v3_native_human_smoke_v4.py",
+        "tests/test_v3_native_human_smoke_v4.py",
+        "<ARTIFACT_ROOT>/native-provider-human-smoke-v4/**",
+        ".codex/eval/handoffs/EVAL-063-H.json"
+      ],
+      "forbidden_write_paths": [
+        "benchmarks/v3/native-provider/human-smoke-v2.json",
+        "benchmarks/v3/native-provider/human-smoke-v3.json",
+        "scripts/run_v3_native_human_smoke.py",
+        "scripts/run_v3_native_human_smoke_v3.py",
+        "tests/test_v3_native_human_smoke.py",
+        "tests/test_v3_native_human_smoke_v3.py",
+        "pico/core/**",
+        "pico/providers/**",
+        "W6R4 Artifacts",
+        ".codex/eval/CURRENT.md",
+        ".codex/eval/state/FREEZE.json"
+      ]
+    },
+    "AUDIT-063-A": {
+      "title": "Human-smoke v4 Measurement 只读复审",
+      "thread_type": "reviewer",
+      "wave": "W6R5",
+      "depends_on": [
+        "EVAL-063-H"
+      ],
+      "ticket_file": "tickets/AUDIT-063-A.md",
+      "allowed_write_paths": [
+        ".codex/eval/handoffs/AUDIT-063-A.json"
+      ],
+      "forbidden_write_paths": [
+        "除 AUDIT-063-A handoff 外的所有路径"
+      ]
+    },
+    "TOOL-063-G": {
+      "title": "Human-smoke v4 Deterministic Gate 与 Selection Reuse Proof",
+      "thread_type": "integrator",
+      "wave": "W6R5",
+      "depends_on": [
+        "AUDIT-063-A"
+      ],
+      "ticket_file": "tickets/TOOL-063-G.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-human-smoke-v4-gate/<SOURCE_SHA>/**",
+        ".codex/eval/handoffs/TOOL-063-G.json",
+        ".codex/eval/state/FREEZE.json"
+      ],
+      "forbidden_write_paths": [
+        "产品源码",
+        "human-smoke v2/v3 source 与历史 Artifacts",
+        "provider selection Artifacts",
+        ".codex/eval/CURRENT.md",
+        ".codex/eval/state/STATUS.json"
+      ]
+    },
+    "EVAL-063-R": {
+      "title": "Authorized Human-smoke v4 Process",
+      "thread_type": "run_shard",
+      "wave": "W6R5",
+      "depends_on": [
+        "TOOL-063-G"
+      ],
+      "ticket_file": "tickets/EVAL-063-R.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-provider-human-smoke-v4/<SOURCE_SHA>/**",
+        "<ARTIFACT_ROOT>/native-provider-human-smoke-v4/process-manifests/**",
+        ".codex/eval/handoffs/EVAL-063-R.json"
+      ],
+      "forbidden_write_paths": [
+        "所有 Git-tracked source、tests、fixtures 与 control files（EVAL-063-R handoff 除外）",
+        "W6R4 与更早 Artifacts",
+        "raw .pico session JSON 或 private continuation public copy",
+        "private config locator value、secret、raw endpoint 或展开后的命令"
+      ]
+    },
+    "EVAL-063-M": {
+      "title": "Human-smoke v4 Adjudication 与 native_eval_ready Gate",
+      "thread_type": "integrator",
+      "wave": "W6R5",
+      "depends_on": [
+        "EVAL-063-R"
+      ],
+      "ticket_file": "tickets/EVAL-063-M.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-provider-human-smoke-v4/<SOURCE_SHA>/adjudication/**",
+        ".codex/eval/handoffs/EVAL-063-M.json",
+        ".codex/eval/state/FREEZE.json"
+      ],
+      "forbidden_write_paths": [
+        "产品源码、tests、fixtures 与 runner",
+        "W6R4 与更早 Artifacts",
+        ".codex/eval/CURRENT.md",
+        ".codex/eval/state/STATUS.json"
+      ]
+    },
+    "TOOL-060-R": {
+      "title": "Native Tool-call Resume 状态机与 Checkpoint Schema",
+      "thread_type": "implementer",
+      "wave": "W7",
+      "depends_on": [
+        "TOOL-042-G-R2",
+        "TOOL-031-S"
+      ],
+      "ticket_file": "tickets/TOOL-060-R.md",
+      "allowed_write_paths": [
+        "pico/core/runtime_checkpoints.py",
+        "pico/core/task_state.py",
+        "pico/core/session_lifecycle.py",
+        "pico/core/model_exchange.py",
+        "pico/core/tool_call_batch.py",
+        "tests/test_native_tool_resume.py",
+        ".codex/eval/handoffs/TOOL-060-R.json"
+      ],
+      "forbidden_write_paths": [
+        "frozen evaluator/fixtures",
+        "provider adapters",
+        "tests/test_architecture_boundaries.py"
+      ]
+    },
+    "TOOL-061-T": {
+      "title": "Native Resume Crash Contract Harness",
+      "thread_type": "implementer",
+      "wave": "W7",
+      "depends_on": [
+        "TOOL-060-R"
+      ],
+      "ticket_file": "tickets/TOOL-061-T.md",
+      "allowed_write_paths": [
+        "pico/evaluation/native_resume_contract.py",
+        "scripts/run_native_resume_contract.py",
+        "tests/test_native_resume_contract.py",
+        ".codex/eval/handoffs/TOOL-061-T.json"
+      ],
+      "forbidden_write_paths": [
+        "产品 Runtime",
+        "正式 Resume taskset",
+        ".codex/eval/state/FREEZE.json"
+      ]
+    },
+    "TOOL-062-R": {
+      "title": "Selected Profile Native Restart Conformance",
+      "thread_type": "run_shard",
+      "wave": "W8",
+      "depends_on": [
+        "TOOL-050-S-R1",
+        "TOOL-061-T"
+      ],
+      "ticket_file": "tickets/TOOL-062-R.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-resume-conformance/<RUN_SHA>/selected-profile/**",
+        ".codex/eval/handoffs/TOOL-062-R.json"
+      ],
+      "forbidden_write_paths": [
+        "所有源码、frozen contract、本地配置写入"
+      ],
+      "required_gates": [
+        "native_eval_ready"
+      ]
+    },
+    "TOOL-062-G": {
+      "title": "native_resume_ready Gate",
+      "thread_type": "integrator",
+      "wave": "W8",
+      "depends_on": [
+        "TOOL-061-T",
+        "TOOL-062-R"
+      ],
+      "ticket_file": "tickets/TOOL-062-G.md",
+      "allowed_write_paths": [
+        "<ARTIFACT_ROOT>/native-resume-conformance/summary.json",
+        "<ARTIFACT_ROOT>/native-resume-conformance/summary.md",
+        ".codex/eval/handoffs/TOOL-062-G.json",
+        ".codex/eval/state/FREEZE.json"
+      ],
+      "forbidden_write_paths": [
+        "产品源码",
+        "raw rows",
+        "frozen contract"
+      ]
+    }
+  }
+}

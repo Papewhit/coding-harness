@@ -1,0 +1,1 @@
+{"id":"C11","must_keep":["PLAN-C11-MODE=plan","POINTER=plans/C11.md","WRITE=read_only","GATE=approve","PROGRESS=step-2","REQUEST-C11-KEEP-VERBATIM"],"may_degrade":["SKILL-C11-INACTIVE-","TODO-C11-ACTIVE","CHECKPOINT-C11-FRESH"],"must_remove_before":["SKILL-C11-INACTIVE-"],"must_surface":{"REQUEST-C11-KEEP-VERBATIM":"messages"},"drop_evidence_required":true}

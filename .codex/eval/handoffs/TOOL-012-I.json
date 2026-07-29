@@ -1,0 +1,126 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-012-I",
+  "instance_id": "W1-TOOL-012-I-01",
+  "wave": "W1",
+  "role": "implementer",
+  "status": "complete",
+  "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+  "head_sha": "9a05404ec3a51821ca09a710bf8bfbfff84e4f90",
+  "branch": "codex/eval-v3-w1-tool-012-i",
+  "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\ea8d\\pico",
+  "prompt_sha256": "df0f212510be0d86486ced98839c05e8fcca923b2fab014fc3b0cf851e412604",
+  "dependency_commits": [],
+  "own_commits": [
+    "9a05404ec3a51821ca09a710bf8bfbfff84e4f90"
+  ],
+  "files_changed": [
+    "pico/evaluation/sdk_probe.py",
+    "scripts/run_sdk_viability_probe.py",
+    "tests/test_sdk_probe.py",
+    "benchmarks/v3/sdk-viability/cases.json",
+    "benchmarks/v3/sdk-viability/profile.example.json"
+  ],
+  "commands_run": [
+    "uv run pytest tests/test_sdk_probe.py -q (default F:\\.uv\\cache failed before collection: access denied)",
+    "$env:UV_CACHE_DIR=<system-temp>\\pico-w1-tool-012-i-uv-cache; uv run pytest tests/test_sdk_probe.py -q",
+    "$env:UV_CACHE_DIR=<system-temp>\\pico-w1-tool-012-i-uv-cache; uv run ruff check pico/evaluation/sdk_probe.py scripts/run_sdk_viability_probe.py tests/test_sdk_probe.py",
+    "CLI fake/profile smoke using benchmark cases and example profile; output in task-specific system temporary file",
+    "PowerShell ConvertFrom-Json checks for cases, profile, and smoke artifact",
+    "git diff --check; git diff --cached --check; post-commit git status",
+    "SHA-256 of Git blob bytes for all committed outputs"
+  ],
+  "tests": [
+    {
+      "command": "uv run pytest tests/test_sdk_probe.py -q",
+      "result": "passed",
+      "details": "4 passed in 0.68s with task-specific temporary UV cache; covers all six case kinds, plugin boundaries, hash-only raw capture, HTTP attempts, and SDK retry evidence"
+    },
+    {
+      "command": "uv run ruff check pico/evaluation/sdk_probe.py scripts/run_sdk_viability_probe.py tests/test_sdk_probe.py",
+      "result": "passed",
+      "details": "All checks passed"
+    },
+    {
+      "command": "CLI fake/profile smoke",
+      "result": "passed",
+      "details": "6/6 cases passed; artifact reported 9 HTTP attempts; no provider request was issued"
+    },
+    {
+      "command": "JSON and Git diff checks",
+      "result": "passed",
+      "details": "JSON parsed, whitespace checks passed, and tracked worktree was clean after commit"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "pico/evaluation/sdk_probe.py",
+      "sha256": "d47cde8398bfe8142e712c6c7b2d461eadd249aa7f7a8867894e81c5e9f37491",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "scripts/run_sdk_viability_probe.py",
+      "sha256": "842a8f035447d9b7a48c948b050e5bd76704d2f0b821645ee824784688e947d7",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "tests/test_sdk_probe.py",
+      "sha256": "b23d9d5d2316b52c7a1fe443e07d79d24db78cb90058598aee5f701d6a9e7ed0",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "benchmarks/v3/sdk-viability/cases.json",
+      "sha256": "4e642ef9d70af7a3959a09dd875efac84150a3b2f4095d2c5c1852e93d1c2110",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "benchmarks/v3/sdk-viability/profile.example.json",
+      "sha256": "5fdcd86c6175a376fd7884b69320f3f977a16b1f87f25e1d1e03b943f9ed5d89",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": ".codex/eval/handoffs/TOOL-012-I.json",
+      "persistence": "generated after the content commit and intentionally not included in that commit"
+    }
+  ],
+  "dependency_handoff_hashes": {
+    "EVAL-001": "cc8c951e0a0e0dac20e46c611b102bc538a6863099310a90690eb639f931a3be"
+  },
+  "contract_hashes": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "probe_harness": "d47cde8398bfe8142e712c6c7b2d461eadd249aa7f7a8867894e81c5e9f37491",
+    "probe_case_set": "4e642ef9d70af7a3959a09dd875efac84150a3b2f4095d2c5c1852e93d1c2110",
+    "example_profile": "5fdcd86c6175a376fd7884b69320f3f977a16b1f87f25e1d1e03b943f9ed5d89"
+  },
+  "frozen_hashes": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "native_contract": null,
+    "tool_schema": null,
+    "sdk_transport_decision": null,
+    "provider_selection": null,
+    "native_resume_gate": null
+  },
+  "native_protocol_observations": {
+    "observation_scope": "fake transport and CLI smoke only; no provider request or formal online evaluation was issued",
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": true,
+    "implicit_sdk_retry_detail": "fake transport reported one SDK retry across two HTTP attempts and the harness preserved both counters",
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0
+  },
+  "defects": [],
+  "risks": [
+    "This ticket proves provider-neutral harness behavior with a fake transport; provider SDK viability remains for the dedicated provider probe tickets.",
+    "Temporary provider SDK installation and credential handling remain outside the product dependency graph."
+  ],
+  "status_proposal": {
+    "ticket_id": "TOOL-012-I",
+    "status": "complete",
+    "head_sha": "9a05404ec3a51821ca09a710bf8bfbfff84e4f90",
+    "ready_for_integration": true
+  },
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}

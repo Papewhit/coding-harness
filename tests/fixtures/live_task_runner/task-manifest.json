@@ -1,0 +1,14 @@
+{
+  "tasks": [
+    {
+      "task_id": "synthetic-add",
+      "repo_id": "calculator",
+      "prompt": "Fix the add function.",
+      "source_dir": "public_repo",
+      "verifier": "hidden/verifier.py",
+      "reference_paths": ["hidden/reference.txt"],
+      "run_kinds": ["synthetic", "probe", "formal"],
+      "shard": "unit"
+    }
+  ]
+}

@@ -1,6 +1,12 @@
 import json
 
-from pico.testing import ScriptedModelClient
+from tests.native_fixtures import (
+    final,
+    lock_scripted_provider_profile,
+    scripted_client,
+    tool,
+    tools,
+)
 from pico import Pico, SessionStore, WorkspaceContext
 from pico.providers import ProviderError
 
@@ -9,12 +15,14 @@ def build_agent(tmp_path, outputs, **kwargs):
     (tmp_path / "README.md").write_text("demo\n", encoding="utf-8")
     workspace = WorkspaceContext.build(tmp_path)
     store = SessionStore(tmp_path / ".pico" / "sessions")
-    return Pico(
-        model_client=ScriptedModelClient(outputs),
-        workspace=workspace,
-        session_store=store,
-        approval_policy="auto",
-        **kwargs,
+    return lock_scripted_provider_profile(
+        Pico(
+            model_client=scripted_client(outputs),
+            workspace=workspace,
+            session_store=store,
+            approval_policy="auto",
+            **kwargs,
+        )
     )
 
 
@@ -30,8 +38,8 @@ def test_engine_streams_a_real_session_with_tool_artifacts(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            '<tool name="write_file" path="notes/result.txt"><content>ok\n</content></tool>',
-            "<final>Wrote it.</final>",
+            tool("write_file", path="notes/result.txt", content="ok\n"),
+            final("Wrote it."),
         ],
     )
 
@@ -40,11 +48,8 @@ def test_engine_streams_a_real_session_with_tool_artifacts(tmp_path):
     assert [event["type"] for event in events] == [
         "turn_started",
         "model_requested",
-        "model_parsed",
         "tool_call",
         "tool_result",
-        "model_requested",
-        "model_parsed",
         "final",
         "turn_finished",
     ]
@@ -52,11 +57,10 @@ def test_engine_streams_a_real_session_with_tool_artifacts(tmp_path):
     assert (tmp_path / "notes" / "result.txt").read_text(encoding="utf-8") == "ok\n"
 
     persisted_events = read_jsonl(agent.session_event_bus.path)
-    assert [event["event"] for event in persisted_events][-6:] == [
-        "tool_finished",
-        "context_usage_recorded",
-        "model_requested",
-        "model_parsed",
+    persisted_names = [event["event"] for event in persisted_events]
+    assert persisted_names.count("model_exchange") == 3
+    assert persisted_names[-3:] == [
+        "model_exchange",
         "assistant_message",
         "turn_finished",
     ]
@@ -115,13 +119,11 @@ def test_engine_executes_multiple_tool_calls_from_one_model_response(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            "\n".join(
-                [
-                    '<tool>{"name":"read_file","args":{"path":"README.md","start":1,"end":1}}</tool>',
-                    '<tool>{"name":"list_files","args":{"path":"."}}</tool>',
-                ]
+            tools(
+                tool("read_file", path="README.md", start=1, end=1),
+                tool("list_files", path="."),
             ),
-            "<final>Both tools ran.</final>",
+            final("Both tools ran."),
         ],
     )
 
@@ -148,7 +150,7 @@ def test_empty_response_provider_error_is_retried_once_before_failing(tmp_path):
                 code="empty_response",
                 retryable=False,
             ),
-            "<final>Recovered.</final>",
+            final("Recovered."),
         ],
     )
 
@@ -166,9 +168,14 @@ def test_worker_notification_drained_during_turn_is_streamed(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            '<tool>{"name":"agent","args":{"description":"Inspect","prompt":"Read README","subagent_type":"Explore"}}</tool>',
-            "<final>Child done.</final>",
-            "<final>Parent done.</final>",
+            tool(
+                "agent",
+                description="Inspect",
+                prompt="Read README",
+                subagent_type="Explore",
+            ),
+            final("Child done."),
+            final("Parent done."),
         ],
         max_steps=3,
     )
@@ -183,15 +190,15 @@ def test_worker_notification_drained_during_turn_is_streamed(tmp_path):
 
 
 def test_step_limit_triggers_graceful_summary_when_model_complies(tmp_path):
-    """达到 step_limit 时，runtime 让模型用剩余预算给一个 <final> 总结，
+    """达到 step_limit 时，runtime 让模型用剩余预算给一个结构化最终总结，
     用户看到的就不再是冷冰冰的 'Stopped after reaching the step limit'。"""
     agent = build_agent(
         tmp_path,
         [
             # 1 步用掉 max_steps=1，触发 step_limit
-            '<tool>{"name":"list_files","args":{"path":"."}}</tool>',
+            tool("list_files", path="."),
             # step_limit 总结调用——模型遵守了 notice 给 final
-            "<final>已经列出文件。还差读取具体内容。继续请用 /resume。</final>",
+            final("已经列出文件。还差读取具体内容。继续请用 /resume。"),
         ],
         max_steps=1,
     )
@@ -206,13 +213,12 @@ def test_step_limit_triggers_graceful_summary_when_model_complies(tmp_path):
 
 
 def test_step_limit_falls_back_to_cold_message_when_summary_fails(tmp_path):
-    """模型如果连总结都返回 retry，不能死循环，要 fall back 到老消息。"""
+    """模型如果返回空总结，不能死循环，要 fall back 到老消息。"""
     agent = build_agent(
         tmp_path,
         [
-            '<tool>{"name":"list_files","args":{"path":"."}}</tool>',
-            # step_limit 总结时模型乱说话（没 <tool> 也没 <final>），解析为 retry
-            "I cannot comply.",
+            tool("list_files", path="."),
+            final(""),
         ],
         max_steps=1,
     )

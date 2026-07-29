@@ -1,0 +1,18 @@
+diff --git a/logslice/cli.py b/logslice/cli.py
+--- a/logslice/cli.py
++++ b/logslice/cli.py
+@@ -33,7 +33,11 @@
+ def main(argv: Sequence[str] | None = None) -> int:
+     """Render one record and return a conventional process status."""
+-
+-    args = build_parser().parse_args(argv)
+-    record = record_from_args(args)
++
++    parser = build_parser()
++    args = parser.parse_args(argv)
++    try:
++        record = record_from_args(args)
++    except ValueError as error:
++        parser.error(f"invalid timestamp: {error}")
+     print(format_record(record))
+     return 0

@@ -1,0 +1,1696 @@
+{
+  "schema_version": "pico-eval-freeze-v2",
+  "artifact_contract": {
+    "version": "pico-evaluation-artifact-v1",
+    "path": "pico/evaluation/contracts.py",
+    "sha256": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "hash_basis": "git_blob_bytes",
+    "source_ticket": "EVAL-001",
+    "source_head_sha": "96add601b99cb347b7a4aa509a57e25ad4a8d073",
+    "integration_sha": "3923a71b64d2ac9f4a4304a4e7dc88a35b94ad0d"
+  },
+  "native_contract": {
+    "version": "pico-provider-native-contract-v1",
+    "path": "pico/providers/contracts.py",
+    "sha256": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "hash_basis": "git_blob_bytes",
+    "source_ticket": "TOOL-010",
+    "source_head_sha": "387216cf4393edc34bce30e7facfa2dbc35cc524",
+    "integration_sha": "87b943a81febbecc15b40ab1d81e002208383abd"
+  },
+  "tool_schema": {
+    "version": "pico-tool-schema-catalog-v1",
+    "sha256": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "hash_basis": "canonical_json_sort_keys_compact_ascii",
+    "entry_count": 15,
+    "legacy_runtime_tool_signature": "e55a7c4d9bb3988c0d1a2701c15f8d95735ea0de077e0c6489e4b068ec916328",
+    "source_ticket": "TOOL-011",
+    "source_head_sha": "e08cb3e8c93e6eb63df4118ce0f065f4dd0bcc48",
+    "integration_sha": "0c0182e945abacbc273395a4a0fdea5349f64a5b"
+  },
+  "sdk_transport_decision": {
+    "version": "pico-sdk-transport-decision-v1",
+    "path": "F:/dev/llm/pico-eval-artifacts/native-sdk-spike/decision.json",
+    "sha256": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "hash_basis": "file_bytes",
+    "decision_markdown": {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-sdk-spike/decision.md",
+      "sha256": "e091e6c38095156ab06eb428dfdcabc5a481093b5fdc5dfab1b0c3cbdd06e155"
+    },
+    "dialects": {
+      "openai-responses": {
+        "transport": "typed_sdk",
+        "sdk_package": "openai",
+        "sdk_version": "2.46.0",
+        "tested_profile_status": "dashscope-o protocol-ineligible: thinking mode rejects tool_choice=required"
+      },
+      "anthropic-messages": {
+        "transport": "sdk_raw_response",
+        "sdk_package": "anthropic",
+        "sdk_version": "0.117.0",
+        "tested_profile_status": "dashscope-a and deepseek completed 3/3 native roundtrips"
+      }
+    },
+    "raw_http_selections": [],
+    "sdk_tool_or_agent_runner_allowed": false,
+    "sdk_managed_pico_tool_execution_allowed": false,
+    "final_evaluation_model_selected": false,
+    "effectiveness_conclusion": "not_evaluated",
+    "production_dependency_lock_owner": "TOOL-019-D",
+    "source_ticket": "TOOL-013-S",
+    "source_head_sha": "1347952a3d6af33714074b5d837a11685fde67a3",
+    "integration_sha": "b76d5332343a5273c676b707d9077087a9fbf6db"
+  },
+  "sdk_dependency_lock": {
+    "version": "pico-sdk-dependency-lock-v1",
+    "path": "uv.lock",
+    "sha256": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+    "hash_basis": "git_blob_bytes",
+    "project_path": "pyproject.toml",
+    "project_sha256": "441af16eb3f3797fc541381ff296971ba7c6a45d4fcd1351df0aa4a6f123ca6e",
+    "provider_extra": "providers",
+    "packages": {
+      "openai": "2.46.0",
+      "anthropic": "0.117.0",
+      "httpx": "0.28.1",
+      "socksio": "1.0.0"
+    },
+    "sdk_max_retries": 0,
+    "lazy_imports": true,
+    "sdk_tool_or_agent_runner_allowed": false,
+    "sdk_managed_pico_tool_execution_allowed": false,
+    "source_ticket": "TOOL-019-D",
+    "source_head_sha": "4f1a74a67a02f84ad6c4cbe14b318790d2754177",
+    "integration_sha": "74c05e74b99ff303287ea60525fc4d5e99ffdab7"
+  },
+  "native_deterministic_gate": {
+    "version": "pico-native-deterministic-gate-w5r2-v1",
+    "status": "complete",
+    "sha256": "2fc1ebbe4d64c5be80e7fe063584915f12aabf3a8f8c08796d2cf009e94849a5",
+    "hash_basis": "gate_report_file_bytes",
+    "run_snapshot_sha": "dd8a677782f90c749a422ee066daa1afcb36c516",
+    "run_snapshot_approved_for_live_conformance": true,
+    "artifact": {
+      "root": "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate-w5r2/W5R2-TOOL-042-G-R2-01",
+      "report_sha256": "2fc1ebbe4d64c5be80e7fe063584915f12aabf3a8f8c08796d2cf009e94849a5",
+      "manifest_sha256": "1c859f11adebceaa13115c7a9947d19de23014f9abbfc1d47bdaf02b0494620f"
+    },
+    "gate_result": {
+      "all_required_commands_exit_zero": true,
+      "ruff": "passed",
+      "protected": "27 passed",
+      "deterministic": "92 passed",
+      "full_suite": "487 passed, 2 pre-existing live-provider opt-in skipped",
+      "architecture_violations": 0,
+      "text_envelope_seen_count": 0,
+      "call_id_result_match": 1.0,
+      "batch_completeness": 1.0,
+      "unknown_block_loss_count": 0,
+      "safety_chain_bypass_count": 0,
+      "sdk_tool_or_agent_runner_used": false,
+      "context_v2_binding_verified": true
+    },
+    "source_ticket": "TOOL-042-G-R2"
+  },
+  "native_conformance_preflight": {
+    "version": "pico-native-provider-preflight-gate-w6r2-v1",
+    "status": "complete",
+    "run_snapshot_approved_for_live_conformance": true,
+    "run_snapshot_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+    "source": {
+      "sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+      "tree": "158cd2abde04d20e0544c4615db3cb0676f8fc83"
+    },
+    "dependency_commits": [
+      {
+        "ticket_id": "TOOL-055-E",
+        "original": "50f728ba824a142ba0d64a5f820c80bbc1942496",
+        "applied": "28a200055a6595392a0d67065fb774ec12fcac12",
+        "stable_patch_id": "86f900fa077405162cfa49435551f500cfb2c344"
+      },
+      {
+        "ticket_id": "EVAL-056-H",
+        "original": "c7a4a16cd124349448952063894f81d18c0b50c9",
+        "applied": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+        "stable_patch_id": "cb8100e853515f99195e7a37f58cf690d6dc46f5"
+      }
+    ],
+    "bindings": {
+      "cases": {
+        "path": "benchmarks/v3/native-provider/cases.json",
+        "git_blob_oid": "f513f6e15c521104b12fe348dc280f73624acd56",
+        "canonical_checkout_sha256": "92f746b113a88ceb652e4e8ec651021b1358d9922ab91c0dad34e62c0068b9e3",
+        "git_blob_sha256": "b20cdf446a21e20db035213c9308b47daa252cb9b0aadbebf7ec5747750e9f4d"
+      },
+      "evaluator": {
+        "path": "pico/evaluation/native_provider.py",
+        "git_blob_oid": "244bf13a0c77cea907d7c6bc98afbf5d3299670b",
+        "git_blob_sha256": "777313f0966224b82071ceff4d7acad633031fcde87eb63a97e5c468c89f0eec"
+      },
+      "production_runner": {
+        "path": "pico/evaluation/native_provider_live.py",
+        "git_blob_oid": "cfd9a0c654e0200ea9ca437bd8c3fd1a92d58587",
+        "git_blob_sha256": "35e4573b5275015eb6caabde6a8c6baa9a17740742b5aa155baf93fb21de56e8"
+      },
+      "formal_cli": {
+        "path": "scripts/run_native_provider_conformance.py",
+        "git_blob_oid": "d615afafd7cbb02d75e571a06c82b7e6d16a9821",
+        "git_blob_sha256": "834f87bc9ee04fac6c4247aab7f352c6d6f21bc92da3c4121bb2303ce6f6a95d"
+      },
+      "public_profile_builder": {
+        "module_git_blob_sha256": "186c5cd950f7418c8a9fb0f80b3f06ce190f3b0ab1e5b54a4d042159ee991be5",
+        "cli_git_blob_sha256": "58e64b5321aee07b585fb78548434e4f7b7dbab59fd0d8452e34b7c599785005"
+      },
+      "bundle_schema_version": "pico-native-provider-conformance-bundle-v2",
+      "public_profiles": [
+        {
+          "provider": "dashscope-o",
+          "status": "bound",
+          "profile_id": "sha256:41ebb321c6332867f0bb020621b7e1c17f8c60430374c37c3a670c916326ee70",
+          "canonical_sha256": "499655acd72b0c10f0bd0a938a032060fb7a5b776e74e478742078da1a137331",
+          "wire_dialect": "openai-responses"
+        },
+        {
+          "provider": "dashscope-a",
+          "status": "bound",
+          "profile_id": "sha256:fccbdcb07f4c3fff931d5c7540673ca8aafc1e57a8389b5042a377916d670fd9",
+          "canonical_sha256": "3ec252354cae811672d4af618be3cb2aa1911f6e766ae577db56189712a2574f",
+          "wire_dialect": "anthropic-messages"
+        },
+        {
+          "provider": "deepseek",
+          "status": "bound",
+          "profile_id": "sha256:d7f29754016394922b48edb3ac4211d3920c333e386e7cf4d76f0ff178beb4a5",
+          "canonical_sha256": "5e4a4c3af56f492ee066835b8657748ec430cc6f11f8f0aebe39d2ea4cfac2e6",
+          "wire_dialect": "anthropic-messages"
+        }
+      ],
+      "sdk_transport_decision_sha256": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+      "sdk_dependency_lock_sha256": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+      "sdk_versions": {
+        "openai": "2.46.0",
+        "anthropic": "0.117.0"
+      },
+      "sdk_max_retries": 0,
+      "reviewer_handoff_sha256": "ccffc5d5c4450afe2e2d994ecc8dd37e4b9f709a6b6a740c2a662d917ccc893f",
+      "reviewer_audit_report_sha256": "0726c7daf6023322b7b1c3e3abfdab20209128c91d7940f915bec6df42f26482",
+      "reviewer_audit_inventory_sha256": "7fa96fdcfa46dc1ed0f9d6a6e354614c5116a94b8963e27c057eace507046100",
+      "read_only_verifier_sha256": "a9cc6a85be6287bbf3fbd2c2eb0d16efc7f898a2140da01aa4f0edb47e16e27c",
+      "three_repetition_generator_sha256": "96d109548b0a7e1b770c626928519803602e6a5269848c66515f71cd7f7e5c81"
+    },
+    "gate_result": {
+      "canonical_environment": "Ubuntu 26.04 LTS WSL2 / Python 3.12.13",
+      "ruff": "passed",
+      "targeted": "36 passed",
+      "protected": "27 passed",
+      "deterministic": "97 passed",
+      "full_suite": "516 passed, 2 pre-existing live-provider opt-in skipped",
+      "bound_profile_count": 3,
+      "dialect_case_repetition_matrix": "8 cases x 3 repetitions x 2 dialects",
+      "passing_rows_per_dialect": "24/24",
+      "call_id_result_match_per_dialect": "36/36",
+      "batch_completeness_per_dialect": "33/33",
+      "safety_chain_completeness_per_dialect": "36/36",
+      "negative_matrix_controls": "3/3 rejected",
+      "inventory_verified": "25/25",
+      "credential_scan_match_count": 0,
+      "live_provider_http_attempt_count": 0,
+      "all_required_tests_passed": true
+    },
+    "artifact": {
+      "root": "F:/dev/llm/pico-eval-artifacts/native-provider-preflight/W6R2-TOOL-058-G-01",
+      "gate_report_sha256": "7d59bbfdce5eccc3ebc70691abb68b65e0c4536b71fd8158d0fd119dbf51afd9",
+      "inventory_sha256": "4e8df2eb9beb1cd8174b32442d936650df4d9b0806d5d13953e8134507055705",
+      "inventory_file_count": 25,
+      "artifact_manifest_sha256": "ef90bbc59ff7d92d78cc725594d1adecdbf0c3fba47ad9cc3b43ffb263a5ba9a",
+      "bundle_verification_sha256": "a081da2f4597b9e4f776a418769cfad76cc148ead31ee6e511607cdaae3a08ee",
+      "profile_bindings_sha256": "4acbc76c1c34ecfeb85cc9b1e9eacd5a5a29c4d25f5d30cd4012073fcb141035"
+    },
+    "source_ticket": "TOOL-058-G",
+    "source_handoff_sha256": "5dcbbcc456f1d917c4bbb8708495ef1ab38d9b7f5d5268f62b5bb7d3524d3df8",
+    "source_proposal": {
+      "path": ".codex/eval/proposals/TOOL-058-G.freeze.json",
+      "sha256": "61f697873cdd87d369bb743f28c8ad69a4af086cb72bc6a3c0dfa48c8bec728d"
+    }
+  },
+  "native_scripted_fixtures": {
+    "version": "pico-scripted-native-model-client-v1",
+    "path": "pico/testing.py",
+    "sha256": "ff2a8febe36730b6c18d096312f9455dce0793c9d1f975ffb941c726706904cf",
+    "hash_basis": "git_blob_bytes",
+    "test_path": "tests/test_native_model_fixtures.py",
+    "test_sha256": "86bc82039bafba271f634f709f712be6fde00df2789dc710e27bc5084199ad04",
+    "coverage": ["structured_final", "single_call", "multi_call", "protocol_error", "opaque_continuation", "scripted_exception", "exhaustion"],
+    "source_ticket": "TOOL-015",
+    "source_head_sha": "69369dfadb3165108d2cb11bc28076dce73e18f7",
+    "integration_sha": "d6991e3d0a47ba86c7f0662c47f0166d026089a6"
+  },
+  "provider_selection": {
+    "version": "pico-native-provider-selection-gate-n1-v1",
+    "gate": "Gate N1",
+    "status": "blocked",
+    "selection_status": "none",
+    "eligible_profile_count": 0,
+    "selected_profile": null,
+    "complete_conformance_evidence_observed": false,
+    "protocol_metrics_status": "not_computable",
+    "reason": "No candidate reached HTTP or produced complete live native conformance evidence; no profile identity is frozen for formal online evaluation.",
+    "selection_artifact": {
+      "path": "benchmarks/v3/native-provider/selection.json",
+      "sha256": "e51ec2b3fd45c6f22f87e1db619c1c2cfc3fdc2304821ca92540fd24479f71df",
+      "hash_basis": "git_blob_bytes"
+    },
+    "summary_artifacts": [
+      {
+        "path": "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/summary.json",
+        "sha256": "f291706780d48f4d9c2a1ee113992f5bf7bcbe981f2ee6b9642b6203960e0368"
+      },
+      {
+        "path": "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/summary.md",
+        "sha256": "3d9b7d7a9d3778b9beacd8208061fe6949ee40606d3df7a5879ae5aa33188186"
+      }
+    ],
+    "evidence_index": [
+      {
+        "profile": "dashscope-o",
+        "handoff_sha256": "af2f24021009fa1b9ea9a294d6226ca3dba3316f595f9542d0ca45b554a4168e",
+        "manifest_sha256": "83e6c784cfcfe18354238f8238adf01f75ec57cb9ec0eff6c4255847d3d87bbd",
+        "rows_sha256": "641cfe9550e79441b064df1829debeb69c257e343a616d687fa75d8e19f511cb",
+        "complete_conformance_sha256": null
+      },
+      {
+        "profile": "dashscope-a",
+        "handoff_sha256": "66cfb9a8a069075e313894cea600ba98f931d3a74ecd1d05c9d8d71afb6f75e7",
+        "manifest_sha256": "c4cde64ac86c344f3f4589507b02e2c96f9b044a6ffad3013759cb2df73641d1",
+        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "complete_conformance_sha256": null
+      },
+      {
+        "profile": "deepseek",
+        "handoff_sha256": "1f4e84cca8073d9708c968610e1d29c61f91d36710da88c1591706fd9428ed17",
+        "manifest_sha256": "9c806284b39051b2b7adfd30519798741a58c519434926961443f64cdee78ddb",
+        "rows_sha256": "b5f389e0f2e253094475202b4a581a244aca00e09d52f0ef7107af665d8ef977",
+        "complete_conformance_sha256": null
+      }
+    ],
+    "frozen_inputs": {
+      "formal_freeze_before_promotion_sha256": "538f7644f91611abcbe4822a497490e0bb6d4ffa0d39286e871c92afdd81e70e",
+      "w5r2_handoff_sha256": "101e6006e0d67c693ebe439078cbbb82779810f54dee8a3cce51256c38a44f95",
+      "cases_sha256": "92f746b113a88ceb652e4e8ec651021b1358d9922ab91c0dad34e62c0068b9e3",
+      "native_gate_handoff_sha256": "c4b0dbd9549b33397e6377d421fd59193619cf655b10a3c78185ef34abdf3c1e",
+      "evaluator_handoff_sha256": "5eef3b00058eb07ec33527ff6e33ba628dea5ec27967a0ae0caf6b60e1cb2936"
+    },
+    "evaluation_runs": {
+      "live_native_conformance": false,
+      "formal_effectiveness": false,
+      "auto_dream": false,
+      "local_task": false,
+      "resume": false
+    },
+    "remediation_ownership_request": {
+      "owner": "new scoped evaluator/runner implementation and run tickets",
+      "request": "Freeze a reviewed compliant live runner plugin, complete sanitized public profile artifacts, and a corrected runner invocation; rerun fresh candidate shards against unchanged frozen cases, then rerun TOOL-050-S."
+    },
+    "source_ticket": "TOOL-050-S",
+    "source_proposal": {
+      "path": ".codex/eval/proposals/TOOL-050-S.freeze.json",
+      "sha256": "2d2a272378e3fa10c63ed36c39212fa931d7d8bfb784b3469341fa4fc83e389e"
+    }
+  },
+  "provider_selection_w6r2": {
+    "version": "pico-native-provider-selection-gate-n1-w6r2-v1",
+    "gate": "Gate N1",
+    "status": "passed",
+    "selection_status": "selected",
+    "eligible_profile_count": 1,
+    "selected_profile": {
+      "name": "dashscope-o",
+      "profile_id": "sha256:41ebb321c6332867f0bb020621b7e1c17f8c60430374c37c3a670c916326ee70",
+      "public_manifest_sha256": "499655acd72b0c10f0bd0a938a032060fb7a5b776e74e478742078da1a137331",
+      "model": "qwen3.6-plus",
+      "base_url_fingerprint": "sha256:0568e2eff482ec7379afab1c75b4cc21121e6a5f0b58b293b957c13199d30bc8",
+      "wire_dialect": "openai-responses",
+      "adapter_mode": "official-sdk-transport",
+      "sdk": {
+        "package": "openai",
+        "version": "2.46.0"
+      },
+      "capabilities": {
+        "native_tools": true,
+        "opaque_continuation_support": false,
+        "parallel_tool_calls": false,
+        "reasoning_support": false,
+        "strict_tool_schema": false,
+        "thinking_support": false
+      },
+      "stream": false,
+      "parallel_tool_execution": false,
+      "sdk_max_retries": 0,
+      "pico_provider_attempts": 1,
+      "conformance_bundle_sha256": "8d6c4061d9960e4670f221f8507618cb2bacb81f2ebf50f3d1a9bfb279d813f2",
+      "conformance_bundle_hash_basis": "sha256 of canonical JSON inventory mapping the four artifact filenames to their file-byte SHA-256 values"
+    },
+    "complete_conformance_evidence_observed": true,
+    "protocol_metrics_status": "computable",
+    "reason": "dashscope-o is the only profile passing every independently reconstructed Gate N1 hard requirement.",
+    "selection_artifact": {
+      "path": "benchmarks/v3/native-provider/selection-w6r2.json",
+      "sha256": "e94483ef222373139b9f07173632d579416056248431deaafcf0bcaf0c7a1278",
+      "hash_basis": "file_bytes"
+    },
+    "selection_artifacts": {
+      "summary_json_sha256": "36a0dc14e86692ad32c5052633675ad4fbe107b2f9134a4ae150301d0f1a2caf",
+      "summary_markdown_sha256": "c3f35b09cdc4c8b3fd764957d2c3909513d5a8199b4a547216d1790c1d044d81",
+      "verification_sha256": "3644a4d3d95e014c1300ea04e7ec5a96fbbc7b8f62c5ef6f780e42b8492b432d",
+      "inventory_sha256": "8521b66b2614a51872d721e62869ccd942e6d903dbf20924d677bd87ab357310"
+    },
+    "evidence_index": [
+      {
+        "profile": "dashscope-o",
+        "handoff_sha256": "52d3b226d233b697f505bc2c4b8649511f3afd7dc379e3b10211dd85ab1958ac",
+        "manifest_sha256": "d8e984e1d3dd2b917d2adfb27cb610dbe6ab6b14bd8657f02812d84e69a199e4",
+        "rows_sha256": "c95dae0f8c3a90bc46e22e9f07dfce53784e43557f0fdf960bc9f5ba1fa92da3",
+        "evidence_index_sha256": "2cabd5d8dd94a1b50be83cfff800fcc1bba90203e9d3a58a25da17bc81fee1d2",
+        "summary_sha256": "b9bfce582704216ba6f7ff37b68234c8292eee625da2e9cadb425c6b02ef3718",
+        "complete_conformance_sha256": "8d6c4061d9960e4670f221f8507618cb2bacb81f2ebf50f3d1a9bfb279d813f2"
+      },
+      {
+        "profile": "dashscope-a",
+        "handoff_sha256": "bb1dae84b0ed3ba267e2c7623fb6eb48640214fb8ba45feb5481d8be4c6d2000",
+        "manifest_sha256": "99c97102fa46f17bc0a120757eca0328401595d31af38a00c4b6dd2213d0b863",
+        "rows_sha256": "dfaf6efe30718d69ebd27f918f6f40978d8fb58af9454bbc702beabf86f09089",
+        "evidence_index_sha256": "6680bc2f0e3e4c29fa5fc804f33d2bd8ee1be6797fc9de3d0c75060b1806819e",
+        "summary_sha256": "e187bea1aa8a25928e944f9b55dd46392b68540a6f191ba31fdf76026d3b06d7",
+        "complete_conformance_sha256": "3120b78515671eb875f40916f55e2e4c87f3e9f59b3cdc7fdf43bce5fce49413"
+      },
+      {
+        "profile": "deepseek",
+        "handoff_sha256": "eec6ee22918fb50adfde7df7a0a7c39eb3d85894a7e2c627a57a59b964202763",
+        "manifest_sha256": "7b7e903c9ba01ec3c51e99c7ef75faae26f761e7834da85e64116867338576cd",
+        "rows_sha256": "86cd167db8a9054a94bef435517a5e2cbeec7484407c6a961d6904a839235fe4",
+        "evidence_index_sha256": "b7d316bc458c72271910ce337d00de0919aecc953adc98bb2d6af413982671aa",
+        "summary_sha256": "56dcedae55b21647bd0b278ed42de3c473b83f8954939576e51411b496db253f",
+        "complete_conformance_sha256": "330124709c754edd01b7bdcba6968d0f072a45e49ee4823569dc021d73febe3b"
+      }
+    ],
+    "frozen_inputs": {
+      "wave_base_sha": "6b4fa94948888b7c95dfbe4cd0134205356decba",
+      "run_snapshot_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+      "run_snapshot_tree": "158cd2abde04d20e0544c4615db3cb0676f8fc83",
+      "formal_freeze_before_selection_sha256": "546893c11eeb2c78e473257e6bbb166cb1c5b904d22289a34cdb57865034b7ce",
+      "tool_058_g_handoff_sha256": "5dcbbcc456f1d917c4bbb8708495ef1ab38d9b7f5d5268f62b5bb7d3524d3df8",
+      "cases_git_blob_oid": "f513f6e15c521104b12fe348dc280f73624acd56",
+      "artifact_contract_sha256": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+      "native_contract_sha256": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+      "tool_schema_sha256": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+      "sdk_transport_decision_sha256": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+      "sdk_dependency_lock_sha256": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+      "native_deterministic_gate_sha256": "2fc1ebbe4d64c5be80e7fe063584915f12aabf3a8f8c08796d2cf009e94849a5"
+    },
+    "human_smoke": {
+      "profile": "dashscope-o",
+      "profile_id": "sha256:41ebb321c6332867f0bb020621b7e1c17f8c60430374c37c3a670c916326ee70",
+      "source_commit": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+      "status": "not_run",
+      "authorization_required": true
+    },
+    "evaluation_runs": {
+      "formal_effectiveness": false,
+      "human_smoke": false,
+      "resume": false,
+      "w7_started": false
+    },
+    "source_ticket": "TOOL-050-S-R1",
+    "source_handoff_sha256": "ada774641c62e871b00181090f1983a68e90d113380f0057f3f737bcf298c072",
+    "source_proposal": {
+      "path": ".codex/eval/proposals/TOOL-050-S-R1.freeze.json",
+      "sha256": "599c7f1466f81514a6242c36bb4c764afddf29d20ef19755af720ff72bb0e699"
+    },
+    "prior_provider_selection_preserved": true
+  },
+  "native_provider_oracle_v2": {
+    "version": "pico-native-provider-oracle-v2",
+    "status": "complete",
+    "cases": {
+      "path": "benchmarks/v3/native-provider/cases-v2.json",
+      "schema_version": "pico-native-provider-cases-v2",
+      "sha256": "dca7a585c2264a12187dd00344c63c225b966937bf9df8a53ed5a5341417defc",
+      "hash_basis": "UTF-8 file bytes"
+    },
+    "responsibility_boundary": {
+      "safety_owner": "runtime_snapshot",
+      "execution_denominator": "calls entering runtime.run_tool",
+      "pre_runtime_rejection_excluded": true,
+      "execute_completed_means": "tool implementation returned",
+      "operation_outcome_fields": [
+        "tool_status",
+        "tool_error_code"
+      ],
+      "runtime_chain_violation_effect": "block_source_snapshot",
+      "profile_metrics": [
+        "native_wire",
+        "call_result_cardinality",
+        "batch_completeness_if_observed",
+        "opaque_continuation_roundtrip",
+        "retry_counts",
+        "text_protocol_envelope",
+        "unknown_block_loss"
+      ],
+      "stochastic_invalid_args_or_multi_call_required": false
+    },
+    "historical_conformance": {
+      "dashscope-o": {
+        "profile_status_v2": "eligible",
+        "call_id_result_match": "50/50",
+        "batch_completeness": "35/35",
+        "runtime_execution_chains": "50/50",
+        "pre_runtime_rejections": 0
+      },
+      "dashscope-a": {
+        "profile_status_v2": "eligible",
+        "call_id_result_match": "85/85",
+        "batch_completeness": "76/76",
+        "runtime_execution_chains": "83/83",
+        "pre_runtime_rejections": 2
+      },
+      "historical_adjudication_only": true,
+      "reselection_or_promotion_permitted": false
+    },
+    "historical_human_smoke": {
+      "dashscope-o": "failed",
+      "dashscope-a": "semantic_pass_oracle_false_negative",
+      "formal_human_smoke_run": false
+    },
+    "artifact": {
+      "root": "F:/dev/llm/pico-eval-artifacts/native-provider-oracle-v2/W6R3-EVAL-059-O-01",
+      "conformance_adjudication_sha256": "d78bec13744cff83edda12e67e5fc151765d0ce41211b381e56778287bcad291",
+      "human_smoke_adjudication_sha256": "fbfe414f7c87218608754b4e807cc114bd2a90b06d8fb622d138b4942c0ed7f9",
+      "manifest_sha256": "87fa6898bfb7297a4f0244e0e177c1f66e4090b1c43ee544ce59309dc12806b7",
+      "inventory_sha256": "7cb7fa26e3c4347b3461123e925197c7d44f06b22a5cfc56adda49ab51a63138"
+    },
+    "v1_immutability": {
+      "cases_sha256": "92f746b113a88ceb652e4e8ec651021b1358d9922ab91c0dad34e62c0068b9e3",
+      "cases_git_blob_oid": "f513f6e15c521104b12fe348dc280f73624acd56",
+      "selection_w6r2_working_tree_sha256": "2d9251860395276ab03d623b7fee3d7477140d74d7ee6e8f35a008375b79a6cc",
+      "selection_w6r2_git_blob_oid": "6649c651c09e7e65936dadea0efee901e6f12d61",
+      "dashscope_o_rows_sha256": "c95dae0f8c3a90bc46e22e9f07dfce53784e43557f0fdf960bc9f5ba1fa92da3",
+      "dashscope_a_rows_sha256": "dfaf6efe30718d69ebd27f918f6f40978d8fb58af9454bbc702beabf86f09089",
+      "mutated": false
+    },
+    "execution_constraints": {
+      "provider_http_attempts": 0,
+      "human_smoke_run": false,
+      "profile_reselection_run": false,
+      "formal_effectiveness_run": false,
+      "w6r4_started": false,
+      "w7_started": false
+    },
+    "source_ticket": "EVAL-059-O",
+    "source_worker_head": "a642a7d223d392b34f78692fa2bffe0feb5c5b4e",
+    "source_canonical_commit": "b90fb5297aceef3eb137ae8104888974e96e7141",
+    "source_handoff_sha256": "849b687163b77e8957529d72e0111edb08625a76a1276c87799e68b595bef00f",
+    "source_proposal": {
+      "path": ".codex/eval/proposals/EVAL-059-O.freeze.json",
+      "sha256": "12a6f9b3ae756e6f4f6a2ae380f2926252bb814400a0c994062af3f68f4e9cc9"
+    }
+  },
+  "native_human_smoke_v2": {
+    "version": "pico-native-human-smoke-v2",
+    "status": "frozen_but_audit_blocked",
+    "manifest": {
+      "path": "benchmarks/v3/native-provider/human-smoke-v2.json",
+      "schema_version": "pico-native-human-smoke-v2",
+      "sha256": "5a73a009a5c367db7946af487609a48024605682026d2c9a5f758017883f5853",
+      "single_source_for": [
+        "prompt",
+        "fixture",
+        "expected_postcondition",
+        "verifier"
+      ]
+    },
+    "runner": {
+      "path": "scripts/run_v3_native_human_smoke.py",
+      "sha256": "69e9001e6090c21d6e2701e54ce908cfe514036386d5b0dfee78217559e9f20c",
+      "default": "fail_closed",
+      "fake_provider": "no HTTP",
+      "authorized_live": "requires explicit flag, frozen public profile, provider name, and config before client construction"
+    },
+    "tests": {
+      "path": "tests/test_v3_native_human_smoke.py",
+      "sha256": "2acecaa74c8d6dad87171262c715f93c27dd7222cbcb1b5e5ef22968058e7c62",
+      "result": "6 passed; all fake-provider only"
+    },
+    "scenarios": [
+      "HSMOKE-V2-A",
+      "HSMOKE-V2-B"
+    ],
+    "historical_adjudication": {
+      "source_ticket": "EVAL-059-O",
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-oracle-v2/W6R3-EVAL-059-O-01/human-smoke-adjudication.json",
+      "sha256": "fbfe414f7c87218608754b4e807cc114bd2a90b06d8fb622d138b4942c0ed7f9",
+      "read_only": true
+    },
+    "fake_provider_adjudication": {
+      "root": "F:/dev/llm/pico-eval-artifacts/native-provider-human-smoke-adjudication/W6R3-EVAL-059-H-01-correction",
+      "summary_sha256": "041e5178fd397f5247103b2da2a53a6a61a746cbe4584f6af5522d64b1130999",
+      "status": "PASS",
+      "provider_http_attempts": 0,
+      "sensitive_scan_hits": 0
+    },
+    "not_a_formal_human_smoke": true,
+    "authorized_live_not_run": true,
+    "authorized_live_operational": false,
+    "audit_blocker": "AUDIT-059-A-P1-003: verifier binds future live evidence to fake-provider call IDs",
+    "profile_reselection_run": false,
+    "w6r4_started": false,
+    "w7_started": false,
+    "source_ticket": "EVAL-059-H",
+    "source_worker_head": "0d637dfa5d23e1ebcd28555abce979d900b60218",
+    "source_canonical_commit": "f321f064a1a146bcbf64904ee59f0bb863f118d4",
+    "source_handoff_sha256": "456d89a6d81b909551b9e687a70d48625d0fd814bbbbd519b9fd347b0c45f123",
+    "source_proposal": {
+      "path": ".codex/eval/proposals/EVAL-059-H.freeze.json",
+      "sha256": "4457fb73dff6391622322b0521db17fa4d39d12318bce7afabce1a448e0c9ab3"
+    }
+  },
+  "w6r3_recovery_audit": {
+    "version": "pico-w6r3-recovery-audit-v1",
+    "status": "needs_remediation",
+    "prior_status": "blocked",
+    "remediation_round": 1,
+    "source_integration_head_before_close_metadata": "8b0abb22e394206c6e03276a0bb71e309e7efa4b",
+    "source_integration_tree_before_close_metadata": "b48a6ebcbade67eb4984eef7c39497fd6a126acf",
+    "audit": {
+      "ticket": "AUDIT-059-A",
+      "instance_id": "W6R3-AUDIT-059-A-01",
+      "worker_head": "99b3052774721b1469b254abae665496f5c3678d",
+      "canonical_commit": "8b0abb22e394206c6e03276a0bb71e309e7efa4b",
+      "handoff_sha256": "659d898a96fab1514b6a78027f886fcefedcff859a2e29f22dc87e293ec06d5b",
+      "open_p1_findings": [
+        {
+          "id": "AUDIT-059-A-P1-001",
+          "classification": "multiround_context_loss_and_asymmetric_test_coverage"
+        },
+        {
+          "id": "AUDIT-059-A-P1-002",
+          "classification": "responses_call_result_cardinality_not_fail_closed"
+        },
+        {
+          "id": "AUDIT-059-A-P1-003",
+          "classification": "authorized_live_verifier_bound_to_fake_call_ids"
+        }
+      ]
+    },
+    "deterministic_gate": {
+      "ticket": "TOOL-059-G",
+      "status": "not_dispatched",
+      "start_condition_met": false,
+      "artifact_created": false,
+      "recovery_snapshot_approved": false
+    },
+    "preserved_snapshot": {
+      "run_snapshot_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+      "semantics": "Prior W6R2 runtime snapshot remains historical only; W6R3 did not approve a replacement recovery snapshot."
+    },
+    "execution_constraints": {
+      "provider_http_attempts": 0,
+      "human_smoke_run": false,
+      "profile_reselection_run": false,
+      "formal_effectiveness_run": false,
+      "resume_run": false,
+      "w6r4_started": false,
+      "w7_started": false
+    }
+  },
+  "w6r3_remediation_cycle_1": {
+    "version": "pico-w6r3-remediation-cycle-v1",
+    "status": "superseded_by_remediation_cycle_2",
+    "remediation_round": 1,
+    "resume_control_head": "647437bda4be4652f089b93ecf67d99914c45122",
+    "candidate_ref": "codex/w6r3-remediation-r1-candidate",
+    "candidate_semantics": "The commit containing the formal resume checkpoint is the common immutable remediation candidate.",
+    "review_candidate_ref": "codex/w6r3-remediation-r1-review-candidate",
+    "review_candidate_semantics": "The commit containing this formal review checkpoint is the immutable AUDIT-059-A revision-2 candidate.",
+    "source_integration_head_before_review_checkpoint": "909b62046a26bac333972dd102d1cf29937f3b55",
+    "frozen_inputs_preserved": {
+      "oracle_v2": true,
+      "human_smoke_v2_bytes": true,
+      "w6r2_cases_rows_selection_and_smoke": true
+    },
+    "historical_w6r3_attempt": {
+      "handoff_sha256": "827560dac112f1b813212699d91cca474b5a68dd07d7523d459b04e5f005676d",
+      "commit_map_sha256": "b57b018a73f045e6cdab668f6ec6a44e757aedbc32f6a4263c95a33bc12667bc",
+      "worker_bundle_sha256": "98474e9e8b3a6812b1bf0208bd8f32e9a500339771a1f9fbd7343118a1ed495e",
+      "canonical_tag_object_sha": "15d09fecc52af7b6e0750f044484b3c0b2cf4a02",
+      "canonical_tag_target": "9d35e7d22eca9ff89c7920dd3a7fa479185c75d5",
+      "preserved_immutable": true
+    },
+    "allowed_remediation": {
+      "TEST-059-C": "revision 2",
+      "EVAL-059-H": "revision 2 with new v3 paths",
+      "TOOL-059-A-R1": "new scoped Anthropic owner",
+      "TOOL-059-O": "revision 2 after TEST-059-C",
+      "AUDIT-059-A": "revision 2 read-only re-review"
+    },
+    "integrated_payloads": {
+      "TOOL-059-A-R1": {
+        "revision": 1,
+        "worker_head": "ab1a07621a12b7f3e2438f7643dd86322c571182",
+        "handoff_sha256": "d6956ba6821528fa64c0b8e425a1878ff079aaf996d1a0acedb12e2421b7004f",
+        "canonical_commit": "264e67df2380fc0218e28a3f7a5412dcdc065bc1",
+        "stable_patch_id": "334af7a422ce11662921c38763381e350736acb0"
+      },
+      "TEST-059-C": {
+        "revision": 2,
+        "worker_head": "9aa8e023db764788fdbba8a2f4b3765d8ea1cce4",
+        "handoff_sha256": "2f806adbce6e29e8161ef5039a9be0cc2fc74eb66fca3f17a4dcda054bf3e75e",
+        "canonical_commit": "e076fb0c616d900b3445f9ddb93103bdd2243a7b",
+        "stable_patch_id": "6af75813f31d2b16992f4d35b13e8637edd463e0"
+      },
+      "EVAL-059-H": {
+        "revision": 2,
+        "worker_head": "b583ac24687093aa8b296ccbb5400530546df11d",
+        "handoff_sha256": "1c4969142164ec6d0975e1bdbe331636082548dcfb0752b66b3be6e928c07973",
+        "canonical_commit": "532d3f7c2b8f40915dc8b64138f282a1fa0e9a25",
+        "stable_patch_id": "5b8d0b3f0f08d002dc91c68799a550e7755a0fc8"
+      },
+      "TOOL-059-O": {
+        "revision": 2,
+        "worker_head": "c8731f804bbb737ae19e84d582aafad32451923d",
+        "handoff_sha256": "ee3a39d1df80845304ceac5c6547f1aca7fb02c2911904c97f5e79901e78e48d",
+        "canonical_commit": "909b62046a26bac333972dd102d1cf29937f3b55",
+        "stable_patch_id": "469b0415da4e2e79b5013cc113b77caa6503ced2"
+      }
+    },
+    "audit_revision_2": {
+      "status": "accepted",
+      "worker_head": "f0d8acef98c0d2f770f5734d783808b6847e5e9d",
+      "canonical_commit": "24bebf8ac67095775856883db7b84a7dcf6ec7d1",
+      "handoff_sha256": "d93f2131d082128dccea53fb223ab5dd8447a5f13f06e34a337ca89633783f3d",
+      "stable_patch_id": "89c4fae15704e809daadd1b4247f08ac0623b074",
+      "open_p1_findings": 0,
+      "supersedes_handoff_sha256": "659d898a96fab1514b6a78027f886fcefedcff859a2e29f22dc87e293ec06d5b"
+    },
+    "deterministic_gate": {
+      "ticket_id": "TOOL-059-G",
+      "status": "passed",
+      "canonical_commit": "1126bb1cd8405d730c60888de4d60adf9e6f6b2a",
+      "worker_head": "3b415776a28f2a0a0bd21f41c438ed946400743b",
+      "handoff_sha256": "4cef39dc80f56610c1a5ee32145e2abbd294f7a5fe6a1fea0fba8c545b5a7e90",
+      "stable_patch_id": "e684e79286dfcbce4f600e1b8b644b8bbeb4bff3",
+      "recovery_snapshot_sha": "24bebf8ac67095775856883db7b84a7dcf6ec7d1",
+      "recovery_snapshot_tree": "45106ea2c0b70713065e59381172c3d267e6bdde"
+    },
+    "final_bindings": {
+      "commit_map_path": ".codex/eval/state/W6R3-r1-commit-map.json",
+      "worker_bundle_path": "F:\\dev\\llm\\pico-eval-artifacts\\wave-bundles\\W6R3-r1-workers.bundle",
+      "worker_bundle_sha256": "f6e9ff52a8ed3c39180d54aceea0822cb484b03e0c4834fda2bd8e878ef2db09",
+      "canonical_tag": "eval-v3/w6r3-canonical-r1"
+    },
+    "execution_constraints": {
+      "provider_http_attempts": 0,
+      "human_smoke_run": false,
+      "profile_reselection_run": false,
+      "formal_effectiveness_run": false,
+      "resume_run": false,
+      "w6r4_started": false,
+      "w7_started": false
+    }
+  },
+  "w6r3_deterministic_recovery_gate_r1_superseded": {
+    "version": "pico-native-deterministic-recovery-gate-v1",
+    "status": "superseded_needs_remediation",
+    "gate_status": "invalidated_by_upper_review",
+    "source": {
+      "sha": "24bebf8ac67095775856883db7b84a7dcf6ec7d1",
+      "tree": "45106ea2c0b70713065e59381172c3d267e6bdde",
+      "clean": true
+    },
+    "bindings": {
+      "oracle_v2_cases": {
+        "path": "benchmarks/v3/native-provider/cases-v2.json",
+        "git_blob_oid": "82c50bc318617c6556f82cbf4ec779fcbe4a1993",
+        "sha256": "dca7a585c2264a12187dd00344c63c225b966937bf9df8a53ed5a5341417defc"
+      },
+      "oracle_v2_evaluator": {
+        "path": "pico/evaluation/native_provider.py",
+        "git_blob_oid": "38bb94bcc8397fb42daa353085cc182e4af72c3c",
+        "sha256": "a0b3c2802fc35227c18828fd1875dbe401fc31dca662005bd1eab744e1da5a5f"
+      },
+      "oracle_v2_live_runner": {
+        "path": "pico/evaluation/native_provider_live.py",
+        "git_blob_oid": "024506d99a942d6691b47bbee0fcb432fd46e313",
+        "sha256": "dc6d0b8e6f98d7c714a7a0780ac9f623caee7abdc19977301cc4a4cfc8877e5f"
+      },
+      "oracle_v2_tests": {
+        "path": "tests/test_native_provider_evaluator.py",
+        "git_blob_oid": "aaaf86e51aa7a2ceb33075eec5b2ab0b50d7553f",
+        "sha256": "b3e1dbb534b5461fe0e893462ad0141ae44e5320e63ecdded669a3dd0cf9ff58"
+      },
+      "dual_dialect_live_fake_tests": {
+        "path": "tests/test_native_provider_live.py",
+        "git_blob_oid": "a3b962cc1df9dcfb1dcbc0fca46bb8bfc86169de",
+        "sha256": "cf7cca2e8719e6195f1b57a44d82b785b9b0d91641c83528b273dfa1015ed293"
+      },
+      "openai_responses_adapter": {
+        "path": "pico/providers/openai_responses.py",
+        "git_blob_oid": "ce80c279d0d762d9c9a813b881898959405bf4f6",
+        "sha256": "65a085bddee05eb98814f40b42f425390746a540f31153d7f4ca8a0e3a4dfb7b"
+      },
+      "anthropic_messages_adapter": {
+        "path": "pico/providers/anthropic_messages.py",
+        "git_blob_oid": "2dcdac9ff3cedda57177ba21ed1ebf7a991039d8",
+        "sha256": "7ffb1a0cbd1f0448e28d989e8ac7274996cfb5e11bf815981c409432b632abd0"
+      },
+      "openai_closure_tests": {
+        "path": "tests/test_openai_responses_tools.py",
+        "git_blob_oid": "d9362d690ff6001c069372e22cb66f392df1bdb3",
+        "sha256": "75e393234a4b252388093798ddbfa18e202d13e752ac609a4f3c93eaef394c37"
+      },
+      "anthropic_stateless_transcript_tests": {
+        "path": "tests/test_anthropic_stateless_transcript.py",
+        "git_blob_oid": "886ceb973a574666ce6f08eca000396c3848ddcb",
+        "sha256": "2f9bbfb27203071affa20bb532bdedadea2e445b507bac1d3994e1076e3dd3af"
+      },
+      "openai_stateless_transcript_tests": {
+        "path": "tests/test_native_stateless_transcript.py",
+        "git_blob_oid": "03f90c42272cc63b444eedd3736249681b588f69",
+        "sha256": "b0ddb33705d9b4f561175f4e62565f75f9e456b1b9da296de5983b684dcf2222"
+      },
+      "human_smoke_v3_tests": {
+        "path": "tests/test_v3_native_human_smoke_v3.py",
+        "git_blob_oid": "e27b57452f29d55a3f40b77b5bbd166fbf7ba4d6",
+        "sha256": "15a97567d4aba0af0e745c074df54f18b9bbc3964f4f53ecc34a8cf96a3f9b27"
+      },
+      "repetition_implementation": {
+        "path": "pico/core/tool_repetition.py",
+        "git_blob_oid": "454e413210bbd78ce1bb95099a9be3afb0a7e545",
+        "sha256": "e43a431de2610b676a8225ff776b3b69c0bd7a36a7d31955337f2c0a2062aff5"
+      },
+      "repetition_tests": {
+        "path": "tests/test_native_tool_repetition.py",
+        "git_blob_oid": "82ca273e8514b886abca393f4da332eab7dac15a",
+        "sha256": "db4d62f2f53ad469c4aead4b98b767222a57d3bc9f9fefd4647ad963bb4c4587"
+      },
+      "sdk_dependency_lock": {
+        "path": "uv.lock",
+        "git_blob_oid": "6b949cdc94f74dd00932e66fd2b27f4f6436e4b3",
+        "sha256": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657"
+      },
+      "sdk_transport_decision_sha256": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+      "native_contract_sha256": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+      "tool_schema_sha256": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f"
+    },
+    "responsibility_boundary": {
+      "safety_owner": "runtime_snapshot",
+      "execution_denominator": "calls entering runtime.run_tool",
+      "pre_runtime_rejection_excluded": true,
+      "execute_completed_means": "tool implementation returned",
+      "operation_outcome_fields": ["tool_status", "tool_error_code"],
+      "runtime_chain_violation_effect": "block_source_snapshot"
+    },
+    "gate_result": {
+      "targeted": "90 passed",
+      "protected": "27 passed",
+      "deterministic": "131 passed",
+      "full_suite": "546 passed, 2 live-provider opt-in skipped, 6 warnings",
+      "scoped_ruff": "passed",
+      "full_ruff": "passed",
+      "compileall": "passed",
+      "plan_validation": "VALID: 94 ticket templates, 16 waves",
+      "provider_http_attempts": 0,
+      "acceptance_socket_attempt_records": 0,
+      "credential_private_locator_raw_url_scan_hits": 0,
+      "all_required_tests_passed": true
+    },
+    "artifact": {
+      "root": "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate/W6R3-TOOL-059-G-01",
+      "manifest_sha256": "836692c1caa4df087981e7016f3768e5f1359c7d8753e2ee7f10f1884e776afe",
+      "inventory_aggregate_sha256": "312b3fd7d840077d2f0f89b63f17f453a8a3af33c56d6be3cbb7ea5ba7c548c1",
+      "file_count_excluding_manifest": 205,
+      "gate_report_sha256": "5649d2c6eda0a2fdea3b8b3e67306dba18e04f7ba6bc4c0cf19d75cc8763ea62",
+      "environment_manifest_sha256": "06e8bde4d930fd286727c008b80838747ac977619f057a38f8163e65bd83f867",
+      "command_results_sha256": "e57e0440e66f0e49a05c839a67d320b4a1cba20ffdf5a10767bb747cd6474668",
+      "junit_summary_sha256": "d2acc94f6d2a6bd68349af6979d3704119390c4a22019d890f6367b3ecd11aa2",
+      "invariant_verification_sha256": "7280491bb84d596dd623b774311c324e200e39e182ff43ac78e46db07e542562",
+      "sensitive_scan_sha256": "2719719b9064dc27a7f5a6bb482cb02b3e297b375b310e72def480e1bc79336e"
+    },
+    "historical_immutability": {
+      "oracle_v2": true,
+      "w6r2_cases_rows_selection_and_smoke": true,
+      "human_smoke_v2": true,
+      "historical_w6r3_handoff_bundle_tag": true
+    },
+    "execution_constraints": {
+      "human_smoke_run": false,
+      "profile_reselection_run": false,
+      "formal_effectiveness_run": false,
+      "resume_evaluation_run": false,
+      "w6r4_started": false,
+      "w7_started": false
+    },
+    "w6r4_ready_set": {
+      "status": "proposed_ready",
+      "ticket_ids": [],
+      "ticket_ids_reason": "The current PLAN has no W6R4 ticket templates; dispatch remains a Program Supervisor and Wave Integrator responsibility.",
+      "started": false
+    },
+    "w7": {
+      "status": "blocked",
+      "blocked_until": "W6R4 profile reselection completes and the user accepts a new human smoke",
+      "started": false
+    },
+    "blocking_defects": []
+  },
+  "w6r3_deterministic_recovery_gate": {
+    "version": "pico-native-deterministic-recovery-gate-v2",
+    "status": "complete",
+    "gate_status": "passed",
+    "source": {
+      "sha": "cffe1bd0344eb66d218c2e24cae19fca63b2cbf0",
+      "tree": "5ebb6a2cd62e96753fe3502a3b5846319db7386f",
+      "ref": "codex/w6r3-remediation-r2-gate-source",
+      "clean": true
+    },
+    "bindings": {
+      "oracle_v2_cases": {
+        "path": "benchmarks/v3/native-provider/cases-v2.json",
+        "git_blob_oid": "82c50bc318617c6556f82cbf4ec779fcbe4a1993",
+        "sha256": "dca7a585c2264a12187dd00344c63c225b966937bf9df8a53ed5a5341417defc"
+      },
+      "openai_responses_adapter": {
+        "path": "pico/providers/openai_responses.py",
+        "git_blob_oid": "ce80c279d0d762d9c9a813b881898959405bf4f6",
+        "sha256": "65a085bddee05eb98814f40b42f425390746a540f31153d7f4ca8a0e3a4dfb7b"
+      },
+      "anthropic_messages_adapter": {
+        "path": "pico/providers/anthropic_messages.py",
+        "git_blob_oid": "2dcdac9ff3cedda57177ba21ed1ebf7a991039d8",
+        "sha256": "7ffb1a0cbd1f0448e28d989e8ac7274996cfb5e11bf815981c409432b632abd0"
+      },
+      "human_smoke_v3_manifest": {
+        "path": "benchmarks/v3/native-provider/human-smoke-v3.json",
+        "git_blob_oid": "7d567d28d76a5e88fc93067fa63331a90adaf3fe",
+        "sha256": "4a513c285ada8d3fc5a3f694e7286dba0f2bf579685c73e4d5720b51ea756f41"
+      },
+      "human_smoke_v3_runner": {
+        "path": "scripts/run_v3_native_human_smoke_v3.py",
+        "git_blob_oid": "147b7cadb26be3c5e00d0458cc2f377e658d54ec",
+        "sha256": "8dd71824e89f85fd559f5491d4b195f80d3ff7e8d8e90340881db2d69bdc500b"
+      },
+      "human_smoke_v3_tests": {
+        "path": "tests/test_v3_native_human_smoke_v3.py",
+        "git_blob_oid": "47be129f44b5a6bd10cbb246f9f79651e46ca81d",
+        "sha256": "ca00686922b95590581519bf1e383e98fc1ec0d690578790e9f0eafe8dd50857"
+      },
+      "human_smoke_v3_r3_artifact": {
+        "root": "F:/dev/llm/pico-eval-artifacts/native-provider-human-smoke-v3/W6R3-EVAL-059-H-01-R3",
+        "summary_sha256": "4dfc48928e3bb94f773383776519b2538b9bba9a13eb29cab0748c360083aae4",
+        "result_a_sha256": "f96e4a4fa1000d362a6d7c0ca03ad2131318ab4aeb3a119f8024054750a6bfcc",
+        "result_b_sha256": "88b0a1b42553142d45d0ae0420f0ac980127c2af6fdc385eca214fd07f5973cb",
+        "inventory_file_count": 11,
+        "inventory_sha256": "ab09409b8b1435177738d45640bda29f6755aab44070246796f8d08ecbe2337e",
+        "execution_mode": "fake_provider",
+        "top_level_profile_non_empty": true,
+        "profile_equals_each_scenario_profile": true,
+        "provider_http_attempts": 0
+      }
+    },
+    "audit_binding": {
+      "revision": 3,
+      "remediation_round": 2,
+      "canonical_commit": "cffe1bd0344eb66d218c2e24cae19fca63b2cbf0",
+      "worker_commit": "4926a40b591f382ae865aafa6707c11bdc5b9ba9",
+      "handoff_sha256": "4285766c60bac6774cb2a25bed6335e3d53989218705f25fc7c9456a360ffde9",
+      "verdict": "accepted",
+      "open_p1": 0,
+      "open_p2": 0
+    },
+    "gate_result": {
+      "eval_revision_3_targeted": "10 passed",
+      "targeted_recovery": "97 passed",
+      "protected": "27 passed",
+      "deterministic": "138 passed",
+      "full_suite": "553 passed, 2 live-provider opt-in skipped, 6 warnings",
+      "scoped_ruff": "passed",
+      "full_ruff": "passed",
+      "compileall": "passed",
+      "plan_validation": "VALID: 94 ticket templates, 16 waves",
+      "provider_http_attempts": 0,
+      "acceptance_socket_attempt_records": 0,
+      "credential_private_locator_raw_url_scan_hits": 0,
+      "all_required_final_commands_passed": true
+    },
+    "artifact": {
+      "root": "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate/W6R3-TOOL-059-G-02",
+      "manifest_sha256": "9d7ba536e26231b55c69512724e266bbc23a1895e64d74d5c3a63adb1ce78996",
+      "inventory_aggregate_sha256": "ddb5d1d2792b993d3bb2abad1081f08f3774c96fe6311821a8afbb52160da251",
+      "file_count_excluding_manifest": 183,
+      "gate_report_sha256": "e85b36f50ff314d2bdceb18727d006f30f0cd7de2f00b7f7a0bd715efc63e7ea",
+      "environment_manifest_sha256": "65cefe71cb4ac468ebee853d9b5d2f4505b14e6b2b4e8ce366c43096a9ac67ac",
+      "command_results_sha256": "893a51127b5e8487494965486988848b9faf9689e2ccffe309586b1d2b52b125",
+      "junit_summary_sha256": "b7b0449cf83222eb48aee80e06e2fb51cb71e691fbd2b127a952c725cc9314ea",
+      "invariant_verification_sha256": "7dbc777afe0c38685f4a1ad8c55213648eb26ae0d52e1de3f90019b54b720eec",
+      "sensitive_scan_sha256": "d0bf3b05e8104267fb228cd8ef55d5eeab58d726bd122ae30e4ea305ba32dc93",
+      "all_member_hashes_sizes_matched": true,
+      "all_json_jsonl_xml_reparsed": true
+    },
+    "historical_immutability": {
+      "oracle_v2": true,
+      "w6r2_cases_rows_selection_and_smoke": true,
+      "human_smoke_v2": true,
+      "historical_w6r3_r1_handoff_sha256": "ce1a548022a05e94e4cd2bab0cbd9fe15a3d52214bc21a9556504d5020169d82",
+      "historical_w6r3_r1_commit_map_sha256": "55418a09c6b06c580648e79508e56cf00bbe04fa783816dfca909ec5a29f3435",
+      "historical_w6r3_r1_worker_bundle_sha256": "f6e9ff52a8ed3c39180d54aceea0822cb484b03e0c4834fda2bd8e878ef2db09",
+      "historical_w6r3_r1_tag_object": "565e937df275c6215661623564c70492cc0b306f",
+      "historical_w6r3_r1_tag_target": "b5a18cedde2f5897ad261afb286c4e123f54509f",
+      "preserved": true
+    },
+    "ambient_commit_map_obligation": {
+      "commit": "0775f65083fa53b532b78132e7ab1162f98231c5",
+      "path": "docs/known-issues/codex-task-sandbox-permission-downgrade.md",
+      "required_final_map": ".codex/eval/state/W6R3-r2-commit-map.json",
+      "recorded": true
+    },
+    "execution_constraints": {
+      "provider_http_attempts": 0,
+      "formal_human_smoke_run": false,
+      "profile_reselection_run": false,
+      "formal_effectiveness_run": false,
+      "resume_evaluation_run": false,
+      "w6r4_started": false,
+      "w7_started": false
+    },
+    "w6r4_ready_set": {
+      "status": "proposed_ready",
+      "ticket_ids": [],
+      "ticket_ids_reason": "The current PLAN has no W6R4 ticket templates; dispatch remains a Program Supervisor and Wave Integrator responsibility.",
+      "required_scope": [
+        "reselect profiles from the immutable recovery snapshot",
+        "run a newly user-authorized human smoke only after recovered selection"
+      ],
+      "started": false
+    },
+    "w7": {
+      "status": "blocked",
+      "blocked_until": "W6R4 profile reselection completes and the user accepts a new human smoke",
+      "started": false
+    },
+    "blocking_defects": []
+  },
+  "w6r3_remediation_cycle_2": {
+    "version": "pico-w6r3-remediation-cycle-v2",
+    "status": "passed",
+    "remediation_round": 2,
+    "resume_control_head": "d514ae3c1185111ee92e88c400e4c0176bf66d4c",
+    "candidate_ref": "codex/w6r3-remediation-r2-candidate",
+    "candidate_semantics": "The commit containing this formal resume checkpoint is the common immutable remediation-cycle-2 candidate.",
+    "frozen_inputs_preserved": {
+      "oracle_v2": true,
+      "human_smoke_v2_bytes": true,
+      "w6r2_cases_rows_selection_and_smoke": true,
+      "historical_w6r3_attempt": true,
+      "historical_w6r3_r1_close": true
+    },
+    "findings": {
+      "UPPER-AUDIT-059-A-P1-003-CALL-ID-BINDING": {
+        "priority": "P1",
+        "owner": "EVAL-059-H",
+        "required_revision": 3,
+        "contract": "Runtime evidence is keyed one-to-one by real provider call_id; missing, duplicate, and extra tool_finished events fail closed."
+      },
+      "UPPER-AUDIT-059-A-P1-003-FAKE-LIVE-FAIL-CLOSED": {
+        "priority": "P1",
+        "owner": "EVAL-059-H",
+        "required_revision": 3,
+        "contract": "fake_provider rejects provider_factory, profile, and live-only CLI inputs and enforces zero HTTP attempts; authorized_live requires every binding."
+      },
+      "UPPER-AUDIT-059-A-P2-001-TOP-LEVEL-PROFILE": {
+        "priority": "P2",
+        "owner": "EVAL-059-H",
+        "required_revision": 3,
+        "contract": "summary.json top level binds the redacted profile identity."
+      },
+      "UPPER-AUDIT-059-A-P2-002-COMMIT-MAP-AMBIENT": {
+        "priority": "P2",
+        "owner": "W6R3 Wave Integrator",
+        "contract": "The final cycle-2 commit map records ambient documentation commit 0775f65083fa53b532b78132e7ab1162f98231c5."
+      }
+    },
+    "allowed_remediation": {
+      "EVAL-059-H": "revision 3 on existing worker task and allowed harness/test/artifact paths",
+      "AUDIT-059-A": "revision 3 read-only review after repaired candidate",
+      "TOOL-059-G": "revision 2 only after accepted audit",
+      "W6R3 Wave Integrator": "formal state and final cycle-2 commit map ambient history record"
+    },
+    "source_integration_head_before_review_checkpoint": "9c78ec5622ea114a51348898fbce45787d71f127",
+    "review_candidate_ref": "codex/w6r3-remediation-r2-review-candidate",
+    "review_candidate_semantics": "The commit containing this formal review checkpoint is the immutable AUDIT-059-A revision-3 candidate.",
+    "integrated_payloads": {
+      "EVAL-059-H": {
+        "revision": 3,
+        "worker_head": "a12e4f7d074bf087c15cba087e6a48022e1b5cdd",
+        "handoff_sha256": "14135b5bfe06a728281fb9f7946329b1563feb365d4c3fdc60ea5c08ebe81e15",
+        "freeze_proposal_sha256": "ff09cf642cfb15f00db3f013d76e4b182421e1eb369e7e0ee018c2c41e0cd444",
+        "canonical_commit": "9c78ec5622ea114a51348898fbce45787d71f127",
+        "stable_patch_id": "d61b2c7a21b5a4b1a5cdeeb5288b5968cfdc2bfb",
+        "runner_sha256": "8dd71824e89f85fd559f5491d4b195f80d3ff7e8d8e90340881db2d69bdc500b",
+        "tests_sha256": "ca00686922b95590581519bf1e383e98fc1ec0d690578790e9f0eafe8dd50857",
+        "tests": "10 passed; scoped Ruff passed",
+        "artifact": {
+          "root": "F:\\dev\\llm\\pico-eval-artifacts\\native-provider-human-smoke-v3\\W6R3-EVAL-059-H-01-R3",
+          "summary_sha256": "4dfc48928e3bb94f773383776519b2538b9bba9a13eb29cab0748c360083aae4",
+          "result_a_sha256": "f96e4a4fa1000d362a6d7c0ca03ad2131318ab4aeb3a119f8024054750a6bfcc",
+          "result_b_sha256": "88b0a1b42553142d45d0ae0420f0ac980127c2af6fdc385eca214fd07f5973cb",
+          "inventory_file_count": 11,
+          "inventory_sha256": "ab09409b8b1435177738d45640bda29f6755aab44070246796f8d08ecbe2337e",
+          "execution_mode": "fake_provider",
+          "provider_http_attempts": 0,
+          "top_level_profile_binding_verified": true,
+          "sensitive_scan_hits": 0
+        }
+      },
+      "AUDIT-059-A": {
+        "revision": 3,
+        "worker_head": "4926a40b591f382ae865aafa6707c11bdc5b9ba9",
+        "handoff_sha256": "4285766c60bac6774cb2a25bed6335e3d53989218705f25fc7c9456a360ffde9",
+        "canonical_commit": "cffe1bd0344eb66d218c2e24cae19fca63b2cbf0",
+        "stable_patch_id": "3a29844dd686a611d81c383a0bcaaa85b0d668c8",
+        "verdict": "accepted",
+        "open_p1_findings": 0,
+        "open_p2_findings": 0
+      },
+      "TOOL-059-G": {
+        "revision": 2,
+        "worker_head": "2ee5a2607dc430604ef9039e436e2fd6feb1bcb0",
+        "handoff_sha256": "67a825b2107a32ee5830ea465cb8cff989bac3b6f47494df520200312f975b57",
+        "canonical_commit": "9a5d07fcd9f03f73023059cd1c8b8dc3eee2fad6",
+        "stable_patch_id": "7e44e650d692519de865adcff668f90fe3bce9be",
+        "gate_status": "passed",
+        "provider_http_attempts": 0
+      }
+    },
+    "immutable_recovery_snapshot": {
+      "sha": "cffe1bd0344eb66d218c2e24cae19fca63b2cbf0",
+      "tree": "5ebb6a2cd62e96753fe3502a3b5846319db7386f"
+    },
+    "historical_r1_close": {
+      "handoff_sha256": "ce1a548022a05e94e4cd2bab0cbd9fe15a3d52214bc21a9556504d5020169d82",
+      "commit_map_sha256": "55418a09c6b06c580648e79508e56cf00bbe04fa783816dfca909ec5a29f3435",
+      "worker_bundle_sha256": "f6e9ff52a8ed3c39180d54aceea0822cb484b03e0c4834fda2bd8e878ef2db09",
+      "canonical_tag_object_sha": "565e937df275c6215661623564c70492cc0b306f",
+      "canonical_tag_target": "b5a18cedde2f5897ad261afb286c4e123f54509f",
+      "preserved_immutable": true,
+      "disposition": "historical_close_superseded_by_upper_review"
+    },
+    "future_final_bindings": {
+      "handoff_path": ".codex/eval/state/W6R3-wave-handoff-r2.json",
+      "commit_map_path": ".codex/eval/state/W6R3-r2-commit-map.json",
+      "worker_bundle_path": "F:\\dev\\llm\\pico-eval-artifacts\\wave-bundles\\W6R3-r2-workers.bundle",
+      "canonical_tag": "eval-v3/w6r3-canonical-r2",
+      "generate_only_after_gate_terminal": true
+    },
+    "execution_constraints": {
+      "provider_http_attempts": 0,
+      "human_smoke_run": false,
+      "profile_reselection_run": false,
+      "formal_effectiveness_run": false,
+      "resume_run": false,
+      "w6r4_started": false,
+      "w7_started": false
+    }
+  },
+  "w6r4_profile_reselection_human_smoke": {
+    "version": "pico-w6r4-close-v1",
+    "status": "complete",
+    "wave_state": "passed",
+    "closed_at": "2026-07-26",
+    "entry": {
+      "source_sha": "cffe1bd0344eb66d218c2e24cae19fca63b2cbf0",
+      "source_tree": "5ebb6a2cd62e96753fe3502a3b5846319db7386f",
+      "control_checkpoint_sha": "7dd52612d7319b5189214f9bb8976b09a3933c35",
+      "previous_handoff_path": ".codex/eval/state/W6R3-wave-handoff-r2.json",
+      "previous_handoff_sha256": "521b1f3e30c393cbefd449cbff5057992cdca3167a327ec612532cc7335c8823",
+      "entry_freeze_sha256": "4ca55e089cbf34acf60d33c88d17dcf9819f216acb09e5c99ad72464ef7d9a85"
+    },
+    "accepted_source": {
+      "sha": "0d8c21c3484b069c71a7a8b784b74330530163d2",
+      "tree": "98d4c62a14dfc446c3ff5dceecea7eeb02c1b941",
+      "canonical_environment": "Ubuntu WSL2 ext4 checkout, Python 3.12.13",
+      "clean": true,
+      "changed_source_files": [
+        "pico/evaluation/native_provider.py",
+        "pico/evaluation/native_provider_live.py",
+        "tests/test_native_provider_evaluator.py",
+        "tests/test_native_provider_live.py"
+      ],
+      "accepted_commits": [
+        {
+          "revision": 1,
+          "worker_head": "e78731d289b02cfde49c744ffad0b8b149c0bf28",
+          "canonical_commit": "345261c3f644ddea92065f105bc754e223d0eff4",
+          "tree": "38535dd58d9b317c174a470a1857e6617ac45cc4",
+          "parent": "7dd52612d7319b5189214f9bb8976b09a3933c35",
+          "stable_patch_id": "3335c7a4f94671bb12981bf117d8729b0e1e8cf9",
+          "subject": "fix(eval): [EVAL-059-O][R1] accept pre-runtime rejection scope",
+          "handoff_sha256": "662bb2378223143c6abfec86f8e384d8e3f8c44eabcd3d600844def5933fce39",
+          "review_sha256": "c9f4364bd4b79ee87b9a97176a2045e2c1cf2f7120105ec41e2bafe89dc72f97"
+        },
+        {
+          "revision": 2,
+          "worker_head": "30375b1080cfe8400c3912dfb8b51930d62ee2e9",
+          "canonical_commit": "0d8c21c3484b069c71a7a8b784b74330530163d2",
+          "tree": "98d4c62a14dfc446c3ff5dceecea7eeb02c1b941",
+          "parent": "345261c3f644ddea92065f105bc754e223d0eff4",
+          "stable_patch_id": "75c52ea9cfd8a3ec36ac623dcb0fb600cd86ac8c",
+          "subject": "fix(eval): [EVAL-059-O][R2] accept call-bound runtime evidence",
+          "handoff_sha256": "47f971316f3eab2b93dafe6a66f1e1c5601f8e2d7c2b4e5671a489a4c14480dc",
+          "review_sha256": "27cc4f3f7fe43fd0e5f2bdb256c398c80be83d2621f7bc883011701af6aac0f6"
+        }
+      ]
+    },
+    "measurement_remediations": {
+      "W6R4-MD-001": {
+        "classification": "measurement_defect",
+        "status": "resolved",
+        "finding_path": "F:\\dev\\llm\\pico-eval-artifacts\\native-provider-reselection\\cffe1bd0344eb66d218c2e24cae19fca63b2cbf0\\selection\\W6R4-MD-001.json",
+        "finding_sha256": "cfb4104c707e5d932cdc1415503b309f52b92496bf98c98ce5fac8cb1b5cd94f",
+        "accepted_commit": "345261c3f644ddea92065f105bc754e223d0eff4",
+        "boundary": "Pre-runtime step-limit results are excluded from the Runtime execution denominator."
+      },
+      "W6R4-MD-002": {
+        "classification": "measurement_defect",
+        "status": "resolved",
+        "finding_path": "F:\\dev\\llm\\pico-eval-artifacts\\native-provider-reselection\\345261c3f644ddea92065f105bc754e223d0eff4\\selection\\W6R4-MD-002.json",
+        "finding_sha256": "f4f443870b32a57034773feb9a3b15a2514cd8c5aba193af1e73032b9d5885be",
+        "accepted_commit": "0d8c21c3484b069c71a7a8b784b74330530163d2",
+        "boundary": "Unmatched calls require call-ID-specific runtime-entry evidence and fail closed when evidence is missing or conflicting."
+      },
+      "W6R4-SMOKE-MD-001": {
+        "classification": "measurement_defect",
+        "status": "resolved",
+        "finding_path": "F:\\dev\\llm\\pico-eval-artifacts\\native-provider-human-smoke-v3\\process-manifests\\W6R4-SMOKE-MD-001.json",
+        "finding_sha256": "9d41cfb9825803481a453b3f2f6204f247f96742bbdda1c0186e663dfb528073",
+        "invalid_process_manifest_sha256": "7cbc79bfc17a7fde1b5523034ad1e8be3c8337f575f0bfca126ee02d406f9d29",
+        "invalid_state_marker_sha256": "bb28095487543c2322fe9b830847e5f74c10bacf0f3faa0745e5424f1b2cbb94",
+        "runner_main_entered": false,
+        "output_created": false,
+        "provider_http_attempts": 0,
+        "replacement_authorized": true,
+        "invalid_evidence_preserved": true
+      }
+    },
+    "selection": {
+      "status": "accepted",
+      "source_sha": "0d8c21c3484b069c71a7a8b784b74330530163d2",
+      "adjudicator_source_sha": "0d8c21c3484b069c71a7a8b784b74330530163d2",
+      "contract_interpretation": "The hard Gate requires at least one eligible profile; frozen comparison among eligible profiles selects one Evaluation profile.",
+      "hard_gate_eligible_profiles": [
+        "dashscope-o",
+        "dashscope-a"
+      ],
+      "hard_gate_ineligible_profiles": [
+        "deepseek"
+      ],
+      "unique_selected_profile": "dashscope-o",
+      "selected_profile_id": "sha256:41ebb321c6332867f0bb020621b7e1c17f8c60430374c37c3a670c916326ee70",
+      "selected_public_profile_sha256": "499655acd72b0c10f0bd0a938a032060fb7a5b776e74e478742078da1a137331",
+      "selection_reason": "Completion and protocol/retry metrics tied; dashscope-o had repetition status stability 8/8 versus dashscope-a 6/8.",
+      "artifacts": {
+        "root": "F:\\dev\\llm\\pico-eval-artifacts\\native-provider-reselection\\0d8c21c3484b069c71a7a8b784b74330530163d2\\selection",
+        "selection_sha256": "245bb1032998d61496d18b3a9edcf89ac21b7b2c44ba997267e7a7f344a5b056",
+        "summary_sha256": "6e2cbe3c24a29f1c46b23a629d1e98b85a5e82a8a756da44148df1dff8609583",
+        "verification_sha256": "2c55f760241cc5c9feb2a38e1b773c39f8ba6e48a55aa82ccdb83d609eef10d9",
+        "inventory_sha256": "d8c136a6ef1fe359d0a3fefa05493173c85eb9e3f464c5be6abdb1d958951cd0",
+        "manifest_sha256": "699a294a9027f9109c235ee5b3e3d10b527669a1b23eb1017ff2c4ea43460cb8"
+      },
+      "active_conformance_bundles": {
+        "dashscope-o": {
+          "raw_run_source_sha": "cffe1bd0344eb66d218c2e24cae19fca63b2cbf0",
+          "bundle_sha256": "c10c56be50f1a7503887bc76eaab6b3c8fda4706ff5b5166426aa1b8c24725d6",
+          "profile_status": "eligible",
+          "http_attempts": 73
+        },
+        "dashscope-a": {
+          "raw_run_source_sha": "cffe1bd0344eb66d218c2e24cae19fca63b2cbf0",
+          "bundle_sha256": "012eed42b38ff014935994ff3efbf22bb4c8e913fe644aa7f45f5717a30a993e",
+          "profile_status": "eligible",
+          "http_attempts": 72
+        },
+        "deepseek": {
+          "raw_run_source_sha": "0d8c21c3484b069c71a7a8b784b74330530163d2",
+          "bundle_sha256": "10bd6677d3309ad47cba96af6478f37c44ac1c3dd43c8cc4a0c59e1be76d069c",
+          "profile_status": "ineligible",
+          "http_attempts": 102
+        }
+      },
+      "process_manifests": {
+        "initial_dashscope_o": "75c559524d833f437dd86efd9f33c76f50968d4d7ad9612dfccc89be5199d121",
+        "initial_dashscope_a": "60b7af067827ed49ae9314bc3c7d7572402ac1ac9f72efbf0874b340bb7856b8",
+        "initial_deepseek": "c115d929b95a4234dec8edff35ce7fa9a70ea08fc588cb59ad282c193c8bac2b",
+        "first_replacement_deepseek": "7cbddf2d292070dacee7056df2de7b6cd2d2aadc5c13fe9d55caaabc2f8bf577",
+        "second_replacement_deepseek": "996e4d4878885bf6c456ebdae3feda47f01ae787cd0aafb374fb863d26797dba"
+      },
+      "http_accounting": {
+        "dashscope_o": 73,
+        "dashscope_a": 72,
+        "deepseek_original": 98,
+        "deepseek_first_replacement": 91,
+        "deepseek_second_replacement": 102,
+        "total": 436,
+        "automatic_reruns": 0
+      }
+    },
+    "human_smoke": {
+      "status": "accepted_evidence_with_evaluation_failure",
+      "execution_mode": "authorized_live",
+      "source_sha": "0d8c21c3484b069c71a7a8b784b74330530163d2",
+      "profile": "dashscope-o",
+      "profile_id": "sha256:41ebb321c6332867f0bb020621b7e1c17f8c60430374c37c3a670c916326ee70",
+      "frozen_manifest_sha256": "4a513c285ada8d3fc5a3f694e7286dba0f2bf579685c73e4d5720b51ea756f41",
+      "replacement_process_manifest_sha256": "399e3d91efd3297784fcfbc2a0a57ea19f7ce8ac850d602d60311874196404ba",
+      "replacement_launcher_sha256": "9011c05f46be00b5c0ed98a1d386f928b7f6185eaf6f6a512acff9169722d51d",
+      "replacement_state_marker_sha256": "922fbfb2aa1e5eccec4220dba157024f599baa9c67856f38f8b35fd10b3215ec",
+      "result": {
+        "summary_status": "FAIL",
+        "process_exit_code": 1,
+        "provider_http_attempts": 6,
+        "HSMOKE-V3-A": "FAIL",
+        "HSMOKE-V3-B": "PASS",
+        "automatic_rerun": false
+      },
+      "artifacts": {
+        "root": "F:\\dev\\llm\\pico-eval-artifacts\\native-provider-human-smoke-v3\\W6R4-0d8c21c3484b069c71a7a8b784b74330530163d2-R1",
+        "summary_sha256": "0af9cbc8e35e93b02bcd69da18b1991a756c2b5b9ba649317346c2bec1c10a49",
+        "result_a_sha256": "1511cf83db572bff83019c307b7d5159b0dc88e2cfcabae0b0b21794d73efc37",
+        "result_b_sha256": "76883314f3ff9379ba99d5368fa9adee47da87e9023afb15d0e3fae2b742500e",
+        "evaluation_failure_sha256": "df910751d8ab069736f5082f53e14b16abf77172fd9341df269b3cfe91d4b4c4",
+        "inventory_sha256": "69f616c7b18cc9bed6040adda173d03c3e20931884ef053844c6f6226541ef5e",
+        "human_review_sha256": "149fdc5cfb10bfe065e7a8364cc963e488cc536b8823b3e05ba057584ace53c7",
+        "inventory_member_count": 12,
+        "all_inventory_member_hashes_and_sizes_matched": true
+      },
+      "finding": {
+        "id": "W6R4-EF-001",
+        "classification": "evaluation_failure",
+        "status": "accepted",
+        "automatic_product_repair_requested": false
+      },
+      "evidence_validation": {
+        "summary_result_records_exact": true,
+        "call_result_mapping_one_to_one": true,
+        "safety_events_bound_to_call_ids": true,
+        "source_manifest_profile_bindings_match": true,
+        "exact_secret_or_raw_endpoint_hits": 0,
+        "expanded_private_locator_hits": 0,
+        "raw_url_hits": 0,
+        "credential_marker_hits": 0,
+        "executable_text_envelope_hits": 0
+      }
+    },
+    "decision": {
+      "program_supervisor_accepted_selection": true,
+      "program_supervisor_accepted_human_smoke_evidence": true,
+      "program_supervisor_accepted_evaluation_failure": true,
+      "native_eval_ready": "rejected",
+      "native_resume_ready": "pending",
+      "automatic_repair_authorized": false,
+      "smoke_rerun_authorized": false,
+      "w7_authorized": false,
+      "w7_status": "not_started"
+    },
+    "execution_accounting": {
+      "profile_reselection_http_attempts": 436,
+      "invalid_smoke_launcher_http_attempts": 0,
+      "valid_human_smoke_http_attempts": 6,
+      "w6r4_provider_http_attempts_total": 442,
+      "formal_effectiveness_run": false,
+      "resume_evaluation_run": false
+    },
+    "handoff": {
+      "path": ".codex/eval/state/W6R4-wave-handoff.json",
+      "freeze_sha256_bound_by_handoff": true,
+      "close_checkpoint_sha_recorded_post_commit_in_current": true
+    },
+    "safety": {
+      "private_config_locator_provided_out_of_band": true,
+      "private_config_locator_environment_variable": "PICO_NATIVE_PROVIDER_CONFIG",
+      "private_config_locator_value_persisted": false,
+      "secret_or_raw_endpoint_hits": 0,
+      "opaque_continuation_persisted": false
+    },
+    "cleanup": {
+      "performed": false,
+      "tag_created": false,
+      "bundle_created": false
+    }
+  },
+  "native_human_smoke_v4_gate": {
+    "version": "pico-native-human-smoke-v4-gate-v1",
+    "status": "needs_remediation",
+    "source": {
+      "sha": "e65f370e49fe2ef749e017f33f509997eb1a0cd5",
+      "tree": "b306d8a29f863b64fcb2a45316a5cee8aa44dc7e",
+      "base_sha": "f9626c0a6c3c72907318f0616d0379cbb586404f",
+      "canonical_environment": "Ubuntu WSL2 / Python 3.12.13",
+      "clean_fresh_clone": true
+    },
+    "dependency_handoffs": {
+      "EVAL-063-H": "163de1abc1c2ed170db559d31e463c3def12de54d8565a602b7fed040a354dae",
+      "AUDIT-063-A": "3c745440be19c14a18fe4efed9ce829fed4f2e295cc39f306017281cc620462c"
+    },
+    "measurement_contract": {
+      "manifest": {
+        "path": "benchmarks/v3/native-provider/human-smoke-v4.json",
+        "sha256": "50aaa75f617eff099be4090bfa15c08a245ad4d9fcb206df1f21b5fc8ff68071",
+        "hash_basis": "git_blob_bytes"
+      },
+      "runner": {
+        "path": "scripts/run_v3_native_human_smoke_v4.py",
+        "sha256": "24d87909dd1a60320f74262d4c4d025c869e4e467a05064fc1d0a31c2aa1c1b7",
+        "hash_basis": "git_blob_bytes"
+      },
+      "tests": {
+        "path": "tests/test_v3_native_human_smoke_v4.py",
+        "sha256": "0775754675370759eb87139ca2a4eb50f751cf64455ec5298b7b773a469bec94",
+        "hash_basis": "git_blob_bytes"
+      },
+      "grounded_scenario": "HSMOKE-V4-A",
+      "durable_public_trajectory": true,
+      "raw_session_json_allowed": false,
+      "private_continuation_public_copy_allowed": false
+    },
+    "selection_reuse": {
+      "status": "accepted",
+      "w6r4_source_sha": "0d8c21c3484b069c71a7a8b784b74330530163d2",
+      "selected_profile": "dashscope-o",
+      "selected_profile_id": "sha256:41ebb321c6332867f0bb020621b7e1c17f8c60430374c37c3a670c916326ee70",
+      "selected_public_profile_sha256": "499655acd72b0c10f0bd0a938a032060fb7a5b776e74e478742078da1a137331",
+      "selection_critical_path_count": 18,
+      "selection_critical_changed_path_count": 0,
+      "production_runtime_unchanged": true,
+      "provider_adapters_unchanged": true,
+      "conformance_evaluator_unchanged": true,
+      "sdk_dependency_lock_unchanged": true,
+      "profile_reselection_rerun_required": false,
+      "proof_sha256": "1a8cb663f9c36874b4ce30ca27e42c3c3e2861ca0a9b38cb88cd7836b5abf2a9"
+    },
+    "authorized_live_parameters": {
+      "profile": "dashscope-o",
+      "stream": false,
+      "parallel_tool_execution": false,
+      "sdk_max_retries": 0,
+      "pico_provider_attempts": 1,
+      "private_config_locator_environment_variable": "PICO_NATIVE_PROVIDER_CONFIG",
+      "live_authorization_obtained": false
+    },
+    "gate_result": {
+      "eval_063_h_targeted": "28 passed",
+      "protected": "32 passed",
+      "scoped_ruff": "passed",
+      "compileall": "passed",
+      "plan_validation": "VALID: 99 Ticket templates, 18 Waves, control revision eval-control-v4.2",
+      "diff_check": "passed",
+      "fake_artifact": "2 scenarios PASS",
+      "native_call_count": 5,
+      "raw_session_json_count": 0,
+      "sensitive_or_raw_endpoint_hit_count": 0,
+      "invalid_public_shape_rejection_count": 17,
+      "unsafe_output_item_name_rejection_count": 4,
+      "rejected_key_value_payload_persisted_count": 0,
+      "provider_http_attempts": 0,
+      "all_required_commands_passed": true
+    },
+    "resolved_measurement_defects": {
+      "W6R5-EVAL-063-R-MD-001": {
+        "classification": "measurement_defect",
+        "invalidated_rows": 2,
+        "scope": "v4 public scanner and failure-accounting measurement contract",
+        "invalid_process_evidence_preserved": true,
+        "replacement_live_authorization_required": true
+      },
+      "W6R5-TOOL-063-G-MD-001": {
+        "classification": "measurement_defect",
+        "invalidated_rows": 0,
+        "scope": "integrator-local verifier only",
+        "invalid_logs_preserved": true,
+        "provider_http_attempts": 0
+      },
+      "W6R5-TOOL-063-G-R3-MD-001": {
+        "classification": "measurement_defect",
+        "invalidated_rows": 0,
+        "scope": "integrator-local synthetic credential probe only",
+        "invalid_logs_preserved": true,
+        "provider_http_attempts": 0
+      },
+      "W6R5-EVAL-063-R-MD-002": {
+        "classification": "measurement_defect",
+        "invalidated_rows": 2,
+        "scope": "v4 output_item_counts public value and field-name contract",
+        "r02_exact_provider_http_attempts": 4,
+        "invalid_process_evidence_preserved": true,
+        "replacement_live_authorization_required": true
+      }
+    },
+    "open_measurement_defects": {
+      "W6R5-EVAL-063-R-MD-003": {
+        "classification": "measurement_defect",
+        "status": "open",
+        "responsible_ticket": "EVAL-063-H",
+        "affected_ticket": "EVAL-063-R",
+        "invalidated_rows": 1,
+        "invalidated_process": "W6R5-EVAL-063-R-03",
+        "scope": "HSMOKE-V4-A contains:docs/quickstart.md exact-string Oracle rejects a semantically equivalent sentence after the required read_file -> patch_file -> read_file trajectory succeeded",
+        "actual_text": "Run pico sync before opening the workspace so that all dependencies are ready.",
+        "expected_text": "Run pico sync before opening the workspace so dependencies are ready.",
+        "product_semantic_conclusion_valid": false,
+        "invalid_process_evidence_preserved": true,
+        "r03_exact_provider_http_attempts": 6,
+        "replacement_live_authorization_required": true,
+        "replacement_live_authorized": false,
+        "remediation_authorized": false
+      }
+    },
+    "live_measurement_close": {
+      "wave": "W6R5",
+      "wave_status": "blocked",
+      "native_eval_ready": "pending",
+      "native_resume_ready": "pending",
+      "w7_authorized": false,
+      "processes": {
+        "W6R5-EVAL-063-R-01": {
+          "product_result_valid": false,
+          "classification": "measurement_defect",
+          "evidence_preserved": true
+        },
+        "W6R5-EVAL-063-R-02": {
+          "product_result_valid": false,
+          "classification": "measurement_defect",
+          "provider_http_attempts": 4,
+          "evidence_preserved": true
+        },
+        "W6R5-EVAL-063-R-03": {
+          "product_result_valid": false,
+          "classification": "measurement_defect",
+          "provider_http_attempts": 6,
+          "process_manifest_sha256": "b2c3a97c16ba570df3780b40eb1644beb9e6bef516f1e80f185cbb62a575b82b",
+          "process_result_sha256": "8ecd883349d8a12a560953fd7b2c6e3b7e06c9c3f2ed7e6dcf625497a0afc08d",
+          "summary_sha256": "6e6227693e8ff1b6590b06df2b8e8b8b51bea93dd5df5d96898b4fc63bbf0906",
+          "inventory_sha256": "6ffbfad170604827fd6956a4af7aec6be9a387ad11ae6cfffa7a56811f723cdd",
+          "ticket_handoff_sha256": "05066a7ebdbca1459a91dd245b015a2aaa1eca15af34f9d6fb2c245bf80c8b88",
+          "evidence_preserved": true,
+          "automatic_rerun": false
+        }
+      },
+      "evaluation_v2_proposals_accepted": false,
+      "close_reason": "The user stopped W6R5 remediation after the R-03 exact-string Oracle measurement defect; no valid live product result or authorized compliant continuation remains."
+    },
+    "artifact": {
+      "root": "F:/dev/llm/pico-eval-artifacts/native-human-smoke-v4-gate/e65f370e49fe2ef749e017f33f509997eb1a0cd5",
+      "manifest_sha256": "dad5732e549ab5c248c643e0a850584d186b883b777f65e7b1b57bfa0b6d5af5",
+      "environment_sha256": "ea5815e2c5557db7fdde2245b67b71e2a9b7fa00484e1074de88859f8cfd0f84",
+      "command_results_sha256": "aee841ee352d5520c07c7d6222b871aa2dd9fe54a72fcc032049332ae62a9d69",
+      "selection_reuse_sha256": "1a8cb663f9c36874b4ce30ca27e42c3c3e2861ca0a9b38cb88cd7836b5abf2a9",
+      "validation_sha256": "f53de04c05c5649f9f5306341384d4dd9b846dfc7a5ae5a4454a4201a3a4585e",
+      "gate_report_sha256": "53b6b869900d139b54cc9398dafbdcb82baf9874461a44d5955244faa6c87a54",
+      "inventory_sha256": "dffcc8496eaecc277db723219237116538ee5286811a6b5d7bfbfea487b8d346",
+      "inventory_file_count": 36,
+      "all_member_hashes_and_sizes_matched": true,
+      "all_json_jsonl_reparsed": true
+    },
+    "execution_constraints": {
+      "provider_http_attempts": 0,
+      "private_config_locator_read": false,
+      "formal_effectiveness_run": false,
+      "resume_evaluation_run": false,
+      "w7_started": false
+    },
+    "source_ticket": "TOOL-063-G"
+  },
+  "native_resume_contract": null,
+  "native_resume_gate": null,
+  "auto_dream": null,
+  "context_assets": {
+    "version": "pico-context-asset-contract-v1",
+    "path": "benchmarks/v3/context-assets/assets.json",
+    "sha256": "d8349c034524cc488958a1f3b460a7b6080915eed0b03b64c635810c21bf8e15",
+    "hash_basis": "git_blob_bytes",
+    "source_ticket": "EVAL-030",
+    "source_head_sha": "7b8badf1ad9aeb5111f5537438686a473191e176",
+    "integration_sha": "a6284ba08edde6cefd6a924edfd5305288dc6508",
+    "case_fragments": [
+      {
+        "version": "pico-context-asset-cases-fragment-v1",
+        "path": "benchmarks/v3/context-assets/fragments/C01-C08.json",
+        "sha256": "6bef856d9df68209d60d0ef7e9df1dc927fd861f64a6f646f0cc58fba9c808b8",
+        "hash_basis": "git_blob_bytes",
+        "source_ticket": "EVAL-031-A",
+        "source_head_sha": "f745704edb63f22b2ef8da99a0636aa041000ec7",
+        "integration_sha": "0352cb98192b23976ce40bf0aa3b2a0ac6197f9f"
+      },
+      {
+        "version": "pico-context-asset-cases-fragment-v1",
+        "path": "benchmarks/v3/context-assets/fragments/C09-C15.json",
+        "sha256": "1c2975e53696faed737a676e14faef7008cb4a2c4c5db27c804a903af3e1455c",
+        "hash_basis": "git_blob_bytes",
+        "source_ticket": "EVAL-031-B",
+        "source_head_sha": "d0f34d12cbbd13798665986ced61f6eda38bdb81",
+        "integration_sha": "8e5f9d8864521214b1eb455c3faab96e61fae59a"
+      }
+    ]
+  },
+  "local_taskset": {
+    "key": "pico_local_python_v1",
+    "taskset_id": "pico-local-python-v1",
+    "version": 1,
+    "taskset": {
+      "path": "benchmarks/v3/local-repos/taskset.json",
+      "sha256": "b6c1d16720583767b86cf8c8f535b0ff744a84216e0843a79660fea87389909a",
+      "hash_basis": "git_blob_bytes"
+    },
+    "lock": {
+      "path": "benchmarks/v3/local-repos/taskset.lock.json",
+      "sha256": "f12b2171da87ca6602e8574cfcc6e9621f792c7453bd3c806ad70dbe716fa2e2",
+      "hash_basis": "git_blob_bytes"
+    },
+    "fragment_hashes": {
+      "tinyconfig": "24d42d41038f8fa08d90d27fc0664b8fda75579896f9072d058eadc4dfc7b3ba",
+      "miniqueue": "dcea7a08048653285782e8f00c9326322c6d5fe5eeab36e32c16c19d79d9f622",
+      "logslice": "3e8d833b4b424b3d389705d51431b350142acc4367864ca1dcab870ed86fa382"
+    },
+    "self_check": {
+      "repositories": 3,
+      "tasks": 9,
+      "baseline_failed_as_expected": 9,
+      "reference_passed": 9,
+      "inverted_failed_as_expected": 9,
+      "anti_cheat": "passed",
+      "network_disabled": "passed",
+      "path_isolation": "passed",
+      "user_home_dependency_absent": "passed"
+    },
+    "source_ticket": "EVAL-040-M",
+    "source_head_sha": "a357ea96a9d5a977f292a878fa2e8914fd6e8403",
+    "integration_sha": "059f176a31539b475573524bff640f1a34b9609c"
+  },
+  "resume_predicates": null,
+  "structured_context_deterministic_gate": {
+    "version": "pico-context-asset-gate-v1",
+    "proposal": {
+      "path": ".codex/eval/proposals/EVAL-031-G.freeze.json",
+      "sha256": "6f8ef9f2725da04b6283bf37b7900df86120a7bde89700f505f852626d5f1f48"
+    },
+    "contract_hashes": {
+      "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+      "context_assets": "d8349c034524cc488958a1f3b460a7b6080915eed0b03b64c635810c21bf8e15",
+      "fragment_C01_C08": "6bef856d9df68209d60d0ef7e9df1dc927fd861f64a6f646f0cc58fba9c808b8",
+      "fragment_C09_C15": "1c2975e53696faed737a676e14faef7008cb4a2c4c5db27c804a903af3e1455c",
+      "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb"
+    },
+    "cases": {
+      "path": "benchmarks/v3/context-assets/cases.json",
+      "schema_version": "pico-context-asset-cases-v1",
+      "case_count": 15,
+      "sha256": "d69dfc1808cb12b179f8a1fb30ffa74136339d7783d9f11a5fbe8fd4259400ba",
+      "hash_basis": "UTF-8 file bytes"
+    },
+    "artifacts": {
+      "root": "F:/dev/llm/pico-eval-artifacts/phase-2-context-assets",
+      "evaluation_sha256": "b941868234be06832f5b1d3f246d4015baf39d69fac65c01a3c15a94228fdd65",
+      "summary_sha256": "0a04d182aa2d4decd53600b98acb072fd653bd939e989b32f8da5aebd13b8223"
+    },
+    "gate_result": {
+      "total": 15,
+      "passed": 15,
+      "failed": 0,
+      "pass_rate": 1.0,
+      "normal_budget_asset_classes_evidenced": [
+        "skills",
+        "todo",
+        "plan",
+        "checkpoint",
+        "worker",
+        "durable",
+        "compact",
+        "pointer"
+      ],
+      "current_request_preserved": "15/15",
+      "tool_schema_system_match_count": 0,
+      "unfinished_native_turn": {
+        "case_id": "C14",
+        "status": "awaiting_result",
+        "provider_call_id": "call-c14-1",
+        "result_call_ids": [],
+        "compactable": false
+      }
+    },
+    "known_runtime_defects": [
+      "runtime-asset-record-contract-incomplete",
+      "runtime-provider-request-flattens-structured-context",
+      "ticket-cli-command-drift"
+    ],
+    "live_provider_used": false,
+    "formal_effectiveness_evaluation_run": false,
+    "source_ticket": "EVAL-031-G",
+    "source_head_sha": "8888b0b77f712ac8a2edda3afbcb5fcdfed36ca4",
+    "integration_sha": "f1fc030271a6c4fd3d793e40b7e9f42227391890"
+  },
+  "structured_context_deterministic_gate_v2": {
+    "version": "pico-context-asset-gate-v2",
+    "status": "complete",
+    "binding": {
+      "path": "benchmarks/v3/context-assets/cases-v2.binding.json",
+      "schema_version": "pico-context-asset-cases-binding-v2",
+      "git_blob_oid": "3426371758b7bb9569680e271d3d782a486d2bd1",
+      "git_blob_sha256": "4fa2a43d0733621280c19323ade951f8dcca6328efa8d9d46b53777388c962c5"
+    },
+    "cases": {
+      "path": "benchmarks/v3/context-assets/cases.json",
+      "schema_version": "pico-context-asset-cases-v1",
+      "case_count": 15,
+      "git_blob_oid": "5e9bdf06e75f6661660947e880f07edfe7480880",
+      "sha256": "e08066749520a52af5bb14a9435e359f4a85d3f3ae6e8dd0e962001f99c2df17",
+      "hash_basis": "git_blob_bytes"
+    },
+    "supersession": {
+      "invalidated_declaration_sha256": "d69dfc1808cb12b179f8a1fb30ffa74136339d7783d9f11a5fbe8fd4259400ba",
+      "status": "retained_invalidated_superseded",
+      "replacement_binding_version": "pico-context-asset-cases-binding-v2"
+    },
+    "artifact": {
+      "root": "F:/dev/llm/pico-eval-artifacts/phase-2-context-assets-w5r",
+      "evaluation_sha256": "ee39ac9eb1e22633a23f0858fadc29802b252a6fb0ada15184b5bfad75d12b24",
+      "manifest_sha256": "6c74b0f920fd2acd528e648e49917750d9438e945be6864f95d53ee149ff1355"
+    },
+    "gate_result": {
+      "total": 15,
+      "passed": 15,
+      "failed": 0,
+      "fresh_clone_binding_verified": true,
+      "lf_crlf_independent": true
+    },
+    "source_ticket": "EVAL-032-F",
+    "source_run_snapshot_sha": "b3ec3e226de82d87c30fa8e4f1bc681a6c42a5b4"
+  },
+  "context_ablation_selection": null
+}

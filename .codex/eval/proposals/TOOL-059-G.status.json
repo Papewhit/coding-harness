@@ -1,0 +1,163 @@
+{
+  "schema_version": "pico-eval-status-proposal-v1",
+  "ticket_id": "TOOL-059-G",
+  "instance_id": "W6R3-TOOL-059-G-02",
+  "revision": 2,
+  "remediation_round": 2,
+  "supersedes_handoff_sha256": "4cef39dc80f56610c1a5ee32145e2abbd294f7a5fe6a1fea0fba8c545b5a7e90",
+  "supersedes_status_proposal_sha256": "11ce9a4232ac0e54e976fd44dc669dd185fff19569d565273f87e050a604fa2e",
+  "wave": "W6R3",
+  "role": "gate_integrator/w6r3-deterministic-recovery-gate",
+  "status": "complete",
+  "gate_status": "passed",
+  "source": {
+    "sha": "cffe1bd0344eb66d218c2e24cae19fca63b2cbf0",
+    "tree": "5ebb6a2cd62e96753fe3502a3b5846319db7386f",
+    "ref": "codex/w6r3-remediation-r2-gate-source",
+    "fresh_clone_clean": true
+  },
+  "source_state_hashes": {
+    "formal_status_sha256": "30f27b04229e6cd231679637bfe29fd6fe521f414b6fc17010668055b7a48916",
+    "formal_freeze_sha256": "9d996bea4e6802256b06953fa8d81191aea31cefdc6b35114c875931539460b5"
+  },
+  "audit_binding": {
+    "ticket_id": "AUDIT-059-A",
+    "revision": 3,
+    "remediation_round": 2,
+    "verdict": "accepted",
+    "open_p1": 0,
+    "open_p2": 0,
+    "canonical_commit": "cffe1bd0344eb66d218c2e24cae19fca63b2cbf0",
+    "worker_commit": "4926a40b591f382ae865aafa6707c11bdc5b9ba9",
+    "handoff_sha256": "4285766c60bac6774cb2a25bed6335e3d53989218705f25fc7c9456a360ffde9",
+    "start_condition_met": true
+  },
+  "eval_revision_3_binding": {
+    "ticket_id": "EVAL-059-H",
+    "revision": 3,
+    "canonical_commit": "9c78ec5622ea114a51348898fbce45787d71f127",
+    "stable_patch_id": "d61b2c7a21b5a4b1a5cdeeb5288b5968cfdc2bfb",
+    "handoff_sha256": "14135b5bfe06a728281fb9f7946329b1563feb365d4c3fdc60ea5c08ebe81e15",
+    "artifact_summary_sha256": "4dfc48928e3bb94f773383776519b2538b9bba9a13eb29cab0748c360083aae4",
+    "artifact_inventory_sha256": "ab09409b8b1435177738d45640bda29f6755aab44070246796f8d08ecbe2337e",
+    "profile_binding_verified": true,
+    "provider_http_attempts": 0
+  },
+  "artifact": {
+    "root": "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate/W6R3-TOOL-059-G-02",
+    "artifact_manifest_sha256": "9d7ba536e26231b55c69512724e266bbc23a1895e64d74d5c3a63adb1ce78996",
+    "artifact_inventory_aggregate_sha256": "ddb5d1d2792b993d3bb2abad1081f08f3774c96fe6311821a8afbb52160da251",
+    "artifact_file_count_excluding_manifest": 183,
+    "gate_report_sha256": "e85b36f50ff314d2bdceb18727d006f30f0cd7de2f00b7f7a0bd715efc63e7ea",
+    "environment_manifest_sha256": "65cefe71cb4ac468ebee853d9b5d2f4505b14e6b2b4e8ce366c43096a9ac67ac",
+    "command_results_sha256": "893a51127b5e8487494965486988848b9faf9689e2ccffe309586b1d2b52b125",
+    "junit_summary_sha256": "b7b0449cf83222eb48aee80e06e2fb51cb71e691fbd2b127a952c725cc9314ea",
+    "invariant_verification_sha256": "7dbc777afe0c38685f4a1ad8c55213648eb26ae0d52e1de3f90019b54b720eec",
+    "sensitive_scan_sha256": "d0bf3b05e8104267fb228cd8ef55d5eeab58d726bd122ae30e4ea305ba32dc93",
+    "all_member_hashes_sizes_matched": true,
+    "all_json_jsonl_xml_reparsed": true
+  },
+  "hard_gate_result": {
+    "environment": {
+      "ubuntu_wsl2": "Ubuntu 26.04 LTS",
+      "kernel": "6.18.33.2-microsoft-standard-WSL2",
+      "user": "papewhit",
+      "uid": 1000,
+      "python": "3.12.13",
+      "uv": "0.11.31 user-level",
+      "filesystem": "ext4",
+      "fresh_clone": "/home/papewhit/dev/pico-w6r3-tool-059-g-02-cffe1bd-20260724-001",
+      "committed_lock": true,
+      "uv_sync_frozen_providers_extra": "passed_offline",
+      "sudo_used": false
+    },
+    "tests": {
+      "eval_revision_3_targeted": "10 passed",
+      "w6r3_targeted_recovery": "97 passed",
+      "protected": "27 passed",
+      "deterministic": "138 passed",
+      "full_suite": "553 passed, 2 live-provider opt-in skipped, 6 warnings",
+      "scoped_ruff": "passed",
+      "full_ruff": "passed",
+      "compileall": "passed",
+      "plan_validation": "VALID: 94 ticket templates, 16 waves"
+    },
+    "protocol_and_safety": {
+      "runtime_event_call_id_bijection": "passed",
+      "fake_live_api_cli_fail_closed": "passed",
+      "r3_top_level_profile_hash_binding": "passed",
+      "oracle_v2_hash_bound": true,
+      "both_dialects_complete_stateless_transcript": true,
+      "unresolved_call_result_exact_closure": true,
+      "call_result_one_to_one": true,
+      "pre_runtime_rejection_excluded_from_execution_denominator": true,
+      "execute_completed_semantics_preserved": true,
+      "runtime_safety_chain_bypass_count": 0,
+      "executable_text_fallback_count": 0,
+      "sdk_managed_execution_count": 0,
+      "historical_r1_close_unchanged": true
+    },
+    "network_and_scope": {
+      "provider_http_attempts": 0,
+      "acceptance_socket_attempt_records": 0,
+      "network_namespace_enforced": true,
+      "python_socket_guard_calibrated": true,
+      "credential_private_locator_raw_url_scan_hits": 0,
+      "formal_human_smoke_run": false,
+      "profile_reselection_run": false,
+      "formal_online_evaluation_run": false,
+      "resume_evaluation_run": false,
+      "w6r4_started": false,
+      "w7_started": false
+    },
+    "all_required_final_commands_exit_zero": true,
+    "blocking_defects": []
+  },
+  "superseded_gate_diagnostics": [
+    {
+      "id": "11_invariant_verification",
+      "classification": "gate_verifier_hash_basis",
+      "reason": "The artifact-local verifier initially used Windows CRLF worktree hashes instead of canonical Git/WSL LF bytes.",
+      "superseded_by": "11b_invariant_verification",
+      "final_result": "passed",
+      "source_changed": false
+    }
+  ],
+  "historical_r1_preservation": {
+    "handoff_sha256": "ce1a548022a05e94e4cd2bab0cbd9fe15a3d52214bc21a9556504d5020169d82",
+    "commit_map_sha256": "55418a09c6b06c580648e79508e56cf00bbe04fa783816dfca909ec5a29f3435",
+    "worker_bundle_sha256": "f6e9ff52a8ed3c39180d54aceea0822cb484b03e0c4834fda2bd8e878ef2db09",
+    "tag_object": "565e937df275c6215661623564c70492cc0b306f",
+    "tag_target": "b5a18cedde2f5897ad261afb286c4e123f54509f",
+    "preserved": true
+  },
+  "ambient_commit_map_obligation": {
+    "commit": "0775f65083fa53b532b78132e7ab1162f98231c5",
+    "changed_path": "docs/known-issues/codex-task-sandbox-permission-downgrade.md",
+    "known_issue_only": true,
+    "required_map": ".codex/eval/state/W6R3-r2-commit-map.json",
+    "owner": "W6R3 Wave Integrator",
+    "map_generated_by_ticket": false,
+    "verified": true
+  },
+  "proposal": {
+    "ticket_execution_status": "complete",
+    "ticket_gate_status": "passed",
+    "proposed_immutable_recovery_snapshot_sha": "cffe1bd0344eb66d218c2e24cae19fca63b2cbf0",
+    "proposed_immutable_recovery_snapshot_tree": "5ebb6a2cd62e96753fe3502a3b5846319db7386f",
+    "native_eval_ready": "deterministic_recovery_passed_pending_w6r4_reselection_and_new_accepted_human_smoke",
+    "w6r4_ready_set": {
+      "status": "proposed_ready",
+      "ticket_ids": [],
+      "ticket_ids_reason": "The current PLAN has no W6R4 ticket templates; TOOL-059-G does not invent or dispatch tickets.",
+      "started": false
+    },
+    "w7_ready": false,
+    "w7_status": "blocked_pending_w6r4_reselection_and_new_user_accepted_human_smoke",
+    "reason": "The canonical WSL2/Python 3.12 fresh-clone deterministic recovery Gate passed with the R3 audit/evidence bindings, prior frozen inputs and R1 close unchanged and provider HTTP attempts equal to zero."
+  },
+  "canonical_status_written": false,
+  "canonical_freeze_written": false,
+  "canonical_state_written": false,
+  "canonical_state_owner": "W6R3 Wave Integrator"
+}

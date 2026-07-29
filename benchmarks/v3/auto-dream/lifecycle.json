@@ -1,0 +1,159 @@
+{
+  "schema_version": "pico-dream-lifecycle-evaluation-v1",
+  "write_scope": ".pico/memory",
+  "cases": [
+    {
+      "id": "interval-gate",
+      "category": "gate",
+      "setup": {
+        "last_consolidated_age_hours": 0.25,
+        "min_hours": 1,
+        "min_sessions": 2,
+        "session_count": 3
+      },
+      "expected": {
+        "should_run": false,
+        "skip_reason": "interval_gate",
+        "session_count": 3,
+        "current_session_excluded": true
+      },
+      "evidence_sources": [
+        "pico/features/memory_durable.py::evaluate_auto_dream_gate"
+      ]
+    },
+    {
+      "id": "session-count-gate",
+      "category": "gate",
+      "setup": {
+        "last_consolidated_age_hours": 2,
+        "min_hours": 1,
+        "min_sessions": 2,
+        "session_count": 1
+      },
+      "expected": {
+        "should_run": false,
+        "skip_reason": "session_gate",
+        "session_count": 1,
+        "current_session_excluded": true
+      },
+      "evidence_sources": [
+        "pico/features/memory_durable.py::evaluate_auto_dream_gate"
+      ]
+    },
+    {
+      "id": "eligible-gate",
+      "category": "gate",
+      "setup": {
+        "last_consolidated_age_hours": 2,
+        "min_hours": 1,
+        "min_sessions": 2,
+        "session_count": 2
+      },
+      "expected": {
+        "should_run": true,
+        "skip_reason": "",
+        "session_count": 2,
+        "current_session_excluded": true
+      },
+      "evidence_sources": [
+        "pico/features/memory_durable.py::evaluate_auto_dream_gate"
+      ]
+    },
+    {
+      "id": "active-lock",
+      "category": "lock",
+      "setup": {
+        "age_seconds": 1
+      },
+      "expected": {
+        "acquired": false,
+        "holder_replaced": false,
+        "classified_stale": false
+      },
+      "evidence_sources": [
+        "pico/features/memory_durable.py::try_acquire_lock"
+      ]
+    },
+    {
+      "id": "stale-lock",
+      "category": "lock",
+      "setup": {
+        "age_seconds": 3601
+      },
+      "expected": {
+        "acquired": true,
+        "holder_replaced": true,
+        "classified_stale": true
+      },
+      "evidence_sources": [
+        "pico/features/memory_durable.py::try_acquire_lock"
+      ]
+    },
+    {
+      "id": "dream-failure-isolated",
+      "category": "failure_isolation",
+      "evidence": {
+        "primary_result_before": "primary-task-result",
+        "primary_result_after": "primary-task-result",
+        "dream_status": "failed",
+        "errors": [
+          "dream provider unavailable"
+        ]
+      },
+      "expected": {
+        "primary_result_preserved": true,
+        "dream_status": "failed",
+        "error_recorded": true
+      },
+      "evidence_sources": [
+        "tests/test_pico.py::test_memory_maintenance_failure_does_not_mask_final_answer",
+        "tests/test_pico.py::test_background_auto_dream_failure_restores_lock_and_reports_error"
+      ]
+    },
+    {
+      "id": "memory-write-contained",
+      "category": "write_scope",
+      "evidence": {
+        "attempted_paths": [
+          ".pico/memory/MEMORY.md",
+          ".pico/memory/topics/project.md"
+        ],
+        "denied_paths": [],
+        "changed_paths": [
+          ".pico/memory/MEMORY.md",
+          ".pico/memory/topics/project.md"
+        ]
+      },
+      "expected": {
+        "scope": ".pico/memory",
+        "outside_changes": [],
+        "outside_attempts_denied": true
+      },
+      "evidence_sources": [
+        "pico/features/memory.py::run_dream"
+      ]
+    },
+    {
+      "id": "outside-write-denied",
+      "category": "write_scope",
+      "evidence": {
+        "attempted_paths": [
+          "README.md"
+        ],
+        "denied_paths": [
+          "README.md"
+        ],
+        "changed_paths": []
+      },
+      "expected": {
+        "scope": ".pico/memory",
+        "outside_changes": [],
+        "outside_attempts_denied": true
+      },
+      "evidence_sources": [
+        "tests/test_skills_acceptance.py::test_dream_cannot_write_outside_memory_directory",
+        "pico/core/permissions.py::_check_write_scope"
+      ]
+    }
+  ]
+}

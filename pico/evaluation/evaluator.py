@@ -13,7 +13,12 @@ from typing import Any
 from zoneinfo import ZoneInfo
 
 from ..features import memory as memorylib
-from ..testing import ScriptedModelClient
+from ..providers.contracts import ModelResponse
+from ..testing import (
+    ScriptedNativeModelClient,
+    native_final_response,
+    native_tool_call_response,
+)
 from ..core.runtime import Pico, SessionStore
 from ..core.run_store import RunStore
 from ..core.task_state import STOP_REASON_FINAL_ANSWER_RETURNED
@@ -22,8 +27,10 @@ from ..core.workspace import WorkspaceContext
 BENCHMARK_SCHEMA_VERSION = 1
 DEFAULT_BENCHMARK_PATH = Path("benchmarks/coding_tasks.json")
 DEFAULT_ARTIFACT_PATH = Path("benchmarks/benchmark-v1.json")
-DEFAULT_HARNESS_REGRESSION_V2_ARTIFACT_PATH = Path("artifacts/harness-regression-v2.json")
-DEFAULT_MODEL_NAME = "ScriptedModelClient"
+DEFAULT_HARNESS_REGRESSION_V2_ARTIFACT_PATH = Path(
+    "artifacts/harness-regression-v2.json"
+)
+DEFAULT_MODEL_NAME = "ScriptedNativeModelClient"
 DEFAULT_MODEL_VERSION = "scripted-deterministic"
 DEFAULT_TEMPERATURE = 0.0
 DEFAULT_TOP_P = 1.0
@@ -49,73 +56,182 @@ TASK_FIXTURE_ARTIFACTS = {
 
 SCRIPTED_MODEL_OUTPUTS = {
     "readme_intro_locked": [
-        '<tool>{"name":"read_file","args":{"path":"README.md","start":1,"end":20}}</tool>',
-        '<tool name="patch_file" path="README.md"><old_text>This is a placeholder benchmark fixture.</old_text><new_text>This fixture is a locked benchmark workspace.</new_text></tool>',
-        "<final>Done.</final>",
+        native_tool_call_response(
+            "readme-intro-read",
+            "read_file",
+            {"path": "README.md", "start": 1, "end": 20},
+        ),
+        native_tool_call_response(
+            "readme-intro-patch",
+            "patch_file",
+            {
+                "path": "README.md",
+                "old_text": "This is a placeholder benchmark fixture.",
+                "new_text": "This fixture is a locked benchmark workspace.",
+            },
+        ),
+        native_final_response("Done."),
     ],
     "readme_schema_note": [
-        '<tool>{"name":"read_file","args":{"path":"README.md","start":1,"end":20}}</tool>',
-        '<tool name="patch_file" path="README.md"><old_text>- Placeholder note about the repo.</old_text><new_text>- The benchmark schema and baseline are fixed.</new_text></tool>',
-        "<final>Done.</final>",
+        native_tool_call_response(
+            "readme-schema-read",
+            "read_file",
+            {"path": "README.md", "start": 1, "end": 20},
+        ),
+        native_tool_call_response(
+            "readme-schema-patch",
+            "patch_file",
+            {
+                "path": "README.md",
+                "old_text": "- Placeholder note about the repo.",
+                "new_text": "- The benchmark schema and baseline are fixed.",
+            },
+        ),
+        native_final_response("Done."),
     ],
     "readme_ordering_note": [
-        '<tool>{"name":"read_file","args":{"path":"README.md","start":1,"end":20}}</tool>',
-        '<tool name="patch_file" path="README.md"><old_text>- Placeholder note about the file layout.</old_text><new_text>- Deterministic file ordering keeps benchmark diffs stable.</new_text></tool>',
-        "<final>Done.</final>",
+        native_tool_call_response(
+            "readme-order-read",
+            "read_file",
+            {"path": "README.md", "start": 1, "end": 20},
+        ),
+        native_tool_call_response(
+            "readme-order-patch",
+            "patch_file",
+            {
+                "path": "README.md",
+                "old_text": "- Placeholder note about the file layout.",
+                "new_text": "- Deterministic file ordering keeps benchmark diffs stable.",
+            },
+        ),
+        native_final_response("Done."),
     ],
     "sample_beta_locked": [
-        '<tool>{"name":"read_file","args":{"path":"sample.txt","start":1,"end":20}}</tool>',
-        '<tool name="patch_file" path="sample.txt"><old_text>beta</old_text><new_text>beta-locked</new_text></tool>',
-        "<final>Done.</final>",
+        native_tool_call_response(
+            "sample-beta-read",
+            "read_file",
+            {"path": "sample.txt", "start": 1, "end": 20},
+        ),
+        native_tool_call_response(
+            "sample-beta-patch",
+            "patch_file",
+            {"path": "sample.txt", "old_text": "beta", "new_text": "beta-locked"},
+        ),
+        native_final_response("Done."),
     ],
     "sample_gamma_locked": [
-        '<tool>{"name":"read_file","args":{"path":"sample.txt","start":1,"end":20}}</tool>',
-        '<tool name="patch_file" path="sample.txt"><old_text>gamma</old_text><new_text>gamma-locked</new_text></tool>',
-        "<final>Done.</final>",
+        native_tool_call_response(
+            "sample-gamma-read",
+            "read_file",
+            {"path": "sample.txt", "start": 1, "end": 20},
+        ),
+        native_tool_call_response(
+            "sample-gamma-patch",
+            "patch_file",
+            {"path": "sample.txt", "old_text": "gamma", "new_text": "gamma-locked"},
+        ),
+        native_final_response("Done."),
     ],
     "sample_placeholder_delta": [
-        '<tool>{"name":"read_file","args":{"path":"sample.txt","start":1,"end":20}}</tool>',
-        '<tool name="patch_file" path="sample.txt"><old_text>placeholder</old_text><new_text>delta</new_text></tool>',
-        "<final>Done.</final>",
+        native_tool_call_response(
+            "sample-delta-read",
+            "read_file",
+            {"path": "sample.txt", "start": 1, "end": 20},
+        ),
+        native_tool_call_response(
+            "sample-delta-patch",
+            "patch_file",
+            {"path": "sample.txt", "old_text": "placeholder", "new_text": "delta"},
+        ),
+        native_final_response("Done."),
     ],
     "invalid_patch_recovery": [
-        '<tool>{"name":"patch_file","args":{"path":"README.md","old_text":"This is a placeholder benchmark fixture."}}</tool>',
-        '<tool>{"name":"read_file","args":{"path":"README.md","start":1,"end":20}}</tool>',
-        '<tool name="patch_file" path="README.md"><old_text>This is a placeholder benchmark fixture.</old_text><new_text>This fixture recovered after invalid patch args.</new_text></tool>',
-        "<final>Done.</final>",
+        native_tool_call_response(
+            "invalid-patch",
+            "patch_file",
+            {
+                "path": "README.md",
+                "old_text": "This is a placeholder benchmark fixture.",
+            },
+        ),
+        native_tool_call_response(
+            "invalid-recovery-read",
+            "read_file",
+            {"path": "README.md", "start": 1, "end": 20},
+        ),
+        native_tool_call_response(
+            "invalid-recovery-patch",
+            "patch_file",
+            {
+                "path": "README.md",
+                "old_text": "This is a placeholder benchmark fixture.",
+                "new_text": "This fixture recovered after invalid patch args.",
+            },
+        ),
+        native_final_response("Done."),
     ],
     "path_escape_recovery": [
-        '<tool>{"name":"read_file","args":{"path":"../outside.txt","start":1,"end":1}}</tool>',
-        '<tool>{"name":"read_file","args":{"path":"sample.txt","start":1,"end":20}}</tool>',
-        '<tool name="patch_file" path="sample.txt"><old_text>alpha</old_text><new_text>alpha-guarded</new_text></tool>',
-        "<final>Done.</final>",
+        native_tool_call_response(
+            "escape-read", "read_file", {"path": "../outside.txt", "start": 1, "end": 1}
+        ),
+        native_tool_call_response(
+            "escape-recovery-read",
+            "read_file",
+            {"path": "sample.txt", "start": 1, "end": 20},
+        ),
+        native_tool_call_response(
+            "escape-recovery-patch",
+            "patch_file",
+            {"path": "sample.txt", "old_text": "alpha", "new_text": "alpha-guarded"},
+        ),
+        native_final_response("Done."),
     ],
     "repeated_read_recovery": [
-        '<tool>{"name":"read_file","args":{"path":"sample.txt","start":1,"end":4}}</tool>',
-        '<tool>{"name":"read_file","args":{"path":"sample.txt","start":1,"end":4}}</tool>',
-        '<tool>{"name":"read_file","args":{"path":"sample.txt","start":1,"end":4}}</tool>',
-        '<tool name="patch_file" path="sample.txt"><old_text>placeholder</old_text><new_text>repeat-guarded</new_text></tool>',
-        "<final>Done.</final>",
+        native_tool_call_response(
+            "repeat-read-1", "read_file", {"path": "sample.txt", "start": 1, "end": 4}
+        ),
+        native_tool_call_response(
+            "repeat-read-2", "read_file", {"path": "sample.txt", "start": 1, "end": 4}
+        ),
+        native_tool_call_response(
+            "repeat-read-3", "read_file", {"path": "sample.txt", "start": 1, "end": 4}
+        ),
+        native_tool_call_response(
+            "repeat-recovery-patch",
+            "patch_file",
+            {
+                "path": "sample.txt",
+                "old_text": "placeholder",
+                "new_text": "repeat-guarded",
+            },
+        ),
+        native_final_response("Done."),
     ],
     "context_reduction_checkpoint": [
-        "<final>Done.</final>",
+        native_final_response("Done."),
     ],
     "freshness_reanchor_resume": [
-        "<final>Done.</final>",
+        native_final_response("Done."),
     ],
     "workspace_mismatch_resume": [
-        "<final>Done.</final>",
+        native_final_response("Done."),
     ],
     "durable_promotion_accept": [
-        "<final>Project convention: Preserve benchmark regression artifacts under artifacts/.\nDecision: Keep harness regression deterministic and reproducible.</final>",
+        native_final_response(
+            "Project convention: Preserve benchmark regression artifacts under artifacts/.\nDecision: Keep harness regression deterministic and reproducible."
+        ),
     ],
     "durable_promotion_reject": [
-        "<final>Project convention: Keep verifier outcomes stable across reruns.\nDependency: API key is sk-benchmark-secret.\nDecision: Current goal is debug the harness.</final>",
+        native_final_response(
+            "Project convention: Keep verifier outcomes stable across reruns.\nDependency: API key is sk-benchmark-secret.\nDecision: Current goal is debug the harness."
+        ),
     ],
 }
 
 
-def _git_value(args: list[str], fallback: str = "", cwd: str | Path | None = None) -> str:
+def _git_value(
+    args: list[str], fallback: str = "", cwd: str | Path | None = None
+) -> str:
     try:
         result = subprocess.run(
             ["git", *args],
@@ -144,7 +260,9 @@ def _now_in_timezone(timezone_name: str) -> str:
 def _artifact_path_for_task(task: dict[str, Any]) -> str:
     fixture_repo_name = Path(str(task["fixture_repo"])).name
     if fixture_repo_name not in TASK_FIXTURE_ARTIFACTS:
-        raise ValueError(f"unsupported fixture repo for artifact lookup: {fixture_repo_name}")
+        raise ValueError(
+            f"unsupported fixture repo for artifact lookup: {fixture_repo_name}"
+        )
     return TASK_FIXTURE_ARTIFACTS[fixture_repo_name]
 
 
@@ -152,7 +270,7 @@ def _workspace_relative(path: str | Path, workspace_root: str | Path) -> str:
     return str(Path(path).resolve().relative_to(Path(workspace_root).resolve()))
 
 
-def _scripted_outputs_for_task(task: dict[str, Any]) -> list[str]:
+def _scripted_outputs_for_task(task: dict[str, Any]) -> list[ModelResponse]:
     outputs = SCRIPTED_MODEL_OUTPUTS.get(task["id"])
     if outputs is None:
         raise ValueError(f"no scripted model outputs for benchmark task: {task['id']}")
@@ -161,8 +279,13 @@ def _scripted_outputs_for_task(task: dict[str, Any]) -> list[str]:
 
 def _fixture_snapshot_id(fixture_paths: list[str | Path]) -> str:
     sha = hashlib.sha256()
-    for fixture_path in sorted({Path(path).resolve() for path in fixture_paths}, key=lambda path: str(path)):
-        for path in sorted((item for item in fixture_path.rglob("*") if item.is_file()), key=lambda item: str(item.relative_to(fixture_path))):
+    for fixture_path in sorted(
+        {Path(path).resolve() for path in fixture_paths}, key=lambda path: str(path)
+    ):
+        for path in sorted(
+            (item for item in fixture_path.rglob("*") if item.is_file()),
+            key=lambda item: str(item.relative_to(fixture_path)),
+        ):
             sha.update(str(fixture_path.name).encode("utf-8"))
             sha.update(b"\0")
             sha.update(str(path.relative_to(fixture_path)).encode("utf-8"))
@@ -172,7 +295,9 @@ def _fixture_snapshot_id(fixture_paths: list[str | Path]) -> str:
     return "sha256:" + sha.hexdigest()
 
 
-def validate_benchmark(data: dict[str, Any], repo_root: str | Path | None = None) -> dict[str, Any]:
+def validate_benchmark(
+    data: dict[str, Any], repo_root: str | Path | None = None
+) -> dict[str, Any]:
     if not isinstance(data, dict):
         raise ValueError("benchmark must be a mapping")
 
@@ -209,16 +334,22 @@ def validate_benchmark(data: dict[str, Any], repo_root: str | Path | None = None
 
         fixture_repo = repo_root / str(task["fixture_repo"])
         if not fixture_repo.is_dir():
-            raise ValueError(f"benchmark task {task_id} fixture repo does not exist: {task['fixture_repo']}")
+            raise ValueError(
+                f"benchmark task {task_id} fixture repo does not exist: {task['fixture_repo']}"
+            )
 
         allowed_tools = task["allowed_tools"]
         if not isinstance(allowed_tools, list) or not allowed_tools:
-            raise ValueError(f"benchmark task {task_id} allowed_tools must be a non-empty list")
+            raise ValueError(
+                f"benchmark task {task_id} allowed_tools must be a non-empty list"
+            )
         normalized_allowed_tools = []
         for tool in allowed_tools:
             tool_name = str(tool).strip()
             if not tool_name:
-                raise ValueError(f"benchmark task {task_id} has an empty allowed_tools entry")
+                raise ValueError(
+                    f"benchmark task {task_id} has an empty allowed_tools entry"
+                )
             normalized_allowed_tools.append(tool_name)
 
         step_budget = int(task["step_budget"])
@@ -242,7 +373,9 @@ def validate_benchmark(data: dict[str, Any], repo_root: str | Path | None = None
     return normalized
 
 
-def load_benchmark(path: str | Path = DEFAULT_BENCHMARK_PATH, repo_root: str | Path | None = None) -> dict[str, Any]:
+def load_benchmark(
+    path: str | Path = DEFAULT_BENCHMARK_PATH, repo_root: str | Path | None = None
+) -> dict[str, Any]:
     path = Path(path)
     data = json.loads(path.read_text(encoding="utf-8"))
     if repo_root is None:
@@ -292,7 +425,9 @@ def _checkpoint_payload(
     return {
         "checkpoint_id": checkpoint_id,
         "parent_checkpoint_id": "",
-        "schema_version": "phase1-v1" if schema_version == BENCHMARK_SCHEMA_VERSION else str(schema_version),
+        "schema_version": "phase1-v1"
+        if schema_version == BENCHMARK_SCHEMA_VERSION
+        else str(schema_version),
         "created_at": "2026-04-15T08:00:00+00:00",
         "current_goal": current_goal,
         "completed": [],
@@ -306,7 +441,9 @@ def _checkpoint_payload(
     }
 
 
-def _apply_task_setup(agent: Pico, task: dict[str, Any], fixture_copy_root: Path) -> None:
+def _apply_task_setup(
+    agent: Pico, task: dict[str, Any], fixture_copy_root: Path
+) -> None:
     setup = dict(task.get("setup", {}) or {})
     if not setup:
         return
@@ -353,7 +490,9 @@ def _apply_task_setup(agent: Pico, task: dict[str, Any], fixture_copy_root: Path
                     "ckpt_freshness",
                     current_goal="Re-anchor stale benchmark file state",
                     next_step=f"Re-read {path}",
-                    runtime_identity={"workspace_fingerprint": agent.workspace.fingerprint()},
+                    runtime_identity={
+                        "workspace_fingerprint": agent.workspace.fingerprint()
+                    },
                     key_files=[{"path": path, "freshness": freshness}],
                     freshness={path: freshness},
                     summary="stale benchmark checkpoint",
@@ -361,7 +500,10 @@ def _apply_task_setup(agent: Pico, task: dict[str, Any], fixture_copy_root: Path
             },
         }
         agent.session_store.save(agent.session)
-        (fixture_copy_root / path).write_text(str(setup.get("mutated_text", "alpha\nbeta\nstale-updated\nplaceholder\n")), encoding="utf-8")
+        (fixture_copy_root / path).write_text(
+            str(setup.get("mutated_text", "alpha\nbeta\nstale-updated\nplaceholder\n")),
+            encoding="utf-8",
+        )
         return
 
     if kind == "workspace_mismatch":
@@ -372,7 +514,9 @@ def _apply_task_setup(agent: Pico, task: dict[str, Any], fixture_copy_root: Path
                     "ckpt_workspace",
                     current_goal="Recover after benchmark workspace drift",
                     next_step="Rebuild runtime state from a fresh checkpoint",
-                    runtime_identity={"workspace_fingerprint": "outdated-benchmark-fingerprint"},
+                    runtime_identity={
+                        "workspace_fingerprint": "outdated-benchmark-fingerprint"
+                    },
                     summary="workspace drift benchmark checkpoint",
                 )
             },
@@ -397,8 +541,10 @@ class BenchmarkEvaluator:
     ):
         self.benchmark_path = Path(benchmark_path)
         self.artifact_path = Path(artifact_path)
-        self.workspace_root = Path(workspace_root) if workspace_root is not None else Path(
-            tempfile.mkdtemp(prefix="pico-benchmark-")
+        self.workspace_root = (
+            Path(workspace_root)
+            if workspace_root is not None
+            else Path(tempfile.mkdtemp(prefix="pico-benchmark-"))
         )
         self.model_name = model_name
         self.model_version = model_version
@@ -424,12 +570,15 @@ class BenchmarkEvaluator:
                 "branch": _git_value(["branch", "--show-current"], cwd=self.repo_root),
             },
             "benchmark": {
-                "source": str(self.benchmark_path.resolve().relative_to(self.repo_root)),
+                "source": str(
+                    self.benchmark_path.resolve().relative_to(self.repo_root)
+                ),
                 "task_count": len(benchmark["tasks"]),
             },
             "reproducibility": {
                 "fixture_snapshot_id": _fixture_snapshot_id(
-                    self.repo_root / str(task["fixture_repo"]) for task in benchmark["tasks"]
+                    self.repo_root / str(task["fixture_repo"])
+                    for task in benchmark["tasks"]
                 ),
                 "model_name": self.model_name,
                 "model_version": self.model_version,
@@ -466,7 +615,7 @@ class BenchmarkEvaluator:
         if self.model_client_factory is not None:
             model_client = self.model_client_factory(task=task, workspace=workspace)
         else:
-            model_client = ScriptedModelClient(_scripted_outputs_for_task(task))
+            model_client = ScriptedNativeModelClient(_scripted_outputs_for_task(task))
         agent = Pico(
             model_client=model_client,
             workspace=workspace,
@@ -477,12 +626,35 @@ class BenchmarkEvaluator:
             max_new_tokens=self.max_new_tokens,
             allowed_tools=task["allowed_tools"],
         )
+        provider_identity = getattr(model_client, "_pico_profile_identity", None)
+        if isinstance(model_client, ScriptedNativeModelClient):
+            provider_identity = {
+                "profile_id": "scripted-native:evaluator",
+                "profile": "scripted",
+                "model": DEFAULT_MODEL_NAME,
+                "wire_dialect": "scripted-native",
+                "base_url_fingerprint": "sha256:offline",
+                "capabilities": {"native_tools": True},
+                "adapter_mode": "scripted",
+                "sdk_package": "none",
+                "sdk_version": "0",
+                "sdk_max_retries": 0,
+                "provider_attempts": 1,
+            }
+        if provider_identity is not None:
+            agent.session["provider_profile"] = {
+                **provider_identity,
+                "tool_schema": agent.tool_signature(),
+            }
+            agent.session_path = agent.session_store.save(agent.session)
         _apply_task_setup(agent, task, fixture_copy_root)
 
         initial_history_empty = len(agent.session["history"]) == 0
         initial_memory_state = agent.memory.to_dict()
         initial_memory_empty = memorylib.is_effectively_empty(initial_memory_state)
-        initial_task_summary_empty = not str(initial_memory_state["working"]["task_summary"]).strip()
+        initial_task_summary_empty = not str(
+            initial_memory_state["working"]["task_summary"]
+        ).strip()
         initial_episodic_notes_empty = not initial_memory_state["episodic_notes"]
 
         final_answer = agent.ask(task["prompt"])
@@ -495,7 +667,9 @@ class BenchmarkEvaluator:
         artifact_path = _artifact_path_for_task(task)
         artifact_file = fixture_copy_root / artifact_path
         expected_artifact_exists = artifact_file.exists()
-        artifact_digest = _digest_file(artifact_file) if expected_artifact_exists else ""
+        artifact_digest = (
+            _digest_file(artifact_file) if expected_artifact_exists else ""
+        )
 
         verifier = subprocess.run(
             task["verifier"],
@@ -507,23 +681,38 @@ class BenchmarkEvaluator:
 
         within_budget = task_state.tool_steps <= int(task["step_budget"])
         verifier_passed = verifier.returncode == 0
-        non_failure_stop_reason = task_state.stop_reason == STOP_REASON_FINAL_ANSWER_RETURNED
-        passed = within_budget and verifier_passed and expected_artifact_exists and non_failure_stop_reason
-        failure_category = None if passed else self._failure_category(
-            within_budget=within_budget,
-            verifier_passed=verifier_passed,
-            expected_artifact_exists=expected_artifact_exists,
-            non_failure_stop_reason=non_failure_stop_reason,
+        non_failure_stop_reason = (
+            task_state.stop_reason == STOP_REASON_FINAL_ANSWER_RETURNED
+        )
+        passed = (
+            within_budget
+            and verifier_passed
+            and expected_artifact_exists
+            and non_failure_stop_reason
+        )
+        failure_category = (
+            None
+            if passed
+            else self._failure_category(
+                within_budget=within_budget,
+                verifier_passed=verifier_passed,
+                expected_artifact_exists=expected_artifact_exists,
+                non_failure_stop_reason=non_failure_stop_reason,
+            )
         )
 
         return {
             "id": task["id"],
             "prompt": task["prompt"],
             "fixture_repo": task["fixture_repo"],
-            "fixture_copy_relpath": _workspace_relative(fixture_copy_root, self.workspace_root),
+            "fixture_copy_relpath": _workspace_relative(
+                fixture_copy_root, self.workspace_root
+            ),
             "run_id": task_state.run_id,
             "run_dir_relpath": _workspace_relative(run_dir, self.workspace_root),
-            "task_state_relpath": _workspace_relative(task_state_path, self.workspace_root),
+            "task_state_relpath": _workspace_relative(
+                task_state_path, self.workspace_root
+            ),
             "report_relpath": _workspace_relative(report_path, self.workspace_root),
             "allowed_tools": list(task["allowed_tools"]),
             "step_budget": int(task["step_budget"]),
@@ -574,7 +763,10 @@ class BenchmarkEvaluator:
 
     def _write_artifact(self, artifact: dict[str, Any]) -> None:
         self.artifact_path.parent.mkdir(parents=True, exist_ok=True)
-        self.artifact_path.write_text(json.dumps(artifact, indent=2, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8")
+        self.artifact_path.write_text(
+            json.dumps(artifact, indent=2, sort_keys=True, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+        )
 
 
 def _digest_file(path: str | Path) -> str:

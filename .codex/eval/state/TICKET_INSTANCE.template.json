@@ -1,0 +1,30 @@
+{
+  "schema_version": "pico-eval-ticket-instance-v2",
+  "control_revision": "eval-control-v4",
+  "ticket_id": "<TICKET_ID>",
+  "execution_id": "<UNIQUE_EXECUTION_ID>",
+  "wave": "<WAVE_ID>",
+  "role": "program_supervisor|integrator|implementer|reviewer",
+  "execution_mode": "model_thread|local_process|current_integrator",
+  "thread_id": null,
+  "process_ids": [],
+  "dispatch_sequence": [
+    "<TICKET_ID>"
+  ],
+  "dispatch_sequence_index": 0,
+  "revision": 1,
+  "supersedes_handoff_sha256": null,
+  "finding_ids": [],
+  "base_sha": "<CANDIDATE_OR_RUN_SHA>",
+  "candidate_sha": "<CANDIDATE_SHA>",
+  "branch": null,
+  "worktree": null,
+  "dependency_handoff_hashes": {},
+  "dependency_commits": [],
+  "freeze_hashes": {},
+  "allowed_write_paths": [],
+  "prompt_sha256": null,
+  "status": "pending|running|needs_remediation|accepted|not_applicable|blocked",
+  "not_applicable_reason": "required_gate_rejected|optional_branch_not_selected|null",
+  "not_applicable_binding": null
+}

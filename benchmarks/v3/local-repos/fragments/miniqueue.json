@@ -1,0 +1,32 @@
+{
+  "schema_version": "pico-local-repo-fragment-v1",
+  "repository": "miniqueue",
+  "base_snapshot": "benchmarks/v3/local-repos/repos/miniqueue",
+  "source_loc": 215,
+  "tasks": [
+    {
+      "id": "T04",
+      "slug": "miniqueue-retry-boundary",
+      "prompt_path": "benchmarks/v3/local-repos/task_docs/miniqueue/T04-retry-boundary.md",
+      "hidden_verifier": "benchmarks/v3/local-repos/hidden_verifiers/miniqueue/verify_t04_retry_boundary.py",
+      "reference_patch": "benchmarks/v3/local-repos/reference_patches/miniqueue/T04-retry-boundary.patch",
+      "target_files": ["miniqueue/queue.py"]
+    },
+    {
+      "id": "T05",
+      "slug": "miniqueue-pending-order-limit",
+      "prompt_path": "benchmarks/v3/local-repos/task_docs/miniqueue/T05-pending-order-limit.md",
+      "hidden_verifier": "benchmarks/v3/local-repos/hidden_verifiers/miniqueue/verify_t05_pending_order_limit.py",
+      "reference_patch": "benchmarks/v3/local-repos/reference_patches/miniqueue/T05-pending-order-limit.patch",
+      "target_files": ["miniqueue/queue.py"]
+    },
+    {
+      "id": "T06",
+      "slug": "miniqueue-expired-lease-reclaim",
+      "prompt_path": "benchmarks/v3/local-repos/task_docs/miniqueue/T06-expired-lease-reclaim.md",
+      "hidden_verifier": "benchmarks/v3/local-repos/hidden_verifiers/miniqueue/verify_t06_expired_lease_reclaim.py",
+      "reference_patch": "benchmarks/v3/local-repos/reference_patches/miniqueue/T06-expired-lease-reclaim.patch",
+      "target_files": ["miniqueue/queue.py"]
+    }
+  ]
+}

@@ -1,0 +1,233 @@
+{
+  "schema_version": "pico-eval-wave-handoff-v1",
+  "wave": "W6R3",
+  "status": "blocked_before_deterministic_gate",
+  "wave_integrator_role": "non-ticket scheduler and sole formal STATUS/FREEZE writer",
+  "wave_integrator_thread": "019f91dc-1940-7b31-9e6f-086f4941922b",
+  "integration_branch": "eval/v3-integration",
+  "wave_base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+  "upstream_wave": "W6R2",
+  "upstream_metadata_head": "1baf1e1adef49e93994a4abbb93a41a520e489fb",
+  "upstream_canonical_sha": "62cf5a680edc05ae1d242638827178453163c71e",
+  "upstream_runtime_snapshot_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+  "upstream_handoff_sha256": "031f0cf629f60fead1b82e239c69a2e55660a5829a45f5d2d24862e83df6cbd7",
+  "canonical_snapshot_sha": "9d35e7d22eca9ff89c7920dd3a7fa479185c75d5",
+  "canonical_snapshot_tree": "9373f8590c8a039192de0694c0100b91be994e8b",
+  "canonical_tag": "eval-v3/w6r3-canonical",
+  "canonical_tag_object_sha": "15d09fecc52af7b6e0750f044484b3c0b2cf4a02",
+  "canonical_tag_verified_type": "tag",
+  "canonical_tag_verified_target": "9d35e7d22eca9ff89c7920dd3a7fa479185c75d5",
+  "canonical_snapshot_semantics": "Immutable W6R3 integration and formal blocked state after AUDIT-059-A; TOOL-059-G was not dispatched and no recovery run snapshot was approved.",
+  "source_integration_head_before_close_metadata": "8b0abb22e394206c6e03276a0bb71e309e7efa4b",
+  "source_integration_tree_before_close_metadata": "b48a6ebcbade67eb4984eef7c39497fd6a126acf",
+  "formal_state_hashes": {
+    "status_sha256": "5d0d04fa1c921a4e67972205d3ff51b28dd921be40249057ab51aee27c354bfe",
+    "freeze_sha256": "f5d68812883b1df378a5f6eb1a06af025f0fadb32d0d7573e26ffb098b77f343",
+    "commit_map_sha256": "b57b018a73f045e6cdab668f6ec6a44e757aedbc32f6a4263c95a33bc12667bc",
+    "artifact_index_sha256": "d25bff9c9028a5e4e491394f497689612fccdc50d738bbeb515ce1c16dd286fa"
+  },
+  "plan_validation": {
+    "result": "VALID",
+    "ticket_template_count": 93,
+    "wave_count": 16,
+    "initial_ready_tickets": ["EVAL-059-O"],
+    "initial_ready_set_match": true,
+    "final_ready_tickets": []
+  },
+  "integration_order": [
+    "EVAL-059-O",
+    "TEST-059-C",
+    "TOOL-059-O",
+    "EVAL-059-H",
+    "TOOL-059-R",
+    "AUDIT-059-A"
+  ],
+  "accepted_tickets": [
+    {
+      "ticket_id": "EVAL-059-O",
+      "instance_id": "W6R3-EVAL-059-O-01",
+      "worker_thread_uuid": "019f91df-c283-7f70-87af-88d42cd35e54",
+      "worker_branch": "codex/w6r3-eval-059-o",
+      "worker_head": "a642a7d223d392b34f78692fa2bffe0feb5c5b4e",
+      "canonical_commit": "b90fb5297aceef3eb137ae8104888974e96e7141",
+      "handoff_sha256": "849b687163b77e8957529d72e0111edb08625a76a1276c87799e68b595bef00f",
+      "stable_patch_id": "06e7e986f6b99b5969dd23f00aebd71f61badef2",
+      "outcome": "accepted_oracle_v2_frozen"
+    },
+    {
+      "ticket_id": "TEST-059-C",
+      "instance_id": "W6R3-TEST-059-C-01",
+      "worker_thread_uuid": "019f91f6-81c6-75b1-8347-bc996798f993",
+      "worker_branch": "codex/w6r3-test-059-c",
+      "worker_head": "f893c6dfb753c76b648256ca8125d5527be14566",
+      "canonical_commit": "49cc1cc2ff72d61b8cdce871e352803ed68b79b5",
+      "handoff_sha256": "498887b31ca34d7f347b984f8011162802dc6100ffd9f04f8166845ce3d8316f",
+      "stable_patch_id": "16272167e55eb106a2b78b830f6fd67407ec5c75",
+      "outcome": "accepted_red_baseline"
+    },
+    {
+      "ticket_id": "TOOL-059-O",
+      "instance_id": "W6R3-TOOL-059-O-01",
+      "worker_thread_uuid": "019f91fc-3623-7321-aef9-0e2fe37a3212",
+      "worker_branch": "codex/w6r3-tool-059-o",
+      "worker_head": "6cd6f68eaa44ae5ac73dc2d748359989186e6e55",
+      "canonical_commit": "83540b8df58bfb302268b5abd58876a7bf629abc",
+      "handoff_sha256": "ad18b730148979e5f46149432484072c1414fb4dc39f90ad074a0539bfdb49cd",
+      "stable_patch_id": "a7062d1ee7d5a89067a3411d375611183b86d7a2",
+      "outcome": "accepted"
+    },
+    {
+      "ticket_id": "EVAL-059-H",
+      "instance_id": "W6R3-EVAL-059-H-01",
+      "worker_thread_uuid": "019f91f6-ecd6-76a3-a724-482c21cda42a",
+      "worker_branch": "codex/w6r3-eval-059-h",
+      "worker_head": "0d637dfa5d23e1ebcd28555abce979d900b60218",
+      "canonical_commit": "f321f064a1a146bcbf64904ee59f0bb863f118d4",
+      "handoff_sha256": "456d89a6d81b909551b9e687a70d48625d0fd814bbbbd519b9fd347b0c45f123",
+      "stable_patch_id": "76f493bb117e86ada3ad1994208626c75a912aa5",
+      "outcome": "accepted_then_audit_found_live_verifier_blocker"
+    },
+    {
+      "ticket_id": "TOOL-059-R",
+      "instance_id": "W6R3-TOOL-059-R-01",
+      "worker_thread_uuid": "019f91f7-4836-7580-a509-0b355f6089b8",
+      "worker_branch": "codex/w6r3-tool-059-r",
+      "worker_head": "8bcf1e5f1241cc19c7ea2590572dbc08c93cb9f6",
+      "canonical_commit": "d07950a5ee94d90658f28c4b52bafc4916a0097e",
+      "handoff_sha256": "03c6ade0282d6f2c0a0a2af28c75f1a76c34a5be5358ba67e5cea0b41f5c0fd6",
+      "stable_patch_id": "8ec7e62d11a8d1cde9e1c24eadd58003b8f9819c",
+      "outcome": "accepted"
+    }
+  ],
+  "blocked_tickets": [
+    {
+      "ticket_id": "AUDIT-059-A",
+      "instance_id": "W6R3-AUDIT-059-A-01",
+      "worker_thread_uuid": "019f920c-0e98-7943-bc78-8479f9a51723",
+      "worker_branch": "codex/w6r3-audit-059-a",
+      "worker_head": "99b3052774721b1469b254abae665496f5c3678d",
+      "canonical_commit": "8b0abb22e394206c6e03276a0bb71e309e7efa4b",
+      "handoff_sha256": "659d898a96fab1514b6a78027f886fcefedcff859a2e29f22dc87e293ec06d5b",
+      "stable_patch_id": "87e1631af7bf1d62e4ad577f7fb7068f518beca0",
+      "outcome": "accepted_blocked",
+      "open_p1_findings": [
+        "AUDIT-059-A-P1-001",
+        "AUDIT-059-A-P1-002",
+        "AUDIT-059-A-P1-003"
+      ]
+    }
+  ],
+  "not_dispatched_tickets": [
+    {
+      "ticket_id": "TOOL-059-G",
+      "reason": "AUDIT-059-A did not pass, so the Gate start condition was not met.",
+      "provider_http_attempts": 0,
+      "artifact_created": false
+    }
+  ],
+  "audit": {
+    "status": "blocked",
+    "deterministic_tests": "82 passed",
+    "ruff": "passed",
+    "provider_http_attempts": 0,
+    "findings": [
+      {
+        "id": "AUDIT-059-A-P1-001",
+        "classification": "multiround_context_loss_and_asymmetric_test_coverage",
+        "summary": "Anthropic stateless continuation retains only the latest call/result round."
+      },
+      {
+        "id": "AUDIT-059-A-P1-002",
+        "classification": "responses_call_result_cardinality_not_fail_closed",
+        "summary": "OpenAI Responses v2 accepts a two-call/one-result incomplete transcript."
+      },
+      {
+        "id": "AUDIT-059-A-P1-003",
+        "classification": "authorized_live_verifier_bound_to_fake_call_ids",
+        "summary": "The future-live smoke verifier requires fake-provider literal call IDs."
+      }
+    ]
+  },
+  "worker_bundle": {
+    "path": "F:/dev/llm/pico-eval-artifacts/wave-bundles/W6R3-workers.bundle",
+    "sha256": "98474e9e8b3a6812b1bf0208bd8f32e9a500339771a1f9fbd7343118a1ed495e",
+    "size_bytes": 16785463,
+    "verified_ref_count": 7,
+    "complete_history": true
+  },
+  "commit_map": {
+    "path": ".codex/eval/state/W6R3-commit-map.json",
+    "sha256": "b57b018a73f045e6cdab668f6ec6a44e757aedbc32f6a4263c95a33bc12667bc",
+    "stable_patch_identities_verified": true
+  },
+  "ticket_handoffs": {
+    "index_path": ".codex/eval/state/W6R3-artifact-index.json",
+    "index_sha256": "d25bff9c9028a5e4e491394f497689612fccdc50d738bbeb515ce1c16dd286fa",
+    "ticket_count": 6
+  },
+  "recovery_snapshot": {
+    "approved": false,
+    "new_run_snapshot_sha": null,
+    "preserved_historical_runtime_snapshot_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+    "reason": "TOOL-059-G was not dispatched."
+  },
+  "evaluation_scope": {
+    "live_provider_run": false,
+    "human_smoke_run": false,
+    "formal_effectiveness_evaluation_run": false,
+    "profile_reselection_run": false,
+    "resume_evaluation_run": false,
+    "w6r4_started": false,
+    "w7_ready": false,
+    "w7_started": false
+  },
+  "next_wave": {
+    "ready": false,
+    "ready_tickets": [],
+    "w6r4_started": false,
+    "w7_ready": false,
+    "w7_started": false,
+    "blocked_until": "A supervisor-approved plan amendment creates separately owned remediation tickets for all three audit findings, the fixes are accepted, the read-only audit is rerun, and TOOL-059-G passes."
+  },
+  "worker_branches_and_worktrees_retained": true,
+  "cleanup_candidates": [
+    {
+      "branch": "codex/w6r3-eval-059-o",
+      "worktree": "C:/Users/Papewhit/.codex/worktrees/65e4/pico",
+      "head": "a642a7d223d392b34f78692fa2bffe0feb5c5b4e",
+      "tracked_clean": true
+    },
+    {
+      "branch": "codex/w6r3-test-059-c",
+      "worktree": "C:/Users/Papewhit/.codex/worktrees/7a4a/pico",
+      "head": "f893c6dfb753c76b648256ca8125d5527be14566",
+      "tracked_clean": true
+    },
+    {
+      "branch": "codex/w6r3-tool-059-o",
+      "worktree": "C:/Users/Papewhit/.codex/worktrees/4b6c/pico",
+      "head": "6cd6f68eaa44ae5ac73dc2d748359989186e6e55",
+      "tracked_clean": true
+    },
+    {
+      "branch": "codex/w6r3-eval-059-h",
+      "worktree": "C:/Users/Papewhit/.codex/worktrees/0f69/pico",
+      "head": "0d637dfa5d23e1ebcd28555abce979d900b60218",
+      "tracked_clean": true
+    },
+    {
+      "branch": "codex/w6r3-tool-059-r",
+      "worktree": "C:/Users/Papewhit/.codex/worktrees/e6a1/pico",
+      "head": "8bcf1e5f1241cc19c7ea2590572dbc08c93cb9f6",
+      "tracked_clean": true
+    },
+    {
+      "branch": "codex/w6r3-audit-059-a",
+      "worktree": "C:/Users/Papewhit/.codex/worktrees/24a9/pico",
+      "head": "99b3052774721b1469b254abae665496f5c3678d",
+      "tracked_clean": true,
+      "ignored_environment_candidate": ".venv/"
+    }
+  ],
+  "completed_at": "2026-07-24T11:13:11+08:00"
+}

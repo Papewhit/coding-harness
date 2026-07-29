@@ -1,0 +1,12 @@
+diff --git a/miniqueue/queue.py b/miniqueue/queue.py
+--- a/miniqueue/queue.py
++++ b/miniqueue/queue.py
+@@ -81,7 +81,7 @@ class MiniQueue:
+         ready = [
+             job
+             for job in self._jobs.values()
+-            if job.state == "pending" and job.available_at < now
++            if job.state == "pending" and job.available_at <= now
+         ]
+         ready.sort(key=lambda job: (job.available_at, job.sequence))
+         return ready if limit is None else ready[:limit]

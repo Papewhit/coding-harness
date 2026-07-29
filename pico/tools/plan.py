@@ -21,10 +21,9 @@ PLAN_TOOL_SPECS = {
 }
 
 PLAN_TOOL_EXAMPLES = {
-    "enter_plan_mode": '<tool>{"name":"enter_plan_mode","args":{"topic":"Refactor auth"}}</tool>',
-    "exit_plan_mode": '<tool>{"name":"exit_plan_mode","args":{}}</tool>',
+    "enter_plan_mode": {"topic": "Refactor auth"},
+    "exit_plan_mode": {},
 }
-
 
 
 def tool_enter_plan_mode(agent: Pico, args: dict[str, Any]) -> str:

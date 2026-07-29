@@ -1,0 +1,164 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-043-R",
+  "instance_id": "W5R-TOOL-043-R-01",
+  "wave": "W5R",
+  "role": "implementer",
+  "status": "complete",
+  "thread_uuid": "019f88a0-f6c2-7940-8143-93bc3b977e7a",
+  "source_thread_id": "019f8899-40f8-7231-9458-dcc8084aa44e",
+  "prompt_sha256": "7d950b71fae38c43dea17a5dcc16cc5bb48c382768fa9a678e9b29900a02cdec",
+  "base_sha": "fd17e64b45f58558d84a200b5498db463998a239",
+  "head_sha": "10af860397a18f1a43dd4ea528fc77f5397cffb9",
+  "head_sha_semantics": "Implementation-content head before the metadata-only commit containing this handoff; the containing commit is the final worker branch HEAD reported to the Wave Integrator.",
+  "branch": "codex/eval-v3-w5r-tool-043-r",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/e3f0/pico",
+  "dependency_commits": [],
+  "applied_dependency_commits": [],
+  "dependency_handoff_hashes": {
+    "TOOL-040-I": "3ea08ab84d4bcdc632280bb8e65e572aa1a448b04781394f242880790faf0922",
+    "TOOL-041-M": "7b3b413cc1f41f8db5f5d218936013e32ea41059dfe0505b74a5eefc7fbd64d5",
+    "TOOL-042-G": "437d9c24c7cc38c68f8f3f6f2bdfe322e55408ada19c01f61d1474d3a0b55b2d"
+  },
+  "dependency_state_hashes": {
+    "W5-wave-handoff": "8bb358e325764457d727a11cbe07742bc230e730296c8ce35fc2ce1e3b5b2625"
+  },
+  "own_commits": [
+    "10af860397a18f1a43dd4ea528fc77f5397cffb9"
+  ],
+  "files_changed": [
+    "pico/core/tool_repetition.py",
+    "pico/core/session_lifecycle.py",
+    "tests/test_native_tool_repetition.py",
+    ".codex/eval/handoffs/TOOL-043-R.json"
+  ],
+  "commands_run": [
+    "git rev-parse --show-toplevel; git rev-parse HEAD; git branch --show-current",
+    "SHA-256 verification of TOOL-040-I, TOOL-041-M, TOOL-042-G and W5 blocked handoffs",
+    "uv run pytest tests/test_tool_policy_acceptance.py::test_rejected_patch_can_be_retried_after_informing_read -q",
+    "uv run pytest tests/test_native_tool_repetition.py tests/test_tool_policy_acceptance.py::test_rejected_patch_can_be_retried_after_informing_read -q",
+    "uv run pytest tests/test_native_tool_loop.py tests/test_native_runtime_integration.py tests/test_tool_policy_acceptance.py -q",
+    "uv run ruff check pico/core/tool_repetition.py pico/core/session_lifecycle.py tests/test_native_tool_repetition.py",
+    "git diff --check; allowed-write-path verification"
+  ],
+  "tests": [
+    {
+      "command": "uv run pytest tests/test_tool_policy_acceptance.py::test_rejected_patch_can_be_retried_after_informing_read -q",
+      "result": "failed_before_fix",
+      "details": "1 failed: README.md remained 'hello world', reproducing TOOL-042-G-NEW-001 on the immutable W5R base."
+    },
+    {
+      "command": "uv run pytest tests/test_native_tool_repetition.py tests/test_tool_policy_acceptance.py::test_rejected_patch_can_be_retried_after_informing_read -q",
+      "result": "passed",
+      "details": "9 passed. Covers structured history persistence, same-path successful read unlock, failed read, different path, unrelated error code, completed/uncertain mutation repeats, and rendered-text non-authority; the protected retry test passed without modification."
+    },
+    {
+      "command": "uv run pytest tests/test_native_tool_loop.py tests/test_native_runtime_integration.py tests/test_tool_policy_acceptance.py -q",
+      "result": "failed_known_windows_baseline",
+      "details": "17 passed and 3 failed. The target protected retry test passed. The failures are the W5-recorded Windows path-separator assertion, unavailable POSIX tail command, and Windows shell quoting/artifact behavior; none involve changed paths or retry semantics."
+    },
+    {
+      "command": "uv run ruff check pico/core/tool_repetition.py pico/core/session_lifecycle.py tests/test_native_tool_repetition.py",
+      "result": "passed",
+      "details": "All checks passed."
+    },
+    {
+      "command": "git diff --check; allowed-write-path verification",
+      "result": "passed",
+      "details": "No whitespace errors; all implementation and metadata changes are confined to ticket allowed_write_paths."
+    }
+  ],
+  "test_coverage": [
+    {
+      "case": "successful_same_path_read",
+      "purpose": "Proves a rejected prior_read_required mutation can be retried only after an intervening read_file with structured tool_status=ok for the same path."
+    },
+    {
+      "case": "failed_or_different_read",
+      "purpose": "Proves failed reads and successful reads of another path cannot unlock the mutation."
+    },
+    {
+      "case": "other_mutation_outcomes",
+      "purpose": "Proves other error codes and completed or uncertain mutation attempts remain repeated_identical_call rejections."
+    },
+    {
+      "case": "rendered_text_non_authority",
+      "purpose": "Proves content, error prefixes and display strings cannot substitute for tool_status/tool_error_code metadata."
+    },
+    {
+      "case": "native_history_persistence",
+      "purpose": "Proves NativeSessionRecorder stores tool_status and tool_error_code beside rendered content in internal history."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "pico/core/tool_repetition.py",
+      "sha256": "b90100045117397138901a94e7ea471358ad9980e3ac8f12b7d6c0c17cbda030",
+      "hash_basis": "working_tree_file_bytes_at_implementation_head",
+      "coverage": "Structured prior_read_required and fresh same-path read decision; no content parsing."
+    },
+    {
+      "path": "pico/core/session_lifecycle.py",
+      "sha256": "34d3c56e2eece3d74b3d268000439cf054a1783dda610739786d0961cdce8a55",
+      "hash_basis": "working_tree_file_bytes_at_implementation_head",
+      "coverage": "Persists structured tool_status/tool_error_code to internal history while preserving existing event and trace metadata."
+    },
+    {
+      "path": "tests/test_native_tool_repetition.py",
+      "sha256": "6898c89789ad04effef4645a6159e8893954003bc79ad19c87c29253dfe6bd65",
+      "hash_basis": "working_tree_file_bytes_at_implementation_head",
+      "coverage": "Positive, negative, rendered-text independence, and recorder persistence regression tests."
+    },
+    {
+      "path": ".codex/eval/handoffs/TOOL-043-R.json",
+      "persistence": "Metadata-only commit generated after the implementation-content head."
+    }
+  ],
+  "acceptance_checklist": {
+    "successful_same_path_read_unlocks_prior_read_required": true,
+    "failed_read_different_path_and_other_error_codes_do_not_unlock": true,
+    "completed_or_uncertain_mutation_repeats_remain_rejected": true,
+    "rendered_content_is_not_parsed": true,
+    "protected_retry_test_passes": true,
+    "safety_chain_order_unchanged": true,
+    "rejection_metadata_unchanged": true,
+    "protected_tests_modified": false
+  },
+  "native_protocol_observations": {
+    "observation_scope": "Offline deterministic tests only; no live provider, formal effectiveness, Resume evaluation or W6 work.",
+    "text_envelope_seen_count": 0,
+    "rendered_text_used_for_policy": false,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0,
+    "sdk_tool_runner_used": false,
+    "sdk_agent_runner_used": false,
+    "sdk_managed_pico_tool_execution_used": false
+  },
+  "defects": [
+    {
+      "id": "W5-windows-platform-set",
+      "classification": "known_baseline",
+      "details": "Three Windows-specific failures remain in the ticket's full regression command: path separator rendering, missing POSIX tail, and shell quoting/artifact behavior."
+    }
+  ],
+  "risks": [
+    "Wave Integrator must not accept this implementation until TOOL-044-F completes and verifies the required WSL fixture-only negative control.",
+    "This ticket does not resolve the separate W5 structured-context freeze binding defect or other W5R baseline remediation tickets."
+  ],
+  "integration_prerequisites": [
+    "TOOL-044-F WSL fixture-only negative control verified by the Wave Integrator"
+  ],
+  "status_proposal": {
+    "ticket_id": "TOOL-043-R",
+    "status": "complete",
+    "head_sha": "10af860397a18f1a43dd4ea528fc77f5397cffb9",
+    "reason": "Native history now persists structured tool outcome metadata and retry-after-read consumes only that metadata; targeted and protected regression coverage passes."
+  },
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "implementation_ready": true,
+  "ready_for_integration": false,
+  "ready_for_integration_reason": "Implementation is complete, but acceptance is intentionally pending the separately owned TOOL-044-F WSL fixture-only negative control."
+}

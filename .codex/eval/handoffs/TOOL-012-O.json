@@ -1,0 +1,124 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-012-O",
+  "instance_id": "W1-TOOL-012-O-01",
+  "wave": "W1",
+  "role": "implementer",
+  "status": "complete",
+  "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+  "head_sha": "dbd28eff4b2441c7aa9d0277706c61329d34c541",
+  "branch": "codex/eval-v3-w1-tool-012-o",
+  "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\908f\\pico",
+  "prompt_sha256": "b631dc6175c38423a10f869fdb186aef012f94bf1111c3160c473b38fca054f3",
+  "dependency_commits": [
+    "9a05404ec3a51821ca09a710bf8bfbfff84e4f90"
+  ],
+  "applied_dependency_commits": [
+    {
+      "source_sha": "9a05404ec3a51821ca09a710bf8bfbfff84e4f90",
+      "applied_sha": "ec18c8758c5adb31e43d565b49cfbf316e500413"
+    }
+  ],
+  "own_commits": [
+    "dbd28eff4b2441c7aa9d0277706c61329d34c541"
+  ],
+  "files_changed": [
+    "pico/evaluation/sdk_probe_openai.py",
+    "tests/test_sdk_probe_openai.py"
+  ],
+  "commands_run": [
+    "git cherry-pick 9a05404ec3a51821ca09a710bf8bfbfff84e4f90",
+    "$env:UV_CACHE_DIR=<system-temp>\\pico-w1-tool-012-o-uv-cache; uv run --with openai python -c <SDK signature introspection>",
+    "$env:UV_CACHE_DIR=<system-temp>\\pico-w1-tool-012-o-uv-cache; uv run --with openai pytest tests/test_sdk_probe_openai.py -q",
+    "$env:UV_CACHE_DIR=<system-temp>\\pico-w1-tool-012-o-uv-cache; uv run --with openai ruff check pico/evaluation/sdk_probe_openai.py tests/test_sdk_probe_openai.py",
+    "$env:UV_CACHE_DIR=<system-temp>\\pico-w1-tool-012-o-uv-cache; uv run --with openai pytest tests/test_sdk_probe.py tests/test_sdk_probe_openai.py -q",
+    "$env:UV_CACHE_DIR=<system-temp>\\pico-w1-tool-012-o-uv-cache; uv run --with openai pytest tests/test_architecture_boundaries.py tests/test_safety_invariants.py -q",
+    "git diff --check; git diff --cached --check; explicit allowed-path checks",
+    "SHA-256 of Git blob bytes for committed outputs and frozen artifact contract"
+  ],
+  "tests": [
+    {
+      "command": "uv run --with openai pytest tests/test_sdk_probe_openai.py -q",
+      "result": "passed",
+      "details": "4 passed in 16.69s using OpenAI SDK 2.46.0 and an in-process httpx MockTransport; no live provider request was issued"
+    },
+    {
+      "command": "uv run --with openai ruff check pico/evaluation/sdk_probe_openai.py tests/test_sdk_probe_openai.py",
+      "result": "passed",
+      "details": "All checks passed"
+    },
+    {
+      "command": "uv run --with openai pytest tests/test_sdk_probe.py tests/test_sdk_probe_openai.py -q",
+      "result": "passed",
+      "details": "8 passed in 4.09s; provider-neutral harness and OpenAI plugin tests pass together"
+    },
+    {
+      "command": "uv run --with openai pytest tests/test_architecture_boundaries.py tests/test_safety_invariants.py -q",
+      "result": "failed",
+      "details": "3 passed, 8 failed in 5.87s for pre-existing baseline and Windows environment reasons: base runtime.py is already 952 lines against a 950-line budget; Windows symlink privilege is unavailable; clear=True environment tests cannot resolve Path.home(); and an existing shell quoting test fails. None of the failing modules or tests were modified by this ticket."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "pico/evaluation/sdk_probe_openai.py",
+      "sha256": "9d5e903b87265525a8f69a1f3674512e5e7756f96d0f667cb9f221a3d135b97f",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "tests/test_sdk_probe_openai.py",
+      "sha256": "8f23fe888447d912d0f732e67ef9553f98fea1222756556176615b8f21603f85",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": ".codex/eval/handoffs/TOOL-012-O.json",
+      "persistence": "generated after the content commit and intentionally not included in that commit"
+    }
+  ],
+  "dependency_handoff_hashes": {
+    "TOOL-012-I": "a401dbac5f1f93eb366a14b5ed9e129a489e4b2a802b734c8adf4be1792f05f9"
+  },
+  "contract_hashes": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "probe_harness": "d47cde8398bfe8142e712c6c7b2d461eadd249aa7f7a8867894e81c5e9f37491",
+    "openai_probe_plugin": "9d5e903b87265525a8f69a1f3674512e5e7756f96d0f667cb9f221a3d135b97f"
+  },
+  "frozen_hashes": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "native_contract": null,
+    "tool_schema": null,
+    "sdk_transport_decision": null,
+    "provider_selection": null,
+    "native_resume_gate": null
+  },
+  "native_protocol_observations": {
+    "observation_scope": "OpenAI SDK 2.46.0 with in-process fake HTTP responses only; no provider request or formal online evaluation was issued",
+    "response_modes_tested": [
+      "typed",
+      "raw"
+    ],
+    "custom_base_url_observed": true,
+    "tools_and_tool_choice_observed": true,
+    "function_call_output_roundtrip_observed": true,
+    "reasoning_item_roundtrip_observed": true,
+    "sdk_max_retries": 0,
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0
+  },
+  "defects": [],
+  "risks": [
+    "This ticket validates SDK behavior only against an in-process fake HTTP transport; endpoint-specific viability remains unproven until an authorized live conformance probe.",
+    "The optional architecture/safety regression command has unrelated pre-existing baseline and Windows environment failures documented in tests; ticket-specific and provider-neutral SDK probe suites pass."
+  ],
+  "status_proposal": {
+    "ticket_id": "TOOL-012-O",
+    "status": "complete",
+    "head_sha": "dbd28eff4b2441c7aa9d0277706c61329d34c541",
+    "ready_for_integration": true
+  },
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}

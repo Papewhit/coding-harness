@@ -1,0 +1,369 @@
+{
+  "schema_version": "pico-eval-wave-handoff-v1",
+  "wave": "W1",
+  "wave_base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+  "integration_sha": "67d5f8bf10a65c39885f203e7edb7aede7beb27b",
+  "integration_sha_role": "canonical W1 code/state snapshot before the wave-handoff metadata commit",
+  "metadata_commit": {
+    "role": "commit adding this handoff after the canonical integration snapshot",
+    "parent_sha": "67d5f8bf10a65c39885f203e7edb7aede7beb27b",
+    "sha_resolution": "git log -1 --format=%H -- .codex/eval/state/W1-wave-handoff.json"
+  },
+  "status_sha256": "fd0095b76f392f27806aac5a4d8481c9bc24369864dd52f4c824039634a674b9",
+  "freeze_sha256": "271b0078e42b72d2295ac20ecc33e1fe8f993a1b47e66fe7b4104a9d4d60a075",
+  "accepted_tickets": [
+    "TOOL-010",
+    "TOOL-011",
+    "TOOL-012-I",
+    "TOOL-012-O",
+    "TOOL-012-A",
+    "EVAL-020",
+    "EVAL-021-A",
+    "EVAL-021-B",
+    "EVAL-022",
+    "EVAL-030",
+    "EVAL-041",
+    "EVAL-040-A",
+    "EVAL-040-B",
+    "EVAL-040-C"
+  ],
+  "blocked_tickets": [],
+  "ticket_handoffs": {
+    "TOOL-010": {
+      "path": ".codex/eval/handoffs/TOOL-010.json",
+      "sha256": "300faf3f58f369248291ba72be3aefca9e3444dac9999cf45c5767c4eefbde0d",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "head_sha": "387216cf4393edc34bce30e7facfa2dbc35cc524",
+      "own_commits": [
+        "387216cf4393edc34bce30e7facfa2dbc35cc524"
+      ],
+      "integration_commits": [
+        "87b943a81febbecc15b40ab1d81e002208383abd"
+      ]
+    },
+    "TOOL-011": {
+      "path": ".codex/eval/handoffs/TOOL-011.json",
+      "sha256": "825e0d3a64abd065e3a9c67a3ce3d1bb9c06d2bbe1b5b00b8b24423cfa3d4dfa",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "head_sha": "e08cb3e8c93e6eb63df4118ce0f065f4dd0bcc48",
+      "own_commits": [
+        "e08cb3e8c93e6eb63df4118ce0f065f4dd0bcc48"
+      ],
+      "integration_commits": [
+        "0c0182e945abacbc273395a4a0fdea5349f64a5b"
+      ]
+    },
+    "TOOL-012-I": {
+      "path": ".codex/eval/handoffs/TOOL-012-I.json",
+      "sha256": "a401dbac5f1f93eb366a14b5ed9e129a489e4b2a802b734c8adf4be1792f05f9",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "head_sha": "9a05404ec3a51821ca09a710bf8bfbfff84e4f90",
+      "own_commits": [
+        "9a05404ec3a51821ca09a710bf8bfbfff84e4f90"
+      ],
+      "integration_commits": [
+        "886962d339221a7214c9be8a988a6978b1d42d44"
+      ]
+    },
+    "TOOL-012-O": {
+      "path": ".codex/eval/handoffs/TOOL-012-O.json",
+      "sha256": "80ccbd69a07af49fe028155da9c9c7a19d29b6729d1a7667ab1b1357e7c58d63",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "head_sha": "dbd28eff4b2441c7aa9d0277706c61329d34c541",
+      "dependency_commits": [
+        "9a05404ec3a51821ca09a710bf8bfbfff84e4f90"
+      ],
+      "applied_dependency_commits": [
+        "ec18c8758c5adb31e43d565b49cfbf316e500413"
+      ],
+      "own_commits": [
+        "dbd28eff4b2441c7aa9d0277706c61329d34c541"
+      ],
+      "integration_commits": [
+        "57875ae44a4ef10b45f3d0679dba9dc94999039c"
+      ]
+    },
+    "TOOL-012-A": {
+      "path": ".codex/eval/handoffs/TOOL-012-A.json",
+      "sha256": "f319f37fc9345e8de861d83da1e4df2fee4efec06cc834e8ab9d29c7464cee77",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "head_sha": "690c84001c8477a8c33a7da2e96a0a2db09f930f",
+      "dependency_commits": [
+        "9a05404ec3a51821ca09a710bf8bfbfff84e4f90"
+      ],
+      "applied_dependency_commits": [
+        "11a5f5e53ae5fa1be20e63d36b090f0b74226ef1"
+      ],
+      "own_commits": [
+        "690c84001c8477a8c33a7da2e96a0a2db09f930f"
+      ],
+      "integration_commits": [
+        "83c0d68a959ddf260ffffb7c9e34bf8a56f8d8e4"
+      ]
+    },
+    "EVAL-020": {
+      "path": ".codex/eval/handoffs/EVAL-020.json",
+      "sha256": "964e7eed10799462a645f4a3135ca409c5c49744b76010385749d77f6b099464",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "head_sha": "539904b31541f898c5da795bb690dce7c6d43701",
+      "own_commits": [
+        "539904b31541f898c5da795bb690dce7c6d43701"
+      ],
+      "integration_commits": [
+        "527d7bb07c198aacbfe5f2922c6057960e4ca0e6"
+      ]
+    },
+    "EVAL-021-A": {
+      "path": ".codex/eval/handoffs/EVAL-021-A.json",
+      "sha256": "fbe818bf475ec35e4a509e517203f22988aa3ae964496af923617c941904c1da",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "head_sha": "c9199cbe20c7975b2d626c5c7b4efe4f6bd36327",
+      "dependency_commits": [
+        "539904b31541f898c5da795bb690dce7c6d43701"
+      ],
+      "applied_dependency_commits": [
+        "f8276080164af80fa61cbd7c225e888fdff337b3"
+      ],
+      "own_commits": [
+        "c9199cbe20c7975b2d626c5c7b4efe4f6bd36327"
+      ],
+      "integration_commits": [
+        "05ee4ad6191669a602af60b1ecf38835baabed67"
+      ]
+    },
+    "EVAL-021-B": {
+      "path": ".codex/eval/handoffs/EVAL-021-B.json",
+      "sha256": "cb5d65e964f9f669804d0a9385c98e99c77680bbbfd98f291d22537b78b3b558",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "head_sha": "3211e1dd98fcabe20340d185f4020ca0124528fa",
+      "dependency_commits": [
+        "539904b31541f898c5da795bb690dce7c6d43701"
+      ],
+      "applied_dependency_commits": [
+        "b1b4324a336a57ffc3c4f56f884d960c3f5f5259"
+      ],
+      "own_commits": [
+        "3211e1dd98fcabe20340d185f4020ca0124528fa"
+      ],
+      "integration_commits": [
+        "034d65bd032c168d66d1c4c746b85ade574b09a8"
+      ]
+    },
+    "EVAL-022": {
+      "path": ".codex/eval/handoffs/EVAL-022.json",
+      "sha256": "37ebed360b54cc525d648e41cdd4899b5551598cd0f702aba72a8df365ad56d2",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "head_sha": "f6a31e6740a83d31e75e0eec2a2fad0069a341fc",
+      "own_commits": [
+        "f6a31e6740a83d31e75e0eec2a2fad0069a341fc"
+      ],
+      "integration_commits": [
+        "2aa56f9198d81578fa8215b20bebe5759c40b879"
+      ]
+    },
+    "EVAL-030": {
+      "path": ".codex/eval/handoffs/EVAL-030.json",
+      "sha256": "40834e95152f29485dcaa6f94d63ce5e28fb4791ad3f33a2bb09d2e03564df84",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "head_sha": "7b8badf1ad9aeb5111f5537438686a473191e176",
+      "dependency_commits": [
+        "387216cf4393edc34bce30e7facfa2dbc35cc524",
+        "e08cb3e8c93e6eb63df4118ce0f065f4dd0bcc48"
+      ],
+      "applied_dependency_commits": [
+        "0a2ebe3a7194cda7cc66e51cf0f4dd200d2dba3b",
+        "4dcfe8dd81db99d510f67cef92494c17d5cf7583"
+      ],
+      "own_commits": [
+        "7b8badf1ad9aeb5111f5537438686a473191e176"
+      ],
+      "integration_commits": [
+        "a6284ba08edde6cefd6a924edfd5305288dc6508"
+      ]
+    },
+    "EVAL-041": {
+      "path": ".codex/eval/handoffs/EVAL-041.json",
+      "sha256": "4be73c8aeb7730419bc42dfd892d34c0862f8bae1ed2a16dd6382432c1e8c347",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "head_sha": "69347c68453eea4649078091f7de0c8057d02539",
+      "dependency_commits": [
+        "387216cf4393edc34bce30e7facfa2dbc35cc524"
+      ],
+      "applied_dependency_commits": [
+        "8323b7f42614513999342b6dc05e4fbc52f2111e"
+      ],
+      "own_commits": [
+        "69347c68453eea4649078091f7de0c8057d02539"
+      ],
+      "integration_commits": [
+        "925015cc4a07e39f86cdf9e73aa689dc9e425fcc"
+      ]
+    },
+    "EVAL-040-A": {
+      "path": ".codex/eval/handoffs/EVAL-040-A.json",
+      "sha256": "f23fb48cc4f4d2cee342b0ad4a18ce05c2296b6e2599c783f86f7e73940748ef",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "head_sha": "fa8cea2e695163c865cc761adccdd2a0015d324d",
+      "own_commits": [
+        "2e8af03a3bd743c0de9a0817e39eb6592a526d36",
+        "fa8cea2e695163c865cc761adccdd2a0015d324d"
+      ],
+      "integration_commits": [
+        "0999ae67fbde0320c17dd9eb4135f971582b70c7",
+        "a7742f81de9b8fbd09db1978e3edd59f12eda3f9"
+      ]
+    },
+    "EVAL-040-B": {
+      "path": ".codex/eval/handoffs/EVAL-040-B.json",
+      "sha256": "62f410f8e59cd066583b4e9a142b59bce6132434c278a420e50bf011ed4bd608",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "head_sha": "662a73e222745d4c6c6854c31025f3e221cf61a8",
+      "own_commits": [
+        "662a73e222745d4c6c6854c31025f3e221cf61a8"
+      ],
+      "integration_commits": [
+        "7b61bf36bd5c61d3d57e9f9c18d124e24da479c2"
+      ]
+    },
+    "EVAL-040-C": {
+      "path": ".codex/eval/handoffs/EVAL-040-C.json",
+      "sha256": "37df819fa4eee7ed5df4c8c71787609096586289bfb5fc9a3088194a00be7b78",
+      "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+      "head_sha": "bd3cc58f2937f1a05c5c3d08b47a3cb641a4f378",
+      "own_commits": [
+        "5677fef23f8b9eebaa82a5d5eb79505526c611b1",
+        "bd3cc58f2937f1a05c5c3d08b47a3cb641a4f378"
+      ],
+      "integration_commits": [
+        "e3dae1c9442618cdb89d596dab20e86b16805264",
+        "27e60ae60dce0b0437b7a73e7a4e662c1c7bef65"
+      ]
+    }
+  },
+  "frozen_artifacts": {
+    "artifact_contract": {
+      "version": "pico-evaluation-artifact-v1",
+      "path": "pico/evaluation/contracts.py",
+      "sha256": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+      "hash_basis": "git_blob_bytes",
+      "source_ticket": "EVAL-001",
+      "source_head_sha": "96add601b99cb347b7a4aa509a57e25ad4a8d073",
+      "integration_sha": "3923a71b64d2ac9f4a4304a4e7dc88a35b94ad0d"
+    },
+    "native_contract": {
+      "version": "pico-provider-native-contract-v1",
+      "path": "pico/providers/contracts.py",
+      "sha256": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+      "hash_basis": "git_blob_bytes",
+      "source_ticket": "TOOL-010",
+      "source_head_sha": "387216cf4393edc34bce30e7facfa2dbc35cc524",
+      "integration_sha": "87b943a81febbecc15b40ab1d81e002208383abd"
+    },
+    "tool_schema": {
+      "version": "pico-tool-schema-catalog-v1",
+      "sha256": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+      "hash_basis": "canonical_json_sort_keys_compact_ascii",
+      "entry_count": 15,
+      "legacy_runtime_tool_signature": "e55a7c4d9bb3988c0d1a2701c15f8d95735ea0de077e0c6489e4b068ec916328",
+      "source_ticket": "TOOL-011",
+      "source_head_sha": "e08cb3e8c93e6eb63df4118ce0f065f4dd0bcc48",
+      "integration_sha": "0c0182e945abacbc273395a4a0fdea5349f64a5b"
+    },
+    "context_assets": {
+      "version": "pico-context-asset-contract-v1",
+      "path": "benchmarks/v3/context-assets/assets.json",
+      "sha256": "d8349c034524cc488958a1f3b460a7b6080915eed0b03b64c635810c21bf8e15",
+      "hash_basis": "git_blob_bytes",
+      "source_ticket": "EVAL-030",
+      "source_head_sha": "7b8badf1ad9aeb5111f5537438686a473191e176",
+      "integration_sha": "a6284ba08edde6cefd6a924edfd5305288dc6508"
+    },
+    "sdk_transport_decision": null,
+    "provider_selection": null,
+    "auto_dream": null,
+    "local_taskset": null
+  },
+  "evidence_artifacts": {
+    "sdk_probe_harness": {
+      "sha256": "d47cde8398bfe8142e712c6c7b2d461eadd249aa7f7a8867894e81c5e9f37491",
+      "case_set_sha256": "4e642ef9d70af7a3959a09dd875efac84150a3b2f4095d2c5c1852e93d1c2110"
+    },
+    "openai_probe_plugin": {
+      "sha256": "9d5e903b87265525a8f69a1f3674512e5e7756f96d0f667cb9f221a3d135b97f",
+      "evidence_scope": "OpenAI SDK fake HTTP transport only"
+    },
+    "anthropic_probe_plugin": {
+      "sha256": "e9d19ca680fc5ab5e2d0cbf1f35cafa9c158688677bb7f2a6098e8cd0c4692be",
+      "evidence_scope": "Anthropic SDK fake HTTP transport only"
+    },
+    "auto_dream": {
+      "fixture_schema_sha256": "ad72911f72985c94af2c3c003c00944b9e3b0b99cc6eb2519d3f70abe02a4539",
+      "evaluator_sha256": "6a7b40bcc0dba05acf6849451969f81bf201ab95072e361e5fb83b52c2f78324",
+      "d01_d04_fragment_sha256": "ba4219cb68966b99e70482f9bcdca875cfc9f91b3c6bef9db7cd67bb7d24d827",
+      "d05_d08_fragment_sha256": "e772645d3d3d18482b9372b941ad990838d3290f780414642b7b46be527ae530",
+      "lifecycle_evaluator_sha256": "d3192977ba2a6a0018bb0a0deb69571add368aac74c9b7027c0d9a1cdf4d2dcd",
+      "lifecycle_cases_sha256": "8ab1dad0af155d8f9e634ae105443943cf378b7fd2fa47bd0b3970c72de7f45a"
+    },
+    "live_task_runner": {
+      "sha256": "9254bf0204176d2a07c50542d8fa8955b61066f05b2aea93992c855a19dca5d2",
+      "evidence_scope": "synthetic client and isolated hidden verifier only"
+    },
+    "local_repo_fragments": {
+      "tinyconfig_sha256": "24d42d41038f8fa08d90d27fc0664b8fda75579896f9072d058eadc4dfc7b3ba",
+      "miniqueue_sha256": "dcea7a08048653285782e8f00c9326322c6d5fe5eeab36e32c16c19d79d9f622",
+      "logslice_sha256": "3e8d833b4b424b3d389705d51431b350142acc4367864ca1dcab870ed86fa382"
+    }
+  },
+  "w2_ready_tickets": [
+    "TOOL-012-QO-R",
+    "TOOL-012-QA-R",
+    "TOOL-012-DA-R",
+    "TOOL-015",
+    "EVAL-031-I",
+    "EVAL-031-A",
+    "EVAL-031-B",
+    "EVAL-040-M",
+    "EVAL-080"
+  ],
+  "exit_gate": {
+    "status": "accepted",
+    "commands": [
+      "uv run python .codex/eval/validate_plan.py",
+      "targeted native/tool/SDK pytest with OpenAI and Anthropic SDKs",
+      "targeted Dream core/lifecycle/memory/artifact-contract pytest",
+      "targeted context asset and live-task runner pytest",
+      "T01-T09 isolated baseline/reference patch verifier matrix",
+      "miniqueue and logslice fixture pytest",
+      "ruff check for all 47 Python files changed since wave base",
+      "tests/test_architecture_boundaries.py and tests/test_safety_invariants.py",
+      "PLAN/STATUS DAG frontier, allowed-path ownership, freeze hash, and Git diff reconstruction"
+    ],
+    "evidence": [
+      "PLAN validation passed: 63 ticket templates, 11 waves.",
+      "All 14 W1 tickets are accepted; active_tickets and blocked_tickets are empty.",
+      "Native/tool/SDK targeted suite passed: 32 passed; no provider request was issued.",
+      "Dream core passed 11 tests; lifecycle/memory/contract passed 27 tests.",
+      "Context asset contract passed 30 tests; live-task runner passed 29 synthetic-only tests.",
+      "T01-T09 unmodified baselines failed and matching reference patches passed; every verifier completed below five seconds.",
+      "Miniqueue fixture tests passed 8 tests; logslice fixture tests passed 18 tests.",
+      "All 47 changed Python files passed Ruff; wave diff passed git diff --check.",
+      "110 ticket-owned changed paths were reconstructed with no cross-ticket ownership conflict.",
+      "runtime.py, runtime_checkpoints.py, pyproject.toml, and uv.lock are unchanged from the W1 wave base.",
+      "Tool schema catalog reconstructed to 15 entries and SHA-256 994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f.",
+      "Architecture/safety baseline remains unchanged: 3 passed, 8 failed (runtime.py 952/950 plus seven Windows platform/environment failures).",
+      "W2 ready set exactly matches the PLAN frontier derived from accepted tickets.",
+      "No formal online effectiveness evaluation or effectiveness conclusion was produced."
+    ]
+  },
+  "risks": [
+    "The immutable architecture baseline still has pico/core/runtime.py at 952 lines against the 950-line budget; no architecture test was weakened.",
+    "Seven safety checks remain blocked by unchanged Windows symlink privilege, cleared-home lookup, and POSIX shell quoting behavior.",
+    "SDK evidence is fake-transport conformance only; sdk_transport_decision and provider_selection remain unfrozen.",
+    "Auto-dream and local-repository fragments are not assembled into their shared canonical manifests; auto_dream and local_taskset remain unfrozen.",
+    "native_eval_ready and native_resume_ready remain pending; formal online effectiveness and Resume evaluation remain prohibited."
+  ],
+  "user_decisions_required": [],
+  "next_wave": "W2",
+  "next_wave_started": false,
+  "completed_at": "2026-07-21T13:41:33.3334480+08:00"
+}

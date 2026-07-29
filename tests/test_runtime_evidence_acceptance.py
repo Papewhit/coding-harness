@@ -1,6 +1,6 @@
 import json
 
-from pico.testing import ScriptedModelClient
+from tests.native_fixtures import final, lock_scripted_provider_profile, scripted_client, tool
 from pico import Pico, SessionStore, WorkspaceContext
 
 
@@ -8,17 +8,23 @@ def build_agent(tmp_path, outputs, **kwargs):
     (tmp_path / "README.md").write_text("demo\n", encoding="utf-8")
     workspace = WorkspaceContext.build(tmp_path)
     store = SessionStore(tmp_path / ".pico" / "sessions")
-    return Pico(
-        model_client=ScriptedModelClient(outputs),
-        workspace=workspace,
-        session_store=store,
-        approval_policy="auto",
-        **kwargs,
+    return lock_scripted_provider_profile(
+        Pico(
+            model_client=scripted_client(outputs),
+            workspace=workspace,
+            session_store=store,
+            approval_policy="auto",
+            **kwargs,
+        )
     )
 
 
 def read_jsonl(path):
-    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    return [
+        json.loads(line)
+        for line in path.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
 
 
 def test_runtime_evidence_graph_and_verifier_are_derived_from_real_tool_run(tmp_path):
@@ -27,19 +33,29 @@ def test_runtime_evidence_graph_and_verifier_are_derived_from_real_tool_run(tmp_
         encoding="utf-8",
     )
     (tmp_path / "tests").mkdir()
-    (tmp_path / "tests" / "test_smoke.py").write_text("def test_smoke():\n    assert True\n", encoding="utf-8")
+    (tmp_path / "tests" / "test_smoke.py").write_text(
+        "def test_smoke():\n    assert True\n", encoding="utf-8"
+    )
     agent = build_agent(
         tmp_path,
         [
-            '<tool name="write_file" path="src/api.py"><content>@app.get("/api/items")\ndef list_items():\n    return fetch("/api/users")\n</content></tool>',
-            "<final>Wrote API file.</final>",
+            tool(
+                "write_file",
+                path="src/api.py",
+                content='@app.get("/api/items")\ndef list_items():\n    return fetch("/api/users")\n',
+            ),
+            final("Wrote API file."),
         ],
     )
 
     assert agent.ask("add an api file") == "Wrote API file."
 
-    report = json.loads((agent.current_run_dir / "report.json").read_text(encoding="utf-8"))
-    task_state = json.loads((agent.current_run_dir / "task_state.json").read_text(encoding="utf-8"))
+    report = json.loads(
+        (agent.current_run_dir / "report.json").read_text(encoding="utf-8")
+    )
+    task_state = json.loads(
+        (agent.current_run_dir / "task_state.json").read_text(encoding="utf-8")
+    )
     graph = report["artifact_graph"]
 
     assert graph["changed_paths"] == ["src/api.py"]
@@ -55,7 +71,9 @@ def test_runtime_evidence_graph_and_verifier_are_derived_from_real_tool_run(tmp_
     assert task_state["verifier_suggestions"] == report["verifier_suggestions"]
 
     trace_events = read_jsonl(agent.current_run_dir / "trace.jsonl")
-    tool_event = next(event for event in trace_events if event["event"] == "tool_executed")
+    tool_event = next(
+        event for event in trace_events if event["event"] == "tool_executed"
+    )
     assert tool_event["phase"] == "tool"
     assert tool_event["status"] == "ok"
     assert tool_event["turn_id"] == agent.current_task_state.task_id
@@ -67,14 +85,16 @@ def test_runtime_reminder_records_failed_tool_without_breaking_the_turn(tmp_path
     agent = build_agent(
         tmp_path,
         [
-            '<tool name="patch_file" path="missing.py"><old_text>x</old_text><new_text>y</new_text></tool>',
-            "<final>Could not patch missing file.</final>",
+            tool("patch_file", path="missing.py", old_text="x", new_text="y"),
+            final("Could not patch missing file."),
         ],
     )
 
     assert agent.ask("patch missing file") == "Could not patch missing file."
 
-    report = json.loads((agent.current_run_dir / "report.json").read_text(encoding="utf-8"))
+    report = json.loads(
+        (agent.current_run_dir / "report.json").read_text(encoding="utf-8")
+    )
     reminders = report["runtime_reminders"]
 
     assert reminders
@@ -82,4 +102,9 @@ def test_runtime_reminder_records_failed_tool_without_breaking_the_turn(tmp_path
     assert reminders[-1]["tool"] == "patch_file"
     assert reminders[-1]["status"] == "rejected"
     assert reminders[-1]["message"]
-    assert json.loads((agent.current_run_dir / "task_state.json").read_text(encoding="utf-8"))["runtime_reminders"] == reminders
+    assert (
+        json.loads(
+            (agent.current_run_dir / "task_state.json").read_text(encoding="utf-8")
+        )["runtime_reminders"]
+        == reminders
+    )

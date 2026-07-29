@@ -34,9 +34,13 @@ AGENT_TOOL_SPECS = {
 }
 
 AGENT_TOOL_EXAMPLES = {
-    "agent": '<tool>{"name":"agent","args":{"description":"Inspect auth","prompt":"Find auth entry points","subagent_type":"Explore"}}</tool>',
-    "send_message": '<tool>{"name":"send_message","args":{"to":"agent_1","message":"Now patch the bug in src/auth.py"}}</tool>',
-    "task_stop": '<tool>{"name":"task_stop","args":{"task_id":"agent_1"}}</tool>',
+    "agent": {
+        "description": "Inspect auth",
+        "prompt": "Find auth entry points",
+        "subagent_type": "Explore",
+    },
+    "send_message": {"to": "agent_1", "message": "Now patch the bug in src/auth.py"},
+    "task_stop": {"task_id": "agent_1"},
 }
 
 
@@ -60,7 +64,9 @@ def tool_agent(agent: Pico, args: dict[str, Any]) -> str:
 
 
 def tool_send_message(agent: Pico, args: dict[str, Any]) -> str:
-    return dumps_payload(agent.worker_manager.continue_task(args["to"], args["message"]))
+    return dumps_payload(
+        agent.worker_manager.continue_task(args["to"], args["message"])
+    )
 
 
 def tool_task_stop(agent: Pico, args: dict[str, Any]) -> str:

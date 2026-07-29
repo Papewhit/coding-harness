@@ -1,0 +1,236 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TEST-059-C",
+  "instance_id": "W6R3-TEST-059-C-01",
+  "revision": 2,
+  "supersedes_handoff_sha256": "498887b31ca34d7f347b984f8011162802dc6100ffd9f04f8166845ce3d8316f",
+  "finding_ids": [
+    "AUDIT-059-A-P1-002"
+  ],
+  "wave": "W6R3",
+  "role": "implementer/responses-stateless-transcript-red-tests",
+  "status": "complete",
+  "source_thread_id": "019f91dc-1940-7b31-9e6f-086f4941922b",
+  "base_sha": "ed287daaf9e88d59b5a027e759032e022a138d27",
+  "wave_base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+  "wave_open_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+  "head_sha": "6779f0709a4dfa4adfedaa941c8f8b5bfa0e3f09",
+  "head_sha_semantics": "Revision 2 test head before the metadata-only Integrator commit that adds this updated handoff.",
+  "branch": "codex/w6r3-test-059-c-r2",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/7a4a/pico",
+  "remediation_candidate": {
+    "sha": "ed287daaf9e88d59b5a027e759032e022a138d27",
+    "tree": "72f68c764b26830fb8c86f6bd11f95c3b452b9c4",
+    "ref": "codex/w6r3-remediation-r1-candidate"
+  },
+  "prior_revision": {
+    "branch": "codex/w6r3-test-059-c",
+    "head": "f893c6dfb753c76b648256ca8125d5527be14566"
+  },
+  "revision_branch": {
+    "branch": "codex/w6r3-test-059-c-r2",
+    "head_before_handoff": "6779f0709a4dfa4adfedaa941c8f8b5bfa0e3f09"
+  },
+  "dependency_commits": [
+    {
+      "ticket_id": "EVAL-059-O",
+      "original": "b90fb5297aceef3eb137ae8104888974e96e7141",
+      "applied": "3ff111b1b8fd6a1c597095460c7e117ac8a5a83d",
+      "stable_patch_id": "06e7e986f6b99b5969dd23f00aebd71f61badef2"
+    }
+  ],
+  "dependency_hashes": {
+    "EVAL-059-O_handoff": "849b687163b77e8957529d72e0111edb08625a76a1276c87799e68b595bef00f",
+    "formal_STATUS": "df244ea8e5237702d09ba2f0f9eb5e88ea3c6f29e95573afd33ae243d6cac846",
+    "formal_FREEZE": "09a6d2143f279ec64bbcacfe48bd9b27f0aac1a377679987dcd6ab411fd67219"
+  },
+  "own_commits": [
+    "6779f0709a4dfa4adfedaa941c8f8b5bfa0e3f09"
+  ],
+  "own_stable_patch_ids": {
+    "6779f0709a4dfa4adfedaa941c8f8b5bfa0e3f09": "ad93f2880a05b7479b2de25e1b58dd996261d392"
+  },
+  "revision_commits": [
+    {
+      "commit": "6779f0709a4dfa4adfedaa941c8f8b5bfa0e3f09",
+      "tree": "f515b04bbc328c90378a2e56e7b84974de04da4f",
+      "stable_patch_id": "ad93f2880a05b7479b2de25e1b58dd996261d392",
+      "subject": "test(openai): [TEST-059-C][R2] freeze call batch cardinality"
+    }
+  ],
+  "allowed_write_paths": [
+    "tests/test_openai_responses_tools.py",
+    "tests/test_native_runtime_integration.py",
+    "tests/test_native_stateless_transcript.py",
+    ".codex/eval/handoffs/TEST-059-C.json"
+  ],
+  "files_changed": [
+    "tests/test_openai_responses_tools.py",
+    ".codex/eval/handoffs/TEST-059-C.json"
+  ],
+  "tests": [
+    {
+      "environment": "Windows / CPython 3.12.13 / deterministic stub transport",
+      "command": ".venv/Scripts/python.exe -m pytest -p no:cacheprovider tests/test_openai_responses_tools.py -q",
+      "result": "expected_red_baseline",
+      "details": "2 failed, 20 passed in the worker run; Integrator independently reproduced 2 failed, 20 passed on the complete file. No xfail or skip used.",
+      "expected_failures": [
+        {
+          "test": "test_incomplete_unresolved_call_batch_is_rejected_before_transport",
+          "assertion": "adapter.request raises OpenAIResponsesProtocolError before transport when two unresolved calls receive only one result",
+          "failure_reason": "DID NOT RAISE OpenAIResponsesProtocolError; the incomplete call/result batch was accepted and reached the stub transport."
+        },
+        {
+          "test": "test_reordered_complete_results_are_normalized_to_original_call_order",
+          "assertion": "complete results supplied in reverse order are emitted in original provider call order [call_1, call_2]",
+          "failure_reason": "The emitted output order remained [call_2, call_1] instead of being normalized to [call_1, call_2]."
+        }
+      ]
+    },
+    {
+      "environment": "Windows / CPython 3.12.13 / deterministic stub transport",
+      "command": ".venv/Scripts/python.exe -m pytest -p no:cacheprovider tests/test_openai_responses_tools.py tests/test_native_stateless_transcript.py tests/test_native_runtime_integration.py -q -k \"not incomplete_unresolved_call_batch_is_rejected_before_transport and not reordered_complete_results_are_normalized_to_original_call_order\"",
+      "result": "passed",
+      "details": "25 passed, 2 deselected in 6.18s. Green coverage includes unknown result ID rejection, extra already-closed result rejection, duplicate result ID rejection, and exclusion of historical closed calls from the current unresolved batch."
+    },
+    {
+      "environment": "Windows / CPython 3.12.13",
+      "command": ".venv/Scripts/ruff.exe check --no-cache tests/test_openai_responses_tools.py tests/test_native_stateless_transcript.py tests/test_native_runtime_integration.py",
+      "result": "passed",
+      "details": "All checks passed."
+    },
+    {
+      "environment": "Windows / CPython 3.12.13",
+      "command": ".venv/Scripts/python.exe -m json.tool .codex/eval/PLAN.json",
+      "result": "passed",
+      "details": "PLAN.json parsed successfully."
+    },
+    {
+      "environment": "Windows / CPython 3.12.13",
+      "command": "uv run pytest tests/test_native_stateless_transcript.py -q",
+      "result": "expected_red_baseline",
+      "details": "2 failed in 2.73s; no xfail or skip used.",
+      "expected_failures": [
+        {
+          "test": "test_second_request_replays_prompt_call_and_result_without_server_state",
+          "assertion": "transport.requests[1][\"input\"] equals [original Runtime prompt, original function_call, matching function_call_output]",
+          "failure_reason": "The actual second wire input begins with call-read-1 and its output and omits the original Runtime prompt entirely."
+        },
+        {
+          "test": "test_three_tool_rounds_accumulate_complete_stateless_transcript",
+          "assertion": "transport.requests[3][\"input\"] equals the original Runtime prompt followed by all three call/result pairs in read_file -> patch_file -> read_file order",
+          "failure_reason": "The actual fourth wire input contains only call-read-2 and its output; it omits the task goal plus call-read-1/result and call-patch-1/result."
+        }
+      ]
+    },
+    {
+      "environment": "Windows / CPython 3.12.13",
+      "command": "uv run pytest tests/test_openai_responses_tools.py tests/test_native_runtime_integration.py -q",
+      "result": "passed",
+      "details": "19 passed in 4.60s."
+    },
+    {
+      "environment": "Windows / CPython 3.12.13",
+      "command": "uv run ruff check tests/test_native_stateless_transcript.py",
+      "result": "passed",
+      "details": "All checks passed."
+    },
+    {
+      "environment": "Windows",
+      "command": "git diff --check",
+      "result": "passed"
+    }
+  ],
+  "hashes": {
+    "test_openai_responses_tools_source": "9369efbaead5669526547e51700cbeeeb2b27e26a80c3685871e19dc758c61b1",
+    "test_native_stateless_transcript_source": "b0ddb33705d9b4f561175f4e62565f75f9e456b1b9da296de5983b684dcf2222",
+    "formal_status": "df244ea8e5237702d09ba2f0f9eb5e88ea3c6f29e95573afd33ae243d6cac846",
+    "formal_freeze": "09a6d2143f279ec64bbcacfe48bd9b27f0aac1a377679987dcd6ab411fd67219",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "sdk_dependency_lock": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+    "native_deterministic_gate": "2fc1ebbe4d64c5be80e7fe063584915f12aabf3a8f8c08796d2cf009e94849a5"
+  },
+  "acceptance_checklist": {
+    "two_unresolved_calls_one_result_frozen_red": true,
+    "unknown_result_id_rejected_before_transport": true,
+    "extra_closed_result_id_rejected_before_transport": true,
+    "duplicate_result_id_rejected_before_transport": true,
+    "legal_reordered_results_require_call_order_normalization": true,
+    "historical_closed_calls_excluded_from_current_batch": true,
+    "second_wire_input_requires_original_prompt_call_and_result": true,
+    "three_tool_rounds_are_read_patch_read": true,
+    "task_goal_required_in_every_followup_transcript": true,
+    "all_prior_call_result_pairs_required_in_later_transcript": true,
+    "each_function_output_required_exactly_once": true,
+    "provider_call_ids_preserved": true,
+    "store_false_asserted": true,
+    "previous_response_id_absent_asserted": true,
+    "live_provider_dependency_absent": true,
+    "provider_cache_dependency_absent": true,
+    "server_storage_dependency_absent": true,
+    "skip_or_xfail_added": false,
+    "assertions_weakened": false,
+    "production_source_modified": false,
+    "frozen_inputs_modified": false,
+    "formal_status_or_freeze_written": false
+  },
+  "native_protocol_observations": {
+    "provider_http_attempts": 0,
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0,
+    "sdk_tool_runner_used": false,
+    "sdk_agent_runner_used": false,
+    "sdk_managed_pico_tool_execution_used": false
+  },
+  "defects": [
+    {
+      "id": "AUDIT-059-A-P1-002",
+      "classification": "responses_call_result_cardinality_not_fail_closed",
+      "details": "The remediation candidate accepts an incomplete two-call/one-result batch and does not normalize a complete reversed result list to original call order.",
+      "downstream_owner": "TOOL-059-O revision 2"
+    },
+    {
+      "id": "openai-responses-stateless-transcript-loss",
+      "classification": "expected_red_product_defect",
+      "details": "With store=false and no previous_response_id, OpenAI Responses follow-up wire input drops the original Runtime prompt and retains only the most recent provider output plus current function result.",
+      "downstream_owner": "TOOL-059-O"
+    }
+  ],
+  "risks": [
+    "Revision 2 remains intentionally red until TOOL-059-O fixes exact unresolved-call/result closure and deterministic result ordering without counting historical closed calls.",
+    "The red tests deliberately fail until TOOL-059-O changes only the OpenAI Responses adapter to carry the complete stateless transcript.",
+    "The checks were run on Windows as a best-effort development lane; the deterministic tests perform no network or platform-native operations."
+  ],
+  "tool_059_o_green_conditions": [
+    "Both revision 2 red tests in tests/test_openai_responses_tools.py pass unchanged.",
+    "Incomplete, unknown, extra closed, and duplicate result IDs are all rejected before transport.",
+    "Complete reordered results are normalized to original provider call order.",
+    "Historical closed calls are excluded from the current unresolved batch.",
+    "Both tests in tests/test_native_stateless_transcript.py pass unchanged.",
+    "Every follow-up request keeps store=false and omits previous_response_id.",
+    "The second wire input contains the original Runtime prompt, original function_call, and exactly one matching function_call_output with the original call ID.",
+    "The final wire input after read_file -> patch_file -> read_file contains the task goal and all three ordered call/result pairs, with every function output exactly once.",
+    "The 19 existing adjacent OpenAI Responses and native Runtime tests continue to pass."
+  ],
+  "provider_http_attempts": 0,
+  "formal_effectiveness_run": false,
+  "human_smoke_run": false,
+  "profile_reselection_run": false,
+  "w6r4_started": false,
+  "w7_started": false,
+  "status_proposal": {
+    "ticket_id": "TEST-059-C",
+    "status": "complete",
+    "head_sha": "6779f0709a4dfa4adfedaa941c8f8b5bfa0e3f09",
+    "reason": "Revision 2 deterministically freezes AUDIT-059-A-P1-002 cardinality and ordering failures while all adjacent and negative-control subsets remain green."
+  },
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true,
+  "stop_after_handoff": true
+}

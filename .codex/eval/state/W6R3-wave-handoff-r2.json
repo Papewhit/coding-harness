@@ -1,0 +1,232 @@
+{
+  "schema_version": "pico-eval-wave-handoff-v2",
+  "wave": "W6R3",
+  "status": "passed",
+  "remediation_round": 2,
+  "integrator_role": "non-ticket Wave Integrator",
+  "integration_branch": "eval/v3-integration",
+  "wave_base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+  "resume_checkpoint": {
+    "sha": "30252bc1d215b18f20340e1503fde489312e9f94",
+    "tree": "f9a8ee28f45b6b02984195a7dbe9123f048e85dd",
+    "ref": "codex/w6r3-remediation-r2-candidate"
+  },
+  "review_candidate": {
+    "sha": "068dc31f41be32a3c3b2a253e137ecb53ddd2757",
+    "tree": "dd30873853c93fc5227f87c5c48e9d94bd669d3a",
+    "ref": "codex/w6r3-remediation-r2-review-candidate"
+  },
+  "immutable_recovery_snapshot": {
+    "sha": "cffe1bd0344eb66d218c2e24cae19fca63b2cbf0",
+    "tree": "5ebb6a2cd62e96753fe3502a3b5846319db7386f",
+    "ref": "codex/w6r3-remediation-r2-gate-source",
+    "semantics": "Accepted AUDIT-059-A revision-3 source snapshot exercised by the canonical Gate."
+  },
+  "close_metadata_commit": {
+    "sha": "caa354f7f904a36d65eabd941425a722be1e6745",
+    "tree": "a04407fadc35e91092f894056678fc5086b45e88",
+    "tag_target": true
+  },
+  "formal_state": {
+    "status_path": ".codex/eval/state/STATUS.json",
+    "status_sha256": "9c655ce2a3c1b39bdea7cc7f3ad185535135a23ebf71dfe13816c146320a73fb",
+    "freeze_path": ".codex/eval/state/FREEZE.json",
+    "freeze_sha256": "4ca55e089cbf34acf60d33c88d17dcf9819f216acb09e5c99ad72464ef7d9a85",
+    "native_eval_ready": "deterministic_recovery_passed_pending_w6r4_reselection_and_new_accepted_human_smoke",
+    "native_resume_ready": "pending"
+  },
+  "canonical_objects": {
+    "commit_map": {
+      "path": ".codex/eval/state/W6R3-r2-commit-map.json",
+      "sha256": "a82564975836fff3834ef90f270493666dbf5dc661381fdc0f17ed3883909eb5"
+    },
+    "worker_bundle": {
+      "path": "F:\\dev\\llm\\pico-eval-artifacts\\wave-bundles\\W6R3-r2-workers.bundle",
+      "sha256": "55eaae96e162ddffa8d1c64ce9a08f795f61722626d087c32483377d5fcbe716",
+      "size_bytes": 16916149,
+      "ref_count": 22,
+      "complete_history": true,
+      "verified": true
+    },
+    "annotated_tag": {
+      "name": "eval-v3/w6r3-canonical-r2",
+      "object_sha": "e64e69dc408c5071990de6f13bf979cd31125d81",
+      "target_sha": "caa354f7f904a36d65eabd941425a722be1e6745",
+      "moved_after_creation": false
+    }
+  },
+  "upper_review_findings": {
+    "AUDIT-059-A-P1-003-runtime-call-id-binding": {
+      "status": "fixed_and_accepted",
+      "owner": "EVAL-059-H revision 3",
+      "evidence": "Runtime tool_finished events are uniquely joined by call_id; missing, duplicate, unknown, extra, and name-mismatched events fail closed."
+    },
+    "AUDIT-059-A-P1-003-fake-live-fail-closed": {
+      "status": "fixed_and_accepted",
+      "owner": "EVAL-059-H revision 3",
+      "evidence": "Fake API/CLI rejects live-only bindings and nonzero HTTP; authorized-live requires all bindings."
+    },
+    "AUDIT-059-A-P2-001-top-level-profile": {
+      "status": "fixed_and_accepted",
+      "owner": "EVAL-059-H revision 3",
+      "evidence": "Fake summary top-level redacted profile is nonempty and equals both scenario profile identities."
+    },
+    "AUDIT-059-A-P2-002-ambient-commit-map": {
+      "status": "fixed",
+      "owner": "W6R3 Wave Integrator",
+      "evidence": "Commit 0775f65083fa53b532b78132e7ab1162f98231c5 is recorded as control-side known-issue documentation with ticket_payload=false."
+    }
+  },
+  "accepted_tickets": {
+    "EVAL-059-O": {
+      "revision": 1,
+      "worker_head": "a642a7d223d392b34f78692fa2bffe0feb5c5b4e",
+      "canonical_commit": "b90fb5297aceef3eb137ae8104888974e96e7141",
+      "stable_patch_id": "06e7e986f6b99b5969dd23f00aebd71f61badef2",
+      "handoff_sha256": "849b687163b77e8957529d72e0111edb08625a76a1276c87799e68b595bef00f"
+    },
+    "TOOL-059-R": {
+      "revision": 1,
+      "worker_head": "8bcf1e5f1241cc19c7ea2590572dbc08c93cb9f6",
+      "canonical_commit": "d07950a5ee94d90658f28c4b52bafc4916a0097e",
+      "stable_patch_id": "8ec7e62d11a8d1cde9e1c24eadd58003b8f9819c",
+      "handoff_sha256": "03c6ade0282d6f2c0a0a2af28c75f1a76c34a5be5358ba67e5cea0b41f5c0fd6"
+    },
+    "TOOL-059-A-R1": {
+      "revision": 1,
+      "worker_head": "ab1a07621a12b7f3e2438f7643dd86322c571182",
+      "canonical_commit": "264e67df2380fc0218e28a3f7a5412dcdc065bc1",
+      "stable_patch_id": "334af7a422ce11662921c38763381e350736acb0",
+      "handoff_sha256": "d6956ba6821528fa64c0b8e425a1878ff079aaf996d1a0acedb12e2421b7004f"
+    },
+    "TEST-059-C": {
+      "revision": 2,
+      "worker_head": "9aa8e023db764788fdbba8a2f4b3765d8ea1cce4",
+      "canonical_commit": "e076fb0c616d900b3445f9ddb93103bdd2243a7b",
+      "stable_patch_id": "6af75813f31d2b16992f4d35b13e8637edd463e0",
+      "handoff_sha256": "2f806adbce6e29e8161ef5039a9be0cc2fc74eb66fca3f17a4dcda054bf3e75e"
+    },
+    "EVAL-059-H": {
+      "revision": 3,
+      "worker_head": "a12e4f7d074bf087c15cba087e6a48022e1b5cdd",
+      "canonical_commit": "9c78ec5622ea114a51348898fbce45787d71f127",
+      "stable_patch_id": "d61b2c7a21b5a4b1a5cdeeb5288b5968cfdc2bfb",
+      "handoff_sha256": "14135b5bfe06a728281fb9f7946329b1563feb365d4c3fdc60ea5c08ebe81e15",
+      "provider_http_attempts": 0
+    },
+    "TOOL-059-O": {
+      "revision": 2,
+      "worker_head": "c8731f804bbb737ae19e84d582aafad32451923d",
+      "canonical_commit": "909b62046a26bac333972dd102d1cf29937f3b55",
+      "stable_patch_id": "469b0415da4e2e79b5013cc113b77caa6503ced2",
+      "handoff_sha256": "ee3a39d1df80845304ceac5c6547f1aca7fb02c2911904c97f5e79901e78e48d"
+    },
+    "AUDIT-059-A": {
+      "revision": 3,
+      "worker_head": "4926a40b591f382ae865aafa6707c11bdc5b9ba9",
+      "canonical_commit": "cffe1bd0344eb66d218c2e24cae19fca63b2cbf0",
+      "stable_patch_id": "3a29844dd686a611d81c383a0bcaaa85b0d668c8",
+      "handoff_sha256": "4285766c60bac6774cb2a25bed6335e3d53989218705f25fc7c9456a360ffde9",
+      "verdict": "accepted",
+      "open_p1": 0,
+      "open_p2": 0
+    },
+    "TOOL-059-G": {
+      "revision": 2,
+      "worker_head": "2ee5a2607dc430604ef9039e436e2fd6feb1bcb0",
+      "canonical_commit": "9a5d07fcd9f03f73023059cd1c8b8dc3eee2fad6",
+      "stable_patch_id": "7e44e650d692519de865adcff668f90fe3bce9be",
+      "handoff_sha256": "67a825b2107a32ee5830ea465cb8cff989bac3b6f47494df520200312f975b57",
+      "gate_status": "passed",
+      "provider_http_attempts": 0
+    }
+  },
+  "gate": {
+    "environment": "Ubuntu WSL2 fresh ext4 clone, Python 3.12.13, user-level uv, no sudo",
+    "source_sha": "cffe1bd0344eb66d218c2e24cae19fca63b2cbf0",
+    "source_tree": "5ebb6a2cd62e96753fe3502a3b5846319db7386f",
+    "tests": {
+      "eval_revision_3_targeted": "10 passed",
+      "w6r3_targeted_recovery": "97 passed",
+      "protected": "27 passed",
+      "deterministic": "138 passed",
+      "full_suite": "553 passed, 2 live-provider opt-in skipped, 6 warnings",
+      "scoped_ruff": "passed",
+      "full_ruff": "passed",
+      "compileall": "passed",
+      "plan_validation": "VALID: 94 ticket templates, 16 waves"
+    },
+    "network": {
+      "provider_http_attempts": 0,
+      "acceptance_socket_attempt_records": 0,
+      "network_namespace_enforced": true,
+      "formal_human_smoke_run": false
+    },
+    "artifact": {
+      "root": "F:\\dev\\llm\\pico-eval-artifacts\\native-deterministic-gate\\W6R3-TOOL-059-G-02",
+      "manifest_sha256": "9d7ba536e26231b55c69512724e266bbc23a1895e64d74d5c3a63adb1ce78996",
+      "inventory_sha256": "ddb5d1d2792b993d3bb2abad1081f08f3774c96fe6311821a8afbb52160da251",
+      "file_count_excluding_manifest": 183,
+      "all_member_hashes_and_sizes_matched": true,
+      "all_json_jsonl_xml_reparsed": true,
+      "sensitive_scan_hits": 0
+    }
+  },
+  "historical_immutability": {
+    "original_w6r3": {
+      "handoff_sha256": "827560dac112f1b813212699d91cca474b5a68dd07d7523d459b04e5f005676d",
+      "commit_map_sha256": "b57b018a73f045e6cdab668f6ec6a44e757aedbc32f6a4263c95a33bc12667bc",
+      "worker_bundle_sha256": "98474e9e8b3a6812b1bf0208bd8f32e9a500339771a1f9fbd7343118a1ed495e",
+      "tag_object": "15d09fecc52af7b6e0750f044484b3c0b2cf4a02",
+      "tag_target": "9d35e7d22eca9ff89c7920dd3a7fa479185c75d5"
+    },
+    "w6r3_r1": {
+      "handoff_sha256": "ce1a548022a05e94e4cd2bab0cbd9fe15a3d52214bc21a9556504d5020169d82",
+      "commit_map_sha256": "55418a09c6b06c580648e79508e56cf00bbe04fa783816dfca909ec5a29f3435",
+      "worker_bundle_sha256": "f6e9ff52a8ed3c39180d54aceea0822cb484b03e0c4834fda2bd8e878ef2db09",
+      "tag_object": "565e937df275c6215661623564c70492cc0b306f",
+      "tag_target": "b5a18cedde2f5897ad261afb286c4e123f54509f"
+    },
+    "all_verified_unchanged": true
+  },
+  "next_state": {
+    "w6r4": {
+      "status": "not_started",
+      "ready_semantics": "Deterministic recovery passed; a future Program Supervisor decision must define W6R4 reselection and newly authorized human smoke work.",
+      "plan_ticket_ids": []
+    },
+    "w7": {
+      "status": "blocked",
+      "blocked_until": "W6R4 profile reselection completes and the user accepts a new human smoke",
+      "started": false
+    }
+  },
+  "execution_constraints_observed": {
+    "live_provider_http_run": false,
+    "provider_http_attempts": 0,
+    "human_smoke_run": false,
+    "profile_reselection_run": false,
+    "formal_online_evaluation_run": false,
+    "resume_evaluation_run": false,
+    "w6r4_started": false,
+    "w7_started": false
+  },
+  "cleanup": {
+    "performed": false,
+    "policy": "All worker branches and worktrees were retained.",
+    "candidates_only": {
+      "branches": "All 22 refs/heads/codex/w6r3-* refs captured in the R2 worker bundle.",
+      "worktrees": [
+        "C:\\Users\\Papewhit\\.codex\\worktrees\\0f69\\pico",
+        "C:\\Users\\Papewhit\\.codex\\worktrees\\24a9\\pico",
+        "C:\\Users\\Papewhit\\.codex\\worktrees\\4b6c\\pico",
+        "C:\\Users\\Papewhit\\.codex\\worktrees\\65e4\\pico",
+        "C:\\Users\\Papewhit\\.codex\\worktrees\\7a4a\\pico",
+        "C:\\Users\\Papewhit\\.codex\\worktrees\\e6a1\\pico",
+        "C:\\Users\\Papewhit\\.codex\\worktrees\\efe3\\pico",
+        "C:\\Users\\Papewhit\\.codex\\worktrees\\f8c2\\pico"
+      ]
+    }
+  },
+  "stop_condition": "W6R3 remediation cycle 2 handoff complete; do not start W6R4 or W7."
+}

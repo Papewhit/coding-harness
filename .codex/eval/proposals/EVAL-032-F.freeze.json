@@ -1,0 +1,105 @@
+{
+  "schema_version": "pico-eval-freeze-proposal-v1",
+  "ticket_id": "EVAL-032-F",
+  "instance_id": "W5R-EVAL-032-F-01",
+  "thread_uuid": "019f88c0-24a0-7b41-8919-7426e83231dd",
+  "wave": "W5R",
+  "role": "integrator_ticket/aggregator",
+  "status": "complete",
+  "wave_base_sha": "fd17e64b45f58558d84a200b5498db463998a239",
+  "run_snapshot_sha": "b3ec3e226de82d87c30fa8e4f1bc681a6c42a5b4",
+  "dependency_commits": [
+    "5b68bb8c1e9a23f9fb9b7828a4aee5c6657718c3",
+    "89203e262674d6d4a695712f739c14e110e66d12",
+    "892fb5afd471f99d3cddcb1ba3797dee3ba94a75",
+    "ae6f6bc219a543a13f9fb7a3528118362d726490"
+  ],
+  "applied_dependency_commits": [
+    "22e41ea629cc012db52cd22472659ce136aa757a",
+    "7a7fb75e819a9b9d4d35c903885257ec1acf15b4",
+    "d3a798f66e39722c3474ba8a9a1405c82052ecce",
+    "54b4170c4726e01564dfdb155b2a2dd90e129992"
+  ],
+  "own_commits": [
+    "b3ec3e226de82d87c30fa8e4f1bc681a6c42a5b4"
+  ],
+  "dependency_handoff_hashes": {
+    "TOOL-044-F": "3f9c248922cd8bc7c89789c255e89ca77df9e0293dd2ca05f9a4c40f4e1f472f",
+    "ARCH-045-B": "31fbde29d32f0f6a0ea219ded1fe7460c80772659b134b248d2e4f252d6c02e9",
+    "CHORE-045-L": "8c62702b626d2be6c27ccf70d1db32cf84ecb61a281a9b590ccc65b19e34635c",
+    "TOOL-043-R": "c96f81c9dd4c62d0eeb387a5d86ed36e252fd33d557f737ec0b9ea7c395606c3",
+    "EVAL-031-G": "c317b79cd19afdcac2df3de5e71cf08748647fac8fcb9e4244e5b669826fb31c",
+    "TOOL-042-G": "437d9c24c7cc38c68f8f3f6f2bdfe322e55408ada19c01f61d1474d3a0b55b2d"
+  },
+  "dependency_freeze_hashes": {
+    "EVAL-031-G": "6f8ef9f2725da04b6283bf37b7900df86120a7bde89700f505f852626d5f1f48",
+    "TOOL-042-G": "f90bc12f5588d565da4f3a5f2cc83e36eec91ec91dac10edead1ac0f91d05e35"
+  },
+  "freeze_proposal": {
+    "key": "structured_context_deterministic_gate_v2",
+    "version": "pico-context-asset-gate-v2",
+    "status": "complete",
+    "binding": {
+      "path": "benchmarks/v3/context-assets/cases-v2.binding.json",
+      "schema_version": "pico-context-asset-cases-binding-v2",
+      "git_blob_oid": "3426371758b7bb9569680e271d3d782a486d2bd1",
+      "git_blob_sha256": "4fa2a43d0733621280c19323ade951f8dcca6328efa8d9d46b53777388c962c5"
+    },
+    "cases": {
+      "path": "benchmarks/v3/context-assets/cases.json",
+      "schema_version": "pico-context-asset-cases-v1",
+      "case_count": 15,
+      "git_blob_oid": "5e9bdf06e75f6661660947e880f07edfe7480880",
+      "sha256": "e08066749520a52af5bb14a9435e359f4a85d3f3ae6e8dd0e962001f99c2df17",
+      "hash_basis": "git_blob_bytes"
+    },
+    "supersession": {
+      "invalidated_declaration_sha256": "d69dfc1808cb12b179f8a1fb30ffa74136339d7783d9f11a5fbe8fd4259400ba",
+      "status": "retained_invalidated_superseded",
+      "replacement_binding_version": "pico-context-asset-cases-binding-v2"
+    },
+    "artifact": {
+      "root": "F:/dev/llm/pico-eval-artifacts/phase-2-context-assets-w5r",
+      "evaluation": {
+        "path": "structured-context-evaluation.json",
+        "sha256": "ee39ac9eb1e22633a23f0858fadc29802b252a6fb0ada15184b5bfad75d12b24"
+      },
+      "manifest": {
+        "path": "artifact-manifest.json",
+        "sha256": "6c74b0f920fd2acd528e648e49917750d9438e945be6864f95d53ee149ff1355"
+      },
+      "binding_verification": {
+        "path": "binding-verification.json",
+        "sha256": "96b6203af0ae5a705d177a9d4ae468f854bc3dbf161d436b839387d84dbd0dbf"
+      },
+      "fresh_clone_verification": {
+        "path": "fresh-clone-verification.json",
+        "sha256": "fca9064e7f6f47d9250a0f272e8af6ac8fd23f735724e1c80f073237caaa9b72"
+      },
+      "evaluator_input": {
+        "path": "inputs/cases.json",
+        "sha256": "e08066749520a52af5bb14a9435e359f4a85d3f3ae6e8dd0e962001f99c2df17",
+        "matches_bound_git_blob_bytes": true
+      }
+    },
+    "gate_result": {
+      "total": 15,
+      "passed": 15,
+      "failed": 0,
+      "pass_rate": 1.0,
+      "fresh_clone_binding_verified": true,
+      "lf_crlf_independent": true,
+      "ticket_path_and_bound_input_artifacts_identical": true
+    },
+    "execution_constraints": {
+      "live_provider_used": false,
+      "formal_effectiveness_evaluation_run": false,
+      "resume_evaluation_run": false,
+      "final_gate_run": false,
+      "product_fix_mixed_with_gate": false
+    }
+  },
+  "canonical_state_write_required": true,
+  "canonical_state_written": false,
+  "canonical_freeze_owner": "W5R Wave Integrator"
+}

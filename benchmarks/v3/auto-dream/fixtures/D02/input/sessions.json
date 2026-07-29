@@ -1,0 +1,8 @@
+{
+  "schema_version": "pico-auto-dream-fixture-sessions-v1",
+  "sessions": [
+    {"id": "d02-001", "recorded_at": "2026-02-03T10:00:00Z", "observations": ["Use uv for project commands."]},
+    {"id": "d02-002", "recorded_at": "2026-02-04T10:00:00Z", "observations": ["Use uv for project commands."]},
+    {"id": "d02-003", "recorded_at": "2026-02-05T10:00:00Z", "observations": ["Use uv for project commands."]}
+  ]
+}

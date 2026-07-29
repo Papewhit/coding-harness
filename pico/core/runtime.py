@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import json
 import os
-import textwrap
 import uuid
 import hashlib
 from dataclasses import dataclass
@@ -19,14 +18,15 @@ from typing import Any, Callable, Sequence
 
 from ..features import memory as memorylib, skills as skillslib
 from ..features.sandbox import SandboxConfig, SandboxRunner
-from ..providers.base import ModelClient
+from ..providers.base import NativeModelClient
 from ..tools.base import RegisteredTool
 from .compact import CompactManager
 from .context_manager import ContextManager
 from .engine import Engine
-from . import model_output, tool_executor
+from . import tool_executor
 from .plan_mode import PlanModeController
 from .permissions import PermissionChecker
+from .request_context import ModelRequestContext, stable_system_text
 from .run_store import RunStore
 from .runtime_consumers import default_runtime_consumers
 from .runtime_checkpoints import RuntimeCheckpointsMixin
@@ -87,7 +87,7 @@ class PromptPrefix:
 class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
     def __init__(
         self,
-        model_client: ModelClient,
+        model_client: NativeModelClient,
         workspace: WorkspaceContext,
         session_store: SessionStore,
         session: dict[str, Any] | None = None,
@@ -106,11 +106,15 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         auto_dream: bool = True,
         dream_interval_hours: float = 24.0,
         dream_min_sessions: int = 5,
-        model_client_factory: Callable[[], ModelClient] | None = None,
+        model_client_factory: Callable[[], NativeModelClient] | None = None,
         sandbox_config: SandboxConfig | None = None,
         ask_user_callback: Callable | None = None,
         allowed_tools: Sequence[str] | None = None,
     ):
+        if not callable(getattr(model_client, "request", None)):
+            raise TypeError(
+                "Pico Runtime requires a native model client with request()"
+            )
         self.model_client = model_client
         self.model_client_factory = model_client_factory
         self.abort_requested = False
@@ -197,6 +201,15 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         self.permission_checker = PermissionChecker(self)
         self.prefix_state = self.build_prefix()
         self.prefix = self.prefix_state.text
+        provider_identity = getattr(self.model_client, "_pico_profile_identity", None)
+        if (
+            isinstance(provider_identity, dict)
+            and "provider_profile" not in self.session
+        ):
+            self.session["provider_profile"] = {
+                **provider_identity,
+                "tool_schema": self.tool_signature(),
+            }
         self.current_turn_id = ""
         self.current_run_id = ""
         self._trace_seq = 0
@@ -228,7 +241,7 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
     @classmethod
     def from_session(
         cls,
-        model_client: ModelClient,
+        model_client: NativeModelClient,
         workspace: WorkspaceContext,
         session_store: SessionStore,
         session_id: str,
@@ -423,7 +436,9 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         return toolkit.build_tool_registry(self)
 
     @staticmethod
-    def _normalize_allowed_tools(allowed_tools: Sequence[str] | None) -> tuple[str, ...] | None:
+    def _normalize_allowed_tools(
+        allowed_tools: Sequence[str] | None,
+    ) -> tuple[str, ...] | None:
         if allowed_tools is None:
             return None
         normalized = tuple(str(name).strip() for name in allowed_tools)
@@ -431,7 +446,9 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
             raise ValueError("allowed_tools must be a non-empty sequence of tool names")
         return normalized
 
-    def _apply_tool_allowlist(self, tools: dict[str, RegisteredTool]) -> dict[str, RegisteredTool]:
+    def _apply_tool_allowlist(
+        self, tools: dict[str, RegisteredTool]
+    ) -> dict[str, RegisteredTool]:
         if self.allowed_tools is None:
             return tools
         unknown = [name for name in self.allowed_tools if name not in tools]
@@ -470,63 +487,7 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         ).hexdigest()
 
     def build_prefix(self) -> PromptPrefix:
-        tool_lines = []
-        for name, tool in self.available_tools().items():
-            fields = ", ".join(
-                f"{key}: {value}" for key, value in tool["schema"].items()
-            )
-            risk = "approval required" if tool["risky"] else "safe"
-            tool_lines.append(f"- {name}({fields}) [{risk}] {tool['description']}")
-        tool_text = "\n".join(tool_lines)
-        examples = "\n".join(
-            [
-                '<tool>{"name":"list_files","args":{"path":"."}}</tool>',
-                '<tool>{"name":"read_file","args":{"path":"README.md","start":1,"end":80}}</tool>',
-                '<tool name="write_file" path="binary_search.py"><content>def binary_search(nums, target):\n    return -1\n</content></tool>',
-                '<tool name="patch_file" path="binary_search.py"><old_text>return -1</old_text><new_text>return mid</new_text></tool>',
-                '<tool>{"name":"run_shell","args":{"command":"uv run --with pytest python -m pytest -q","timeout":20}}</tool>',
-                '<tool>{"name":"agent","args":{"description":"Inspect auth","prompt":"Find auth entry points","subagent_type":"Explore"}}</tool>',
-                "<final>Done.</final>",
-            ]
-        )
-        # prefix 可以理解成 agent 的“工作手册”：
-        # 它是谁、工具怎么调用、当前仓库是什么状态，都写在这里。
-        text = textwrap.dedent(
-            f"""\
-            You are pico, a small local coding agent working inside a local repository.
-
-            Rules:
-            - Use tools instead of guessing about the workspace.
-            - Return exactly one <tool>...</tool> or one <final>...</final>.
-            - Tool calls must look like:
-              <tool>{{"name":"tool_name","args":{{...}}}}</tool>
-            - For write_file and patch_file with multi-line text, prefer XML style:
-              <tool name="write_file" path="file.py"><content>...</content></tool>
-            - Final answers must look like:
-              <final>your answer</final>
-            - Never invent tool results.
-            - Keep answers concise and concrete.
-            - If the user asks you to create or update a specific file and the path is clear, use write_file or patch_file instead of repeatedly listing files.
-            - Before writing tests for existing code, read the implementation first.
-            - When writing tests, match the current implementation unless the user explicitly asked you to change the code.
-            - New files should be complete and runnable, including obvious imports.
-            - Do not repeat the same tool call with the same arguments if it did not help. Choose a different tool or return a final answer.
-            - Required tool arguments must not be empty. Do not call read_file, write_file, patch_file, run_shell, or agent with args={{}}.
-            - Use agent for bounded subagents. Explore is read-only; worker writes must stay inside write_scope.
-            - Use send_message to continue an existing worker instead of spawning a fresh worker with missing context.
-            - {skillslib.SKILL_FILE_CREATION_GUIDE}
-
-            {self.runtime_mode_text()}
-
-            Tools:
-            {tool_text}
-
-            Valid response examples:
-            {examples}
-
-            {self.workspace.text()}
-            """
-        ).strip()
+        text = stable_system_text(self)
         return PromptPrefix(
             text=text,
             hash=hashlib.sha256(text.encode("utf-8")).hexdigest(),
@@ -623,6 +584,13 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         prompt, _ = self._build_prompt_and_metadata(user_message)
         return prompt
 
+    def request_context(self, user_message: str, **kwargs: Any) -> ModelRequestContext:
+        """Expose the structured request surface for native Runtime wiring."""
+
+        self.refresh_prefix()
+        self.resume_state = self.evaluate_resume_state()
+        return self.context_manager.build_request(user_message, **kwargs)
+
     def record(self, item: dict[str, Any]) -> None:
         self.session["history"].append(self.turn_history.enrich(item))
         self.session_path = self.session_store.save(self.session)
@@ -631,7 +599,9 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         _, metadata = self._build_prompt_and_metadata(user_message)
         return metadata
 
-    def _build_prompt_and_metadata(self, user_message: str) -> tuple[str, dict[str, Any]]:
+    def _build_prompt_and_metadata(
+        self, user_message: str
+    ) -> tuple[str, dict[str, Any]]:
         refresh = self.refresh_prefix()
         self.resume_state = self.evaluate_resume_state()
         prompt, metadata = self.context_manager.build(user_message)
@@ -683,7 +653,9 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         self.session_event_bus.emit("context_usage_recorded", usage_payload)
         return prompt, metadata
 
-    def compact_history(self, trigger: str = "manual", keep_recent_turns: int = 2) -> Any:
+    def compact_history(
+        self, trigger: str = "manual", keep_recent_turns: int = 2
+    ) -> Any:
         return self.compact_manager.compact(
             trigger=trigger, keep_recent_turns=keep_recent_turns
         )
@@ -710,7 +682,9 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
             return index
         return "No durable memories yet. Use /remember <text> and /dream to consolidate daily logs."
 
-    def run_dream(self, quiet: bool = False, session_ids: list[str] | None = None) -> Any:
+    def run_dream(
+        self, quiet: bool = False, session_ids: list[str] | None = None
+    ) -> Any:
         return memorylib.run_dream(self, quiet=quiet, session_ids=session_ids)
 
     def maintain_memory_after_turn(self, final_answer: str) -> Any:
@@ -723,7 +697,9 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         thread.join(timeout=timeout)
         return not thread.is_alive()
 
-    def emit_trace(self, task_state: TaskState, event: str, payload: dict[str, Any] | None = None) -> Any:
+    def emit_trace(
+        self, task_state: TaskState, event: str, payload: dict[str, Any] | None = None
+    ) -> Any:
         payload = self.redact_artifact(payload or {})
         for path in payload.get("affected_paths", []) or []:
             if path not in task_state.changed_paths:
@@ -747,7 +723,9 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
             return f"Decide the next action after {task_state.last_tool}."
         return "Continue the task from the latest checkpoint."
 
-    def update_memory_after_tool(self, name: str, args: dict[str, Any], result: Any) -> None:
+    def update_memory_after_tool(
+        self, name: str, args: dict[str, Any], result: Any
+    ) -> None:
         """把少量高价值工具结果沉淀到 working memory。
 
         为什么存在：
@@ -851,7 +829,12 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         return tool_executor.run_tool(self, name, args)
 
     def repeated_tool_call(self, name: str, args: dict[str, Any]) -> bool:
-        return is_repeated_tool_call(self.session["history"], name, args)
+        return is_repeated_tool_call(
+            self.session["history"],
+            name,
+            args,
+            workspace_root=self.root,
+        )
 
     @staticmethod
     def new_task_id() -> str:
@@ -923,13 +906,6 @@ class Pico(RuntimeSecretsMixin, RuntimeCheckpointsMixin):
         except EOFError:
             return False
         return answer.strip().lower() in {"y", "yes"}
-
-    parse = staticmethod(model_output.parse)
-    retry_notice = staticmethod(model_output.retry_notice)
-    parse_xml_tool = staticmethod(model_output.parse_xml_tool)
-    parse_attrs = staticmethod(model_output.parse_attrs)
-    extract = staticmethod(model_output.extract)
-    extract_raw = staticmethod(model_output.extract_raw)
 
     def reset(self) -> None:
         self.session["history"] = []

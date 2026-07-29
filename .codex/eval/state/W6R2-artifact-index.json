@@ -1,0 +1,80 @@
+{
+  "schema_version": "pico-eval-wave-artifact-index-v1",
+  "wave": "W6R2",
+  "run_snapshot_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+  "ticket_handoffs": {
+    "TOOL-055-E": {
+      "path": ".codex/eval/handoffs/TOOL-055-E.json",
+      "sha256": "733e9488b787dc0bf07d6b5f8d51b2ec502e2682feed8e139baa8cedd0c033d4"
+    },
+    "EVAL-056-H": {
+      "path": ".codex/eval/handoffs/EVAL-056-H.json",
+      "sha256": "88dd58e2a7a726c18bc584b92538de259b02e698d15c079830be858ccacc05f5"
+    },
+    "TOOL-057-A": {
+      "path": ".codex/eval/handoffs/TOOL-057-A.json",
+      "sha256": "ccffc5d5c4450afe2e2d994ecc8dd37e4b9f709a6b6a740c2a662d917ccc893f"
+    },
+    "TOOL-058-G": {
+      "path": ".codex/eval/handoffs/TOOL-058-G.json",
+      "sha256": "5dcbbcc456f1d917c4bbb8708495ef1ab38d9b7f5d5268f62b5bb7d3524d3df8"
+    },
+    "TOOL-050-QO-R2": {
+      "path": ".codex/eval/handoffs/TOOL-050-QO-R2.json",
+      "sha256": "52d3b226d233b697f505bc2c4b8649511f3afd7dc379e3b10211dd85ab1958ac"
+    },
+    "TOOL-050-QA-R2": {
+      "path": ".codex/eval/handoffs/TOOL-050-QA-R2.json",
+      "sha256": "bb1dae84b0ed3ba267e2c7623fb6eb48640214fb8ba45feb5481d8be4c6d2000"
+    },
+    "TOOL-050-DA-R2": {
+      "path": ".codex/eval/handoffs/TOOL-050-DA-R2.json",
+      "sha256": "eec6ee22918fb50adfde7df7a0a7c39eb3d85894a7e2c627a57a59b964202763"
+    },
+    "TOOL-050-S-R1": {
+      "path": ".codex/eval/handoffs/TOOL-050-S-R1.json",
+      "sha256": "ada774641c62e871b00181090f1983a68e90d113380f0057f3f737bcf298c072"
+    }
+  },
+  "run_shards": {
+    "TOOL-050-QO-R2": {
+      "manifest_sha256": "d8e984e1d3dd2b917d2adfb27cb610dbe6ab6b14bd8657f02812d84e69a199e4",
+      "rows_sha256": "c95dae0f8c3a90bc46e22e9f07dfce53784e43557f0fdf960bc9f5ba1fa92da3",
+      "evidence_index_sha256": "2cabd5d8dd94a1b50be83cfff800fcc1bba90203e9d3a58a25da17bc81fee1d2",
+      "summary_sha256": "b9bfce582704216ba6f7ff37b68234c8292eee625da2e9cadb425c6b02ef3718"
+    },
+    "TOOL-050-QA-R2": {
+      "manifest_sha256": "99c97102fa46f17bc0a120757eca0328401595d31af38a00c4b6dd2213d0b863",
+      "rows_sha256": "dfaf6efe30718d69ebd27f918f6f40978d8fb58af9454bbc702beabf86f09089",
+      "evidence_index_sha256": "6680bc2f0e3e4c29fa5fc804f33d2bd8ee1be6797fc9de3d0c75060b1806819e",
+      "summary_sha256": "e187bea1aa8a25928e944f9b55dd46392b68540a6f191ba31fdf76026d3b06d7"
+    },
+    "TOOL-050-DA-R2": {
+      "manifest_sha256": "7b7e903c9ba01ec3c51e99c7ef75faae26f761e7834da85e64116867338576cd",
+      "rows_sha256": "86cd167db8a9054a94bef435517a5e2cbeec7484407c6a961d6904a839235fe4",
+      "evidence_index_sha256": "b7d316bc458c72271910ce337d00de0919aecc953adc98bb2d6af413982671aa",
+      "summary_sha256": "56dcedae55b21647bd0b278ed42de3c473b83f8954939576e51411b496db253f"
+    }
+  },
+  "selection": {
+    "path": "benchmarks/v3/native-provider/selection-w6r2.json",
+    "sha256": "e94483ef222373139b9f07173632d579416056248431deaafcf0bcaf0c7a1278",
+    "selected_profile": "dashscope-o",
+    "profile_id": "sha256:41ebb321c6332867f0bb020621b7e1c17f8c60430374c37c3a670c916326ee70",
+    "public_manifest_sha256": "499655acd72b0c10f0bd0a938a032060fb7a5b776e74e478742078da1a137331"
+  },
+  "selection_artifacts": {
+    "summary_json_sha256": "36a0dc14e86692ad32c5052633675ad4fbe107b2f9134a4ae150301d0f1a2caf",
+    "summary_markdown_sha256": "c3f35b09cdc4c8b3fd764957d2c3909513d5a8199b4a547216d1790c1d044d81",
+    "verification_sha256": "3644a4d3d95e014c1300ea04e7ec5a96fbbc7b8f62c5ef6f780e42b8492b432d",
+    "inventory_sha256": "8521b66b2614a51872d721e62869ccd942e6d903dbf20924d677bd87ab357310",
+    "privacy_scan": "passed_no_matches",
+    "duplicate_aggregator_contamination": "stopped_audited_and_excluded"
+  },
+  "evaluation_scope": {
+    "human_smoke_run": false,
+    "formal_effectiveness_run": false,
+    "resume_run": false,
+    "w7_started": false
+  }
+}

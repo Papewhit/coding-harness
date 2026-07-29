@@ -1,0 +1,185 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-055-E",
+  "instance_id": "W6R2-TOOL-055-E-01",
+  "wave": "W6R2",
+  "role": "implementer/dual-dialect-runner-parity-and-safety-chain-evidence",
+  "status": "complete",
+  "source_thread_id": "019f8e25-2f02-73d0-9a55-3ce4ffa1bb1f",
+  "base_sha": "6b4fa94948888b7c95dfbe4cd0134205356decba",
+  "wave_base_sha": "6b4fa94948888b7c95dfbe4cd0134205356decba",
+  "starting_ref": "codex/w6r2-wave-base",
+  "starting_ref_verified_target": "6b4fa94948888b7c95dfbe4cd0134205356decba",
+  "head_sha": "50f728ba824a142ba0d64a5f820c80bbc1942496",
+  "head_sha_semantics": "Implementation-content head before the metadata-only commit containing this handoff; the containing commit is the final retained worker branch HEAD.",
+  "branch": "codex/w6r2-tool-055-e",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/63ff/pico",
+  "dependency_commits": [],
+  "applied_dependency_commits": [],
+  "own_commits": [
+    "50f728ba824a142ba0d64a5f820c80bbc1942496"
+  ],
+  "metadata_commit_semantics": "The commit containing this handoff is metadata-only; its self-referential SHA is intentionally not embedded in this file.",
+  "dependency_handoff_hashes": {
+    "TOOL-051-L": "64d276287e7921a620e0e9e80e3e59b89c97be8f79ea97599767bbf93eb6c9d7",
+    "EVAL-052-H": "660d01fbdb45af6663d3a8f937a06acf92b7c78ff2d34f84ec4e8955c5e2b5db",
+    "TOOL-053-A": "f6c0bc418876a9cbeb16d9617bd1cb724aa2a00736bcf5130324543cce5d8938",
+    "W6R-wave-handoff": "84e0e7f57fb52de5a9aa13ed2f94e6d8ea8dd73287efb9cf8eecef50c701eb5b"
+  },
+  "allowed_write_paths": [
+    "pico/evaluation/native_provider_live.py",
+    "pico/core/tool_executor.py",
+    "tests/test_native_provider_live.py",
+    "tests/test_native_safety_chain_evidence.py",
+    ".codex/eval/handoffs/TOOL-055-E.json"
+  ],
+  "files_changed": [
+    "pico/evaluation/native_provider_live.py",
+    "pico/core/tool_executor.py",
+    "tests/test_native_provider_live.py",
+    "tests/test_native_safety_chain_evidence.py",
+    ".codex/eval/handoffs/TOOL-055-E.json"
+  ],
+  "implementation": {
+    "dual_dialect_parity": "The repository-owned fixed runner regression now sends the same frozen eight cases through production OpenAI Responses and Anthropic Messages adapters, with two case-major repetitions and the same case and protocol assertions.",
+    "safety_evidence_schema": "pico-native-safety-chain-evidence-v1",
+    "safety_evidence_path": "The live runner binds an evidence hook to Pico; the production tool executor invokes it at the existing validate, repetition, permission, policy, and execute boundaries without changing their order or decisions.",
+    "evidence_binding": [
+      "case_id",
+      "repetition",
+      "provider call_id",
+      "tool_name",
+      "stage",
+      "stage_index",
+      "outcome",
+      "reason",
+      "sequence"
+    ],
+    "bypass_audit": "The live runner reconstructs each provider call's ordered stage prefix from persisted session events and marks missing, reordered, duplicated, or invalidly terminated evidence as a safety-chain bypass.",
+    "architecture_budget": "pico/core/tool_executor.py remains 190 lines against the enforced 220-line growth tripwire; evidence serialization and native call-ID lookup stay in the evaluation runner."
+  },
+  "tests": [
+    {
+      "command": "uv run pytest tests/test_native_provider_live.py tests/test_native_safety_chain_evidence.py -q",
+      "result": "passed",
+      "details": "10 passed. Both dialects completed 16/16 rows (eight frozen cases times two repetitions), with identical row and shared protocol assertions; production executor evidence covered success plus validate, repetition, permission, and policy rejection prefixes."
+    },
+    {
+      "command": "uv run ruff check pico/evaluation/native_provider_live.py pico/core/tool_executor.py tests/test_native_provider_live.py tests/test_native_safety_chain_evidence.py",
+      "result": "passed",
+      "details": "All checks passed."
+    },
+    {
+      "command": "uv run pytest tests/test_native_safety_chain_evidence.py tests/test_native_runtime_integration.py tests/test_native_tool_loop.py tests/test_permissions_acceptance.py tests/test_architecture_boundaries.py -q",
+      "result": "passed",
+      "details": "26 passed. Native Runtime, native loop, permission behavior, and architecture growth boundaries remain green."
+    },
+    {
+      "command": "git diff --check; git diff --cached --check; allowed-write-path audit; frozen cases and FREEZE hash audit",
+      "result": "passed",
+      "details": "No whitespace errors; implementation and handoff are confined to the five delegated paths; frozen cases blob and formal FREEZE are unchanged."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "pico/evaluation/native_provider_live.py",
+      "sha256": "198290b409980d6a0caf468b32aa3a43e2b86f4de749d7106c03a13b520e249b",
+      "git_blob_oid": "cfd9a0c654e0200ea9ca437bd8c3fd1a92d58587",
+      "hash_basis": "implementation_head_file_bytes"
+    },
+    {
+      "path": "pico/core/tool_executor.py",
+      "sha256": "d65d515e26a437111bc8ad010904c8105156c20b097fc07a4c0ba4d057a0552a",
+      "git_blob_oid": "45f1fead1451621b106d4f80b8b69b8f60adc6f0",
+      "hash_basis": "implementation_head_file_bytes"
+    },
+    {
+      "path": "tests/test_native_provider_live.py",
+      "sha256": "b7bbca5f3da90506b112ff70a19489a8a03249fb34b544f4cde927376f252469",
+      "git_blob_oid": "bef17af0966dbf555d8d8a075d8cc077ab99df59",
+      "hash_basis": "implementation_head_file_bytes"
+    },
+    {
+      "path": "tests/test_native_safety_chain_evidence.py",
+      "sha256": "e9910b7903213a90c16ce3a54ee6158b004a4b0d5dc4461df91baecee4926e20",
+      "git_blob_oid": "6d988875823f69dfb2e312c6045d052903b39e75",
+      "hash_basis": "implementation_head_file_bytes"
+    },
+    {
+      "path": ".codex/eval/handoffs/TOOL-055-E.json",
+      "persistence": "Metadata-only commit generated after the immutable implementation content commit."
+    }
+  ],
+  "frozen_hashes": {
+    "formal_freeze": "b4893c10887bb774dda860a5f4b13ec6fa9b8c014e0cb0257e409c0f27df6ba6",
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "sdk_dependency_lock": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+    "public_profile_schema": "c664de9fc4ba4abfa1c5ee4450425e9ef5e3b638d990c2fc42e343d9a63a1625",
+    "public_profile_example": "135095b602ffd386a4227bce817a5edd0242a8b2df68dc50ca42d44ec106de3f",
+    "selected_provider_profile": null,
+    "native_deterministic_gate": "2fc1ebbe4d64c5be80e7fe063584915f12aabf3a8f8c08796d2cf009e94849a5",
+    "provider_selection": "e51ec2b3fd45c6f22f87e1db619c1c2cfc3fdc2304821ca92540fd24479f71df",
+    "native_resume_gate": null,
+    "cases_sha256": "92f746b113a88ceb652e4e8ec651021b1358d9922ab91c0dad34e62c0068b9e3",
+    "cases_git_blob_oid": "f513f6e15c521104b12fe348dc280f73624acd56"
+  },
+  "native_protocol_observations": {
+    "observation_scope": "Offline production Pico/Engine and production OpenAI Responses and Anthropic Messages adapters over deterministic no-network fake transports. No real provider HTTP, formal effectiveness evaluation, human smoke, or Resume evaluation was run.",
+    "wire_dialects": [
+      "openai-responses",
+      "anthropic-messages"
+    ],
+    "passing_frozen_rows_per_dialect": "16/16",
+    "frozen_cases_per_dialect": "8/8",
+    "repetitions_per_case": 2,
+    "call_id_result_match_per_dialect": "24/24",
+    "batch_completeness_per_dialect": "22/22",
+    "opaque_continuation_roundtrip_per_dialect": "2/2",
+    "unknown_block_observed_per_dialect": 2,
+    "unknown_block_loss_count": 0,
+    "text_envelope_seen_count_in_passing_matrix": 0,
+    "implicit_sdk_retry_seen_in_passing_matrix": false,
+    "pico_retry_count": 0,
+    "safety_chain_bypass_count": 0,
+    "safety_stages": [
+      "validate",
+      "repetition",
+      "permission",
+      "policy",
+      "execute"
+    ],
+    "adverse_controls": {
+      "text_envelope_detection": "passed",
+      "implicit_sdk_retry_detection": "passed",
+      "safety_chain_bypass_detection": "passed"
+    },
+    "real_http_attempt_count": 0,
+    "sdk_tool_runner_used": false,
+    "sdk_agent_runner_used": false,
+    "sdk_managed_pico_tool_execution_used": false,
+    "display_text_parsed_as_protocol": false
+  },
+  "defects": [],
+  "risks": [
+    "No real endpoint was contacted, so provider eligibility, selected profile, and recovered Gate N1 remain unresolved for separately authorized downstream work.",
+    "OpenAI Responses retains continuation for ordinary function-call output items while Anthropic Messages has a different private continuation shape; parity is intentionally enforced on the shared frozen assertions and protocol metrics, while opaque roundtrip is asserted independently for each dialect.",
+    "NativeProviderLiveRunner derives repetition from the fixed harness's documented case-major sequential invocation order; changing runner invocation order would require an explicit repetition argument in the evaluator contract, which is outside this ticket's ownership."
+  ],
+  "ownership_change_request": null,
+  "status_proposal": {
+    "ticket_id": "TOOL-055-E",
+    "status": "complete",
+    "head_sha": "50f728ba824a142ba0d64a5f820c80bbc1942496",
+    "reason": "Both production wire dialects now share one repository-owned frozen eight-case repetition matrix, and every executed native tool call emits ordered, call-ID-bound safety-chain evidence without changing safety semantics."
+  },
+  "freeze_proposal": null,
+  "formal_status_written": false,
+  "formal_freeze_written": false,
+  "live_provider_http_sent": false,
+  "downstream_ticket_started": false,
+  "eval_056_h_started": false,
+  "ready_for_integration": true
+}

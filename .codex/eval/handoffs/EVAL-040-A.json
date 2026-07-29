@@ -1,0 +1,100 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "EVAL-040-A",
+  "instance_id": "W1-EVAL-040-A-01",
+  "wave": "W1",
+  "role": "fixture_builder",
+  "status": "complete",
+  "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+  "head_sha": "fa8cea2e695163c865cc761adccdd2a0015d324d",
+  "dependency_commits": [],
+  "dependency_handoff_hashes": {
+    "EVAL-001": "cc8c951e0a0e0dac20e46c611b102bc538a6863099310a90690eb639f931a3be"
+  },
+  "frozen_hashes": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "native_contract": null,
+    "tool_schema": null,
+    "sdk_transport_decision": null,
+    "provider_selection": null,
+    "native_resume_gate": null
+  },
+  "own_commits": [
+    "2e8af03a3bd743c0de9a0817e39eb6592a526d36",
+    "fa8cea2e695163c865cc761adccdd2a0015d324d"
+  ],
+  "files_changed": [
+    "benchmarks/v3/local-repos/repos/tinyconfig/",
+    "benchmarks/v3/local-repos/hidden_verifiers/tinyconfig/",
+    "benchmarks/v3/local-repos/reference_patches/tinyconfig/",
+    "benchmarks/v3/local-repos/task_docs/tinyconfig/",
+    "benchmarks/v3/local-repos/fragments/tinyconfig.json"
+  ],
+  "commands_run": [
+    "uv run ruff check benchmarks/v3/local-repos/repos/tinyconfig benchmarks/v3/local-repos/hidden_verifiers/tinyconfig",
+    "python hidden verifier matrix on isolated temporary baseline/reference copies",
+    "git apply --check and git apply for each T01-T03 reference patch",
+    "git diff --check 67be0ecc161cd6060a8417d29b1e5bc40b10e080..fa8cea2e695163c865cc761adccdd2a0015d324d"
+  ],
+  "tests": [
+    {
+      "command": "uv run ruff check benchmarks/v3/local-repos/repos/tinyconfig benchmarks/v3/local-repos/hidden_verifiers/tinyconfig",
+      "result": "passed",
+      "details": "All checks passed. UV_CACHE_DIR used a task-specific system temporary directory."
+    },
+    {
+      "command": "T01-T03 baseline/reference matrix",
+      "result": "passed",
+      "details": "Every unmodified baseline failed its own hidden verifier; every independently applied reference patch passed. Repair validation matrix duration was 4.997 seconds."
+    },
+    {
+      "command": "tinyconfig LOC count",
+      "result": "passed",
+      "details": "Candidate repository contains 200 lines across four files, within the 200-1500 LOC ticket limit."
+    },
+    {
+      "command": "candidate isolation check",
+      "result": "passed",
+      "details": "The candidate repo contains no verifier or reference-patch files; hidden verifiers and patches remain in sibling restricted directories."
+    },
+    {
+      "command": "git diff --check base..HEAD",
+      "result": "passed",
+      "details": "No trailing whitespace remains between base 67be0ecc161cd6060a8417d29b1e5bc40b10e080 and repaired head fa8cea2e695163c865cc761adccdd2a0015d324d."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "benchmarks/v3/local-repos/fragments/tinyconfig.json",
+      "sha256": "24d42d41038f8fa08d90d27fc0664b8fda75579896f9072d058eadc4dfc7b3ba"
+    },
+    {
+      "path": "benchmarks/v3/local-repos/repos/tinyconfig/tinyconfig/config.py",
+      "sha256": "672c8a733c6f31dbcbeb80b831c92d6558fb731cd727e819c49449878e9dd900"
+    },
+    {
+      "path": "benchmarks/v3/local-repos/hidden_verifiers/tinyconfig/",
+      "sha256": "e23e29c7210a60316f417323bd9a8c7c70b340f347c901b56a39f7d9b78711e8 (T01); b79c2a3cfe014258a06483fcbf2ff46996156c32d159b54940236212f17b8eb7 (T02); cecb11c3b4ce846c8ebab67fea056edb8acf37f4062a3ade13c47f9b378196eb (T03)"
+    },
+    {
+      "path": "benchmarks/v3/local-repos/reference_patches/tinyconfig/",
+      "sha256": "8924c30d7ed6a24dd7247273a54e693485dd7f0029f5f8b7e5f6f983f9f82ffb (T01); 7750237f021aa830fcf77b98f08b93d1a370b2b6e2fbd38bf579b34d5c0b4c1d (T02); 7d4a6c98b448c5bc4be4af87a7102f48e4da5995041bc2e189bce53967611d76 (T03)"
+    }
+  ],
+  "native_protocol_observations": {
+    "observation_scope": "offline local-repository fixture construction; no provider request was issued",
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0
+  },
+  "defects": [],
+  "risks": [
+    "Running uv created an ignored workspace .venv; cleanup was denied by the command policy. It is not tracked and is outside the fixture commit."
+  ],
+  "status_proposal": null,
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}

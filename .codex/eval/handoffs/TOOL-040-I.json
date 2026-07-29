@@ -1,0 +1,174 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-040-I",
+  "instance_id": "W5-TOOL-040-I-01",
+  "wave": "W5",
+  "role": "implementer",
+  "status": "complete",
+  "base_sha": "a834e78098487888264b5ffdea37f52a8d635fbf",
+  "head_sha": "32a617054cb06bfb9b8c4ae8e3e05d90afe31559",
+  "head_sha_semantics": "Implementation-content head before the metadata-only commit containing this handoff; the containing commit is the final branch HEAD reported to the Wave Integrator.",
+  "branch": "codex/eval-v3-w5-tool-040-i",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/w5-040i/pico",
+  "dependency_commits": [],
+  "applied_dependency_commits": [],
+  "dependency_handoff_hashes": {
+    "TOOL-020-O": "14b3d7350348e52c37cd6a91b0b6a7cadfba71d595dcb8fd01f15f4390e43435",
+    "TOOL-020-A": "90c8ed270c670109b57e63984e4e5f4288b35f8c1ec11a06321a834e950cd2a9",
+    "TOOL-021-P": "7fe89f8337b5b2873d2cc5616f66a8f3819433c86d796df9d4cb22ea91488551",
+    "TOOL-030-E": "da88292e505b9c12beff59513a06ca9ddbee181d9e5754a26c78907d211b6970",
+    "TOOL-031-S": "2f74b423a92ce989a54e86be60a64f875c350f8ee407862c9dfa475b99801cdc",
+    "TOOL-032-C": "e657ffc685f32ae3df036c4d0a36bc491d2c6577f47aefcaf12090bcb5142843"
+  },
+  "dependency_freeze_hashes": {
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "sdk_dependency_lock": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657"
+  },
+  "own_commits": [
+    "32a617054cb06bfb9b8c4ae8e3e05d90afe31559"
+  ],
+  "files_changed": [
+    "pico/providers/clients.py",
+    "pico/providers/base.py",
+    "pico/providers/__init__.py",
+    "pico/core/runtime.py",
+    "pico/core/engine.py",
+    "pico/core/engine_helpers.py",
+    "pico/core/session_lifecycle.py",
+    "pico/cli.py",
+    "tests/test_native_runtime_integration.py",
+    ".codex/eval/handoffs/TOOL-040-I.json"
+  ],
+  "commands_run": [
+    "SHA-256 verification of six dependency handoffs and four frozen inputs; branch/base/history verification",
+    "uv sync --extra providers --locked",
+    "uv run pytest tests/test_native_runtime_integration.py -q",
+    "uv run pytest tests/test_native_runtime_integration.py tests/test_safety_invariants.py tests/test_permissions_acceptance.py tests/test_tool_policy_acceptance.py -q",
+    "uv run pytest tests/test_native_runtime_integration.py tests/test_native_tool_loop.py tests/test_native_session_exchange.py tests/test_native_request_context.py tests/test_provider_contracts.py tests/test_provider_transport.py tests/test_openai_responses_tools.py tests/test_anthropic_messages_tools.py tests/test_provider_protocol.py tests/test_engine_acceptance.py -q",
+    "uv run ruff check pico tests/test_native_runtime_integration.py",
+    "uv run pytest tests/test_architecture_boundaries.py -q",
+    "git diff --check; allowed-write-path and forbidden-path verification"
+  ],
+  "tests": [
+    {
+      "command": "uv run pytest tests/test_native_runtime_integration.py -q",
+      "result": "passed",
+      "details": "3 passed; covers non-empty native tools, provider-native call/result continuation, durable exchange order, safety-chain rejection, zero SDK retry visibility, adapter factory selection, and absence of the legacy parser from the active native turn."
+    },
+    {
+      "command": "uv run pytest tests/test_native_runtime_integration.py tests/test_native_tool_loop.py tests/test_native_session_exchange.py tests/test_native_request_context.py tests/test_provider_contracts.py tests/test_provider_transport.py tests/test_openai_responses_tools.py tests/test_anthropic_messages_tools.py tests/test_provider_protocol.py tests/test_engine_acceptance.py -q",
+      "result": "passed",
+      "details": "95 passed after final refactoring; validates active Runtime wiring against the frozen contracts, both adapters, official-SDK transports, native batch safety chain, session journal, structured context, provider startup/profile locking, and shared Engine completion lifecycle."
+    },
+    {
+      "command": "uv run ruff check pico tests/test_native_runtime_integration.py",
+      "result": "passed",
+      "details": "All repository Python source and the new integration tests passed lint."
+    },
+    {
+      "command": "uv run pytest tests/test_native_runtime_integration.py tests/test_safety_invariants.py tests/test_permissions_acceptance.py tests/test_tool_policy_acceptance.py -q",
+      "result": "failed",
+      "details": "19 passed and 10 failed only on pre-existing Windows/base conditions documented by dependencies: unavailable symlink privilege, Path.home() failure when tests clear home variables, POSIX shell quoting/tools under cmd.exe, and a path-separator assertion. All TOOL-040-I integration tests and platform-independent permission/policy checks passed."
+    },
+    {
+      "command": "uv run pytest tests/test_architecture_boundaries.py -q",
+      "result": "failed",
+      "details": "The single immutable-base failure remains pico/core/worker_manager.py at 232 lines versus 220. TOOL-040-I did not modify that forbidden path or the architecture test; ticket-owned engine.py is 415/470 and runtime.py is 903/950."
+    },
+    {
+      "command": "git diff --check; allowed-write-path and forbidden-path verification",
+      "result": "passed",
+      "details": "No whitespace errors after the final amend; every changed path is ticket-owned, and runtime_checkpoints.py, frozen inputs, and tests/test_architecture_boundaries.py are unchanged."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "pico/providers/clients.py",
+      "sha256": "5bdd5f3135cf55d0094593f2d70c0d042a127b97d4e813b6a21531ec3f39fbe5",
+      "hash_basis": "working_tree_file_bytes_at_implementation_head",
+      "coverage": "Native adapter/transport factory and public zero-retry SDK profile."
+    },
+    {
+      "path": "pico/core/engine.py",
+      "sha256": "8deea4e249916944e1502502a0dc29077ca952497ba07198b8c707f956fb52c8",
+      "hash_basis": "working_tree_file_bytes_at_implementation_head",
+      "coverage": "Active native turn dispatch with shared legacy-migration completion lifecycle."
+    },
+    {
+      "path": "pico/core/engine_helpers.py",
+      "sha256": "e3b1671806dd50c9d89b66ec53963838ae3bc519acbecf7a49a653d62ce77575",
+      "hash_basis": "working_tree_file_bytes_at_implementation_head",
+      "coverage": "Structured request composition, native batch-loop orchestration, visible retry evidence, and shared successful-run finalization."
+    },
+    {
+      "path": "pico/core/session_lifecycle.py",
+      "sha256": "f83c413a27e07bea9cda178e136435b7249cdd5684011d316eb9a7f79e4342b1",
+      "hash_basis": "working_tree_file_bytes_at_implementation_head",
+      "coverage": "Persist-before-execute native batch state plus one-to-one assistant batch/tool result/model final session journal wiring."
+    },
+    {
+      "path": "pico/cli.py",
+      "sha256": "8ec7feff93789a58798ab5977eb304ccd902e0bea8a802d57fe6625c63af1787",
+      "hash_basis": "working_tree_file_bytes_at_implementation_head",
+      "coverage": "Production native adapter selection, native-capability refusal, and reproducible SDK retry/profile locking."
+    },
+    {
+      "path": "tests/test_native_runtime_integration.py",
+      "sha256": "9e4d9344d90e7f8d16a2bd41328a3ba7f72b767a462f037e27faba7f7635b951",
+      "hash_basis": "working_tree_file_bytes_at_implementation_head"
+    },
+    {
+      "path": ".codex/eval/handoffs/TOOL-040-I.json",
+      "persistence": "Metadata-only commit generated after the implementation content commit."
+    }
+  ],
+  "frozen_hashes": {
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "sdk_dependency_lock": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+    "sdk_profile": null,
+    "provider_selection": null,
+    "native_deterministic_gate": null,
+    "native_resume_gate": null
+  },
+  "native_protocol_observations": {
+    "observation_scope": "Offline deterministic active-Runtime, adapter, official-SDK MockTransport, session-journal, validation, permission, and policy tests only; no live provider or formal effectiveness evaluation was issued.",
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0,
+    "sdk_tool_runner_used": false,
+    "sdk_agent_runner_used": false,
+    "sdk_managed_pico_tool_execution_used": false
+  },
+  "defects": [
+    {
+      "code": "pre_existing_windows_acceptance_failures",
+      "scope": "unchanged base/platform outside TOOL-040-I ownership",
+      "detail": "The prescribed acceptance group retains 10 Windows-specific environment/path/shell failures already recorded by dependency handoffs; all ticket-native cases pass."
+    },
+    {
+      "code": "pre_existing_worker_manager_budget",
+      "scope": "pico/core/worker_manager.py outside TOOL-040-I ownership",
+      "detail": "The architecture gate retains the immutable-base 232/220 line-budget failure. Ticket-owned engine.py is now 415/470 and runtime.py remains 903/950."
+    }
+  ],
+  "risks": [
+    "Legacy complete()-only clients remain callable solely through explicit embedding/test injection until TOOL-041-M removes migration code; unmodified CLI provider profiles always select the native adapter factory and never downgrade from native capability.",
+    "Crash/restart policy for a persisted active native batch remains owned by TOOL-060-R; this ticket persists JSON-safe batch state but does not alter runtime_checkpoints.py or auto-replay executing calls.",
+    "No live endpoint was contacted; native production wiring was verified with deterministic scripted clients and locked official-SDK local transport tests."
+  ],
+  "status_proposal": {
+    "ticket_id": "TOOL-040-I",
+    "status": "complete",
+    "head_sha": "32a617054cb06bfb9b8c4ae8e3e05d90afe31559",
+    "reason": "Production CLI profiles now construct locked native adapters, Runtime sends non-empty structured tool definitions, Engine returns provider-native results by call ID through Pico's safety chain, and Session persists normalized native exchanges without a text-protocol fallback."
+  },
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}

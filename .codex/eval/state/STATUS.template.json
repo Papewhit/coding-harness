@@ -1,0 +1,12 @@
+{
+  "schema_version": "pico-eval-status-history-v4",
+  "control_revision": "eval-control-v4",
+  "purpose": "Historical machine index only; CURRENT.md is the authoritative live state from W6R4 onward.",
+  "current_state_path": ".codex/eval/CURRENT.md",
+  "current_state_sha256": "<sha256>",
+  "integration_branch": "eval/v3-integration",
+  "base_commit": "<sha>",
+  "accepted_tickets": {},
+  "wave_handoffs": {},
+  "updated_at": "<iso8601>"
+}

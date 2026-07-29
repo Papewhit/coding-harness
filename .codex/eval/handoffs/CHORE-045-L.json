@@ -1,0 +1,71 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "CHORE-045-L",
+  "instance_id": "W5R-CHORE-045-L-01",
+  "thread_id": "019f88a0-f705-7010-a55d-f55b9b24b5c1",
+  "source_thread_id": "019f8899-40f8-7231-9458-dcc8084aa44e",
+  "prompt_sha256": "ee56f08ddf1ceeb49829274c97c7ea5c38a0400d4e6ba06c5499d4d2218d6518",
+  "wave": "W5R",
+  "role": "implementer",
+  "status": "passed",
+  "wave_base_sha": "fd17e64b45f58558d84a200b5498db463998a239",
+  "base_sha": "fd17e64b45f58558d84a200b5498db463998a239",
+  "head_sha": "f73c305cff1285fa9bf9b58cfaab23d83944de2a",
+  "head_sha_semantics": "Actual branch HEAD immediately before the metadata-only instance-manifest supplement commit; the supplement commit is reported separately to the Wave Integrator to avoid a self-referential commit hash.",
+  "branch": "codex/eval-v3-w5r-chore-045-l",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/da77/pico",
+  "dependency_commits": [],
+  "dependency_handoff_hashes": {
+    "TOOL-042-G": "437d9c24c7cc38c68f8f3f6f2bdfe322e55408ada19c01f61d1474d3a0b55b2d"
+  },
+  "own_commits": [
+    "57000ad99c315fcb7c7d976bad08c35986f00d90",
+    "f73c305cff1285fa9bf9b58cfaab23d83944de2a"
+  ],
+  "files_changed": [
+    "scripts/readable_session.py",
+    ".codex/eval/handoffs/CHORE-045-L.json"
+  ],
+  "commands_run": [
+    "git rev-parse HEAD",
+    "uv run ruff check .",
+    "git diff --check",
+    "git diff -- scripts/readable_session.py"
+  ],
+  "tests": [
+    {
+      "command": "uv run ruff check .",
+      "result": "passed",
+      "details": "All checks passed. The 14 W5 Gate baseline findings in scripts/readable_session.py are resolved."
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed",
+      "details": "No whitespace errors."
+    },
+    {
+      "command": "git diff -- scripts/readable_session.py",
+      "result": "passed",
+      "details": "Manual diff check confirms only one unused import removal and thirteen placeholder-free f-string conversions; string contents, output, behavior, and CLI contract are unchanged."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "scripts/readable_session.py",
+      "sha256": "6af7d44e3005d8dec82e9ae1e150d2295de8e4f608037430062dbbb2290c6d36"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate/W5-TOOL-042-G-01/gate-report.json",
+      "sha256": "ee42ddaabd4ea35c859154f5b2e4056a8c786e0f421ec8ecfa0304082072503e",
+      "role": "w5_gate_ruff_evidence"
+    },
+    {
+      "path": ".codex/eval/handoffs/CHORE-045-L.json",
+      "persistence": "Metadata-only commit generated after the ticket content commit."
+    }
+  ],
+  "defects": [],
+  "risks": [],
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}

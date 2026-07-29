@@ -1,0 +1,113 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "EVAL-020",
+  "instance_id": "W1-EVAL-020-01",
+  "wave": "W1",
+  "role": "implementer",
+  "status": "complete",
+  "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+  "head_sha": "539904b31541f898c5da795bb690dce7c6d43701",
+  "dependency_commits": [],
+  "applied_dependency_commits": [],
+  "dependency_handoff_hashes": {
+    "EVAL-001": "cc8c951e0a0e0dac20e46c611b102bc538a6863099310a90690eb639f931a3be"
+  },
+  "own_commits": [
+    "539904b31541f898c5da795bb690dce7c6d43701"
+  ],
+  "files_changed": [
+    "benchmarks/v3/auto-dream/schema.json",
+    "pico/evaluation/dream_eval.py",
+    "scripts/run_dream_evaluation.py",
+    "tests/test_dream_evaluator.py"
+  ],
+  "commands_run": [
+    "uv run pytest tests/test_dream_evaluator.py -q",
+    "uv run ruff check pico/evaluation/dream_eval.py scripts/run_dream_evaluation.py tests/test_dream_evaluator.py",
+    "git diff --check",
+    "uv run python scripts/run_dream_evaluation.py --help",
+    "git diff --cached --check"
+  ],
+  "tests": [
+    {
+      "command": "uv run pytest tests/test_dream_evaluator.py -q",
+      "result": "passed",
+      "details": "11 passed; covers schema validation, atomic must_keep/replace/drop facts, topics/index/frontmatter, secret/scope/dangling-link hard gates, allowed timestamp normalization, idempotency, case filtering, and shard merge deduplication"
+    },
+    {
+      "command": "uv run ruff check pico/evaluation/dream_eval.py scripts/run_dream_evaluation.py tests/test_dream_evaluator.py",
+      "result": "passed",
+      "details": "All checks passed"
+    },
+    {
+      "command": "git diff --check and git diff --cached --check",
+      "result": "passed",
+      "details": "No whitespace errors"
+    },
+    {
+      "command": "uv run python scripts/run_dream_evaluation.py --help",
+      "result": "passed",
+      "details": "Runner CLI loads and exposes case filtering, changed-path evidence, shard ID, and repetition arguments"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "pico/evaluation/dream_eval.py",
+      "sha256": "6a7b40bcc0dba05acf6849451969f81bf201ab95072e361e5fb83b52c2f78324",
+      "hash_basis": "git_blob_bytes",
+      "contract": "Deterministic atomic oracle, structural and hard gates, semantic snapshots, case selection, runner core, and shard merge API"
+    },
+    {
+      "path": "scripts/run_dream_evaluation.py",
+      "sha256": "2d4ea25ec443b95934957c560dc7008efc681263deeca0b638eefe25b0eb1eba",
+      "hash_basis": "git_blob_bytes",
+      "contract": "CLI evaluates materialized outputs with explicit per-case changed-path evidence and repeatable case filters"
+    },
+    {
+      "path": "tests/test_dream_evaluator.py",
+      "sha256": "ef29b0346e477bbf5168c074a47a62e2dcd2f3612a9ccd7eea90f4cbd2448038",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "benchmarks/v3/auto-dream/schema.json",
+      "sha256": "ad72911f72985c94af2c3c003c00944b9e3b0b99cc6eb2519d3f70abe02a4539",
+      "hash_basis": "git_blob_bytes",
+      "schema_version": "pico-auto-dream-cases-v1"
+    },
+    {
+      "path": ".codex/eval/handoffs/EVAL-020.json",
+      "persistence": "ticket output generated after the content commit; intentionally not amended into the implementation commit"
+    }
+  ],
+  "contract_hashes": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "auto_dream_fixture_schema": "ad72911f72985c94af2c3c003c00944b9e3b0b99cc6eb2519d3f70abe02a4539",
+    "dream_evaluator_core": "6a7b40bcc0dba05acf6849451969f81bf201ab95072e361e5fb83b52c2f78324",
+    "hash_basis": "git_blob_bytes"
+  },
+  "frozen_hashes": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "native_contract": null,
+    "tool_schema": null,
+    "sdk_transport_decision": null,
+    "provider_selection": null,
+    "native_resume_gate": null
+  },
+  "native_protocol_observations": {
+    "observation_scope": "deterministic offline evaluator tests only; no provider request or Dream product run was issued",
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0
+  },
+  "defects": [],
+  "risks": [
+    "Live shards must provide an explicit workspace-relative changed-path list per case; missing evidence intentionally fails the scope hard gate.",
+    "The fixture schema and evaluator are frozen inputs for EVAL-021-A/B, but the assembled cases manifest and final auto_dream freeze remain owned by downstream tickets and the Wave Integrator."
+  ],
+  "status_proposal": null,
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}

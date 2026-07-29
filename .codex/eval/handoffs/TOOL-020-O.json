@@ -1,0 +1,135 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-020-O",
+  "instance_id": "W3-TOOL-020-O-01",
+  "wave": "W3",
+  "role": "implementer",
+  "status": "complete",
+  "base_sha": "807dc8f348c609bf885f4b65e69cebd781e8f1ba",
+  "head_sha": "7b9f1ac62eb893ad6067eb5ef1b30026c00c621a",
+  "head_sha_semantics": "Implementation-content head before the metadata-only commit containing this handoff; the containing commit is the final branch HEAD reported to the Wave Integrator.",
+  "branch": "codex/eval-v3-w3-tool-020-o",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/w3-020o/pico",
+  "dependency_commits": [
+    "4f1a74a67a02f84ad6c4cbe14b318790d2754177",
+    "9fe84c249ccab450504a7928c1ad8a3b2649b175"
+  ],
+  "applied_dependency_commits": [
+    "c652874a26f7f5dc6ac7a250e1f835da9f08060b",
+    "fce73906bfb74cd14b0b2b2a9c7803cade7566f9"
+  ],
+  "dependency_handoff_hashes": {
+    "TOOL-010": "300faf3f58f369248291ba72be3aefca9e3444dac9999cf45c5767c4eefbde0d",
+    "TOOL-011": "825e0d3a64abd065e3a9c67a3ce3d1bb9c06d2bbe1b5b00b8b24423cfa3d4dfa",
+    "TOOL-013-S": "0eb6213eab7261daf535b9b30cce5787533c4070195f7a5e6b2c383ab40ee55a",
+    "TOOL-019-D": "22c3072d90b258717ee1b20261b4f22d19c4f049a05d663bb8d40717b3b0ac64"
+  },
+  "dependency_freeze_hashes": {
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "sdk_dependency_lock": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657"
+  },
+  "own_commits": [
+    "7b9f1ac62eb893ad6067eb5ef1b30026c00c621a"
+  ],
+  "files_changed": [
+    "pico/providers/openai_responses.py",
+    "tests/test_openai_responses_tools.py",
+    ".codex/eval/handoffs/TOOL-020-O.json"
+  ],
+  "commands_run": [
+    "SHA-256 verification of TOOL-010, TOOL-011, TOOL-013-S, and TOOL-019-D dependency handoffs",
+    "SHA-256 verification of native contract, SDK transport decision, and committed uv.lock blob",
+    "uv sync --extra providers --locked",
+    "uv run pytest tests/test_openai_responses_tools.py -q",
+    "uv run pytest tests/test_provider_contracts.py tests/test_provider_transport.py tests/test_openai_responses_tools.py -q",
+    "uv run ruff check pico tests",
+    "uv run pytest tests/test_architecture_boundaries.py tests/test_safety_invariants.py -q",
+    "git diff --check",
+    "SHA-256 Git blob bytes for committed implementation outputs"
+  ],
+  "tests": [
+    {
+      "command": "uv run pytest tests/test_openai_responses_tools.py -q",
+      "result": "passed",
+      "details": "16 passed; covers instructions/input/tools/tool_choice request goldens, text plus calls, exact call/result pairing, error results, profile-bound continuation, raw reasoning and unknown-item roundtrip, protocol error codes, sanitized metadata, and forbidden fallback/runner absence."
+    },
+    {
+      "command": "uv run pytest tests/test_provider_contracts.py tests/test_provider_transport.py tests/test_openai_responses_tools.py -q",
+      "result": "passed",
+      "details": "35 passed with the frozen provider-neutral contracts and official-SDK transport wrapper."
+    },
+    {
+      "command": "uv run ruff check pico tests",
+      "result": "passed",
+      "details": "All repository Python source and tests passed lint."
+    },
+    {
+      "command": "uv run pytest tests/test_architecture_boundaries.py tests/test_safety_invariants.py -q",
+      "result": "failed",
+      "details": "3 passed and 8 failed on unchanged out-of-scope base conditions already recorded by dependency handoffs: runtime.py is 952 lines against 950; Windows lacks symlink privilege; environment-clearing tests cannot resolve Path.home(); and one POSIX shell-quoting assertion fails on Windows. No failure references a TOOL-020-O file."
+    },
+    {
+      "command": "git diff --check and git diff --cached --check",
+      "result": "passed",
+      "details": "Ticket output has no whitespace errors."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "pico/providers/openai_responses.py",
+      "sha256": "039942f7d224195608683cad9625399581108af11f8fe67a04119f8674747234",
+      "hash_basis": "git_blob_bytes",
+      "coverage": "Non-streaming OpenAI Responses request compiler, raw-response parser, JSON-safe profile-bound continuation, sanitized metadata, and stable fail-closed protocol error taxonomy."
+    },
+    {
+      "path": "tests/test_openai_responses_tools.py",
+      "sha256": "889cd824a0f4e2bb5cdb7f457d75dfdd231fa290c31583091b297b5806308c60",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": ".codex/eval/handoffs/TOOL-020-O.json",
+      "persistence": "Ticket output generated after the implementation commit so it can record the immutable implementation head SHA."
+    }
+  ],
+  "frozen_hashes": {
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "sdk_dependency_lock": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+    "sdk_profile": null,
+    "provider_selection": null,
+    "native_deterministic_gate": null,
+    "native_resume_gate": null
+  },
+  "native_protocol_observations": {
+    "observation_scope": "Deterministic request/response golden tests and local official-SDK transport tests only; no live provider or effectiveness evaluation was run.",
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0
+  },
+  "defects": [
+    {
+      "code": "pre_existing_platform_and_architecture_gate_failures",
+      "scope": "unchanged base outside TOOL-020-O ownership",
+      "detail": "The combined architecture/safety run retains the same 8 baseline and Windows-specific failures recorded by dependency handoffs; all ticket-owned and related provider tests pass."
+    }
+  ],
+  "risks": [
+    "The adapter deliberately parses the SDK raw-response bytes supplied by the frozen transport wrapper so future unknown fields survive typed SDK normalization; requests still use the official typed SDK boundary and no SDK runner.",
+    "No live provider was exercised by this implementation ticket; the frozen dashscope-o thinking profile remains protocol-ineligible and receives no fallback.",
+    "Runtime safety-chain wiring remains owned by downstream integration tickets; this adapter only compiles and parses provider exchanges and never executes tools."
+  ],
+  "status_proposal": {
+    "ticket_id": "TOOL-020-O",
+    "status": "complete",
+    "head_sha": "7b9f1ac62eb893ad6067eb5ef1b30026c00c621a",
+    "reason": "The OpenAI Responses adapter satisfies request/response goldens, strict native call validation, lossless opaque continuation, metadata redaction, and no-fallback/no-runner constraints."
+  },
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}

@@ -1,0 +1,208 @@
+{
+  "schema_version": "pico-eval-wave-handoff-v1",
+  "wave": "W6R",
+  "status": "blocked",
+  "wave_integrator_role": "non-ticket scheduler and sole formal STATUS/FREEZE writer",
+  "wave_integrator_thread": "019f8d54-adce-7be2-a422-a8ac0535307c",
+  "integration_branch": "eval/v3-integration",
+  "wave_base_sha": "48a39193580e48acee3fea5c3bfa107e46443d04",
+  "upstream_wave": "W6",
+  "upstream_metadata_head": "8dc42e09b3582417bfec95a8092504dc16f81d3c",
+  "upstream_canonical_sha": "c0638104ae39994e648387243e474037bcfb967f",
+  "upstream_canonical_tag": "eval-v3/w6-canonical",
+  "upstream_handoff_sha256": "6055eca111fe08ebd11448e41550402096b017b34d50e2efde1aea906de8fc4f",
+  "canonical_snapshot_sha": "f4965ac634b8d0a66f455d99de1d85325b4a561e",
+  "canonical_tag": "eval-v3/w6r-canonical",
+  "canonical_tag_verified_target": "f4965ac634b8d0a66f455d99de1d85325b4a561e",
+  "canonical_snapshot_semantics": "The immutable W6R source, formal blocked STATUS, unchanged formal FREEZE, commit map, and artifact index before this metadata-only wave handoff commit.",
+  "formal_state_hashes": {
+    "status_sha256": "ba98e3804b3a6f6a466a933f3fa6330e5bf539ef5bb07b73267dbd6b3cde92e0",
+    "freeze_sha256": "b4893c10887bb774dda860a5f4b13ec6fa9b8c014e0cb0257e409c0f27df6ba6",
+    "commit_map_sha256": "cd761bd5837ad9f343f04f6d10a9909d8c9c55b23907a1f9ef4aa54ffb11e190",
+    "artifact_index_sha256": "512e4bf3259f4de97f17b5ee7732ab367a590912ca70843b4466a0e19520715a"
+  },
+  "plan_validation": {
+    "result": "VALID",
+    "ticket_template_count": 82,
+    "wave_count": 14,
+    "initial_ready_tickets": ["TOOL-051-L"],
+    "initial_ready_set_match": true
+  },
+  "integration_order": [
+    "TOOL-051-L",
+    "EVAL-052-H",
+    "TOOL-053-A",
+    "TOOL-054-G"
+  ],
+  "accepted_tickets": [
+    {
+      "ticket_id": "TOOL-051-L",
+      "instance_id": "W6R-TOOL-051-L-01",
+      "worker_thread_uuid": "019f8d5a-2731-7e31-8059-6b2b6b627a32",
+      "worker_branch": "codex/w6r-tool-051-l",
+      "implementation_commit": "cc5c18c8734301655dc1d0d841972067701c9c2e",
+      "worker_head": "3ec41e77396137f24b7b420d8545f78d018db02d",
+      "canonical_commits": [
+        "ee00ac7a356f12a1856d058209aa98e53856ea90",
+        "770f255bc19b9f89a45793d0bf3a8980710cad2b"
+      ],
+      "handoff_sha256": "64d276287e7921a620e0e9e80e3e59b89c97be8f79ea97599767bbf93eb6c9d7",
+      "outcome": "accepted"
+    },
+    {
+      "ticket_id": "EVAL-052-H",
+      "instance_id": "W6R-EVAL-052-H-01",
+      "worker_thread_uuid": "019f8d73-2787-7c62-8a11-a2c68adf0b8c",
+      "worker_branch": "codex/w6r-eval-052-h",
+      "dependency_commit": "cc5c18c8734301655dc1d0d841972067701c9c2e",
+      "implementation_commit": "d3f22239ef797a4e685790ed73584e0c582249ab",
+      "worker_head": "aaf30ba23279f4c3dabb3023f6808ebda9a616c1",
+      "canonical_commits": [
+        "3717806c4bce448c8ebf89ef1500e0a1d06f62dd",
+        "cb3907b2edb4ec5da6885f7cba74bb7eb3e6ca5f"
+      ],
+      "handoff_sha256": "660d01fbdb45af6663d3a8f937a06acf92b7c78ff2d34f84ec4e8955c5e2b5db",
+      "outcome": "accepted"
+    },
+    {
+      "ticket_id": "TOOL-053-A",
+      "instance_id": "W6R-TOOL-053-A-01",
+      "worker_thread_uuid": "019f8d81-b0ae-7d43-8e9b-688f8a563d7e",
+      "worker_branch": "codex/w6r-tool-053-a",
+      "audited_source_head": "d089790a69f8aebeb10b2967199accb0c3e6bab0",
+      "worker_head": "5612d56f033f1f330d05c0ae46bd310fbfabb8a6",
+      "canonical_commit": "475c0d6479b559f9d97f188b6d6c1216aacf50e2",
+      "handoff_sha256": "f6c0bc418876a9cbeb16d9617bd1cb724aa2a00736bcf5130324543cce5d8938",
+      "audit_report_sha256": "24e95f24f5bfcce771c22fd20f426ef2aa7da82bfffbcbb16a6f40180ba13f4c",
+      "outcome": "accepted_audit_passed"
+    },
+    {
+      "ticket_id": "TOOL-054-G",
+      "instance_id": "W6R-TOOL-054-G-01",
+      "worker_thread_uuid": "019f8d95-32d7-7953-9e8d-1b8be7faf0f6",
+      "worker_branch": "codex/w6r-tool-054-g",
+      "dependency_applied_head": "7eb736b3af73c5a82cb46ee3828b6e29a9ebb909",
+      "worker_head": "099147e8910322f824e02baa6163003c9ef825b6",
+      "canonical_commit": "f626fc58838b3862090d888f08702061f4764458",
+      "handoff_sha256": "3f6cd3346dc19073e378cccb6d90e2a24a7cd7160cec508751b7c56647d531cd",
+      "gate_report_sha256": "8be0a1e8a1bee9e00448d0dfe97aacd1b83111f66ab4d4bc590ca976897d6333",
+      "ticket_execution_outcome": "accepted",
+      "gate_outcome": "blocked"
+    }
+  ],
+  "blocked_tickets": [],
+  "ticket_handoffs": {
+    "TOOL-051-L": {
+      "path": ".codex/eval/handoffs/TOOL-051-L.json",
+      "sha256": "64d276287e7921a620e0e9e80e3e59b89c97be8f79ea97599767bbf93eb6c9d7"
+    },
+    "EVAL-052-H": {
+      "path": ".codex/eval/handoffs/EVAL-052-H.json",
+      "sha256": "660d01fbdb45af6663d3a8f937a06acf92b7c78ff2d34f84ec4e8955c5e2b5db"
+    },
+    "TOOL-053-A": {
+      "path": ".codex/eval/handoffs/TOOL-053-A.json",
+      "sha256": "f6c0bc418876a9cbeb16d9617bd1cb724aa2a00736bcf5130324543cce5d8938"
+    },
+    "TOOL-054-G": {
+      "path": ".codex/eval/handoffs/TOOL-054-G.json",
+      "sha256": "3f6cd3346dc19073e378cccb6d90e2a24a7cd7160cec508751b7c56647d531cd"
+    }
+  },
+  "artifact_index": {
+    "path": ".codex/eval/state/W6R-artifact-index.json",
+    "sha256": "512e4bf3259f4de97f17b5ee7732ab367a590912ca70843b4466a0e19520715a",
+    "audit_inventory_file_count": 27,
+    "preflight_inventory_file_count": 56,
+    "inventory_mismatch_count": 0,
+    "credential_pattern_scan": "passed_no_matches"
+  },
+  "preflight_gate": {
+    "status": "blocked",
+    "candidate_source_sha": "7eb736b3af73c5a82cb46ee3828b6e29a9ebb909",
+    "candidate_source_tree": "08f05c340bb2caa65c8de5ced5200e4d0b6b1b78",
+    "bound_profile_count": 3,
+    "run_snapshot_approved": false,
+    "run_snapshot_sha": null,
+    "windows": {
+      "targeted": "27 passed",
+      "protected": "10 failed, 17 passed",
+      "full_suite": "two attempts terminated with exit 137 at 14 percent",
+      "ruff": "passed",
+      "runtime_adapter": "53 passed"
+    },
+    "wsl_fresh_clone": {
+      "distribution": "Ubuntu 26.04 LTS",
+      "user": "papewhit",
+      "python": "3.12.13",
+      "uv": "0.11.19 user-level",
+      "sudo_used": false,
+      "targeted": "27 passed",
+      "protected": "27 passed",
+      "full_suite": "507 passed, 2 skipped, 6 warnings",
+      "ruff": "passed"
+    },
+    "fake_transport_cli_smoke": "24/24 passed",
+    "preflight_failure_semantics": "0 rows and not_computable",
+    "live_provider_http_attempt_count": 0,
+    "absence_of_observation_treated_as_pass": false,
+    "blocking_defects": [
+      "TOOL-054-G-WIN-PROTECTED-001",
+      "TOOL-054-G-WIN-FULL-002"
+    ]
+  },
+  "evaluation_scope": {
+    "formal_effectiveness_evaluation_run": false,
+    "human_smoke_run": false,
+    "resume_evaluation_run": false,
+    "run_shards_started": false,
+    "TOOL-050-S-R1_started": false,
+    "w7_started": false
+  },
+  "gates": {
+    "native_eval_ready": "blocked",
+    "native_resume_ready": "pending",
+    "gate_n1": "not_run",
+    "w6r_exit_gate_satisfied": false
+  },
+  "human_smoke": {
+    "authorized": false,
+    "eligible_profile": null,
+    "canonical_commit": null,
+    "verification_scope": null,
+    "reason": "TOOL-054-G did not approve a run snapshot, so R2 live shards and TOOL-050-S-R1 were not started."
+  },
+  "worker_bundle": {
+    "path": "F:/dev/llm/pico-eval-artifacts/wave-bundles/W6R-workers.bundle",
+    "sha256": "3d8d0127cfbf2f575e98cfb77663186dcd80c96fe00b39276f8c34829f1fad16",
+    "size_bytes": 16625656,
+    "ref_count": 4,
+    "verified_complete_history": true
+  },
+  "commit_map": {
+    "path": ".codex/eval/state/W6R-commit-map.json",
+    "sha256": "cd761bd5837ad9f343f04f6d10a9909d8c9c55b23907a1f9ef4aa54ffb11e190"
+  },
+  "remediation_required": [
+    {
+      "defect": "TOOL-054-G-WIN-PROTECTED-001",
+      "required_outcome": "The exact required Windows protected suite must exit 0 without weakening architecture, safety, permission, or tool-policy assertions."
+    },
+    {
+      "defect": "TOOL-054-G-WIN-FULL-002",
+      "required_outcome": "The exact required Windows full suite must complete and exit 0; exit 137 or an incomplete result remains blocking."
+    }
+  ],
+  "pending_user_decisions": [
+    "Authorize a fresh recovery Wave only if Windows hard-Gate remediation should continue.",
+    "Do not authorize W7 or human smoke until a later Gate approves a run snapshot, the R2 shards complete, and TOOL-050-S-R1 selects an eligible profile."
+  ],
+  "next_wave": {
+    "ready": false,
+    "ready_tickets": [],
+    "w7_ready": false,
+    "w7_started": false
+  },
+  "worker_branches_and_worktrees_retained": true,
+  "completed_at": "2026-07-23T15:20:08.1138261+08:00"
+}

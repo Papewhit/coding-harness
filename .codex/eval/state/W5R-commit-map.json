@@ -1,0 +1,162 @@
+{
+  "schema_version": "pico-eval-commit-map-v1",
+  "wave": "W5R",
+  "wave_base_sha": "fd17e64b45f58558d84a200b5498db463998a239",
+  "control_overlay_sha256": "6e06ed22e5cf607734367d17ae784db6a0338bc8fbb18af3e1dc35d4d8f75cf0",
+  "entries": {
+    "TOOL-044-F": {
+      "worker_thread_uuid": "019f88a0-f72e-7d90-9968-23e9b74ddd05",
+      "prompt_sha256": "183e6600c9807b7e9e43cd93f6284ba12df2291f2770e323be2f8d2bc85cf7b8",
+      "worker_head": "4e8258d58fb909dc72b647a1823f2bf013a72367",
+      "worker_commits": [
+        "a69c70062c1db6891a398dfc58fe46e4894c7aaf",
+        "2eec522cc84076c6f485907a171296ec5e475d6c",
+        "4e8258d58fb909dc72b647a1823f2bf013a72367"
+      ],
+      "dependency_commits": [],
+      "canonical_commit": "5b68bb8c1e9a23f9fb9b7828a4aee5c6657718c3",
+      "handoff_sha256": "3f9c248922cd8bc7c89789c255e89ca77df9e0293dd2ca05f9a4c40f4e1f472f",
+      "stable_patch_id": "aaf1ff4dac024c3a385774de4c63350d029b1a60",
+      "stable_patch_id_scope": "wave_base_to_worker_head_and_canonical_ticket_commit",
+      "stable_patch_id_match": true,
+      "negative_control": {
+        "report_sha256": "d2627e2989eab8b714491008fb691f15c7788cc1ab4a9973dbae586d1c0c4979",
+        "junit_sha256": "0fadbb78458d39925c5abc924e1699dfba6efa4c5771be9309ba45456c043bc4",
+        "result": "25 passed, exactly 1 expected retry-after-read failure"
+      },
+      "outcome": "accepted"
+    },
+    "ARCH-045-B": {
+      "worker_thread_uuid": "019f88a0-f6e4-7581-93a1-edf83dd1fd3c",
+      "prompt_sha256": "a9d36a1e67d2ad96f3ecfe928f66b7195b2d4d979b29e02c81c6374a72193d07",
+      "worker_head": "700f6e219f543893d8d297fe6589078cc3e40d75",
+      "worker_commits": [
+        "dc4dcd02eca63889790c7aefc41d1334b7eeb825",
+        "700f6e219f543893d8d297fe6589078cc3e40d75"
+      ],
+      "dependency_commits": [],
+      "canonical_commit": "89203e262674d6d4a695712f739c14e110e66d12",
+      "handoff_sha256": "31fbde29d32f0f6a0ea219ded1fe7460c80772659b134b248d2e4f252d6c02e9",
+      "stable_patch_id": "5d89777ba87e53992675a1206a5b1d46fef2d936",
+      "stable_patch_id_scope": "wave_base_to_worker_head_and_canonical_ticket_commit",
+      "stable_patch_id_match": true,
+      "outcome": "accepted",
+      "remaining_gate_risk": "unchanged pico/core/model_errors.py is 109 lines against its separate 100-line budget"
+    },
+    "CHORE-045-L": {
+      "worker_thread_uuid": "019f88a0-f705-7010-a55d-f55b9b24b5c1",
+      "prompt_sha256": "ee56f08ddf1ceeb49829274c97c7ea5c38a0400d4e6ba06c5499d4d2218d6518",
+      "worker_head": "8bfaccffc8f9832d72bbc0c0e9da0d31d1bf0ed0",
+      "worker_commits": [
+        "57000ad99c315fcb7c7d976bad08c35986f00d90",
+        "f73c305cff1285fa9bf9b58cfaab23d83944de2a",
+        "8bfaccffc8f9832d72bbc0c0e9da0d31d1bf0ed0"
+      ],
+      "dependency_commits": [],
+      "canonical_commit": "892fb5afd471f99d3cddcb1ba3797dee3ba94a75",
+      "handoff_sha256": "8c62702b626d2be6c27ccf70d1db32cf84ecb61a281a9b590ccc65b19e34635c",
+      "stable_patch_id": "9fe7fcd5e68532fd73cf2a4cebe872bbda6c2557",
+      "stable_patch_id_scope": "wave_base_to_worker_head_and_canonical_ticket_commit",
+      "stable_patch_id_match": true,
+      "outcome": "accepted"
+    },
+    "TOOL-043-R": {
+      "worker_thread_uuid": "019f88a0-f6c2-7940-8143-93bc3b977e7a",
+      "prompt_sha256": "7d950b71fae38c43dea17a5dcc16cc5bb48c382768fa9a678e9b29900a02cdec",
+      "worker_head": "1ef7e32b955047bd7d80b0481f644cbc98e76725",
+      "worker_commits": [
+        "10af860397a18f1a43dd4ea528fc77f5397cffb9",
+        "1ef7e32b955047bd7d80b0481f644cbc98e76725"
+      ],
+      "dependency_commits": [],
+      "canonical_commit": "ae6f6bc219a543a13f9fb7a3528118362d726490",
+      "handoff_sha256": "c96f81c9dd4c62d0eeb387a5d86ed36e252fd33d557f737ec0b9ea7c395606c3",
+      "stable_patch_id": "b74b7d1f2ea81756ed5b62d3bc4cee15b1622207",
+      "stable_patch_id_scope": "wave_base_to_worker_head_and_canonical_ticket_commit",
+      "stable_patch_id_match": true,
+      "acceptance_prerequisite": "TOOL-044-F WSL fixture-only negative control verified before integration",
+      "outcome": "accepted"
+    },
+    "EVAL-032-F": {
+      "worker_thread_uuid": "019f88c0-24a0-7b41-8919-7426e83231dd",
+      "prompt_sha256": "0057b3fb99a7a79941dd1e0860e67c8848f1598b187bcf9701c26bce8ff49840",
+      "worker_head": "b6f3a610a0ebf136903b76baff2435bb28ac51e6",
+      "worker_run_snapshot_sha": "b3ec3e226de82d87c30fa8e4f1bc681a6c42a5b4",
+      "worker_commits": [
+        "b3ec3e226de82d87c30fa8e4f1bc681a6c42a5b4",
+        "b6f3a610a0ebf136903b76baff2435bb28ac51e6"
+      ],
+      "dependency_commits": [
+        "5b68bb8c1e9a23f9fb9b7828a4aee5c6657718c3",
+        "89203e262674d6d4a695712f739c14e110e66d12",
+        "892fb5afd471f99d3cddcb1ba3797dee3ba94a75",
+        "ae6f6bc219a543a13f9fb7a3528118362d726490"
+      ],
+      "canonical_commit": "c283b7ccb20794d9f9bd361a476be045eee42833",
+      "handoff_sha256": "e051f284b03fedb266e145144c246ffa025c55b19bca045417fb5f7e62d0c0b1",
+      "integrator_correction": "The normalized canonical commit message recorded an incorrectly expanded EVAL-032-F handoff hash; this commit-map entry preserves the verified full SHA-256 from the committed handoff bytes without rewriting history.",
+      "freeze_proposal_sha256": "bffb87a6b0b886899a704660435fc3673a5a06fbf5d92cbeb1556549e1b8d199",
+      "artifact_manifest_sha256": "6c74b0f920fd2acd528e648e49917750d9438e945be6864f95d53ee149ff1355",
+      "stable_patch_id": "4f2dec0a12485d031af1cac2562dd214dd4da5ce",
+      "stable_patch_id_scope": "applied_dependency_tip_to_worker_head_and_canonical_ticket_commit",
+      "stable_patch_id_match": true,
+      "outcome": "accepted"
+    },
+    "TOOL-042-G-R1": {
+      "worker_thread_uuid": "019f88cf-45c6-74a3-b211-525d3e526ebc",
+      "prompt_sha256": "f2b3a43e2e571a8879ab465132067cc5fa4b7d80eeb3f6456f12ab6052fc6a14",
+      "worker_head": "71d4a3f40635f4d94e99caf510c9decf83a76f11",
+      "worker_run_snapshot_sha": "d5464bf08ed50405301d474b7e64f7a4dc3d4918",
+      "worker_commits": [
+        "ac2cfda1ebb7546e55fc9e36f5d132a4706a77a4",
+        "71d4a3f40635f4d94e99caf510c9decf83a76f11"
+      ],
+      "dependency_commits": [
+        "5b68bb8c1e9a23f9fb9b7828a4aee5c6657718c3",
+        "89203e262674d6d4a695712f739c14e110e66d12",
+        "892fb5afd471f99d3cddcb1ba3797dee3ba94a75",
+        "ae6f6bc219a543a13f9fb7a3528118362d726490",
+        "c283b7ccb20794d9f9bd361a476be045eee42833"
+      ],
+      "canonical_commit": "4938bf258b8ffe3f955857cd9243d7867477ee80",
+      "handoff_sha256": "f44e7f3764ad4c834c6fc9bb12651647aa71c5094c5836f4e5d647bd3be9d679",
+      "gate_report_sha256": "fab078c630df496a65a4835f4a0ed601240a039caca684b04e3dd8cbb315a5c4",
+      "artifact_manifest_sha256": "4acf8b1641ddd07e35c87967f57e10623a9586b0c8bea3846f87deb959714157",
+      "stable_patch_id": "0001dde7adb895914774f44403f27ef45bebddc1",
+      "stable_patch_id_scope": "run_snapshot_to_worker_head_and_canonical_ticket_commit",
+      "stable_patch_id_match": true,
+      "outcome": "blocked",
+      "ready_for_integration": false
+    }
+  },
+  "worker_bundle": {
+    "path": "F:/dev/llm/pico-eval-artifacts/wave-bundles/W5R-workers.bundle",
+    "sha256": "11a07f3108f74c82fd53219e7d80690603bf3eeca158d2b1251c9583631a1901",
+    "size_bytes": 16417989,
+    "ref_count": 6,
+    "verified_complete_history": true
+  },
+  "gate_dispatch": {
+    "ticket_id": "TOOL-042-G-R1",
+    "instance_id": "W5R-TOOL-042-G-R1-01",
+    "thread_uuid": "019f88cf-45c6-74a3-b211-525d3e526ebc",
+    "worktree": "C:/Users/Papewhit/.codex/worktrees/10cc/pico",
+    "branch": "codex/eval-v3-w5r-tool-042-g-r1",
+    "prompt_sha256": "f2b3a43e2e571a8879ab465132067cc5fa4b7d80eeb3f6456f12ab6052fc6a14",
+    "model": "gpt-5.6-sol",
+    "reasoning_effort": "xhigh",
+    "wave_base_sha": "fd17e64b45f58558d84a200b5498db463998a239",
+    "dependency_commits": [
+      "5b68bb8c1e9a23f9fb9b7828a4aee5c6657718c3",
+      "89203e262674d6d4a695712f739c14e110e66d12",
+      "892fb5afd471f99d3cddcb1ba3797dee3ba94a75",
+      "ae6f6bc219a543a13f9fb7a3528118362d726490",
+      "c283b7ccb20794d9f9bd361a476be045eee42833"
+    ],
+    "status": "blocked",
+    "worker_run_snapshot_sha": "d5464bf08ed50405301d474b7e64f7a4dc3d4918",
+    "worker_head": "71d4a3f40635f4d94e99caf510c9decf83a76f11",
+    "canonical_commit": "4938bf258b8ffe3f955857cd9243d7867477ee80"
+  },
+  "updated_at": "2026-07-22T16:14:00+08:00"
+}

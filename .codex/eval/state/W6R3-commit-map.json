@@ -1,0 +1,120 @@
+{
+  "schema_version": "pico-eval-wave-commit-map-v2",
+  "wave": "W6R3",
+  "status": "blocked_before_deterministic_gate",
+  "wave_base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+  "integration_branch": "eval/v3-integration",
+  "source_integration_head_before_close_metadata": "8b0abb22e394206c6e03276a0bb71e309e7efa4b",
+  "source_integration_tree_before_close_metadata": "b48a6ebcbade67eb4984eef7c39497fd6a126acf",
+  "canonical_tag": "eval-v3/w6r3-canonical",
+  "worker_bundle": {
+    "path": "F:/dev/llm/pico-eval-artifacts/wave-bundles/W6R3-workers.bundle",
+    "sha256": "98474e9e8b3a6812b1bf0208bd8f32e9a500339771a1f9fbd7343118a1ed495e",
+    "size_bytes": 16785463,
+    "verified": true,
+    "ref_count": 7,
+    "complete_history": true
+  },
+  "integration_order": [
+    "EVAL-059-O",
+    "TEST-059-C",
+    "TOOL-059-O",
+    "EVAL-059-H",
+    "TOOL-059-R",
+    "AUDIT-059-A"
+  ],
+  "tickets": {
+    "EVAL-059-O": {
+      "thread_id": "019f91df-c283-7f70-87af-88d42cd35e54",
+      "worker_branch": "codex/w6r3-eval-059-o",
+      "worker_head": "a642a7d223d392b34f78692fa2bffe0feb5c5b4e",
+      "worker_commits": [
+        "ee656bce32311013c1d637568a4bd472f6010245",
+        "ae9edddc94d8a57894386080f31bbe35d7457cf1",
+        "531bece4d144f7aa34910a3c41c04183b56f561b",
+        "a642a7d223d392b34f78692fa2bffe0feb5c5b4e"
+      ],
+      "canonical_commit": "b90fb5297aceef3eb137ae8104888974e96e7141",
+      "stable_patch_id": "06e7e986f6b99b5969dd23f00aebd71f61badef2",
+      "handoff_sha256": "849b687163b77e8957529d72e0111edb08625a76a1276c87799e68b595bef00f",
+      "outcome": "accepted"
+    },
+    "TEST-059-C": {
+      "thread_id": "019f91f6-81c6-75b1-8347-bc996798f993",
+      "worker_branch": "codex/w6r3-test-059-c",
+      "worker_head": "f893c6dfb753c76b648256ca8125d5527be14566",
+      "worker_commits": [
+        "70ff40fc4c6761e9f91e6ae4d3bc0cdeffa1fb02",
+        "f893c6dfb753c76b648256ca8125d5527be14566"
+      ],
+      "canonical_commit": "49cc1cc2ff72d61b8cdce871e352803ed68b79b5",
+      "stable_patch_id": "16272167e55eb106a2b78b830f6fd67407ec5c75",
+      "handoff_sha256": "498887b31ca34d7f347b984f8011162802dc6100ffd9f04f8166845ce3d8316f",
+      "outcome": "accepted_red_baseline"
+    },
+    "TOOL-059-O": {
+      "thread_id": "019f91fc-3623-7321-aef9-0e2fe37a3212",
+      "worker_branch": "codex/w6r3-tool-059-o",
+      "worker_head": "6cd6f68eaa44ae5ac73dc2d748359989186e6e55",
+      "worker_commits": [
+        "eaae2ea8be115a44fccd948d9dfd05528aad77e6",
+        "6cd6f68eaa44ae5ac73dc2d748359989186e6e55"
+      ],
+      "canonical_commit": "83540b8df58bfb302268b5abd58876a7bf629abc",
+      "stable_patch_id": "a7062d1ee7d5a89067a3411d375611183b86d7a2",
+      "handoff_sha256": "ad18b730148979e5f46149432484072c1414fb4dc39f90ad074a0539bfdb49cd",
+      "outcome": "accepted"
+    },
+    "EVAL-059-H": {
+      "thread_id": "019f91f6-ecd6-76a3-a724-482c21cda42a",
+      "worker_branch": "codex/w6r3-eval-059-h",
+      "worker_head": "0d637dfa5d23e1ebcd28555abce979d900b60218",
+      "worker_commits": [
+        "1a9a4af7da401cdb838359ad265516e590a953f7",
+        "a71bae0d946cc82eb9c2c115bc89e401790bd639",
+        "83ec770a448cf1f45f6d56878ff237a53eeef0e5",
+        "0d637dfa5d23e1ebcd28555abce979d900b60218"
+      ],
+      "canonical_commit": "f321f064a1a146bcbf64904ee59f0bb863f118d4",
+      "stable_patch_id": "76f493bb117e86ada3ad1994208626c75a912aa5",
+      "handoff_sha256": "456d89a6d81b909551b9e687a70d48625d0fd814bbbbd519b9fd347b0c45f123",
+      "outcome": "accepted"
+    },
+    "TOOL-059-R": {
+      "thread_id": "019f91f7-4836-7580-a509-0b355f6089b8",
+      "worker_branch": "codex/w6r3-tool-059-r",
+      "worker_head": "8bcf1e5f1241cc19c7ea2590572dbc08c93cb9f6",
+      "worker_commits": [
+        "a80339c0aa1c294c7f0b44eea0e7a4024767a68c",
+        "8bcf1e5f1241cc19c7ea2590572dbc08c93cb9f6"
+      ],
+      "canonical_commit": "d07950a5ee94d90658f28c4b52bafc4916a0097e",
+      "stable_patch_id": "8ec7e62d11a8d1cde9e1c24eadd58003b8f9819c",
+      "handoff_sha256": "03c6ade0282d6f2c0a0a2af28c75f1a76c34a5be5358ba67e5cea0b41f5c0fd6",
+      "outcome": "accepted"
+    },
+    "AUDIT-059-A": {
+      "thread_id": "019f920c-0e98-7943-bc78-8479f9a51723",
+      "worker_branch": "codex/w6r3-audit-059-a",
+      "worker_head": "99b3052774721b1469b254abae665496f5c3678d",
+      "worker_commits": [
+        "99b3052774721b1469b254abae665496f5c3678d"
+      ],
+      "canonical_commit": "8b0abb22e394206c6e03276a0bb71e309e7efa4b",
+      "stable_patch_id": "87e1631af7bf1d62e4ad577f7fb7068f518beca0",
+      "handoff_sha256": "659d898a96fab1514b6a78027f886fcefedcff859a2e29f22dc87e293ec06d5b",
+      "outcome": "accepted_blocked",
+      "open_p1_findings": 3
+    },
+    "TOOL-059-G": {
+      "outcome": "not_dispatched",
+      "reason": "AUDIT-059-A blocked on three P1 findings, so the Gate start condition was not met."
+    }
+  },
+  "stable_patch_identity_verification": {
+    "method": "git show <canonical-commit> | git patch-id --stable and worker aggregate comparison",
+    "all_six_canonical_patch_ids_matched": true,
+    "verified_at": "2026-07-24T11:10:50.0707949+08:00"
+  },
+  "worker_branches_and_worktrees_retained": true
+}

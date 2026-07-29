@@ -12,8 +12,6 @@ import textwrap
 from functools import partial
 from typing import TYPE_CHECKING, Any
 
-from pydantic import ValidationError
-
 if TYPE_CHECKING:
     from ..core.runtime import Pico
 from ..core.workspace import IGNORED_PATH_NAMES
@@ -21,7 +19,6 @@ from .base import RegisteredTool
 from .agents import (
     AGENT_TOOL_EXAMPLES,
     AGENT_TOOL_NAMES,
-    AGENT_TOOL_SPECS,
     tool_agent,
     tool_send_message,
     tool_task_stop,
@@ -29,103 +26,44 @@ from .agents import (
 )
 from .ask_user import (
     ASK_USER_TOOL_EXAMPLES,
-    ASK_USER_TOOL_SPECS,
     tool_ask_user,
 )
+from .definitions import TOOL_DEFINITIONS
 from .plan import (
     PLAN_TOOL_EXAMPLES,
-    PLAN_TOOL_SPECS,
     tool_enter_plan_mode,
     tool_exit_plan_mode,
 )
 from .todos import (
     TODO_TOOL_EXAMPLES,
-    TODO_TOOL_SPECS,
     tool_todo_add,
     tool_todo_list,
     tool_todo_update,
 )
-from .schemas import (
-    AgentArgs,
-    AskUserArgs,
-    EnterPlanModeArgs,
-    ExitPlanModeArgs,
-    ListFilesArgs,
-    PatchFileArgs,
-    ReadFileArgs,
-    RunShellArgs,
-    SearchArgs,
-    SendMessageArgs,
-    TaskStopArgs,
-    TodoAddArgs,
-    TodoListArgs,
-    TodoUpdateArgs,
-    WriteFileArgs,
-    first_error_message,
-)
-
-_TOOL_SCHEMAS = {
-    "list_files": ListFilesArgs,
-    "read_file": ReadFileArgs,
-    "search": SearchArgs,
-    "run_shell": RunShellArgs,
-    "write_file": WriteFileArgs,
-    "patch_file": PatchFileArgs,
-    "todo_add": TodoAddArgs,
-    "todo_update": TodoUpdateArgs,
-    "todo_list": TodoListArgs,
-    "agent": AgentArgs,
-    "send_message": SendMessageArgs,
-    "task_stop": TaskStopArgs,
-    "enter_plan_mode": EnterPlanModeArgs,
-    "exit_plan_mode": ExitPlanModeArgs,
-    "ask_user": AskUserArgs,
-}
 
 BASE_TOOL_SPECS = {
-    "list_files": {
-        "schema": {"path": "str='.'"},
-        "risky": False,
-        "description": "List files in the workspace.",
-    },
-    "read_file": {
-        "schema": {"path": "str", "start": "int=1", "end": "int=200"},
-        "risky": False,
-        "description": "Read a UTF-8 file by line range.",
-    },
-    "search": {
-        "schema": {"pattern": "str", "path": "str='.'"},
-        "risky": False,
-        "description": "Search the workspace with rg or a simple fallback.",
-    },
-    "run_shell": {
-        "schema": {"command": "str", "timeout": "int=20"},
-        "risky": True,
-        "description": "Run a shell command in the repo root.",
-    },
-    "write_file": {
-        "schema": {"path": "str", "content": "str"},
-        "risky": True,
-        "description": "Write a text file.",
-    },
-    "patch_file": {
-        "schema": {"path": "str", "old_text": "str", "new_text": "str"},
-        "risky": True,
-        "description": "Replace one exact text block in a file.",
-    },
-    **TODO_TOOL_SPECS,
-    **AGENT_TOOL_SPECS,
-    **PLAN_TOOL_SPECS,
-    **ASK_USER_TOOL_SPECS,
+    name: {
+        "schema": definition.schema,
+        "risky": definition.risky,
+        "description": definition.description,
+    }
+    for name, definition in TOOL_DEFINITIONS.items()
 }
 
 TOOL_EXAMPLES = {
-    "list_files": '<tool>{"name":"list_files","args":{"path":"."}}</tool>',
-    "read_file": '<tool>{"name":"read_file","args":{"path":"README.md","start":1,"end":80}}</tool>',
-    "search": '<tool>{"name":"search","args":{"pattern":"binary_search","path":"."}}</tool>',
-    "run_shell": '<tool>{"name":"run_shell","args":{"command":"uv run --with pytest python -m pytest -q","timeout":20}}</tool>',
-    "write_file": '<tool name="write_file" path="binary_search.py"><content>def binary_search(nums, target):\n    return -1\n</content></tool>',
-    "patch_file": '<tool name="patch_file" path="binary_search.py"><old_text>return -1</old_text><new_text>return mid</new_text></tool>',
+    "list_files": {"path": "."},
+    "read_file": {"path": "README.md", "start": 1, "end": 80},
+    "search": {"pattern": "binary_search", "path": "."},
+    "run_shell": {"command": "uv run --with pytest python -m pytest -q", "timeout": 20},
+    "write_file": {
+        "path": "binary_search.py",
+        "content": "def binary_search(nums, target):\n    return -1\n",
+    },
+    "patch_file": {
+        "path": "binary_search.py",
+        "old_text": "return -1",
+        "new_text": "return mid",
+    },
     **TODO_TOOL_EXAMPLES,
     **AGENT_TOOL_EXAMPLES,
     **PLAN_TOOL_EXAMPLES,
@@ -139,29 +77,26 @@ def build_tool_registry(agent: Pico) -> dict[str, RegisteredTool]:
     tools = {
         name: RegisteredTool(
             name=name,
-            schema=spec["schema"],
-            description=spec["description"],
-            risky=bool(spec["risky"]),
+            args_model=definition.args_model,
+            description=definition.description,
+            risky=definition.risky,
             runner=partial(_TOOL_RUNNERS[name], agent),
         )
-        for name, spec in BASE_TOOL_SPECS.items()
+        for name, definition in TOOL_DEFINITIONS.items()
     }
     return tools
 
 
-def tool_example(name: str) -> str:
-    return TOOL_EXAMPLES.get(name, "")
+def tool_example(name: str) -> Any:
+    return TOOL_EXAMPLES.get(name, {})
 
 
 def validate_tool(agent: Pico, name: str, args: dict[str, Any] | None) -> None:
     args = args or {}
 
-    schema_cls = _TOOL_SCHEMAS.get(name)
-    if schema_cls is not None:
-        try:
-            schema_cls.model_validate(args)
-        except ValidationError as exc:
-            raise ValueError(first_error_message(exc)) from exc
+    registered = agent.tools.get(name)
+    if registered is not None:
+        registered.validate(args)
 
     # Workspace-aware checks that require the agent (path safety, file state).
     if name == "list_files":

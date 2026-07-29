@@ -1,9 +1,8 @@
-import json
 import os
 import subprocess
 import sys
 
-from pico.testing import ScriptedModelClient
+from tests.native_fixtures import final, lock_scripted_provider_profile, scripted_client, tool
 from pico import Pico, SessionStore, WorkspaceContext
 from pico.cli import handle_repl_command
 from pico.features import skills as skillslib
@@ -12,11 +11,13 @@ from pico.features import skills as skillslib
 def build_agent(tmp_path, outputs):
     (tmp_path / "README.md").write_text("demo\n", encoding="utf-8")
     workspace = WorkspaceContext.build(tmp_path)
-    return Pico(
-        model_client=ScriptedModelClient(outputs),
-        workspace=workspace,
-        session_store=SessionStore(tmp_path / ".pico" / "sessions"),
-        approval_policy="auto",
+    return lock_scripted_provider_profile(
+        Pico(
+            model_client=scripted_client(outputs),
+            workspace=workspace,
+            session_store=SessionStore(tmp_path / ".pico" / "sessions"),
+            approval_policy="auto",
+        )
     )
 
 
@@ -29,7 +30,11 @@ def test_builtin_skills_are_available_in_context(tmp_path):
     prompt = agent.prompt("what can you do?")
     assert "Available skills:" in prompt
     assert "/review" in prompt
-    assert prompt.index("Memory:") < prompt.index("Available skills:") < prompt.index("Relevant memory:")
+    assert (
+        prompt.index("Memory:")
+        < prompt.index("Available skills:")
+        < prompt.index("Relevant memory:")
+    )
 
 
 def test_prompt_includes_auto_memory_policy_and_index(tmp_path):
@@ -74,7 +79,7 @@ Use target $ARGUMENTS from ${PICO_SKILL_DIR}.
 """,
         encoding="utf-8",
     )
-    agent = build_agent(tmp_path, ["<final>deploy checked</final>"])
+    agent = build_agent(tmp_path, [final("deploy checked")])
 
     handled, should_exit, output = handle_repl_command(agent, "/deploy staging")
 
@@ -86,20 +91,26 @@ Use target $ARGUMENTS from ${PICO_SKILL_DIR}.
     assert "Use target staging from" in model_prompt
     assert str(skill_dir) in model_prompt
 
-    events = agent.session_store.event_path(agent.session["id"]).read_text(encoding="utf-8")
+    events = agent.session_store.event_path(agent.session["id"]).read_text(
+        encoding="utf-8"
+    )
     assert '"event": "skill_invoked"' in events
 
 
 def test_memory_slash_commands_use_kairos_assets(tmp_path):
     agent = build_agent(tmp_path, [])
 
-    handled, should_exit, output = handle_repl_command(agent, "/remember I prefer concise reports")
+    handled, should_exit, output = handle_repl_command(
+        agent, "/remember I prefer concise reports"
+    )
 
     assert handled is True
     assert should_exit is False
     assert "Saved to daily log" in output
     log_files = list((tmp_path / ".pico" / "memory" / "logs").rglob("*.md"))
-    events = agent.session_store.event_path(agent.session["id"]).read_text(encoding="utf-8")
+    events = agent.session_store.event_path(agent.session["id"]).read_text(
+        encoding="utf-8"
+    )
     assert len(log_files) == 1
     assert "I prefer concise reports" in log_files[0].read_text(encoding="utf-8")
     assert "memory_note_appended" in events
@@ -125,10 +136,18 @@ def test_dream_slash_command_consolidates_daily_log_into_memory_files(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            '<tool>{"name":"read_file","args":{"path":".pico/memory/MEMORY.md","start":1,"end":50}}</tool>',
-            '<tool>{"name":"write_file","args":{"path":".pico/memory/MEMORY.md","content":"# Durable Memory Index\\n\\n- [User Preferences](topics/user-preferences.md): User preferences\\n"}}</tool>',
-            '<tool>{"name":"write_file","args":{"path":".pico/memory/topics/user-preferences.md","content":"# User Preferences\\n\\n## Notes\\n- Prefers concise reports.\\n"}}</tool>',
-            "<final>Dream consolidation complete.</final>",
+            tool("read_file", path=".pico/memory/MEMORY.md", start=1, end=50),
+            tool(
+                "write_file",
+                path=".pico/memory/MEMORY.md",
+                content="# Durable Memory Index\n\n- [User Preferences](topics/user-preferences.md): User preferences\n",
+            ),
+            tool(
+                "write_file",
+                path=".pico/memory/topics/user-preferences.md",
+                content="# User Preferences\n\n## Notes\n- Prefers concise reports.\n",
+            ),
+            final("Dream consolidation complete."),
         ],
     )
     handle_repl_command(agent, "/remember Prefers concise reports.")
@@ -138,8 +157,12 @@ def test_dream_slash_command_consolidates_daily_log_into_memory_files(tmp_path):
     assert handled is True
     assert should_exit is False
     assert "Dream consolidation complete" in output
-    assert "User preferences" in (tmp_path / ".pico" / "memory" / "MEMORY.md").read_text(encoding="utf-8")
-    assert "Prefers concise reports" in (tmp_path / ".pico" / "memory" / "topics" / "user-preferences.md").read_text(encoding="utf-8")
+    assert "User preferences" in (
+        tmp_path / ".pico" / "memory" / "MEMORY.md"
+    ).read_text(encoding="utf-8")
+    assert "Prefers concise reports" in (
+        tmp_path / ".pico" / "memory" / "topics" / "user-preferences.md"
+    ).read_text(encoding="utf-8")
     # dream prompt 是发给 dream 子 agent 的，加了 read step 后总 prompt 数 +1，索引相应调整
     assert "Dream: Memory Consolidation" in agent.model_client.prompts[-4]
 
@@ -148,8 +171,8 @@ def test_dream_cannot_write_outside_memory_directory(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            '<tool>{"name":"write_file","args":{"path":"README.md","content":"bad\\n"}}</tool>',
-            "<final>Dream stopped.</final>",
+            tool("write_file", path="README.md", content="bad\n"),
+            final("Dream stopped."),
         ],
     )
 
@@ -208,8 +231,14 @@ Inspect $ARGUMENTS.
 """,
         encoding="utf-8",
     )
-    agent = build_agent(tmp_path, ["<final>fork result</final>"])
-    agent.record({"role": "user", "content": "keep me", "created_at": "2026-05-12T10:00:00+00:00"})
+    agent = build_agent(tmp_path, [final("fork result")])
+    agent.record(
+        {
+            "role": "user",
+            "content": "keep me",
+            "created_at": "2026-05-12T10:00:00+00:00",
+        }
+    )
     before_history = list(agent.session["history"])
 
     handled, should_exit, output = handle_repl_command(agent, "/inspect README.md")
@@ -218,7 +247,9 @@ Inspect $ARGUMENTS.
     assert should_exit is False
     assert output == "fork result"
     assert agent.session["history"] == before_history
-    events = agent.session_store.event_path(agent.session["id"]).read_text(encoding="utf-8")
+    events = agent.session_store.event_path(agent.session["id"]).read_text(
+        encoding="utf-8"
+    )
     assert '"event": "skill_completed"' in events
     assert '"context": "fork"' in events
     assert '"status": "completed"' in events
@@ -241,8 +272,8 @@ Use only read tools.
     agent = build_agent(
         tmp_path,
         [
-            f'<tool>{{"name":"run_shell","args":{{"command":{json.dumps(command)},"timeout":20}}}}</tool>',
-            "<final>blocked</final>",
+            tool("run_shell", command=command, timeout=20),
+            final("blocked"),
         ],
     )
 
@@ -251,7 +282,9 @@ Use only read tools.
     assert handled is True
     assert output == "blocked"
     assert not (tmp_path / "bad.txt").exists()
-    events = agent.session_store.event_path(agent.session["id"]).read_text(encoding="utf-8")
+    events = agent.session_store.event_path(agent.session["id"]).read_text(
+        encoding="utf-8"
+    )
     assert '"tool_name": "run_shell"' in events
     assert '"reason": "tool_not_allowed"' in events
 
@@ -276,7 +309,9 @@ Template says $ARGUMENTS.
     assert handled is True
     assert output == "Template says hello."
     assert agent.model_client.prompts == []
-    events = agent.session_store.event_path(agent.session["id"]).read_text(encoding="utf-8")
+    events = agent.session_store.event_path(agent.session["id"]).read_text(
+        encoding="utf-8"
+    )
     assert '"status": "prompt_only"' in events
 
 
@@ -298,7 +333,9 @@ def test_prompt_metadata_exposes_skill_catalog(tmp_path):
     metadata = agent.prompt_metadata("inspect", "")
 
     assert metadata["skills"]["available_count"] >= 4
-    review = next(item for item in metadata["skills"]["items"] if item["name"] == "review")
+    review = next(
+        item for item in metadata["skills"]["items"] if item["name"] == "review"
+    )
     assert review["source"] == "builtin"
     assert review["context"] == "inline"
     assert "description" in review
@@ -307,8 +344,25 @@ def test_prompt_metadata_exposes_skill_catalog(tmp_path):
 def test_cli_lists_skills_without_calling_model(tmp_path):
     env = os.environ.copy()
     env["PYTHONPATH"] = os.getcwd()
+    launcher = """
+import sys
+import pico.cli as cli
+
+class NoIOModelClient:
+    model = "offline-test"
+    base_url = "offline://test"
+    provider = "offline"
+    protocol = "native"
+
+    def request(self, request):
+        raise AssertionError("model should not be invoked")
+
+cli.build_native_model_client = lambda **kwargs: NoIOModelClient()
+sys.argv = ["pico", "--cwd", sys.argv[1]]
+raise SystemExit(cli.main())
+"""
     result = subprocess.run(
-        [sys.executable, "-m", "pico", "--cwd", str(tmp_path)],
+        [sys.executable, "-c", launcher, str(tmp_path)],
         input="/skills\n/exit\n",
         text=True,
         capture_output=True,

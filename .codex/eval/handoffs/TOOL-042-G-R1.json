@@ -1,0 +1,250 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-042-G-R1",
+  "instance_id": "W5R-TOOL-042-G-R1-01",
+  "wave": "W5R",
+  "role": "integrator_ticket/gate",
+  "status": "blocked",
+  "thread_uuid": "019f88cf-45c6-74a3-b211-525d3e526ebc",
+  "source_thread_id": "019f8899-40f8-7231-9458-dcc8084aa44e",
+  "prompt_sha256": "f2b3a43e2e571a8879ab465132067cc5fa4b7d80eeb3f6456f12ab6052fc6a14",
+  "base_sha": "fd17e64b45f58558d84a200b5498db463998a239",
+  "wave_base_sha": "fd17e64b45f58558d84a200b5498db463998a239",
+  "run_snapshot_sha": "d5464bf08ed50405301d474b7e64f7a4dc3d4918",
+  "head_sha": "ac2cfda1ebb7546e55fc9e36f5d132a4706a77a4",
+  "head_sha_semantics": "Ticket proposal content head before the metadata-only commit containing this handoff; the final branch HEAD is reported to the W5R Wave Integrator after committing this file.",
+  "branch": "codex/eval-v3-w5r-tool-042-g-r1",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/10cc/pico",
+  "canonical_clone": "/home/papewhit/dev/pico-w5r-gate-d5464bf",
+  "dependency_commits": [
+    "5b68bb8c1e9a23f9fb9b7828a4aee5c6657718c3",
+    "89203e262674d6d4a695712f739c14e110e66d12",
+    "892fb5afd471f99d3cddcb1ba3797dee3ba94a75",
+    "ae6f6bc219a543a13f9fb7a3528118362d726490",
+    "c283b7ccb20794d9f9bd361a476be045eee42833"
+  ],
+  "applied_dependency_commits": [
+    "faf081a3b7e30aaa73a3fca238de38315ed2c49f",
+    "407f4595da279247a0ee3e034315f4977ad449f0",
+    "83d5dcf2d449c3570b175451a404d1a01b5fe8cf",
+    "a0db89b7d34310c39ea6c7db859c9aa3a70c3873",
+    "d5464bf08ed50405301d474b7e64f7a4dc3d4918"
+  ],
+  "own_commits": [
+    "ac2cfda1ebb7546e55fc9e36f5d132a4706a77a4"
+  ],
+  "dependency_handoff_hashes": {
+    "TOOL-044-F": "3f9c248922cd8bc7c89789c255e89ca77df9e0293dd2ca05f9a4c40f4e1f472f",
+    "ARCH-045-B": "31fbde29d32f0f6a0ea219ded1fe7460c80772659b134b248d2e4f252d6c02e9",
+    "CHORE-045-L": "8c62702b626d2be6c27ccf70d1db32cf84ecb61a281a9b590ccc65b19e34635c",
+    "TOOL-043-R": "c96f81c9dd4c62d0eeb387a5d86ed36e252fd33d557f737ec0b9ea7c395606c3",
+    "EVAL-032-F": "e051f284b03fedb266e145144c246ffa025c55b19bca045417fb5f7e62d0c0b1",
+    "W5-TOOL-042-G": "437d9c24c7cc38c68f8f3f6f2bdfe322e55408ada19c01f61d1474d3a0b55b2d"
+  },
+  "allowed_write_paths": [
+    "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate-w5r/**",
+    ".codex/eval/proposals/TOOL-042-G-R1.freeze.json",
+    ".codex/eval/proposals/TOOL-042-G-R1.status.json",
+    ".codex/eval/handoffs/TOOL-042-G-R1.json"
+  ],
+  "files_changed_by_ticket": [
+    ".codex/eval/proposals/TOOL-042-G-R1.freeze.json",
+    ".codex/eval/proposals/TOOL-042-G-R1.status.json",
+    ".codex/eval/handoffs/TOOL-042-G-R1.json"
+  ],
+  "commands_run": [
+    "uv sync --locked --extra providers --python 3.12",
+    "uv run ruff check .",
+    "uv run pytest tests/test_architecture_boundaries.py tests/test_safety_invariants.py tests/test_tool_policy_acceptance.py tests/test_permissions_acceptance.py -q",
+    "uv run pytest tests/test_provider_contracts.py tests/test_openai_responses_tools.py tests/test_anthropic_messages_tools.py tests/test_native_tool_loop.py tests/test_native_session_exchange.py tests/test_native_request_context.py tests/test_native_runtime_integration.py tests/test_native_provider_evaluator.py tests/test_native_tool_repetition.py tests/test_context_freeze_integrity.py -q",
+    "uv run pytest tests -q",
+    "uv run pytest tests/test_fixture_migration_integrity.py tests/test_native_tool_repetition.py -q",
+    "uv run python scripts/verify_context_freeze.py --binding benchmarks/v3/context-assets/cases-v2.binding.json",
+    "static source/hash/scope audit"
+  ],
+  "tests": [
+    {
+      "command": "uv sync --locked --extra providers --python 3.12",
+      "result": "passed",
+      "exit_code": 0,
+      "details": "Committed uv.lock resolved with user-level uv 0.11.19 and CPython 3.12.13 in the fresh ext4 clone."
+    },
+    {
+      "command": "uv run ruff check .",
+      "result": "passed",
+      "exit_code": 0,
+      "details": "All checks passed."
+    },
+    {
+      "command": "protected architecture/safety/tool-policy/permissions suite",
+      "result": "failed",
+      "exit_code": 1,
+      "details": "26 passed, 1 failed. The only failure is test_core_modules_stay_below_entropy_budget: pico/core/model_errors.py has 109 lines, budget is 100."
+    },
+    {
+      "command": "native deterministic and Context integrity suite",
+      "result": "passed",
+      "exit_code": 0,
+      "details": "92 passed."
+    },
+    {
+      "command": "full repository suite",
+      "result": "failed",
+      "exit_code": 1,
+      "details": "400 passed, 79 failed, 2 skipped, 6 warnings. Failure clusters: 70 locked-provider-profile failures, 4 worker event wait assertions, 1 architecture-budget failure, and 4 TUI failures/timeouts. The two skips are pre-existing live-provider opt-in tests; no live provider was run."
+    },
+    {
+      "command": "fixture migration and native repetition audit",
+      "result": "passed",
+      "exit_code": 0,
+      "details": "10 passed, including retry-after-read success, repeated mutation rejection without a qualifying read, and global-patch integrity."
+    },
+    {
+      "command": "fresh-clone Context binding verifier",
+      "result": "passed",
+      "exit_code": 0,
+      "details": "Reconstructed OID 5e9bdf06e75f6661660947e880f07edfe7480880 and Git-blob SHA-256 e08066749520a52af5bb14a9435e359f4a85d3f3ae6e8dd0e962001f99c2df17; checkout matches the Git blob."
+    },
+    {
+      "command": "static source/hash/scope audit",
+      "result": "passed",
+      "exit_code": 0,
+      "details": "Dependency, negative-control and Context hashes match; TOOL-049-I ancestry is present; SDK Tool/Agent Runner and formal Runtime/provider text envelopes are absent; no dependency-added skip/xfail was found; clone source remains clean."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate-w5r/W5R-TOOL-042-G-R1-01/gate-report.json",
+      "sha256": "fab078c630df496a65a4835f4a0ed601240a039caca684b04e3dd8cbb315a5c4",
+      "role": "blocked_native_deterministic_gate"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate-w5r/W5R-TOOL-042-G-R1-01/artifact-manifest.json",
+      "sha256": "4acf8b1641ddd07e35c87967f57e10623a9586b0c8bea3846f87deb959714157"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate-w5r/W5R-TOOL-042-G-R1-01/environment-manifest.json",
+      "sha256": "8bd414ad8a90cee2040141f569770588a0dc5f516941681889fb6c1c5a440ea3"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate-w5r/W5R-TOOL-042-G-R1-01/command-results.json",
+      "sha256": "2a41ee2990f45943e470afc71f2922f2f571c1d34855a3f04e184ca7edb7687a"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate-w5r/W5R-TOOL-042-G-R1-01/evidence/dependency-verification.json",
+      "sha256": "2a9c5b5d1824ab4cbca885ba53d8fbed0adc95faced82bc0b0e15552f42c530b"
+    },
+    {
+      "path": ".codex/eval/proposals/TOOL-042-G-R1.freeze.json",
+      "sha256": "3e427f291bebb711a58efb7458cb8abbd766c49898170fa8eb797da5508acb1a"
+    },
+    {
+      "path": ".codex/eval/proposals/TOOL-042-G-R1.status.json",
+      "sha256": "336ee843226ac544e142503a0f0c54b958cf6c5c1ee95c764686101ef77ab289"
+    },
+    {
+      "path": ".codex/eval/handoffs/TOOL-042-G-R1.json",
+      "persistence": "Metadata-only commit generated after the immutable run snapshot, artifacts, and proposal commit."
+    }
+  ],
+  "frozen_hashes": {
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "sdk_dependency_lock": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+    "context_v2_cases_git_blob_oid": "5e9bdf06e75f6661660947e880f07edfe7480880",
+    "context_v2_cases_git_blob_sha256": "e08066749520a52af5bb14a9435e359f4a85d3f3ae6e8dd0e962001f99c2df17",
+    "context_v2_evaluation_artifact": "ee39ac9eb1e22633a23f0858fadc29802b252a6fb0ada15184b5bfad75d12b24",
+    "context_v2_artifact_manifest": "6c74b0f920fd2acd528e648e49917750d9438e945be6864f95d53ee149ff1355",
+    "native_deterministic_gate_report": "fab078c630df496a65a4835f4a0ed601240a039caca684b04e3dd8cbb315a5c4",
+    "native_deterministic_gate_artifact_manifest": "4acf8b1641ddd07e35c87967f57e10623a9586b0c8bea3846f87deb959714157"
+  },
+  "native_protocol_observations": {
+    "observation_scope": "Offline deterministic positive Gate paths only; the adverse detector test intentionally injects protocol faults and is excluded from positive-observation counts.",
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_match_ratio": 1.0,
+    "batch_completeness_ratio": 1.0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0,
+    "sdk_tool_runner_used": false,
+    "sdk_agent_runner_used": false,
+    "sdk_managed_pico_tool_execution_used": false
+  },
+  "acceptance_checklist": {
+    "source_checkout_equals_run_snapshot": true,
+    "repository_ruff_exit_zero": true,
+    "protected_suite_exit_zero": false,
+    "deterministic_suite_exit_zero": true,
+    "full_suite_exit_zero": false,
+    "retry_after_read_passed": true,
+    "genuine_repeated_mutation_still_rejected": true,
+    "protected_tests_no_global_patch": true,
+    "fixture_negative_control_verified": true,
+    "text_envelope_seen_zero": true,
+    "call_id_result_batch_complete": true,
+    "unknown_block_preserved": true,
+    "safety_chain_preserved": true,
+    "context_v2_fresh_clone_reconstruction": true,
+    "sdk_tool_agent_runner_absent": true,
+    "no_ticket_added_skip_or_xfail": true,
+    "preexisting_live_opt_in_skips_observed": 2,
+    "sudo_not_used": true,
+    "canonical_status_or_freeze_written": false,
+    "all_required_commands_exit_zero": false
+  },
+  "discrepancy_corrections": [
+    {
+      "field": "dependency_handoff_hashes.EVAL-032-F",
+      "delegated_expected_hash": "e051f284b03fedb266e1451448ddb2b322446ca39a21cac07687e88aa6f023407",
+      "corrected_verified_hash": "e051f284b03fedb266e145144c246ffa025c55b19bca045417fb5f7e62d0c0b1",
+      "correction_source": "W5R Wave Integrator independent review",
+      "verification_basis": "raw Git blob bytes at c283b7ccb20794d9f9bd361a476be045eee42833:.codex/eval/handoffs/EVAL-032-F.json",
+      "ticket_content_modified": false,
+      "history_rewritten": false
+    }
+  ],
+  "defects": [
+    {
+      "id": "TOOL-042-G-R1-BLOCK-001",
+      "classification": "required_protected_gate_failure",
+      "details": "pico/core/model_errors.py has 109 lines against its 100-line architecture budget; protected suite exit 1."
+    },
+    {
+      "id": "TOOL-042-G-R1-BLOCK-002",
+      "classification": "required_full_suite_failure",
+      "details": "70 tests fail because native Runtime requires a locked provider_profile."
+    },
+    {
+      "id": "TOOL-042-G-R1-BLOCK-003",
+      "classification": "required_full_suite_failure",
+      "details": "Four worker event wait assertions fail and four TUI tests fail or time out."
+    }
+  ],
+  "risks": [
+    "The run snapshot must not be used for live conformance because the required protected and full repository Gates are not all green.",
+    "The dominant full-suite failure cluster indicates broad tests do not supply the locked provider_profile now required by native Runtime.",
+    "Two live-provider tests were skipped by their pre-existing opt-in guards because this ticket explicitly forbids live-provider execution; the skips were not added or selected by this ticket."
+  ],
+  "minimal_followups": [
+    "Open a separately owned remediation ticket for the unchanged model_errors.py architecture budget breach or an explicit architecture-budget decision.",
+    "Open separately owned remediation tickets to supply locked provider profiles in the affected test/runtime builders and resolve worker/TUI failures, then rerun TOOL-042-G-R1 from a new immutable snapshot.",
+    "Do not start W6 or promote native_deterministic_gate from this blocked proposal."
+  ],
+  "status_proposal": {
+    "path": ".codex/eval/proposals/TOOL-042-G-R1.status.json",
+    "sha256": "336ee843226ac544e142503a0f0c54b958cf6c5c1ee95c764686101ef77ab289",
+    "status": "blocked",
+    "native_eval_ready": false,
+    "w5r_exit_gate_satisfied": false,
+    "w6_ready": false
+  },
+  "freeze_proposal": {
+    "path": ".codex/eval/proposals/TOOL-042-G-R1.freeze.json",
+    "sha256": "3e427f291bebb711a58efb7458cb8abbd766c49898170fa8eb797da5508acb1a",
+    "promotion_allowed": false
+  },
+  "canonical_state_written": false,
+  "ownership_change_request": null,
+  "ready_for_integration": false
+}

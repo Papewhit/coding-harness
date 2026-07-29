@@ -1,0 +1,39 @@
+{
+  "schema_version": "pico-local-repo-fragment-v1",
+  "repository": {
+    "id": "logslice",
+    "path": "benchmarks/v3/local-repos/repos/logslice",
+    "language": "python",
+    "network_access": false
+  },
+  "tasks": [
+    {
+      "id": "T07",
+      "title": "message delimiter",
+      "instruction": "benchmarks/v3/local-repos/task_docs/logslice/T07-message-delimiter.md",
+      "hidden_verifier": "benchmarks/v3/local-repos/hidden_verifiers/logslice/verify_t07_message_delimiter.py",
+      "reference_patch": "benchmarks/v3/local-repos/reference_patches/logslice/T07-message-delimiter.patch",
+      "expected_files_changed": ["logslice/formatter.py"]
+    },
+    {
+      "id": "T08",
+      "title": "minimum level",
+      "instruction": "benchmarks/v3/local-repos/task_docs/logslice/T08-minimum-level.md",
+      "hidden_verifier": "benchmarks/v3/local-repos/hidden_verifiers/logslice/verify_t08_minimum_level.py",
+      "reference_patch": "benchmarks/v3/local-repos/reference_patches/logslice/T08-minimum-level.patch",
+      "expected_files_changed": ["logslice/formatter.py"]
+    },
+    {
+      "id": "T09",
+      "title": "CLI invalid timestamp",
+      "instruction": "benchmarks/v3/local-repos/task_docs/logslice/T09-cli-invalid-timestamp.md",
+      "hidden_verifier": "benchmarks/v3/local-repos/hidden_verifiers/logslice/verify_t09_cli_invalid_timestamp.py",
+      "reference_patch": "benchmarks/v3/local-repos/reference_patches/logslice/T09-cli-invalid-timestamp.patch",
+      "expected_files_changed": ["logslice/cli.py"]
+    }
+  ],
+  "isolation": {
+    "agent_workspace_excludes": ["hidden_verifiers", "reference_patches"],
+    "verifiers_run_against": "a disposable copy of repository.path"
+  }
+}

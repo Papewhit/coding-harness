@@ -1,0 +1,178 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "EVAL-059-O",
+  "instance_id": "W6R4-EVAL-059-O-01-R2",
+  "revision": 2,
+  "supersedes_handoff_sha256": "662bb2378223143c6abfec86f8e384d8e3f8c44eabcd3d600844def5933fce39",
+  "finding_ids": [
+    "W6R4-MD-002"
+  ],
+  "finding_type": "measurement_defect",
+  "finding_sha256": "f4f443870b32a57034773feb9a3b15a2514cd8c5aba193af1e73032b9d5885be",
+  "wave": "W6R4",
+  "role": "implementer/oracle-v2-runtime-entry-evidence",
+  "status": "complete",
+  "action": "remediate",
+  "source_task": "/root/w6r4_integrator/eval_059_o_impl",
+  "base_sha": "345261c3f644ddea92065f105bc754e223d0eff4",
+  "base_tree": "38535dd58d9b317c174a470a1857e6617ac45cc4",
+  "prior_accepted_commit": "345261c3f644ddea92065f105bc754e223d0eff4",
+  "source_head_sha": "30375b1080cfe8400c3912dfb8b51930d62ee2e9",
+  "source_head_tree": "98d4c62a14dfc446c3ff5dceecea7eeb02c1b941",
+  "source_head_semantics": "Revision 2 semantic commit; this handoff is intentionally updated afterward and remains uncommitted.",
+  "branch": "codex/w6r4-eval-059-o-r2",
+  "worktree": "/home/papewhit/dev/pico-w6r4-eval-059-o-r2",
+  "dependency_commits": [
+    "345261c3f644ddea92065f105bc754e223d0eff4"
+  ],
+  "own_commits": [
+    "30375b1080cfe8400c3912dfb8b51930d62ee2e9"
+  ],
+  "own_stable_patch_ids": {
+    "30375b1080cfe8400c3912dfb8b51930d62ee2e9": "75c52ea9cfd8a3ec36ac623dcb0fb600cd86ac8c"
+  },
+  "revision_commits": [
+    {
+      "commit": "30375b1080cfe8400c3912dfb8b51930d62ee2e9",
+      "tree": "98d4c62a14dfc446c3ff5dceecea7eeb02c1b941",
+      "stable_patch_id": "75c52ea9cfd8a3ec36ac623dcb0fb600cd86ac8c",
+      "subject": "fix(eval): [EVAL-059-O][R2] bind runtime entry to calls"
+    }
+  ],
+  "allowed_write_paths": [
+    "pico/evaluation/native_provider.py",
+    "pico/evaluation/native_provider_live.py",
+    "tests/test_native_provider_evaluator.py",
+    "tests/test_native_provider_live.py",
+    ".codex/eval/handoffs/EVAL-059-O.json"
+  ],
+  "semantic_commit_files": [
+    "pico/evaluation/native_provider.py",
+    "pico/evaluation/native_provider_live.py",
+    "tests/test_native_provider_evaluator.py",
+    "tests/test_native_provider_live.py"
+  ],
+  "files_changed": [
+    "pico/evaluation/native_provider.py",
+    "pico/evaluation/native_provider_live.py",
+    "tests/test_native_provider_evaluator.py",
+    "tests/test_native_provider_live.py",
+    ".codex/eval/handoffs/EVAL-059-O.json"
+  ],
+  "git_blob_bindings": {
+    "pico/evaluation/native_provider.py": {
+      "oid": "93e6b876cd5fdfadd7a47d940a7350a0b0624551",
+      "sha256": "739874ec7300d168c3c7b85a6e16f36b70bc4b93a1117a925e4c9093d4b6932f"
+    },
+    "pico/evaluation/native_provider_live.py": {
+      "oid": "437bc7d990360371c9f34ff609d976f7e669e147",
+      "sha256": "1d1b120216cd3ca1704f9193aaddcfa03fee59f14776eb54c247442f701cc498"
+    },
+    "tests/test_native_provider_evaluator.py": {
+      "oid": "bb2f25255846e6d446319211a7157a7b91d9496c",
+      "sha256": "db716a24419d0b63fccc8c962e9813ff677f6ad51079717548bfb2a2fadf9c48"
+    },
+    "tests/test_native_provider_live.py": {
+      "oid": "96827b8920d87a70aa317d9aba725055731733b9",
+      "sha256": "444e1fa1281b4aa9d34efddda43e9999a68fba7514a5528fc49f51d18e525738"
+    }
+  },
+  "implementation": {
+    "finding": {
+      "id": "W6R4-MD-002",
+      "classification": "measurement_defect",
+      "status": "resolved_in_worker"
+    },
+    "runtime_entry_evidence": {
+      "location": "call_evidence.runtime_started",
+      "binding": "provider call_id",
+      "independent_of_result_evidence": true,
+      "live_source": "call-ID-bound tool_started session event",
+      "present_for_each_live_assistant_tool_call": true
+    },
+    "oracle_v2_precedence": {
+      "result_present": "existing result.execution_scope semantics preserved",
+      "result_missing_runtime_not_started": "pre_runtime_rejection when runtime_started=false and no safety stages exist",
+      "result_missing_runtime_started": "runtime_execution and incomplete chain",
+      "result_missing_runtime_entry_unknown": "fail-closed runtime_execution",
+      "conflicting_runtime_evidence": "fail-closed runtime_execution"
+    }
+  },
+  "valid_measurement_boundary_preserved": {
+    "deepseek_profile_ineligibility": true,
+    "call_result_cardinality": "98/99",
+    "batch_completeness": "65/66",
+    "profile_metrics_changed_by_runtime_classification": false,
+    "result_rows_synthesized": 0
+  },
+  "targeted_regressions": {
+    "unmatched_call_runtime_not_started": {
+      "profile_call_result_cardinality": "0/1",
+      "profile_batch_completeness": "0/1",
+      "runtime_execution_denominator": 0,
+      "pre_runtime_rejection_count": 1,
+      "runtime_chain_violation_count": 0
+    },
+    "unmatched_call_runtime_started": {
+      "profile_call_result_cardinality": "0/1",
+      "profile_batch_completeness": "0/1",
+      "runtime_execution_denominator": 1,
+      "pre_runtime_rejection_count": 0,
+      "runtime_chain_violation_count": 1
+    },
+    "result_bound_semantics_preserved": [
+      "step_limit_exceeded",
+      "tool_choice_none_violation",
+      "runtime_validation_rejection",
+      "runtime_permission_rejection",
+      "runtime_policy_rejection"
+    ]
+  },
+  "tests": [
+    {
+      "environment": "Ubuntu WSL2 / CPython 3.12.13 / deterministic scripted provider",
+      "command": "uv run pytest tests/test_native_provider_evaluator.py -k unmatched_call -q",
+      "result": "passed",
+      "details": "2 passed, 18 deselected."
+    },
+    {
+      "environment": "Ubuntu WSL2 / CPython 3.12.13 / deterministic scripted provider",
+      "command": "uv run pytest tests/test_native_provider_live.py -k \"runtime_rejections or step_limit_rejection\" -q",
+      "result": "passed",
+      "details": "4 passed, 5 deselected."
+    },
+    {
+      "environment": "Ubuntu WSL2 / CPython 3.12.13",
+      "command": "uv sync --frozen --extra providers",
+      "result": "passed",
+      "details": "Locked project and provider dependencies synchronized."
+    },
+    {
+      "environment": "Ubuntu WSL2 / CPython 3.12.13 / deterministic scripted provider",
+      "command": "uv run pytest tests/test_native_provider_evaluator.py tests/test_native_provider_live.py -q",
+      "result": "passed",
+      "details": "29 passed in 4.16s."
+    },
+    {
+      "environment": "Ubuntu WSL2 / CPython 3.12.13",
+      "command": "uv run ruff check pico/evaluation/native_provider.py pico/evaluation/native_provider_live.py tests/test_native_provider_evaluator.py tests/test_native_provider_live.py",
+      "result": "passed",
+      "details": "All checks passed."
+    },
+    {
+      "environment": "Ubuntu WSL2",
+      "command": "git diff --check",
+      "result": "passed"
+    }
+  ],
+  "frozen_cases_changed": false,
+  "frozen_criteria_changed": false,
+  "provider_behavior_changed": false,
+  "runtime_core_adapter_changed": false,
+  "provider_http_attempts": 0,
+  "formal_effectiveness_run": false,
+  "human_smoke_run": false,
+  "w7_started": false,
+  "ready_for_integration": true,
+  "stop_after_handoff": true
+}

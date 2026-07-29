@@ -1,0 +1,107 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-050-DA-R2",
+  "instance_id": "W6R2-TOOL-050-DA-R2-01",
+  "role": "run_shard",
+  "status": "blocked",
+  "base_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+  "head_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+  "run_snapshot_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+  "source_tree": "158cd2abde04d20e0544c4615db3cb0676f8fc83",
+  "metadata_commit_semantics": "This and dca29bf1f977b8952802bd012aeac76a09197193 are handoff-only metadata commits; neither is a source or run snapshot SHA.",
+  "dependency_commits": [],
+  "own_commits": ["dca29bf1f977b8952802bd012aeac76a09197193"],
+  "files_changed": [".codex/eval/handoffs/TOOL-050-DA-R2.json"],
+  "commands_run": [
+    {
+      "command": "WSL fresh-clone frozen preflight and uv sync --frozen --extra providers",
+      "exit_code": 0,
+      "result": "passed",
+      "details": "Ubuntu WSL2 fresh clone was clean at the exact source SHA/tree; project environment resolved to Python 3.12.13."
+    },
+    {
+      "command": "frozen deepseek native-provider conformance command (8 cases x 3 repetitions)",
+      "exit_code": 124,
+      "result": "late_complete",
+      "details": "The outer execution host returned timeout after approximately 64 seconds, but the sole original process was not terminated and later atomically published the complete bundle. No second run was started."
+    },
+    {
+      "command": "post-publication process check",
+      "exit_code": 0,
+      "result": "passed",
+      "details": "No native-provider conformance runner process remained."
+    }
+  ],
+  "tests": [
+    {
+      "command": "frozen-input and canonical-environment preflight",
+      "result": "passed",
+      "details": "HEAD, tree, clean state, cases blob, formal FREEZE, TOOL-058-G/EVAL-056-H handoffs, public profile identity, and private-config locator existence were verified without recording the locator."
+    },
+    {
+      "command": "late-published bundle verification",
+      "result": "passed",
+      "details": "All four files parse; manifest hashes rebuild; 24 unique case/repetition rows and 148 evidence entries match the bundle declarations; public credential/raw-URL scan has zero matches."
+    }
+  ],
+  "outputs": [
+    {"path": "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/62e0a441b9321d96f50f2863f97ed7e96ace8c9d/TOOL-050-DA-R2/manifest.json", "sha256": "7b7e903c9ba01ec3c51e99c7ef75faae26f761e7834da85e64116867338576cd"},
+    {"path": "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/62e0a441b9321d96f50f2863f97ed7e96ace8c9d/TOOL-050-DA-R2/rows.jsonl", "sha256": "86cd167db8a9054a94bef435517a5e2cbeec7484407c6a961d6904a839235fe4", "row_count": 24, "unique_case_repetition_rows": 24},
+    {"path": "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/62e0a441b9321d96f50f2863f97ed7e96ace8c9d/TOOL-050-DA-R2/evidence-index.json", "sha256": "b7d316bc458c72271910ce337d00de0919aecc953adc98bb2d6af413982671aa", "entry_count": 148},
+    {"path": "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/62e0a441b9321d96f50f2863f97ed7e96ace8c9d/TOOL-050-DA-R2/summary.json", "sha256": "56dcedae55b21647bd0b278ed42de3c473b83f8954939576e51411b496db253f"}
+  ],
+  "artifact_status": "complete_late_atomic_publication",
+  "late_publication_supersedes": "The prior absent-after-interruption observation was superseded by the complete bundle atomically published by the same original process; this is not a retry.",
+  "frozen_hashes": {
+    "formal_freeze": "546893c11eeb2c78e473257e6bbb166cb1c5b904d22289a34cdb57865034b7ce",
+    "cases_git_blob_oid": "f513f6e15c521104b12fe348dc280f73624acd56",
+    "tool_058_g_handoff": "5dcbbcc456f1d917c4bbb8708495ef1ab38d9b7f5d5268f62b5bb7d3524d3df8",
+    "eval_056_h_handoff": "88dd58e2a7a726c18bc584b92538de259b02e698d15c079830be858ccacc05f5",
+    "public_profile_manifest": "5e4a4c3af56f492ee066835b8657748ec430cc6f11f8f0aebe39d2ea4cfac2e6"
+  },
+  "profile": {
+    "name": "deepseek",
+    "profile_id": "sha256:d7f29754016394922b48edb3ac4211d3920c333e386e7cf4d76f0ff178beb4a5",
+    "wire_dialect": "anthropic-messages",
+    "adapter_mode": "official-sdk-raw-response",
+    "stream": false,
+    "parallel": false,
+    "sdk_max_retries": 0,
+    "pico_attempts": 1
+  },
+  "native_protocol_observations": {
+    "http_attempt_count": 113,
+    "provider_call_id_count": 148,
+    "call_id_result_match": {"numerator": 148, "denominator": 148, "value": 1.0},
+    "batch_completeness": {"numerator": 89, "denominator": 89, "value": 1.0},
+    "safety_chain_completeness": {"numerator": 138, "denominator": 148, "value": 0.9324324324324325},
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "duplicate_call_after_result_count": 0,
+    "protocol_error_count": 10,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 10,
+    "evidence_entry_count": 148
+  },
+  "conformance_result": {
+    "computability": "computable",
+    "row_level_eligible_count": 24,
+    "passed": 13,
+    "failed": 11,
+    "excluded": 0,
+    "infrastructure_failure": 0,
+    "shard_eligible": false,
+    "reason": "The complete evidence reports 10 protocol errors and 10 safety-chain bypasses; therefore this formal shard is blocked despite 24 runner-level eligible rows."
+  },
+  "defects": [
+    {"code": "safety_chain_bypass", "count": 10, "detail": "Complete evidence reports ten safety-chain bypasses."},
+    {"code": "protocol_error", "count": 10, "detail": "Complete evidence reports ten protocol errors."}
+  ],
+  "risks": ["Gate N1 remains blocked for this profile because the complete bundle contains safety-chain bypass evidence."],
+  "formal_effectiveness_evaluation_run": false,
+  "resume_evaluation_run": false,
+  "status_proposal": null,
+  "freeze_proposal": null,
+  "ownership_change_request": {"requested_owner": "Wave Integrator / evaluator owner", "request": "Investigate the recorded protocol errors and safety-chain bypasses before any new authorized shard."},
+  "ready_for_integration": true
+}

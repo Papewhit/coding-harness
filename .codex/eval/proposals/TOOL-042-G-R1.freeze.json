@@ -1,0 +1,112 @@
+{
+  "schema_version": "pico-eval-freeze-proposal-v1",
+  "ticket_id": "TOOL-042-G-R1",
+  "instance_id": "W5R-TOOL-042-G-R1-01",
+  "wave": "W5R",
+  "role": "integrator_ticket/gate",
+  "status": "blocked",
+  "base_sha": "fd17e64b45f58558d84a200b5498db463998a239",
+  "run_snapshot_sha": "d5464bf08ed50405301d474b7e64f7a4dc3d4918",
+  "dependency_commits": [
+    "5b68bb8c1e9a23f9fb9b7828a4aee5c6657718c3",
+    "89203e262674d6d4a695712f739c14e110e66d12",
+    "892fb5afd471f99d3cddcb1ba3797dee3ba94a75",
+    "ae6f6bc219a543a13f9fb7a3528118362d726490",
+    "c283b7ccb20794d9f9bd361a476be045eee42833"
+  ],
+  "applied_dependency_commits": [
+    "faf081a3b7e30aaa73a3fca238de38315ed2c49f",
+    "407f4595da279247a0ee3e034315f4977ad449f0",
+    "83d5dcf2d449c3570b175451a404d1a01b5fe8cf",
+    "a0db89b7d34310c39ea6c7db859c9aa3a70c3873",
+    "d5464bf08ed50405301d474b7e64f7a4dc3d4918"
+  ],
+  "dependency_handoff_hashes": {
+    "TOOL-044-F": "3f9c248922cd8bc7c89789c255e89ca77df9e0293dd2ca05f9a4c40f4e1f472f",
+    "ARCH-045-B": "31fbde29d32f0f6a0ea219ded1fe7460c80772659b134b248d2e4f252d6c02e9",
+    "CHORE-045-L": "8c62702b626d2be6c27ccf70d1db32cf84ecb61a281a9b590ccc65b19e34635c",
+    "TOOL-043-R": "c96f81c9dd4c62d0eeb387a5d86ed36e252fd33d557f737ec0b9ea7c395606c3",
+    "EVAL-032-F": "e051f284b03fedb266e145144c246ffa025c55b19bca045417fb5f7e62d0c0b1",
+    "W5-TOOL-042-G": "437d9c24c7cc38c68f8f3f6f2bdfe322e55408ada19c01f61d1474d3a0b55b2d"
+  },
+  "dependency_freeze_hashes": {
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "sdk_dependency_lock": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+    "context_v2_cases_git_blob": "e08066749520a52af5bb14a9435e359f4a85d3f3ae6e8dd0e962001f99c2df17",
+    "context_v2_evaluation_artifact": "ee39ac9eb1e22633a23f0858fadc29802b252a6fb0ada15184b5bfad75d12b24",
+    "context_v2_artifact_manifest": "6c74b0f920fd2acd528e648e49917750d9438e945be6864f95d53ee149ff1355",
+    "canonical_FREEZE_pre_gate": "dbedbc07dcc042546ec37392fb17214b2947bdbfe757d872bb438b9f7cca6f8e"
+  },
+  "freeze_proposal": {
+    "key": "native_deterministic_gate",
+    "version": "pico-native-deterministic-gate-w5r-v1",
+    "status": "blocked",
+    "sha256": "fab078c630df496a65a4835f4a0ed601240a039caca684b04e3dd8cbb315a5c4",
+    "hash_basis": "gate_report_file_bytes",
+    "run_snapshot_sha": "d5464bf08ed50405301d474b7e64f7a4dc3d4918",
+    "run_snapshot_approved_for_live_conformance": false,
+    "artifact": {
+      "root": "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate-w5r/W5R-TOOL-042-G-R1-01",
+      "report": {
+        "path": "gate-report.json",
+        "sha256": "fab078c630df496a65a4835f4a0ed601240a039caca684b04e3dd8cbb315a5c4"
+      },
+      "manifest": {
+        "path": "artifact-manifest.json",
+        "sha256": "4acf8b1641ddd07e35c87967f57e10623a9586b0c8bea3846f87deb959714157"
+      },
+      "environment_manifest": {
+        "path": "environment-manifest.json",
+        "sha256": "8bd414ad8a90cee2040141f569770588a0dc5f516941681889fb6c1c5a440ea3"
+      },
+      "command_results": {
+        "path": "command-results.json",
+        "sha256": "2a41ee2990f45943e470afc71f2922f2f571c1d34855a3f04e184ca7edb7687a"
+      }
+    },
+    "gate_result": {
+      "text_envelope_seen_count": 0,
+      "call_id_result_match": 1.0,
+      "batch_completeness": 1.0,
+      "unknown_block_loss_count": 0,
+      "safety_chain_bypass_count": 0,
+      "sdk_tool_or_agent_runner_used": false,
+      "ruff": "passed",
+      "protected": "26 passed, 1 failed",
+      "deterministic": "92 passed",
+      "full_suite": "400 passed, 79 failed, 2 skipped",
+      "fixture_repetition_audit": "10 passed",
+      "context_binding_verified": true,
+      "overall": "blocked"
+    },
+    "blocking_defects": [
+      "TOOL-042-G-R1-BLOCK-001: pico/core/model_errors.py is 109 lines against its 100-line architecture budget.",
+      "TOOL-042-G-R1-BLOCK-002: 70 full-suite tests fail because native Runtime requires a locked provider_profile.",
+      "TOOL-042-G-R1-BLOCK-003: four worker event waits and four TUI tests fail or time out."
+    ],
+    "execution_constraints": {
+      "sudo_used": false,
+      "system_install_used": false,
+      "live_provider_used": false,
+      "formal_effectiveness_evaluation_run": false,
+      "resume_evaluation_run": false,
+      "w6_started": false,
+      "product_fix_mixed_with_gate": false,
+      "failure_reclassified": false
+    }
+  },
+  "discrepancy_corrections": [
+    {
+      "field": "EVAL-032-F dependency handoff SHA-256",
+      "delegated_expected_hash": "e051f284b03fedb266e1451448ddb2b322446ca39a21cac07687e88aa6f023407",
+      "corrected_verified_hash": "e051f284b03fedb266e145144c246ffa025c55b19bca045417fb5f7e62d0c0b1",
+      "verification_basis": "raw Git blob bytes at c283b7ccb20794d9f9bd361a476be045eee42833:.codex/eval/handoffs/EVAL-032-F.json"
+    }
+  ],
+  "canonical_state_write_required": true,
+  "canonical_state_written": false,
+  "canonical_freeze_promotion_allowed": false,
+  "canonical_freeze_owner": "W5R Wave Integrator"
+}

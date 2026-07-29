@@ -1,0 +1,61 @@
+{
+  "schema_version": "pico-eval-status-proposal-v1",
+  "ticket_id": "TOOL-042-G-R1",
+  "instance_id": "W5R-TOOL-042-G-R1-01",
+  "wave": "W5R",
+  "role": "integrator_ticket/gate",
+  "base_sha": "fd17e64b45f58558d84a200b5498db463998a239",
+  "run_snapshot_sha": "d5464bf08ed50405301d474b7e64f7a4dc3d4918",
+  "source_status_sha256": "4011314f02969b1d415c3d8fbd8b7f44eb57872bf6cd88d7f9deaf8472f05d87",
+  "source_freeze_sha256": "dbedbc07dcc042546ec37392fb17214b2947bdbfe757d872bb438b9f7cca6f8e",
+  "proposed_at": "2026-07-22T16:06:04.8178947+08:00",
+  "proposed_changes": {
+    "ticket_instances": {
+      "W5R-TOOL-042-G-R1-01": {
+        "ticket_id": "TOOL-042-G-R1",
+        "role": "integrator_ticket/gate",
+        "branch": "codex/eval-v3-w5r-tool-042-g-r1",
+        "worktree": "C:/Users/Papewhit/.codex/worktrees/10cc/pico",
+        "base_sha": "fd17e64b45f58558d84a200b5498db463998a239",
+        "run_snapshot_sha": "d5464bf08ed50405301d474b7e64f7a4dc3d4918",
+        "prompt_sha256": "f2b3a43e2e571a8879ab465132067cc5fa4b7d80eeb3f6456f12ab6052fc6a14",
+        "status": "blocked"
+      }
+    },
+    "blocked_tickets": {
+      "TOOL-042-G-R1": {
+        "instance_id": "W5R-TOOL-042-G-R1-01",
+        "status": "blocked",
+        "run_snapshot_sha": "d5464bf08ed50405301d474b7e64f7a4dc3d4918",
+        "gate_report_sha256": "fab078c630df496a65a4835f4a0ed601240a039caca684b04e3dd8cbb315a5c4",
+        "handoff_path": ".codex/eval/handoffs/TOOL-042-G-R1.json"
+      }
+    },
+    "accepted_tickets_remove": [
+      "TOOL-042-G-R1"
+    ],
+    "ready_tickets_remove": [
+      "TOOL-042-G-R1"
+    ],
+    "ready_tickets_add": [],
+    "native_eval_ready": false,
+    "w5r_exit_gate_satisfied": false,
+    "w6_ready": false,
+    "reason": "Canonical WSL Gate is blocked: protected suite is 26 passed/1 failed and full suite is 400 passed/79 failed/2 skipped. No failures were reclassified and no product source or tests were changed."
+  },
+  "artifact": {
+    "root": "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate-w5r/W5R-TOOL-042-G-R1-01",
+    "gate_report_sha256": "fab078c630df496a65a4835f4a0ed601240a039caca684b04e3dd8cbb315a5c4",
+    "artifact_manifest_sha256": "4acf8b1641ddd07e35c87967f57e10623a9586b0c8bea3846f87deb959714157"
+  },
+  "discrepancy_corrections": [
+    {
+      "field": "EVAL-032-F dependency handoff SHA-256",
+      "delegated_expected_hash": "e051f284b03fedb266e1451448ddb2b322446ca39a21cac07687e88aa6f023407",
+      "corrected_verified_hash": "e051f284b03fedb266e145144c246ffa025c55b19bca045417fb5f7e62d0c0b1"
+    }
+  ],
+  "canonical_status_written": false,
+  "canonical_freeze_written": false,
+  "canonical_state_written": false
+}

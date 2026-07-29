@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 import os
 import re
 import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit, urlunsplit
 
 from ..features.sandbox import resolve_sandbox_config as resolve_sandbox_values
 
@@ -24,27 +27,77 @@ PROJECT_CONFIG_NAME = ".pico.toml"
 
 
 @dataclass(frozen=True)
+class ProviderCapabilities:
+    """Native protocol features declared by a local provider profile."""
+
+    native_tools: bool = True
+    strict_tool_schema: bool = False
+    parallel_tool_calls: bool = False
+    reasoning: bool = False
+    thinking: bool = False
+    opaque_continuation: bool = False
+
+    def to_dict(self) -> dict[str, bool]:
+        return {
+            "native_tools": self.native_tools,
+            "strict_tool_schema": self.strict_tool_schema,
+            "parallel_tool_calls": self.parallel_tool_calls,
+            "reasoning": self.reasoning,
+            "thinking": self.thinking,
+            "opaque_continuation": self.opaque_continuation,
+        }
+
+
+@dataclass(frozen=True)
 class ProviderConfig:
     name: str
-    protocol: str
+    wire_dialect: str
     api_key: str
     base_url: str
     model: str
+    capabilities: ProviderCapabilities
+
+    @property
+    def protocol(self) -> str:
+        """Compatibility view for the legacy text clients during native wiring."""
+
+        return WIRE_DIALECT_PROTOCOLS[self.wire_dialect]
+
+    def public_identity(self, *, tool_schema: str | None = None) -> dict[str, Any]:
+        """Return the reproducible session identity without credentials or raw URLs."""
+
+        identity: dict[str, Any] = {
+            "profile": self.name,
+            "model": self.model,
+            "wire_dialect": self.wire_dialect,
+            "base_url_fingerprint": _base_url_fingerprint(self.base_url),
+            "capabilities": self.capabilities.to_dict(),
+        }
+        encoded = json.dumps(
+            identity, ensure_ascii=True, sort_keys=True, separators=(",", ":")
+        ).encode("utf-8")
+        public = {
+            "profile_id": f"sha256:{hashlib.sha256(encoded).hexdigest()}",
+            **identity,
+        }
+        if tool_schema is not None:
+            public["tool_schema"] = tool_schema
+        return public
 
 
 PROVIDER_DEFAULTS: dict[str, dict[str, str]] = {
     "openai": {
-        "protocol": "openai",
+        "wire_dialect": "openai-responses",
         "base_url": "https://www.right.codes/codex/v1",
         "model": "gpt-5.4",
     },
     "anthropic": {
-        "protocol": "anthropic",
+        "wire_dialect": "anthropic-messages",
         "base_url": "https://www.right.codes/claude/v1",
         "model": "claude-sonnet-4-6",
     },
     "deepseek": {
-        "protocol": "anthropic",
+        "wire_dialect": "anthropic-messages",
         "base_url": "https://api.deepseek.com/anthropic",
         "model": "deepseek-v4-pro",
     },
@@ -55,7 +108,15 @@ PROVIDER_ALIASES = {
     "claude": "anthropic",
 }
 
-PROTOCOLS = {"openai", "anthropic"}
+WIRE_DIALECT_PROTOCOLS = {
+    "openai-responses": "openai",
+    "anthropic-messages": "anthropic",
+}
+LEGACY_PROTOCOL_DIALECTS = {
+    "openai": "openai-responses",
+    "anthropic": "anthropic-messages",
+}
+CAPABILITY_FIELDS = tuple(ProviderCapabilities.__dataclass_fields__)
 
 PROVIDER_MAX_TOKENS: dict[str, int] = {
     "openai": 8192,
@@ -224,15 +285,20 @@ def resolve_provider_config(
     profile_values = _profile_values(file_values["providers"], provider_name)
     default_values = dict(PROVIDER_DEFAULTS.get(provider_name, {}))
 
-    protocol = _first_value(
-        None,
-        os.environ.get("PICO_PROTOCOL"),
-        profile_values.get("protocol"),
-        legacy_env.get("PICO_PROTOCOL"),
-        default_values.get("protocol"),
+    wire_dialect = _resolve_wire_dialect(
+        provider_name=provider_name,
+        profile_values=profile_values,
+        legacy_env=legacy_env,
+        default_values=default_values,
     )
-    protocol = _validate_protocol(protocol, provider_name)
+    capabilities = _resolve_capabilities(profile_values, provider_name)
+    if not capabilities.native_tools:
+        raise ValueError(
+            f"provider profile {provider_name!r} cannot start a coding session: "
+            "capabilities.native_tools must be true"
+        )
 
+    protocol = WIRE_DIALECT_PROTOCOLS[wire_dialect]
     env_values = _env_values(provider_name, protocol)
     legacy_values = _legacy_values(provider_name, protocol, legacy_env)
 
@@ -266,10 +332,11 @@ def resolve_provider_config(
 
     return ProviderConfig(
         name=provider_name,
-        protocol=protocol,
+        wire_dialect=wire_dialect,
         api_key=str(resolved_api_key or ""),
         base_url=str(resolved_base_url or ""),
         model=str(resolved_model or ""),
+        capabilities=capabilities,
     )
 
 
@@ -416,10 +483,86 @@ def _first_value(*values: str | None) -> str:
     return ""
 
 
-def _validate_protocol(protocol: Any, provider_name: str) -> str:
-    normalized = str(protocol or "").strip().lower()
-    if normalized not in PROTOCOLS:
+def _resolve_wire_dialect(
+    *,
+    provider_name: str,
+    profile_values: dict[str, Any],
+    legacy_env: dict[str, str],
+    default_values: dict[str, str],
+) -> str:
+    configured = _first_value(
+        os.environ.get("PICO_WIRE_DIALECT"),
+        profile_values.get("wire_dialect"),
+        legacy_env.get("PICO_WIRE_DIALECT"),
+    )
+    legacy_protocol = _first_value(
+        os.environ.get("PICO_PROTOCOL"),
+        profile_values.get("protocol"),
+        legacy_env.get("PICO_PROTOCOL"),
+    )
+    if configured and legacy_protocol:
+        mapped = LEGACY_PROTOCOL_DIALECTS.get(str(legacy_protocol).strip().lower())
+        if mapped != str(configured).strip().lower():
+            raise ValueError(
+                f"provider profile {provider_name!r} configures conflicting "
+                "wire_dialect and legacy protocol values"
+            )
+    if not configured and legacy_protocol:
+        normalized_protocol = str(legacy_protocol).strip().lower()
+        configured = LEGACY_PROTOCOL_DIALECTS.get(normalized_protocol)
+        if configured is None:
+            raise ValueError(
+                f"provider profile {provider_name!r} uses unsupported legacy protocol "
+                f"{legacy_protocol!r}; replace it with wire_dialect = "
+                "'openai-responses' or 'anthropic-messages'"
+            )
+    normalized = (
+        str(configured or default_values.get("wire_dialect") or "").strip().lower()
+    )
+    if normalized not in WIRE_DIALECT_PROTOCOLS:
         raise ValueError(
-            f"provider {provider_name!r} uses unsupported protocol: {protocol!r}"
+            f"provider profile {provider_name!r} must declare a supported wire_dialect; "
+            f"got {normalized or None!r}"
         )
     return normalized
+
+
+def _resolve_capabilities(
+    profile_values: dict[str, Any], provider_name: str
+) -> ProviderCapabilities:
+    raw = profile_values.get("capabilities", {})
+    if raw is None:
+        raw = {}
+    if not isinstance(raw, dict):
+        raise ValueError(
+            f"provider profile {provider_name!r} capabilities must be a table"
+        )
+    unknown = sorted(set(raw) - set(CAPABILITY_FIELDS))
+    if unknown:
+        raise ValueError(
+            f"provider profile {provider_name!r} has unknown capabilities: "
+            + ", ".join(unknown)
+        )
+    values: dict[str, bool] = {}
+    for field_name in CAPABILITY_FIELDS:
+        value = raw.get(field_name, getattr(ProviderCapabilities(), field_name))
+        if type(value) is not bool:
+            raise ValueError(
+                f"provider profile {provider_name!r} capability {field_name!r} "
+                "must be true or false"
+            )
+        values[field_name] = value
+    return ProviderCapabilities(**values)
+
+
+def _base_url_fingerprint(base_url: str) -> str:
+    parsed = urlsplit(str(base_url))
+    host = (parsed.hostname or "").lower()
+    if ":" in host:
+        host = f"[{host}]"
+    if parsed.port is not None:
+        host = f"{host}:{parsed.port}"
+    endpoint = urlunsplit(
+        (parsed.scheme.lower(), host, parsed.path.rstrip("/"), "", "")
+    )
+    return "sha256:" + hashlib.sha256(endpoint.encode("utf-8")).hexdigest()

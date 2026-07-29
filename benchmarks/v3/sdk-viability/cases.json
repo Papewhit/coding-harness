@@ -1,0 +1,45 @@
+{
+  "schema_version": "pico-sdk-viability-cases-v1",
+  "cases": [
+    {
+      "id": "final",
+      "kind": "final",
+      "prompt": "Reply with the word ready.",
+      "expected": {"final_text": "ready"}
+    },
+    {
+      "id": "native-call",
+      "kind": "native_call",
+      "prompt": "Call echo with value one.",
+      "tool": {"name": "echo", "description": "Echo a value", "input_schema": {"type": "object"}},
+      "expected": {"tool_name": "echo"}
+    },
+    {
+      "id": "result-roundtrip",
+      "kind": "result_roundtrip",
+      "prompt": "Call echo, then report its result.",
+      "tool": {"name": "echo", "description": "Echo a value", "input_schema": {"type": "object"}},
+      "tool_result": {"value": "one"},
+      "expected": {"tool_name": "echo"}
+    },
+    {
+      "id": "invalid-args",
+      "kind": "invalid_args",
+      "prompt": "Attempt echo using malformed arguments, then handle the error.",
+      "tool": {"name": "echo", "description": "Echo a value", "input_schema": {"type": "object"}},
+      "expected": {"tool_name": "echo"}
+    },
+    {
+      "id": "unicode",
+      "kind": "unicode",
+      "prompt": "Return exactly: 工具调用 café 🚀",
+      "expected": {"final_text": "工具调用 café 🚀"}
+    },
+    {
+      "id": "opaque-block",
+      "kind": "opaque_block",
+      "prompt": "Answer ready while preserving any opaque continuation privately.",
+      "expected": {"final_text": "ready"}
+    }
+  ]
+}

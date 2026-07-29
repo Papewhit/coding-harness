@@ -11,6 +11,8 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
+from .model_exchange import public_artifact
+
 
 def _run_id(value: Any) -> str:
     if hasattr(value, "run_id"):
@@ -60,7 +62,7 @@ class RunStore:
         # trace 采用 jsonl 追加写入，原因是 agent 运行过程是流式事件序列，
         # 逐条落盘比"最后一次性写整份 trace"更稳，也更适合调试。
         with path.open("a", encoding="utf-8") as handle:
-            handle.write(json.dumps(event, sort_keys=True, ensure_ascii=False))
+            handle.write(json.dumps(public_artifact(event), sort_keys=True, ensure_ascii=False))
             handle.write("\n")
         return path
 
@@ -77,7 +79,7 @@ class RunStore:
         """写入最终报告"""
         path = self.report_path(task_state)
         path.parent.mkdir(parents=True, exist_ok=True)
-        self._write_json_atomic(path, report)
+        self._write_json_atomic(path, public_artifact(report))
         return path
 
     def load_task_state(self, task_id: str) -> dict[str, Any]:

@@ -1,0 +1,7 @@
+{
+  "schema_version": "pico-auto-dream-fixture-sessions-v1",
+  "sessions": [
+    {"id": "d03-001", "recorded_at": "2026-03-01T10:00:00Z", "observations": ["The deployment target is Render."]},
+    {"id": "d03-002", "recorded_at": "2026-03-08T10:00:00Z", "observations": ["The deployment target is Fly.io, superseding Render."]}
+  ]
+}

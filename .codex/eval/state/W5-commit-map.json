@@ -1,0 +1,123 @@
+{
+  "schema_version": "pico-eval-commit-map-v1",
+  "wave": "W5",
+  "wave_base_sha": "a834e78098487888264b5ffdea37f52a8d635fbf",
+  "control_overlay_sha256": "68e66b17aff7c348c223402a0093cb76ab2bd14565547e8b8aa06a94b7aad279",
+  "entries": {
+    "TOOL-040-I": {
+      "worker_agent_path": "/root/w5_tool_040_i",
+      "durable_thread_uuid": null,
+      "prompt_sha256": "b4fedf757bba53fdf0876e4f2820914d9c52399bbf25ae94255da0de527d616a",
+      "worker_head": "5de57fd3988e9b4fbfc5753d179f2d69a87dce29",
+      "worker_commits": [
+        "32a617054cb06bfb9b8c4ae8e3e05d90afe31559",
+        "5de57fd3988e9b4fbfc5753d179f2d69a87dce29"
+      ],
+      "dependency_commits": [],
+      "applied_dependency_commits": [],
+      "canonical_commit": "68d1829babe6d2908bc22ee52488098962aa94c5",
+      "handoff_sha256": "3ea08ab84d4bcdc632280bb8e65e572aa1a448b04781394f242880790faf0922",
+      "stable_patch_id": "d42016512ec5d9d00232835b1e04dbf00177d26b",
+      "stable_patch_id_scope": "wave_base_to_worker_head_and_canonical_ticket_commit",
+      "stable_patch_id_match": true,
+      "outcome": "accepted"
+    },
+    "TOOL-041-M": {
+      "worker_agent_path": "/root/w5_tool_041_m",
+      "durable_thread_uuid": null,
+      "prompt_sha256": "2faf566f20517b572ab16991089690731337e1e2f2985e437b84286d8a6e7a3c",
+      "worker_head": "9cf136fed19f2ae1224eed88840de76d44539dd3",
+      "worker_commits": [
+        "419fb2f5165860aa801cada58bd4f47ed1bdcb08",
+        "9cf136fed19f2ae1224eed88840de76d44539dd3"
+      ],
+      "dependency_commits": ["68d1829babe6d2908bc22ee52488098962aa94c5"],
+      "applied_dependency_commits": ["d8b4d445554223138188e6059e867ddb63dbc7be"],
+      "canonical_commit": "3dd42df4981febb00f221f8c3471640eeb5efb8d",
+      "handoff_sha256": "7b3b413cc1f41f8db5f5d218936013e32ea41059dfe0505b74a5eefc7fbd64d5",
+      "stable_patch_id": "654c3091cfcdfd7075d857aa984c983c848e1e3a",
+      "stable_patch_id_scope": "applied_dependency_tip_to_worker_head_and_canonical_ticket_commit",
+      "stable_patch_id_match": true,
+      "outcome": "accepted"
+    },
+    "TOOL-049-I": {
+      "worker_agent_path": "/root/w5_tool_049_i",
+      "durable_thread_uuid": null,
+      "prompt_sha256": "3eb8674d2e7f3d6bfd20c4b1fa46d2bd1bb8ac08c4d71ac08baec9d1012b3873",
+      "worker_head": "dd03ed6dbf2a03a384f73d3111f3f8a00d591ab3",
+      "worker_commits": [
+        "f1623c8dcb6dd54a08cc68be1b6578d579bbdb60",
+        "dd03ed6dbf2a03a384f73d3111f3f8a00d591ab3"
+      ],
+      "dependency_commits": ["68d1829babe6d2908bc22ee52488098962aa94c5"],
+      "applied_dependency_commits": ["0239f661beece60124473d72db4f4e43a4ad75bd"],
+      "canonical_commit": "6a12fa8a05aa1a7cbac36496fce2c930a230e72b",
+      "handoff_sha256": "5eef3b00058eb07ec33527ff6e33ba628dea5ec27967a0ae0caf6b60e1cb2936",
+      "stable_patch_id": "085b3965be17c21cf4b5ecca7893dc99daff44de",
+      "stable_patch_id_scope": "applied_dependency_tip_to_worker_head_and_canonical_ticket_commit",
+      "stable_patch_id_match": true,
+      "outcome": "accepted"
+    },
+    "EVAL-031-G": {
+      "worker_agent_path": "/root/w5_eval_031_g",
+      "durable_thread_uuid": null,
+      "prompt_sha256": "b74a5ed238d23b409a9b608c89eb3039f8e6a003e2d1de90b85b7bb8d17d51ed",
+      "worker_head": "8888b0b77f712ac8a2edda3afbcb5fcdfed36ca4",
+      "worker_commits": [
+        "df4f6567cda2955d347fc18df82a85c01e887323",
+        "8888b0b77f712ac8a2edda3afbcb5fcdfed36ca4"
+      ],
+      "dependency_commits": [
+        "68d1829babe6d2908bc22ee52488098962aa94c5",
+        "3dd42df4981febb00f221f8c3471640eeb5efb8d"
+      ],
+      "applied_dependency_commits": [
+        "d101d4dff392632f6ad47e17a28f63cb7de509ea",
+        "a77b4a9177838120bdcdaebd3f3320b57f83f4a9"
+      ],
+      "canonical_commit": "f1fc030271a6c4fd3d793e40b7e9f42227391890",
+      "handoff_sha256": "c317b79cd19afdcac2df3de5e71cf08748647fac8fcb9e4244e5b669826fb31c",
+      "stable_patch_id": "8d79bfcbb21c783beebc200095d52f1f996a81c0",
+      "stable_patch_id_scope": "applied_dependency_tip_to_worker_head_and_canonical_ticket_commit",
+      "stable_patch_id_match": true,
+      "outcome": "accepted"
+    },
+    "TOOL-042-G": {
+      "worker_agent_path": "/root/w5_tool_042_g",
+      "durable_thread_uuid": null,
+      "prompt_sha256": "72dd396261ed1c2c38d08dc83b93785c99fdf442c97d772bd4b2af68bcd6ee82",
+      "worker_head": "1c95e7a9c2d1728675175188a3325f59e294e99b",
+      "worker_commits": [
+        "712a398632f410be2c25f1f9394d50200befa4fc",
+        "1c95e7a9c2d1728675175188a3325f59e294e99b"
+      ],
+      "dependency_commits": [
+        "68d1829babe6d2908bc22ee52488098962aa94c5",
+        "3dd42df4981febb00f221f8c3471640eeb5efb8d",
+        "6a12fa8a05aa1a7cbac36496fce2c930a230e72b",
+        "f1fc030271a6c4fd3d793e40b7e9f42227391890"
+      ],
+      "applied_dependency_commits": [
+        "b8caeabeaa0691151dbf30ebe0d3889997f5dc49",
+        "22f18219af28bba18f4f106b07d5481a6740fff1",
+        "c1dd4e15641fd9efec8aab4d9d67b72e672d07aa",
+        "7e93936331317c119c8adac26bdc500b3ba608ea"
+      ],
+      "canonical_commit": "e17396dda5f871ec83de7c845e60182587e32b14",
+      "handoff_sha256": "437d9c24c7cc38c68f8f3f6f2bdfe322e55408ada19c01f61d1474d3a0b55b2d",
+      "freeze_proposal_sha256": "f90bc12f5588d565da4f3a5f2cc83e36eec91ec91dac10edead1ac0f91d05e35",
+      "stable_patch_id": "c559f1cf7572c7a1f40e971c12ff891f6f08ca61",
+      "stable_patch_id_scope": "applied_dependency_tip_to_worker_head_and_canonical_ticket_commit",
+      "stable_patch_id_match": true,
+      "outcome": "blocked"
+    }
+  },
+  "worker_bundle": {
+    "path": "F:\\dev\\llm\\pico-eval-artifacts\\wave-bundles\\W5-workers.bundle",
+    "sha256": "5b89f26e4a587da8ced5ed24b5466bb1898f97017d0b47fab6713d8029b07d16",
+    "size_bytes": 16348944,
+    "ref_count": 5,
+    "verification": "complete history; git bundle verify passed"
+  },
+  "updated_at": "2026-07-22T12:57:04.6125953+08:00"
+}

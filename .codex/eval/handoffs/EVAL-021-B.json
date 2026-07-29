@@ -1,0 +1,103 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "EVAL-021-B",
+  "instance_id": "W1-EVAL-021-B-01",
+  "wave": "W1",
+  "role": "fixture_builder",
+  "status": "complete",
+  "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+  "head_sha": "3211e1dd98fcabe20340d185f4020ca0124528fa",
+  "dependency_commits": [
+    "539904b31541f898c5da795bb690dce7c6d43701"
+  ],
+  "applied_dependency_commits": [
+    {
+      "source_sha": "539904b31541f898c5da795bb690dce7c6d43701",
+      "local_sha": "b1b4324a336a57ffc3c4f56f884d960c3f5f5259"
+    }
+  ],
+  "dependency_handoff_hashes": {
+    "EVAL-020": "964e7eed10799462a645f4a3135ca409c5c49744b76010385749d77f6b099464"
+  },
+  "own_commits": [
+    "3211e1dd98fcabe20340d185f4020ca0124528fa"
+  ],
+  "files_changed": [
+    "benchmarks/v3/auto-dream/fixtures/D05/memory/MEMORY.md",
+    "benchmarks/v3/auto-dream/fixtures/D05/memory/topics/atlas-project.md",
+    "benchmarks/v3/auto-dream/fixtures/D05/memory/topics/user-collaboration.md",
+    "benchmarks/v3/auto-dream/fixtures/D05/sessions/2026-07-21.jsonl",
+    "benchmarks/v3/auto-dream/fixtures/D06/memory/MEMORY.md",
+    "benchmarks/v3/auto-dream/fixtures/D06/memory/topics/scheduling.md",
+    "benchmarks/v3/auto-dream/fixtures/D06/sessions/2026-07-21.jsonl",
+    "benchmarks/v3/auto-dream/fixtures/D07/memory/MEMORY.md",
+    "benchmarks/v3/auto-dream/fixtures/D07/memory/topics/orion-project.md",
+    "benchmarks/v3/auto-dream/fixtures/D07/sessions/2026-07-21.jsonl",
+    "benchmarks/v3/auto-dream/fixtures/D07/sessions/package.json",
+    "benchmarks/v3/auto-dream/fixtures/D08/memory/MEMORY.md",
+    "benchmarks/v3/auto-dream/fixtures/D08/memory/topics/cedar-project.md",
+    "benchmarks/v3/auto-dream/fixtures/D08/sessions/2026-07-21.jsonl",
+    "benchmarks/v3/auto-dream/fragments/D05-D08.json"
+  ],
+  "commands_run": [
+    "UV_CACHE_DIR=<task-specific-temp-cache> uv run python - (D05-D08 fixture semantic self-check)",
+    "UV_CACHE_DIR=<task-specific-temp-cache> uv run pytest tests/test_dream_evaluator.py -q",
+    "UV_CACHE_DIR=<task-specific-temp-cache> uv run ruff check pico/evaluation/dream_eval.py tests/test_dream_evaluator.py",
+    "git diff --cached --check"
+  ],
+  "tests": [
+    {
+      "command": "fixture semantic self-check",
+      "result": "passed",
+      "details": "Validated the D05-D08 fragment with the frozen evaluator; materialized expected outputs passed multi-topic/index, relative-date replacement, transient/code-derived filtering, secret gate, and D08 second-run semantic idempotency."
+    },
+    {
+      "command": "uv run pytest tests/test_dream_evaluator.py -q",
+      "result": "passed",
+      "details": "11 passed"
+    },
+    {
+      "command": "uv run ruff check pico/evaluation/dream_eval.py tests/test_dream_evaluator.py",
+      "result": "passed",
+      "details": "All checks passed"
+    },
+    {
+      "command": "git diff --cached --check",
+      "result": "passed",
+      "details": "No whitespace errors after fixture commit normalization."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "benchmarks/v3/auto-dream/fragments/D05-D08.json",
+      "sha256": "e772645d3d3d18482b9372b941ad990838d3290f780414642b7b46be527ae530",
+      "hash_basis": "git_blob_bytes",
+      "contract": "Frozen D05-D08 fragment manifest for downstream assembler ownership."
+    }
+  ],
+  "frozen_hashes": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "auto_dream_fixture_schema": "ad72911f72985c94af2c3c003c00944b9e3b0b99cc6eb2519d3f70abe02a4539",
+    "native_contract": null,
+    "tool_schema": null,
+    "sdk_transport_decision": null,
+    "provider_selection": null,
+    "native_resume_gate": null
+  },
+  "native_protocol_observations": {
+    "observation_scope": "offline fixture validation only; no provider or online evaluation was run",
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0
+  },
+  "defects": [],
+  "risks": [
+    "D05-D08 are fragment inputs only; the downstream assembler remains the sole owner of benchmarks/v3/auto-dream/cases.json."
+  ],
+  "status_proposal": null,
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}

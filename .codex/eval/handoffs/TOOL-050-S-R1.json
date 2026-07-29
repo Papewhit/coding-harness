@@ -1,0 +1,242 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-050-S-R1",
+  "instance_id": "W6R2-TOOL-050-S-R1-01",
+  "wave": "W6R2",
+  "role": "aggregator/recovered-native-provider-selection-gate-n1",
+  "status": "complete",
+  "gate_status": "passed",
+  "source_thread_id": "019f8e25-2f02-73d0-9a55-3ce4ffa1bb1f",
+  "base_sha": "6b4fa94948888b7c95dfbe4cd0134205356decba",
+  "wave_base_sha": "6b4fa94948888b7c95dfbe4cd0134205356decba",
+  "source_head_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+  "source_tree": "158cd2abde04d20e0544c4615db3cb0676f8fc83",
+  "source_head_semantics": "Immutable dependency-applied source/run snapshot used by all three R2 shards and proposed as the canonical runtime code commit for the authorized human smoke and later formal native evaluation.",
+  "worker_metadata_head_sha": "df19376d2298c610f1923cedbc58a64f293f52d8",
+  "worker_metadata_head_semantics": "This worker's verified selection payload commit. It contains only selection and status/freeze proposals and must not replace the runtime source SHA. The later handoff-only metadata commit intentionally cannot self-record its own SHA.",
+  "branch": "codex/w6r2-tool-050-s-r1",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/5fb8/pico",
+  "dependency_commits": [],
+  "own_commits": [
+    "df19376d2298c610f1923cedbc58a64f293f52d8"
+  ],
+  "dependency_handoff_hashes": {
+    "TOOL-058-G": "5dcbbcc456f1d917c4bbb8708495ef1ab38d9b7f5d5268f62b5bb7d3524d3df8",
+    "TOOL-050-QO-R2": "52d3b226d233b697f505bc2c4b8649511f3afd7dc379e3b10211dd85ab1958ac",
+    "TOOL-050-QA-R2": "bb1dae84b0ed3ba267e2c7623fb6eb48640214fb8ba45feb5481d8be4c6d2000",
+    "TOOL-050-DA-R2": "eec6ee22918fb50adfde7df7a0a7c39eb3d85894a7e2c627a57a59b964202763"
+  },
+  "frozen_hashes": {
+    "formal_status_at_start": "d8a5b26295478e65dbb213390733f81ec0e9f6e4eca32fe980921dea50d78e4b",
+    "formal_freeze": "546893c11eeb2c78e473257e6bbb166cb1c5b904d22289a34cdb57865034b7ce",
+    "cases_git_blob_oid": "f513f6e15c521104b12fe348dc280f73624acd56",
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "sdk_dependency_lock": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+    "native_deterministic_gate": "2fc1ebbe4d64c5be80e7fe063584915f12aabf3a8f8c08796d2cf009e94849a5",
+    "provider_selection": "e94483ef222373139b9f07173632d579416056248431deaafcf0bcaf0c7a1278",
+    "selected_profile_manifest": "499655acd72b0c10f0bd0a938a032060fb7a5b776e74e478742078da1a137331",
+    "selected_conformance_bundle": "8d6c4061d9960e4670f221f8507618cb2bacb81f2ebf50f3d1a9bfb279d813f2"
+  },
+  "source_bindings": {
+    "cases": {
+      "git_blob_oid": "f513f6e15c521104b12fe348dc280f73624acd56",
+      "git_blob_payload_sha256": "b20cdf446a21e20db035213c9308b47daa252cb9b0aadbebf7ec5747750e9f4d"
+    },
+    "evaluator": {
+      "git_blob_oid": "244bf13a0c77cea907d7c6bc98afbf5d3299670b",
+      "git_blob_payload_sha256": "777313f0966224b82071ceff4d7acad633031fcde87eb63a97e5c468c89f0eec"
+    },
+    "production_runner": {
+      "git_blob_oid": "cfd9a0c654e0200ea9ca437bd8c3fd1a92d58587",
+      "git_blob_payload_sha256": "35e4573b5275015eb6caabde6a8c6baa9a17740742b5aa155baf93fb21de56e8"
+    },
+    "formal_cli": {
+      "git_blob_oid": "d615afafd7cbb02d75e571a06c82b7e6d16a9821",
+      "git_blob_payload_sha256": "834f87bc9ee04fac6c4247aab7f352c6d6f21bc92da3c4121bb2303ce6f6a95d"
+    },
+    "all_match_run_snapshot": true
+  },
+  "selection": {
+    "selected_profile": "dashscope-o",
+    "profile_id": "sha256:41ebb321c6332867f0bb020621b7e1c17f8c60430374c37c3a670c916326ee70",
+    "public_manifest_sha256": "499655acd72b0c10f0bd0a938a032060fb7a5b776e74e478742078da1a137331",
+    "conformance_bundle_sha256": "8d6c4061d9960e4670f221f8507618cb2bacb81f2ebf50f3d1a9bfb279d813f2",
+    "selection_status": "selected",
+    "eligible_profile_count": 1,
+    "gate_n1": "passed",
+    "native_eval_ready_proposal": "accepted",
+    "reason": "dashscope-o is the only profile with a complete 24-row matrix and zero failures on every hard Gate metric."
+  },
+  "profile_results": {
+    "dashscope-o": {
+      "eligible": true,
+      "scheduled_rows": "24/24",
+      "tool_required_native_call_observed": "21/21",
+      "call_id_result_match": "50/50",
+      "batch_completeness": "35/35",
+      "safety_chain_completeness": "50/50",
+      "duplicate_after_result": 0,
+      "unknown_block_loss": 0,
+      "text_envelope": 0,
+      "sdk_retry": 0,
+      "completion": "18/24",
+      "protocol_error_count": 0,
+      "repetition_status_stability": "6/8 cases"
+    },
+    "dashscope-a": {
+      "eligible": false,
+      "safety_chain_completeness": "82/85",
+      "safety_chain_bypass": 3
+    },
+    "deepseek": {
+      "eligible": false,
+      "safety_chain_completeness": "138/148",
+      "safety_chain_bypass": 10,
+      "late_atomic_publication_retry": false
+    }
+  },
+  "native_protocol_observations": {
+    "scheduled_rows": 72,
+    "failed_rows_retained": 26,
+    "tool_required_native_call_observed": "63/63",
+    "call_id_result_match": "283/283",
+    "batch_completeness": "200/200",
+    "duplicate_call_after_result_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 13,
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "sdk_retry_count": 0,
+    "pico_retry_count": 0,
+    "runner_eligible_used_as_gate_eligibility": false,
+    "absence_of_observation_treated_as_pass": false
+  },
+  "human_smoke_proposal": {
+    "profile": "dashscope-o",
+    "profile_id": "sha256:41ebb321c6332867f0bb020621b7e1c17f8c60430374c37c3a670c916326ee70",
+    "source_commit": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+    "status": "not_run",
+    "requires_explicit_user_authorization": true
+  },
+  "proposed_canonical_commit": {
+    "sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+    "semantics": "Immutable dependency-applied runtime source/run snapshot. Worker metadata commits are not runtime source."
+  },
+  "concurrent_duplicate_contamination": {
+    "status": "stopped_and_excluded",
+    "duplicate_commit_count": 0,
+    "writer_state": "idle_and_sealed",
+    "attribution": "The interrupted Integrator duplicate wrote uncommitted bytes into this worker's worktree and the shared selection directory.",
+    "excluded_file_byte_sha256": {
+      "benchmarks/v3/native-provider/selection-w6r2.json": "5b62c63362ed40c5c49f3b7ee447438357a153f60062065d8ad5e05b5cb61034",
+      ".codex/eval/proposals/TOOL-050-S-R1.freeze.json": "0b6062234b4345f9453e9df4f7d70ed583432b6961a78276a1d751e2e8b8257a",
+      ".codex/eval/proposals/TOOL-050-S-R1.status.json": "69d91808eb417c947f955d96c7a1645aaded9b0ea750b0dddff55f4f82ed26a9",
+      ".codex/eval/handoffs/TOOL-050-S-R1.json": "69a2c4544bf61b6d3253d8a4c9babf2dcfeab02234bdc0ede67e1b9a01ffa1be",
+      "selection/summary.json": "5bb679b9a1d338ac6b8df22ca3d1248c8d986440ceb2863fc90a422685a3e0d7",
+      "selection/inventory.json": "0cce092490986dcd742d75789f7547298d6ff70138b53a8eda99223e4f68e8bf"
+    },
+    "adopted_commit": null,
+    "adopted_as_gate_input": false,
+    "adopted_as_output": false,
+    "recovery": "Repository selection/proposals were restored byte-for-byte from df19376. Shared summary, Markdown, verification, and inventory were regenerated from this worker's independent reconstruction and revalidated.",
+    "no_post_recovery_drift_observed": true
+  },
+  "outputs": [
+    {
+      "path": "benchmarks/v3/native-provider/selection-w6r2.json",
+      "sha256": "e94483ef222373139b9f07173632d579416056248431deaafcf0bcaf0c7a1278"
+    },
+    {
+      "path": ".codex/eval/proposals/TOOL-050-S-R1.freeze.json",
+      "sha256": "599c7f1466f81514a6242c36bb4c764afddf29d20ef19755af720ff72bb0e699"
+    },
+    {
+      "path": ".codex/eval/proposals/TOOL-050-S-R1.status.json",
+      "sha256": "039fca1eebce351bce7d156cd6f49b3bfbf112f3df2e6bdb873e69f58441351f"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/62e0a441b9321d96f50f2863f97ed7e96ace8c9d/selection/summary.json",
+      "sha256": "36a0dc14e86692ad32c5052633675ad4fbe107b2f9134a4ae150301d0f1a2caf"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/62e0a441b9321d96f50f2863f97ed7e96ace8c9d/selection/summary.md",
+      "sha256": "c3f35b09cdc4c8b3fd764957d2c3909513d5a8199b4a547216d1790c1d044d81"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/62e0a441b9321d96f50f2863f97ed7e96ace8c9d/selection/verification.json",
+      "sha256": "3644a4d3d95e014c1300ea04e7ec5a96fbbc7b8f62c5ef6f780e42b8492b432d"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/62e0a441b9321d96f50f2863f97ed7e96ace8c9d/selection/inventory.json",
+      "sha256": "8521b66b2614a51872d721e62869ccd942e6d903dbf20924d677bd87ab357310"
+    },
+    {
+      "path": ".codex/eval/handoffs/TOOL-050-S-R1.json",
+      "persistence": "The final handoff-only metadata commit is intentionally not self-recorded."
+    }
+  ],
+  "tests": [
+    {
+      "name": "input artifact format and hash validation",
+      "result": "passed",
+      "details": "9 JSON and 3 JSONL files reparsed; all 72 JSONL rows were retained, unique, and hash-bound."
+    },
+    {
+      "name": "independent evidence reconstruction",
+      "result": "passed",
+      "details": "All 283 provider call IDs have exactly one result; all 200 batches are complete; all safety-chain stage sequences and continuation roundtrips rebuild."
+    },
+    {
+      "name": "generated output validation",
+      "result": "passed",
+      "details": "All generated JSON and Markdown files reparsed; inventory hashes and cross-output references matched."
+    },
+    {
+      "name": "public sensitive-data scan",
+      "result": "passed",
+      "credential_or_raw_url_pattern_hits": 0
+    },
+    {
+      "name": "concurrent duplicate exclusion and no-drift recheck",
+      "result": "passed"
+    },
+    {
+      "name": "git diff --check",
+      "result": "passed"
+    }
+  ],
+  "allowed_write_paths": [
+    "benchmarks/v3/native-provider/selection-w6r2.json",
+    "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/62e0a441b9321d96f50f2863f97ed7e96ace8c9d/selection/**",
+    ".codex/eval/proposals/TOOL-050-S-R1.freeze.json",
+    ".codex/eval/proposals/TOOL-050-S-R1.status.json",
+    ".codex/eval/handoffs/TOOL-050-S-R1.json"
+  ],
+  "files_changed": [
+    "benchmarks/v3/native-provider/selection-w6r2.json",
+    ".codex/eval/proposals/TOOL-050-S-R1.freeze.json",
+    ".codex/eval/proposals/TOOL-050-S-R1.status.json",
+    ".codex/eval/handoffs/TOOL-050-S-R1.json",
+    "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/62e0a441b9321d96f50f2863f97ed7e96ace8c9d/selection/summary.json",
+    "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/62e0a441b9321d96f50f2863f97ed7e96ace8c9d/selection/summary.md",
+    "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/62e0a441b9321d96f50f2863f97ed7e96ace8c9d/selection/verification.json",
+    "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/62e0a441b9321d96f50f2863f97ed7e96ace8c9d/selection/inventory.json"
+  ],
+  "risks": [
+    "The Wave Integrator must independently verify and promote the proposals; this ticket did not write formal STATUS/FREEZE.",
+    "Human smoke remains unrun and requires explicit user authorization before formal effectiveness evaluation.",
+    "The selected profile completed 18/24 rows and had stable pass/fail status in 6/8 cases; these post-hard-Gate metrics remain visible for downstream judgment."
+  ],
+  "ownership_change_request": null,
+  "formal_status_written": false,
+  "formal_freeze_written": false,
+  "formal_effectiveness_run": false,
+  "human_smoke_run": false,
+  "resume_run": false,
+  "w7_started": false,
+  "ready_for_integration": true,
+  "stop_after_handoff": true
+}

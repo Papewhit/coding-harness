@@ -1,0 +1,103 @@
+{
+  "schema_version": "pico-eval-status-proposal-v1",
+  "ticket_id": "TOOL-058-G",
+  "instance_id": "W6R2-TOOL-058-G-01",
+  "wave": "W6R2",
+  "role": "gate_integrator/wsl-native-preflight-and-run-snapshot",
+  "status": "complete",
+  "gate_status": "passed",
+  "immutable_base_sha": "6b4fa94948888b7c95dfbe4cd0134205356decba",
+  "candidate_source_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+  "candidate_source_tree": "158cd2abde04d20e0544c4615db3cb0676f8fc83",
+  "source_status_sha256": "ba98e3804b3a6f6a466a933f3fa6330e5bf539ef5bb07b73267dbd6b3cde92e0",
+  "source_freeze_sha256": "b4893c10887bb774dda860a5f4b13ec6fa9b8c014e0cb0257e409c0f27df6ba6",
+  "gate_report_sha256": "7d59bbfdce5eccc3ebc70691abb68b65e0c4536b71fd8158d0fd119dbf51afd9",
+  "artifact_inventory_sha256": "4e8df2eb9beb1cd8174b32442d936650df4d9b0806d5d13953e8134507055705",
+  "proposal": {
+    "ticket_execution_status": "complete",
+    "ticket_gate_status": "passed",
+    "run_snapshot_approved_for_live_conformance": true,
+    "proposed_run_snapshot_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+    "native_eval_ready": "preflight_passed_pending_conformance_shards",
+    "gate_n1": "not_run",
+    "bound_profile_count": 3,
+    "formal_online_lanes": {
+      "formal_effectiveness": "not_run",
+      "human_smoke": "not_run",
+      "resume": "not_run"
+    },
+    "downstream": {
+      "run_shards_started": false,
+      "TOOL-050-S-R1_started": false,
+      "w7_started": false
+    },
+    "reason": "TOOL-058-G completed the canonical Ubuntu WSL2/Python 3.12 preflight. All required suites passed, three sanitized profiles were rebuilt and exactly matched the private configuration without persisting its locator or identity, and the updated read-only verifier accepted the two 8x3 fake-transport bundles with complete call/result/batch/safety evidence."
+  },
+  "hard_gate_result": {
+    "wsl_fresh_clone": {
+      "source_sha_verified": true,
+      "source_tree_verified": true,
+      "python_3_12": true,
+      "uv_sync_frozen": true,
+      "ruff": "passed",
+      "targeted": "passed_36",
+      "protected": "passed_27",
+      "deterministic": "passed_97",
+      "full_suite": "passed_516_with_2_live_opt_in_skips"
+    },
+    "profile_binding": {
+      "configured": 3,
+      "bound": 3,
+      "minimum_requirement_met": true,
+      "locator_value_persisted": false,
+      "private_config_hash_persisted": false
+    },
+    "fake_transport_bundles": {
+      "dialects": 2,
+      "cases_per_dialect": 8,
+      "repetitions_per_case": 3,
+      "rows_per_dialect": 24,
+      "same_read_only_verifier": "passed",
+      "negative_matrix_controls": "passed_3_of_3"
+    },
+    "artifact_validation": {
+      "inventory": "passed_25_of_25",
+      "format_reparse": "passed_18_json_2_jsonl_6_xml",
+      "credential_scan": "passed_zero_matches",
+      "read_only_verification_writes": 0
+    },
+    "live_provider_http_attempt_count": 0,
+    "all_required_tests_passed": true
+  },
+  "superseded_environment_diagnostic": {
+    "classification": "Initial Gate launcher omitted the user-level uv directory from PATH, causing one nested deterministic uv command to exit 127.",
+    "source_changed": false,
+    "resolution": "The canonical Gate environment explicitly added the user-level uv directory to PATH and all required suites were rerun from the same clean source and passed.",
+    "evidence_retained": true
+  },
+  "blocking_defects": [],
+  "proposed_changes": {
+    "ticket_instances": {
+      "W6R2-TOOL-058-G-01": {
+        "ticket_id": "TOOL-058-G",
+        "role": "gate_integrator/wsl-native-preflight-and-run-snapshot",
+        "branch": "codex/w6r2-tool-058-g",
+        "worktree": "C:/Users/Papewhit/.codex/worktrees/1fef/pico",
+        "base_sha": "6b4fa94948888b7c95dfbe4cd0134205356decba",
+        "candidate_source_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+        "status": "complete",
+        "gate_status": "passed"
+      }
+    },
+    "gates": {
+      "native_eval_ready": "preflight_passed_pending_conformance_shards",
+      "native_resume_ready": "pending"
+    },
+    "run_snapshot_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+    "w7_ready": false
+  },
+  "canonical_status_written": false,
+  "canonical_freeze_written": false,
+  "canonical_state_written": false,
+  "canonical_state_owner": "W6R2 Wave Integrator"
+}

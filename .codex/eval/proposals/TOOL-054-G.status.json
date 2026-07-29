@@ -1,0 +1,103 @@
+{
+  "schema_version": "pico-eval-status-proposal-v1",
+  "ticket_id": "TOOL-054-G",
+  "instance_id": "W6R-TOOL-054-G-01",
+  "wave": "W6R",
+  "role": "integrator_ticket/gate",
+  "status": "complete",
+  "gate_status": "blocked",
+  "immutable_base_sha": "48a39193580e48acee3fea5c3bfa107e46443d04",
+  "candidate_source_sha": "7eb736b3af73c5a82cb46ee3828b6e29a9ebb909",
+  "candidate_source_tree": "08f05c340bb2caa65c8de5ced5200e4d0b6b1b78",
+  "source_status_sha256": "ce0e69ce1bc6da75c4710459eb44bf35e6b75cd79df501e0885a9b66b3c9df3a",
+  "source_freeze_sha256": "b4893c10887bb774dda860a5f4b13ec6fa9b8c014e0cb0257e409c0f27df6ba6",
+  "gate_report_sha256": "8be0a1e8a1bee9e00448d0dfe97aacd1b83111f66ab4d4bc590ca976897d6333",
+  "artifact_inventory_sha256": "f3b66c381712857098a17c74b5aa5d1fcb79c30b48be7351ff93ba1aef765e5a",
+  "proposal": {
+    "ticket_execution_status": "complete",
+    "ticket_gate_status": "blocked",
+    "run_snapshot_approved_for_live_conformance": false,
+    "proposed_run_snapshot_sha": null,
+    "native_eval_ready": "blocked",
+    "gate_n1": "blocked",
+    "bound_profile_count": 3,
+    "formal_online_lanes": {
+      "formal_effectiveness": "blocked_not_run",
+      "human_smoke": "blocked_not_run",
+      "resume": "blocked_not_run"
+    },
+    "downstream": {
+      "run_shards_started": false,
+      "TOOL-050-S-R1_started": false,
+      "w7_started": false
+    },
+    "reason": "TOOL-054-G completed the deterministic preflight evidence, but the required Windows protected suite failed and the required Windows full suite did not complete on two attempts. The ticket therefore cannot approve a live-conformance run snapshot."
+  },
+  "hard_gate_result": {
+    "windows": {
+      "targeted": "passed",
+      "protected": "failed",
+      "full_suite": "incomplete_exit_137",
+      "ruff": "passed",
+      "runtime_adapter": "passed"
+    },
+    "wsl_fresh_clone": {
+      "targeted": "passed",
+      "protected": "passed",
+      "full_suite": "passed",
+      "ruff": "passed"
+    },
+    "profile_binding": {
+      "configured": 3,
+      "bound": 3,
+      "minimum_requirement_met": true
+    },
+    "fake_transport_cli_smoke": "passed_24_of_24",
+    "preflight_failure_computability": "not_computable",
+    "absence_of_observation_treated_as_pass": false,
+    "credential_scan": "passed_zero_matches",
+    "live_provider_http_attempt_count": 0,
+    "all_required_tests_passed": false
+  },
+  "blocking_defects": [
+    {
+      "id": "TOOL-054-G-WIN-PROTECTED-001",
+      "detail": "The required Windows protected suite exited 1 with 10 failures and 17 passes."
+    },
+    {
+      "id": "TOOL-054-G-WIN-FULL-002",
+      "detail": "The required Windows full suite terminated with exit 137 at 14 percent on two attempts; no complete full-suite result exists."
+    }
+  ],
+  "proposed_changes": {
+    "ticket_instances": {
+      "W6R-TOOL-054-G-01": {
+        "ticket_id": "TOOL-054-G",
+        "role": "integrator_ticket/gate",
+        "branch": "codex/w6r-tool-054-g",
+        "worktree": "C:/Users/Papewhit/.codex/worktrees/fa2a/pico",
+        "base_sha": "48a39193580e48acee3fea5c3bfa107e46443d04",
+        "candidate_source_sha": "7eb736b3af73c5a82cb46ee3828b6e29a9ebb909",
+        "status": "complete",
+        "gate_status": "blocked"
+      }
+    },
+    "blocked_tickets_add": [
+      "TOOL-054-G"
+    ],
+    "gates": {
+      "native_eval_ready": "blocked",
+      "native_resume_ready": "blocked"
+    },
+    "w6r_exit_gate_satisfied": false,
+    "w7_ready": false
+  },
+  "remediation_ownership_request": {
+    "owner": "W6R Wave Integrator to assign separately scoped remediation",
+    "request": "Resolve or formally supersede the required Windows protected/full Gate failures, then rerun TOOL-054-G from an authorized immutable base without changing frozen cases or existing evaluation artifacts."
+  },
+  "canonical_status_written": false,
+  "canonical_freeze_written": false,
+  "canonical_state_written": false,
+  "canonical_state_owner": "W6R Wave Integrator"
+}

@@ -1,0 +1,116 @@
+{
+  "schema_version": "pico-eval-status-proposal-v1",
+  "ticket_id": "TOOL-050-S-R1",
+  "instance_id": "W6R2-TOOL-050-S-R1-01",
+  "wave": "W6R2",
+  "wave_base_sha": "6b4fa94948888b7c95dfbe4cd0134205356decba",
+  "run_snapshot_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+  "promotion_owner": "W6R2 Wave Integrator",
+  "proposal": {
+    "ticket_status": "complete",
+    "gate_n1": "passed",
+    "native_eval_ready": "accepted",
+    "eligible_profile_count": 1,
+    "selected_profile": "dashscope-o",
+    "human_smoke": {
+      "profile": "dashscope-o",
+      "profile_id": "sha256:41ebb321c6332867f0bb020621b7e1c17f8c60430374c37c3a670c916326ee70",
+      "source_commit": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+      "status": "awaiting_explicit_user_authorization"
+    },
+    "formal_online_lanes": {
+      "formal_effectiveness": "blocked_pending_human_smoke",
+      "auto_dream": "blocked_pending_human_smoke",
+      "local_task": "blocked_pending_human_smoke",
+      "resume": "blocked_pending_TOOL-062-G"
+    },
+    "reason": "The recovered W6R2 artifacts contain exactly one hard-Gate-eligible profile. dashscope-o passes all hard requirements; the other profiles fail on safety-chain bypass evidence."
+  },
+  "hard_gate_result": {
+    "complete_conformance_evidence": "present",
+    "scheduled_rows": "72/72",
+    "tool_required_native_call_observed": {
+      "dashscope-o": "21/21",
+      "dashscope-a": "21/21",
+      "deepseek": "21/21"
+    },
+    "call_id_result_match": {
+      "dashscope-o": "50/50",
+      "dashscope-a": "85/85",
+      "deepseek": "148/148"
+    },
+    "batch_result_completeness": {
+      "dashscope-o": "35/35",
+      "dashscope-a": "76/76",
+      "deepseek": "89/89"
+    },
+    "duplicate_call_after_result": {
+      "dashscope-o": 0,
+      "dashscope-a": 0,
+      "deepseek": 0
+    },
+    "unknown_block_loss": {
+      "dashscope-o": 0,
+      "dashscope-a": 0,
+      "deepseek": 0
+    },
+    "safety_chain_bypass": {
+      "dashscope-o": 0,
+      "dashscope-a": 3,
+      "deepseek": 10
+    },
+    "text_envelope": {
+      "dashscope-o": 0,
+      "dashscope-a": 0,
+      "deepseek": 0
+    },
+    "sdk_hidden_retry": {
+      "dashscope-o": 0,
+      "dashscope-a": 0,
+      "deepseek": 0
+    },
+    "absence_of_observation_treated_as_pass": false
+  },
+  "selection_comparison": {
+    "performed_only_after_hard_gate": true,
+    "eligible_profiles_compared": ["dashscope-o"],
+    "completion": "18/24",
+    "protocol_errors": 0,
+    "sdk_retries": 0,
+    "pico_retries": 0,
+    "repetition_status_stability": "6/8 cases"
+  },
+  "artifact_index": {
+    "selection": {
+      "path": "benchmarks/v3/native-provider/selection-w6r2.json",
+      "sha256": "e94483ef222373139b9f07173632d579416056248431deaafcf0bcaf0c7a1278"
+    },
+    "summary_json": {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/62e0a441b9321d96f50f2863f97ed7e96ace8c9d/selection/summary.json",
+      "sha256": "36a0dc14e86692ad32c5052633675ad4fbe107b2f9134a4ae150301d0f1a2caf"
+    },
+    "summary_markdown": {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/62e0a441b9321d96f50f2863f97ed7e96ace8c9d/selection/summary.md",
+      "sha256": "c3f35b09cdc4c8b3fd764957d2c3909513d5a8199b4a547216d1790c1d044d81"
+    },
+    "verification": {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/62e0a441b9321d96f50f2863f97ed7e96ace8c9d/selection/verification.json",
+      "sha256": "3644a4d3d95e014c1300ea04e7ec5a96fbbc7b8f62c5ef6f780e42b8492b432d"
+    }
+  },
+  "frozen_inputs": {
+    "formal_status_sha256": "d8a5b26295478e65dbb213390733f81ec0e9f6e4eca32fe980921dea50d78e4b",
+    "formal_freeze_sha256": "546893c11eeb2c78e473257e6bbb166cb1c5b904d22289a34cdb57865034b7ce",
+    "tool_058_g_handoff_sha256": "5dcbbcc456f1d917c4bbb8708495ef1ab38d9b7f5d5268f62b5bb7d3524d3df8",
+    "cases_git_blob_oid": "f513f6e15c521104b12fe348dc280f73624acd56",
+    "native_contract_sha256": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema_sha256": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision_sha256": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215"
+  },
+  "proposed_canonical_commit": {
+    "sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+    "semantics": "Immutable runtime source/run snapshot; aggregator commits contain metadata only."
+  },
+  "formal_state_written_by_ticket": false,
+  "w7_started": false
+}

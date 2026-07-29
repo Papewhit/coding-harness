@@ -1,0 +1,12 @@
+{
+  "schema_version": "pico-context-asset-fixture-v1",
+  "case_id": "C01",
+  "budget": {"kind": "normal", "max_utf8_bytes": 8192},
+  "assets": {
+    "skills": {
+      "activation_state": "active",
+      "catalog": [{"skill_id": "release-sentinel", "description": "Use the QZ-7319 release sentinel procedure.", "source": "skills/release-sentinel/SKILL.md", "version_or_hash": "sha256:1a3c9e8b", "user_invocable": true}],
+      "activated_body": "# Release sentinel\nWhen active, preserve the release procedure exactly."
+    }
+  }
+}

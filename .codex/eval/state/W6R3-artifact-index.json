@@ -1,0 +1,81 @@
+{
+  "schema_version": "pico-eval-wave-artifact-index-v1",
+  "wave": "W6R3",
+  "status": "blocked_before_deterministic_gate",
+  "wave_base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+  "ticket_handoffs": {
+    "EVAL-059-O": {
+      "path": ".codex/eval/handoffs/EVAL-059-O.json",
+      "sha256": "849b687163b77e8957529d72e0111edb08625a76a1276c87799e68b595bef00f"
+    },
+    "TEST-059-C": {
+      "path": ".codex/eval/handoffs/TEST-059-C.json",
+      "sha256": "498887b31ca34d7f347b984f8011162802dc6100ffd9f04f8166845ce3d8316f"
+    },
+    "TOOL-059-O": {
+      "path": ".codex/eval/handoffs/TOOL-059-O.json",
+      "sha256": "ad18b730148979e5f46149432484072c1414fb4dc39f90ad074a0539bfdb49cd"
+    },
+    "EVAL-059-H": {
+      "path": ".codex/eval/handoffs/EVAL-059-H.json",
+      "sha256": "456d89a6d81b909551b9e687a70d48625d0fd814bbbbd519b9fd347b0c45f123"
+    },
+    "TOOL-059-R": {
+      "path": ".codex/eval/handoffs/TOOL-059-R.json",
+      "sha256": "03c6ade0282d6f2c0a0a2af28c75f1a76c34a5be5358ba67e5cea0b41f5c0fd6"
+    },
+    "AUDIT-059-A": {
+      "path": ".codex/eval/handoffs/AUDIT-059-A.json",
+      "sha256": "659d898a96fab1514b6a78027f886fcefedcff859a2e29f22dc87e293ec06d5b"
+    }
+  },
+  "proposals": {
+    "EVAL-059-O.freeze": {
+      "path": ".codex/eval/proposals/EVAL-059-O.freeze.json",
+      "sha256": "12a6f9b3ae756e6f4f6a2ae380f2926252bb814400a0c994062af3f68f4e9cc9"
+    },
+    "EVAL-059-O.status": {
+      "path": ".codex/eval/proposals/EVAL-059-O.status.json",
+      "sha256": "a78c1fecf64baa763c818f5d7ab2816f4ee032ae00ea19c2b7847d92b49b5f45"
+    },
+    "EVAL-059-H.freeze": {
+      "path": ".codex/eval/proposals/EVAL-059-H.freeze.json",
+      "sha256": "4457fb73dff6391622322b0521db17fa4d39d12318bce7afabce1a448e0c9ab3"
+    }
+  },
+  "oracle_v2": {
+    "root": "F:/dev/llm/pico-eval-artifacts/native-provider-oracle-v2/W6R3-EVAL-059-O-01",
+    "conformance_adjudication_sha256": "d78bec13744cff83edda12e67e5fc151765d0ce41211b381e56778287bcad291",
+    "human_smoke_adjudication_sha256": "fbfe414f7c87218608754b4e807cc114bd2a90b06d8fb622d138b4942c0ed7f9",
+    "manifest_sha256": "87fa6898bfb7297a4f0244e0e177c1f66e4090b1c43ee544ce59309dc12806b7",
+    "inventory_sha256": "7cb7fa26e3c4347b3461123e925197c7d44f06b22a5cfc56adda49ab51a63138"
+  },
+  "human_smoke_v2_fake": {
+    "root": "F:/dev/llm/pico-eval-artifacts/native-provider-human-smoke-adjudication/W6R3-EVAL-059-H-01-correction",
+    "summary_sha256": "041e5178fd397f5247103b2da2a53a6a61a746cbe4584f6af5522d64b1130999",
+    "integrator_check_root": "F:/dev/llm/pico-eval-artifacts/native-provider-human-smoke-adjudication/W6R3-integrator-check",
+    "integrator_check_summary_sha256": "3c28cc058894bb1f2ecd60d0b2f163dba2d646b23343c943ea3540765c161439"
+  },
+  "worker_bundle": {
+    "path": "F:/dev/llm/pico-eval-artifacts/wave-bundles/W6R3-workers.bundle",
+    "sha256": "98474e9e8b3a6812b1bf0208bd8f32e9a500339771a1f9fbd7343118a1ed495e",
+    "size_bytes": 16785463,
+    "verified": true
+  },
+  "deterministic_gate": {
+    "ticket": "TOOL-059-G",
+    "status": "not_dispatched",
+    "artifact_created": false,
+    "provider_http_attempts": 0,
+    "reason": "AUDIT-059-A blocked the Gate start condition."
+  },
+  "evaluation_scope": {
+    "live_provider_run": false,
+    "human_smoke_run": false,
+    "formal_effectiveness_run": false,
+    "profile_reselection_run": false,
+    "resume_run": false,
+    "w6r4_started": false,
+    "w7_started": false
+  }
+}

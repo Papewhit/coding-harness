@@ -1,0 +1,150 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "EVAL-031-I",
+  "instance_id": "W2-EVAL-031-I-01",
+  "wave": "W2",
+  "role": "implementer",
+  "status": "complete",
+  "base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+  "head_sha": "cbd077c2246212e37224c1a9f6f38564f92490a5",
+  "branch": "codex/eval-v3-w2-eval-031-i",
+  "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\4afc\\pico",
+  "control_overlay": {
+    "path": ".codex/eval/state/W2-control-overlay.json",
+    "sha256": "5954e177e3bd0f7585786a42654e868b017b167d52172df03c56da116628faaf"
+  },
+  "dependency_commits": [],
+  "applied_dependency_commits": [],
+  "dependency_handoff_hashes": {
+    "EVAL-030": "40834e95152f29485dcaa6f94d63ce5e28fb4791ad3f33a2bb09d2e03564df84",
+    "TOOL-010": "300faf3f58f369248291ba72be3aefca9e3444dac9999cf45c5767c4eefbde0d"
+  },
+  "dependency_freeze_hashes": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "context_assets": "d8349c034524cc488958a1f3b460a7b6080915eed0b03b64c635810c21bf8e15"
+  },
+  "own_commits": [
+    "cbd077c2246212e37224c1a9f6f38564f92490a5"
+  ],
+  "stable_patch_id": "9100aadadf27bc399b7c9252d09e086e249ea1c8",
+  "files_changed": [
+    "pico/evaluation/context_eval.py",
+    "scripts/run_context_asset_evaluation.py",
+    "tests/test_context_asset_evaluator.py",
+    ".codex/eval/handoffs/EVAL-031-I.json"
+  ],
+  "commands_run": [
+    "git switch -c codex/eval-v3-w2-eval-031-i",
+    "uv run pytest tests/test_context_asset_evaluator.py -q",
+    "uv run pytest tests/test_context_asset_evaluator.py tests/test_evaluation_contracts.py tests/test_provider_contracts.py -q",
+    "uv run ruff check pico/evaluation/context_eval.py scripts/run_context_asset_evaluation.py tests/test_context_asset_evaluator.py",
+    "uv run python scripts/run_context_asset_evaluation.py --help",
+    "uv run pytest tests/test_architecture_boundaries.py tests/test_safety_invariants.py -q",
+    "git diff --check",
+    "git diff --cached --check",
+    "git diff 65d7142cf3a5ed9a15fc0689f3022d521369252b..HEAD | git patch-id --stable",
+    "SHA-256 Git blob bytes for committed outputs"
+  ],
+  "tests": [
+    {
+      "command": "uv run pytest tests/test_context_asset_evaluator.py -q",
+      "result": "passed",
+      "details": "10 passed; covers per-asset sentinel activation and attribution, independent current-request hard gate, retention/drop/duplication, real in-workspace pointer resolution and content hash, metadata completeness, separate tool/system accounting, opaque continuation privacy, runner persistence, and deterministic fragment merge."
+    },
+    {
+      "command": "uv run pytest tests/test_context_asset_evaluator.py tests/test_evaluation_contracts.py tests/test_provider_contracts.py -q",
+      "result": "passed",
+      "details": "27 passed."
+    },
+    {
+      "command": "uv run ruff check pico/evaluation/context_eval.py scripts/run_context_asset_evaluation.py tests/test_context_asset_evaluator.py",
+      "result": "passed",
+      "details": "All checks passed."
+    },
+    {
+      "command": "uv run python scripts/run_context_asset_evaluation.py --help",
+      "result": "passed",
+      "details": "CLI parser loaded and exposed mutually exclusive evaluation and fragment-merge modes."
+    },
+    {
+      "command": "uv run pytest tests/test_architecture_boundaries.py tests/test_safety_invariants.py -q",
+      "result": "failed",
+      "details": "3 passed, 8 failed on pre-existing base or Windows environment conditions: pico/core/runtime.py is 952 lines versus the existing 950-line budget; symlink creation lacks Windows privilege; tests clearing the environment cannot resolve Path.home(); and a POSIX shell-quoting assertion fails on Windows. No failure references an EVAL-031-I file."
+    },
+    {
+      "command": "git diff --check && git diff --cached --check",
+      "result": "passed",
+      "details": "No whitespace errors."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "pico/evaluation/context_eval.py",
+      "sha256": "2f65773096015a5ae60ae71c532e12a8801df2822abb0cba22411ddad64b7d96",
+      "hash_basis": "git_blob_bytes",
+      "hash_source": "cbd077c2246212e37224c1a9f6f38564f92490a5:pico/evaluation/context_eval.py",
+      "coverage": "Offline ModelRequest evaluator, protected current-request and tool-schema hard gates, per-asset sentinel/metadata/pointer checks, privacy-safe evidence, runner, summary, and fragment merge."
+    },
+    {
+      "path": "scripts/run_context_asset_evaluation.py",
+      "sha256": "d255b6c4e097949b461b916897e15cc6d8b35264cf5dc6d5dc64ca3cd5ac7117",
+      "hash_basis": "git_blob_bytes",
+      "hash_source": "cbd077c2246212e37224c1a9f6f38564f92490a5:scripts/run_context_asset_evaluation.py",
+      "coverage": "Case-shard execution and deterministic multi-fragment merge CLI."
+    },
+    {
+      "path": "tests/test_context_asset_evaluator.py",
+      "sha256": "3061fba7e72fea60abda9fb1ee4bd7cac8e91d910e2cbdeee50fcc4ae393df1a",
+      "hash_basis": "git_blob_bytes",
+      "hash_source": "cbd077c2246212e37224c1a9f6f38564f92490a5:tests/test_context_asset_evaluator.py",
+      "coverage": "Ten deterministic acceptance and failure-mode tests."
+    },
+    {
+      "path": ".codex/eval/handoffs/EVAL-031-I.json",
+      "persistence": "Generated after the source commit so it records the immutable worker head, output hashes, test evidence, and stable patch id."
+    }
+  ],
+  "contract_hashes": {
+    "context_assets": "d8349c034524cc488958a1f3b460a7b6080915eed0b03b64c635810c21bf8e15",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1"
+  },
+  "frozen_hashes": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "context_assets": "d8349c034524cc488958a1f3b460a7b6080915eed0b03b64c635810c21bf8e15",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": null,
+    "provider_selection": null,
+    "native_resume_gate": null
+  },
+  "native_protocol_observations": {
+    "observation_scope": "Static provider-neutral contract evaluation and local deterministic tests only; no provider request or online evaluation was issued.",
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0
+  },
+  "defects": [
+    {
+      "id": "pre-existing-architecture-and-windows-test-failures",
+      "scope": "pico/core/runtime.py and Windows-only test environment behavior",
+      "details": "The extra architecture/safety suite has eight failures already documented by dependency handoffs and outside this ticket ownership; directed and related evaluation/provider tests are green."
+    }
+  ],
+  "risks": [
+    "The evaluator requires explicit system_text/messages capture metadata because the current ModelRequest contract still exposes a legacy aggregate prompt; Runtime composition remains owned by its designated downstream ticket.",
+    "Tool-definition leakage detection is deterministic and compares canonical full definitions and input schemas; adapters must retain explicit surface captures for auditable attribution.",
+    "Pointer evaluation intentionally fails closed for missing, outside-workspace, non-file, or hash-mismatched targets."
+  ],
+  "status_proposal": {
+    "ticket_id": "EVAL-031-I",
+    "status": "complete",
+    "head_sha": "cbd077c2246212e37224c1a9f6f38564f92490a5"
+  },
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}

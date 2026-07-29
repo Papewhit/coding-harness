@@ -1,0 +1,143 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "EVAL-000",
+  "instance_id": "W0-EVAL-000-01",
+  "wave": "W0",
+  "role": "integrator",
+  "status": "complete",
+  "base_sha": "8ff3a261aa246ddd2798c2f065cac188766ef99c",
+  "head_sha": "9d6bfc4567b6c1dff45908a3ed00335b947a52f9",
+  "dependency_commits": [],
+  "dependency_handoff_hashes": {},
+  "own_commits": [
+    "31fded1559fed404cb26018a2a009a0f1fa727b0",
+    "9d6bfc4567b6c1dff45908a3ed00335b947a52f9"
+  ],
+  "files_changed": [
+    ".codex/eval/proposals/EVAL-000.status.json",
+    ".codex/eval/state/preflight.json",
+    ".codex/eval/state/native-baseline.json"
+  ],
+  "commands_run": [
+    "git rev-parse HEAD",
+    "git branch --show-current",
+    "git status --porcelain=v1",
+    "git diff --binary -- pico/core/runtime_checkpoints.py",
+    "rg -n --no-heading --color never '<tool>|<final>' pico tests scripts benchmarks",
+    "PowerShell canonicalization run 1: replace path separators with '/', sort complete lines with StringComparer.Ordinal, UTF-8 without BOM, LF plus trailing LF, SHA-256",
+    "PowerShell canonicalization run 2: independently replace path separators with '/', sort complete lines with StringComparer.Ordinal, UTF-8 without BOM, LF plus trailing LF, SHA-256",
+    "uv run pytest tests/test_architecture_boundaries.py -q",
+    "git diff --cached --check"
+  ],
+  "tests": [
+    {
+      "command": "uv run pytest tests/test_architecture_boundaries.py -q",
+      "result": "expected_baseline_failure",
+      "details": "1 failed: pico/core/runtime.py has 952 lines, architecture budget is 950. The test was not changed or weakened."
+    },
+    {
+      "command": "two independent deterministic text-protocol hash recomputations",
+      "result": "passed",
+      "details": "Both runs found 286 matching lines and produced SHA-256 21cef7d0bddb0a2a54efcf6ce9256a2e87bf50acdf88adc92b5ba5c744704d4f using slash-normalized paths, Unicode ordinal sorting, UTF-8 without BOM, LF joining, and one trailing LF."
+    },
+    {
+      "command": "PowerShell ConvertFrom-Json for all ticket JSON plus reference-count sum",
+      "result": "passed",
+      "details": "All JSON parsed; declared text-protocol matching-line count 286 equals the sum of per-file counts 286."
+    },
+    {
+      "command": "git diff --cached --check",
+      "result": "passed",
+      "details": "No whitespace errors in the committed baseline artifacts."
+    },
+    {
+      "command": "allowed-write-path audit",
+      "result": "passed",
+      "details": "Only the four manifest-authorized output paths were created; canonical STATUS.json and FREEZE.json were not modified."
+    }
+  ],
+  "outputs": [
+    {
+      "path": ".codex/eval/state/preflight.json",
+      "sha256": "db4e0b4b3fff9e28aba062a0a2fad91aa6ab1e2e06565d9f952208befb1dc4e2"
+    },
+    {
+      "path": ".codex/eval/state/native-baseline.json",
+      "sha256": "e00918cc1aeeb1ae00ea2876057a229cf1b19762d15637e32bece0779df04d9c"
+    },
+    {
+      "path": ".codex/eval/proposals/EVAL-000.status.json",
+      "sha256": "1c2c27dad7ce6f470655660d137e46a596c76bfe39029b0c7cb8e8b187ef005a"
+    },
+    {
+      "path": ".codex/eval/handoffs/EVAL-000.json",
+      "persistence": "ticket output intentionally generated after the content commit and not amended, per Wave Integrator instruction"
+    }
+  ],
+  "hashes": {
+    "bootstrap_content_commit": "31fded1559fed404cb26018a2a009a0f1fa727b0",
+    "bootstrap_content_tree": "ed423a332a64a1df6132013a8649f02b8d98f783",
+    "reproducibility_repair_commit": "9d6bfc4567b6c1dff45908a3ed00335b947a52f9",
+    "reproducibility_repair_tree": "8b8fde3aa63b68f35583fa579fc63858c6546607",
+    "runtime_checkpoint_worktree_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "runtime_checkpoint_content_sha256": "f35b9c2b873be38fad873eb4d5bed8f0d09f7b09ec25a9b406cd5d34062b93ea",
+    "text_protocol_search_output_sha256": "21cef7d0bddb0a2a54efcf6ce9256a2e87bf50acdf88adc92b5ba5c744704d4f"
+  },
+  "baseline_hashes": {
+    "native_contract": "0e6156e96fdcd9bc01b81f49c3d4271361258363bedcd9f4d5efc2fcdad457e5",
+    "tool_schema": "09ed96917cb2a09c4d4999471b191d18735f2ef01862f1f6ed7bcd05019ac3a9",
+    "sdk_transport_decision": "0e442f47348ec47fa0968bcd703f9ea1cfd9c011e5401a5a16fe78eacb68f39b",
+    "provider_selection": "db4e0b4b3fff9e28aba062a0a2fad91aa6ab1e2e06565d9f952208befb1dc4e2",
+    "native_resume_gate": "f35b9c2b873be38fad873eb4d5bed8f0d09f7b09ec25a9b406cd5d34062b93ea",
+    "scope": "unfrozen W0 source baselines; not canonical FREEZE entries"
+  },
+  "frozen_hashes": {
+    "native_contract": null,
+    "tool_schema": null,
+    "sdk_transport_decision": null,
+    "provider_selection": null,
+    "native_resume_gate": null
+  },
+  "native_protocol_observations": {
+    "observation_scope": "static source baseline only; no live provider probe",
+    "text_envelope_seen_count": 286,
+    "implicit_sdk_retry_seen": false,
+    "internal_transport_retry_present": true,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "unknown_block_preservation_supported": false,
+    "safety_chain_bypass_count": 0,
+    "native_safety_chain_wired": false
+  },
+  "defects": [
+    {
+      "id": "architecture-runtime-line-budget",
+      "severity": "baseline",
+      "details": "pico/core/runtime.py is 952 lines against a 950-line architecture budget."
+    },
+    {
+      "id": "native-contract-absent",
+      "severity": "blocking-for-native-evaluation",
+      "details": "ModelClient and both provider adapters expose text-only completion; native declarations, structured calls/results, and provider call IDs are absent."
+    },
+    {
+      "id": "provider-attempts-not-formally-controllable",
+      "severity": "blocking-for-formal-profile",
+      "details": "The stdlib transport has a fixed default retry budget of 2 (up to 3 attempts) and ModelClient does not expose the required attempts=1 setting."
+    }
+  ],
+  "risks": [
+    "The configured dashscope-o and deepseek profiles were not contacted; endpoint native eligibility remains not_probed.",
+    "dashscope-a is recorded as unconfigured in canonical STATUS state.",
+    "Current OpenAI/Anthropic response extraction drops non-text blocks, so unknown native blocks and call IDs cannot be preserved.",
+    "Formal online Evaluation remains prohibited until TOOL-050-S, and formal Resume evaluation remains prohibited until TOOL-062-G."
+  ],
+  "status_proposal": {
+    "path": ".codex/eval/proposals/EVAL-000.status.json",
+    "sha256": "1c2c27dad7ce6f470655660d137e46a596c76bfe39029b0c7cb8e8b187ef005a",
+    "canonical_status_written": false
+  },
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}

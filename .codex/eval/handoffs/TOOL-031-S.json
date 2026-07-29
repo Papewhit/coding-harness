@@ -1,0 +1,146 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-031-S",
+  "instance_id": "W4-TOOL-031-S-01",
+  "wave": "W4",
+  "role": "implementer",
+  "status": "complete",
+  "base_sha": "005ded3eceaaa13e816ae8073973a50db87772f2",
+  "head_sha": "7e81b455f4616ca4962691c9eb139271ae28f3e3",
+  "head_sha_semantics": "Implementation-content head before the metadata-only commit containing this handoff; the containing commit is the final branch HEAD reported to the Wave Integrator.",
+  "branch": "codex/eval-v3-w4-tool-031-s",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/w4-031s/pico",
+  "prompt_sha256": "775f266b3dd989a3890a6e1c96f72a3e022ea2c2c3e94a1718bc9d43100f23d2",
+  "control_overlay": {
+    "path": ".codex/eval/state/W4-control-overlay.json",
+    "sha256": "55ec6149ce76bd87d344185d4828fcdf719483572ab1444d46c454d5e5b1429c"
+  },
+  "dependency_commits": [],
+  "applied_dependency_commits": [],
+  "dependency_handoff_hashes": {
+    "TOOL-010": "300faf3f58f369248291ba72be3aefca9e3444dac9999cf45c5767c4eefbde0d",
+    "TOOL-015": "e3e37d00beba52addbea070666f932b71593a131dfa67778b42f7216ec6bc413"
+  },
+  "dependency_freeze_hashes": {
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "native_scripted_fixtures": "ff2a8febe36730b6c18d096312f9455dce0793c9d1f975ffb941c726706904cf"
+  },
+  "own_commits": [
+    "7e81b455f4616ca4962691c9eb139271ae28f3e3"
+  ],
+  "files_changed": [
+    "pico/core/model_exchange.py",
+    "pico/core/session_events.py",
+    "pico/core/run_store.py",
+    "tests/test_native_session_exchange.py",
+    ".codex/eval/handoffs/TOOL-031-S.json"
+  ],
+  "commands_run": [
+    "SHA-256 verification of TOOL-010.json, TOOL-015.json, canonical FREEZE.json, and W4-control-overlay.json",
+    "uv run pytest tests/test_native_session_exchange.py tests/test_run_store.py -q",
+    "uv run ruff check pico/core/model_exchange.py pico/core/session_events.py pico/core/run_store.py tests/test_native_session_exchange.py",
+    "uv run pytest tests/test_provider_contracts.py tests/test_provider_protocol.py tests/test_context_governance_acceptance.py -q",
+    "uv run pytest tests/test_provider_contracts.py tests/test_provider_protocol.py tests/test_real_session_acceptance.py tests/test_context_governance_acceptance.py tests/test_safety_invariants.py -q",
+    "uv run pytest tests/test_architecture_boundaries.py -q",
+    "git diff --check",
+    "git diff --cached --check"
+  ],
+  "tests": [
+    {
+      "command": "uv run pytest tests/test_native_session_exchange.py tests/test_run_store.py -q",
+      "result": "passed",
+      "details": "14 passed; covers durable assistant batch ordering, one-to-one call/result audit fields, terminal model-final ordering, private continuation roundtrip, hash-only public evidence, profile locks, and rejection of non-JSON-safe state."
+    },
+    {
+      "command": "uv run ruff check pico/core/model_exchange.py pico/core/session_events.py pico/core/run_store.py tests/test_native_session_exchange.py",
+      "result": "passed",
+      "details": "All checks passed."
+    },
+    {
+      "command": "uv run pytest tests/test_provider_contracts.py tests/test_provider_protocol.py tests/test_context_governance_acceptance.py -q",
+      "result": "passed",
+      "details": "23 passed; confirms compatibility with frozen native contracts, provider profile locking, and existing turn-history governance."
+    },
+    {
+      "command": "uv run pytest tests/test_provider_contracts.py tests/test_provider_protocol.py tests/test_real_session_acceptance.py tests/test_context_governance_acceptance.py tests/test_safety_invariants.py -q",
+      "result": "failed",
+      "details": "26 passed and 8 failed on known immutable-base/Windows environment issues: real-session harness GBK subprocess decoding, unavailable symlink privilege, Path.home() failures when tests clear the full environment, and POSIX shell quoting on Windows. No failure references a TOOL-031-S-owned file."
+    },
+    {
+      "command": "uv run pytest tests/test_architecture_boundaries.py -q",
+      "result": "failed",
+      "details": "Known immutable-base failure: pico/core/runtime.py has 952 lines versus its 950-line budget. TOOL-031-S did not modify runtime.py or the architecture test."
+    },
+    {
+      "command": "git diff --check && git diff --cached --check",
+      "result": "passed",
+      "details": "No whitespace errors."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "pico/core/model_exchange.py",
+      "sha256": "db0cb6819ca481fecd5803982b4afc9f32ec33260dcc22cf12347f2f5b0080dc",
+      "hash_basis": "working_tree_file_bytes",
+      "source": "7e81b455f4616ca4962691c9eb139271ae28f3e3:pico/core/model_exchange.py",
+      "coverage": "Normalized assistant_tool_batch, tool_result, and model_final schemas; public/private views; profile mismatch detection; continuation restore and hash evidence."
+    },
+    {
+      "path": "pico/core/session_events.py",
+      "sha256": "865b5f47e2cbb9db800188ca9f1aea6e65d075bfb5a8c38451e1ec2d5ca41279",
+      "hash_basis": "working_tree_file_bytes",
+      "source": "7e81b455f4616ca4962691c9eb139271ae28f3e3:pico/core/session_events.py",
+      "coverage": "Session-private exchange journal with persist-before-publish ordering, one-to-one terminal results, monotonic sequences, profile locking, and same-process continuation retrieval."
+    },
+    {
+      "path": "pico/core/run_store.py",
+      "sha256": "acc28c4f4bb3e16321f6c504e05f05f6fc3be8dca04cde7b21d9b5e3c88e622b",
+      "hash_basis": "working_tree_file_bytes",
+      "source": "7e81b455f4616ca4962691c9eb139271ae28f3e3:pico/core/run_store.py",
+      "coverage": "Defense-in-depth exchange sanitization for public trace and report persistence."
+    },
+    {
+      "path": "tests/test_native_session_exchange.py",
+      "sha256": "3308ff998632908faedc20d143516bab001203ccdf5bc8ab05776a1a944d6bd1",
+      "hash_basis": "working_tree_file_bytes",
+      "source": "7e81b455f4616ca4962691c9eb139271ae28f3e3:tests/test_native_session_exchange.py"
+    },
+    {
+      "path": ".codex/eval/handoffs/TOOL-031-S.json",
+      "persistence": "Metadata-only commit generated after the implementation content commit."
+    }
+  ],
+  "contract_hashes": {
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "native_contract_hash_basis": "frozen_dependency_git_blob_bytes"
+  },
+  "frozen_hashes": {
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "provider_selection": null,
+    "native_resume_gate": null
+  },
+  "native_protocol_observations": {
+    "observation_scope": "Offline deterministic contract, journal, run-store, provider-profile, and context-governance tests only; no provider request or online evaluation was issued.",
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0
+  },
+  "defects": [],
+  "risks": [
+    "Active Runtime wiring is intentionally deferred to TOOL-040-I; this ticket exposes the session journal and event contracts without modifying runtime.py or engine.py.",
+    "Crash replay and uncertain-after-crash policy are intentionally deferred to TOOL-060-R; this ticket guarantees same-process continuation persistence only.",
+    "The expanded Windows regression suite retains known environment/base failures, and the immutable base retains the runtime.py 952/950 architecture-budget failure; none is in TOOL-031-S ownership."
+  ],
+  "status_proposal": {
+    "ticket_id": "TOOL-031-S",
+    "status": "complete",
+    "head_sha": "7e81b455f4616ca4962691c9eb139271ae28f3e3"
+  },
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}

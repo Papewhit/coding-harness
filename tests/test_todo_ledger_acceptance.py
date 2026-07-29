@@ -1,30 +1,40 @@
 import json
 
-from pico.testing import ScriptedModelClient
+from tests.native_fixtures import final, lock_scripted_provider_profile, scripted_client, tool
 from pico import Pico, SessionStore, WorkspaceContext
 
 
 def build_agent(tmp_path, outputs=None, **kwargs):
     (tmp_path / "README.md").write_text("demo\n", encoding="utf-8")
     workspace = WorkspaceContext.build(tmp_path)
-    return Pico(
-        model_client=ScriptedModelClient(outputs or []),
-        workspace=workspace,
-        session_store=SessionStore(tmp_path / ".pico" / "sessions"),
-        approval_policy="auto",
-        **kwargs,
+    return lock_scripted_provider_profile(
+        Pico(
+            model_client=scripted_client(outputs),
+            workspace=workspace,
+            session_store=SessionStore(tmp_path / ".pico" / "sessions"),
+            approval_policy="auto",
+            **kwargs,
+        )
     )
 
 
 def read_jsonl(path):
-    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    return [
+        json.loads(line)
+        for line in path.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
 
 
 def test_todo_tools_persist_state_and_emit_session_events(tmp_path):
     agent = build_agent(tmp_path)
 
-    added = agent.run_tool("todo_add", {"content": "Draft worker manager", "priority": "high"})
-    updated = agent.run_tool("todo_update", {"todo_id": "todo_1", "status": "in_progress", "note": "started"})
+    added = agent.run_tool(
+        "todo_add", {"content": "Draft worker manager", "priority": "high"}
+    )
+    updated = agent.run_tool(
+        "todo_update", {"todo_id": "todo_1", "status": "in_progress", "note": "started"}
+    )
     listed = agent.run_tool("todo_list", {})
 
     assert "todo_1" in added
@@ -39,14 +49,16 @@ def test_todo_tools_persist_state_and_emit_session_events(tmp_path):
 
 
 def test_todo_tools_are_available_in_plan_mode_and_prompt_context(tmp_path):
-    agent = build_agent(tmp_path, ["<final>Plan ready.</final>"])
+    agent = build_agent(tmp_path, [final("Plan ready.")])
     agent.enter_plan_mode("subagent")
 
     assert "todo_add" in agent.available_tools()
     assert "todo_update" in agent.available_tools()
     assert "todo_list" in agent.available_tools()
 
-    agent.run_tool("todo_add", {"content": "Write active plan", "status": "in_progress"})
+    agent.run_tool(
+        "todo_add", {"content": "Write active plan", "status": "in_progress"}
+    )
     prompt = agent.prompt("continue")
 
     assert "Task ledger:" in prompt
@@ -58,17 +70,21 @@ def test_todo_changes_are_written_to_task_state_and_report(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            '<tool>{"name":"todo_add","args":{"content":"Implement Gate6","priority":"high"}}</tool>',
-            '<tool>{"name":"todo_update","args":{"todo_id":"todo_1","status":"done","note":"verified"}}</tool>',
-            "<final>Gate6 tracked.</final>",
+            tool("todo_add", content="Implement Gate6", priority="high"),
+            tool("todo_update", todo_id="todo_1", status="done", note="verified"),
+            final("Gate6 tracked."),
         ],
         max_steps=4,
     )
 
     assert agent.ask("track Gate6") == "Gate6 tracked."
 
-    report = json.loads((agent.current_run_dir / "report.json").read_text(encoding="utf-8"))
-    task_state = json.loads((agent.current_run_dir / "task_state.json").read_text(encoding="utf-8"))
+    report = json.loads(
+        (agent.current_run_dir / "report.json").read_text(encoding="utf-8")
+    )
+    task_state = json.loads(
+        (agent.current_run_dir / "task_state.json").read_text(encoding="utf-8")
+    )
 
     assert report["todos"]["items"][0]["status"] == "done"
     assert [change["action"] for change in report["todo_changes"]] == ["add", "update"]

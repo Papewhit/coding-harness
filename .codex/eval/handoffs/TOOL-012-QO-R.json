@@ -1,0 +1,29 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-012-QO-R",
+  "instance_id": "W2-TOOL-012-QO-R-01",
+  "wave": "W2",
+  "role": "run_shard",
+  "status": "complete",
+  "base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+  "head_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+  "branch": "codex/eval-v3-w2-tool-012-qo-r",
+  "dependency_commits": [],
+  "own_commits": [],
+  "files_changed": [".codex/eval/handoffs/TOOL-012-QO-R.json"],
+  "commands_run": ["attempt-0 frozen ticket CLI invocation", "attempts 1-3 typed SDK setup", "attempts 4-6 uv run --with openai --with socksio with artifact-local profile and factories"],
+  "tests": [{"command": "three typed OpenAI Responses wire probes with temporary socksio", "result": "failed", "details": "Each reached the provider exactly once and received HTTP 400 rejecting tool_choice=required in thinking mode; no retry or fallback occurred."}],
+  "outputs": [
+    {"path": "F:/dev/llm/pico-eval-artifacts/native-sdk-spike/65d7142cf3a5ed9a15fc0689f3022d521369252b/TOOL-012-QO-R/manifest.json", "sha256": "c372dec926860e2cb5715ec93ed96e42bf923848679102369c16c6b0dd6219ff"},
+    {"path": "F:/dev/llm/pico-eval-artifacts/native-sdk-spike/65d7142cf3a5ed9a15fc0689f3022d521369252b/TOOL-012-QO-R/rows.jsonl", "sha256": "465b4aaf2e3116081c10d21d5af399d7a362e06cdf642194baa0248ba4cb265c"},
+    {"path": "F:/dev/llm/pico-eval-artifacts/native-sdk-spike/65d7142cf3a5ed9a15fc0689f3022d521369252b/TOOL-012-QO-R/sanitized-raw-response-evidence.json", "sha256": "6950ffa89e6a425511b53f816ef416cfeae13338cffed50743ca8d43dceae325"}
+  ],
+  "frozen_hashes": {"artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1", "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb", "tool_schema": null, "sdk_transport_decision": null, "provider_selection": null, "native_resume_gate": null},
+  "native_protocol_observations": {"profile_name": "dashscope-o", "sdk_package_version": "2.46.0", "sdk_max_retries": 0, "stream": false, "requested_repetitions": 3, "executed_repetitions": 3, "http_attempt_count": 3, "sdk_retry_count": 0, "text_envelope_seen_count": 0, "implicit_sdk_retry_seen": false, "call_id_result_mismatch_count": 0, "unknown_block_loss_count": 0, "safety_chain_bypass_count": 0, "eligible": false, "protocol_error": "provider_rejected_tool_choice_required"},
+  "defects": [{"code": "provider_rejected_tool_choice_required", "severity": "blocking", "detail": "The OpenAI-compatible endpoint returned HTTP 400 on each of three requests because thinking mode rejects tool_choice=required. The native tool-call probe is therefore ineligible for this profile/configuration."}],
+  "risks": ["This establishes protocol ineligibility for the tested dashscope-o profile configuration only; it is not a model capability or effectiveness ranking."],
+  "status_proposal": {"ticket_id": "TOOL-012-QO-R", "status": "complete", "eligible": false, "reason": "three reproducible provider HTTP 400 rejections"},
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}

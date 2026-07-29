@@ -1,0 +1,12 @@
+{
+  "schema_version": "pico-context-asset-fixture-v1",
+  "case_id": "C06",
+  "budget": {"kind": "normal", "max_utf8_bytes": 8192},
+  "assets": {
+    "durable": {
+      "activation_state": "active",
+      "memory_policy": "selected_note_only",
+      "selected_notes": [{"memory_id": "memory-qz-9821", "source_path": ".pico/memory/qz-9821.md", "kind": "project", "tags": ["release"], "updated_at": "2026-07-21T00:00:00Z", "content_hash": "sha256:8e12fd44a0cc", "selection_score": 1.0, "content": "The QZ-9821 release train requires the offline verifier."}]
+    }
+  }
+}

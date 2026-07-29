@@ -1,0 +1,220 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "EVAL-052-H",
+  "instance_id": "W6R-EVAL-052-H-01",
+  "wave": "W6R",
+  "role": "implementer/versioned-native-conformance-harness",
+  "status": "complete",
+  "source_thread_id": "019f8d54-adce-7be2-a422-a8ac0535307c",
+  "base_sha": "48a39193580e48acee3fea5c3bfa107e46443d04",
+  "wave_base_sha": "48a39193580e48acee3fea5c3bfa107e46443d04",
+  "starting_ref": "codex/w6r-wave-base",
+  "starting_ref_verified_target": "48a39193580e48acee3fea5c3bfa107e46443d04",
+  "head_sha": "d3f22239ef797a4e685790ed73584e0c582249ab",
+  "head_sha_semantics": "Implementation-content head before the metadata-only commit containing this handoff; the containing commit is the final retained worker branch HEAD reported to the W6R Integrator.",
+  "branch": "codex/w6r-eval-052-h",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/534a/pico",
+  "dependency_commits": [
+    "cc5c18c8734301655dc1d0d841972067701c9c2e"
+  ],
+  "applied_dependency_commits": [
+    {
+      "original_commit": "cc5c18c8734301655dc1d0d841972067701c9c2e",
+      "applied_commit": "a2d271511dd5d0b7e32196de5e243c5d9bd1e38a",
+      "stable_patch_id": "084df602a69cc3dfe62423b164cafef0471f642f"
+    }
+  ],
+  "own_commits": [
+    "d3f22239ef797a4e685790ed73584e0c582249ab"
+  ],
+  "dependency_handoff_hashes": {
+    "TOOL-051-L": "64d276287e7921a620e0e9e80e3e59b89c97be8f79ea97599767bbf93eb6c9d7",
+    "W6-wave-handoff": "6055eca111fe08ebd11448e41550402096b017b34d50e2efde1aea906de8fc4f"
+  },
+  "allowed_write_paths": [
+    "pico/evaluation/native_provider.py",
+    "scripts/run_native_provider_conformance.py",
+    "tests/test_native_provider_evaluator.py",
+    "tests/test_native_provider_cli.py",
+    ".codex/eval/handoffs/EVAL-052-H.json"
+  ],
+  "files_changed": [
+    "pico/evaluation/native_provider.py",
+    "scripts/run_native_provider_conformance.py",
+    "tests/test_native_provider_evaluator.py",
+    "tests/test_native_provider_cli.py",
+    ".codex/eval/handoffs/EVAL-052-H.json"
+  ],
+  "implementation": {
+    "cli_contract": {
+      "required_options": [
+        "--case-set",
+        "--provider",
+        "--expected-profile",
+        "--repetitions",
+        "--artifact-dir"
+      ],
+      "diagnostic_options": [
+        "--case"
+      ],
+      "forbidden_options_absent": [
+        "--profile",
+        "--output",
+        "--runner-plugin",
+        "--config"
+      ]
+    },
+    "runner_contract": {
+      "fixed_runner": "pico.evaluation.native_provider_live.NativeProviderLiveRunner",
+      "formal_runner_injection": false,
+      "config_locator_schema_version": "pico-native-provider-config-locator-v1",
+      "config_locator_environment_variable": "PICO_NATIVE_PROVIDER_CONFIG",
+      "resolver": "pico.config.resolve_provider_config",
+      "config_path_persisted": false,
+      "config_file_hash_persisted": false,
+      "credential_or_raw_url_persisted": false,
+      "profile_binding": "The CLI validates the sanitized expected profile against the separately located local config before constructing or invoking the fixed runner. The same resolved config path is passed in memory to TOOL-051-L; it is never placed in the public bundle."
+    },
+    "row_contract": {
+      "order": "case order x repetition order",
+      "repetition_origin": 1,
+      "row_id_format": "<case_id>::r<zero-padded-repetition>",
+      "case_started_exception": "One sanitized infrastructure_failure row remains in the denominator."
+    },
+    "artifact_contract": {
+      "schema_version": "pico-native-provider-conformance-bundle-v2",
+      "files": [
+        "manifest.json",
+        "rows.jsonl",
+        "evidence-index.json",
+        "summary.json"
+      ],
+      "publication": "All four files are written and fsynced in a new sibling staging directory, then the complete directory is atomically renamed to the previously absent exclusive artifact directory.",
+      "preflight_failure": "Writes a run-level manifest, empty rows.jsonl, empty evidence index, and summary computability=not_computable.",
+      "bindings": [
+        "source_sha",
+        "evaluator_sha256",
+        "cases_sha256",
+        "cases_git_blob_oid",
+        "live_runner_sha256",
+        "public_profile_sha256",
+        "public_profile_id",
+        "native_gate_sha256",
+        "sdk_transport_decision_sha256",
+        "config_locator"
+      ]
+    }
+  },
+  "tests": [
+    {
+      "command": "uv run pytest tests/test_native_provider_evaluator.py tests/test_native_provider_cli.py -q",
+      "result": "passed",
+      "details": "19 passed. Covers help and forbidden parser options, positive repetitions, independent source/run/config directories, fixed runner invocation, exact profile mismatch, missing locator, unsafe invalid public profile, exclusive output directory, case-major repetition order, infrastructure rows, atomic four-file bundles, zero-row preflight bundles, and credential/raw-URL/config-path/config-file-hash absence."
+    },
+    {
+      "command": "uv run ruff check pico/evaluation/native_provider.py scripts/run_native_provider_conformance.py tests/test_native_provider_evaluator.py tests/test_native_provider_cli.py",
+      "result": "passed",
+      "details": "All checks passed."
+    },
+    {
+      "command": "uv run python scripts/run_native_provider_conformance.py --help",
+      "result": "passed",
+      "details": "Help exposes only the five required formal options plus diagnostic --case; no --profile, --output, --runner-plugin, or --config is accepted."
+    },
+    {
+      "command": "uv run pytest tests/test_native_provider_live.py tests/test_native_provider_profile_cli.py tests/test_native_runtime_integration.py tests/test_anthropic_messages_tools.py tests/test_openai_responses_tools.py tests/test_architecture_boundaries.py tests/test_permissions_acceptance.py -q",
+      "result": "passed",
+      "details": "53 passed; fixed live runner/profile, active Runtime, both provider adapters, architecture boundaries, and permissions remain green."
+    },
+    {
+      "command": "uv run pytest tests/test_native_provider_live.py tests/test_native_provider_profile_cli.py tests/test_native_runtime_integration.py tests/test_anthropic_messages_tools.py tests/test_openai_responses_tools.py tests/test_architecture_boundaries.py tests/test_tool_policy_acceptance.py tests/test_permissions_acceptance.py tests/test_safety_invariants.py -q",
+      "result": "baseline_failures_only",
+      "details": "61 passed and 10 failed only on existing Windows platform conditions outside ticket scope: path separator expectations, unavailable head/tail/grep, POSIX shell quoting under cmd.exe, unavailable symlink privilege, and Path.home() after tests clear home variables."
+    },
+    {
+      "command": "git diff --check; git diff --cached --check; allowed-write-path audit; frozen cases blob audit",
+      "result": "passed",
+      "details": "No whitespace errors; ticket-owned changes are confined to the five delegated paths; benchmarks/v3/native-provider/cases.json remains Git blob f513f6e15c521104b12fe348dc280f73624acd56."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "pico/evaluation/native_provider.py",
+      "sha256": "da88ddb04d9db65467e8553e98e2aab23cb5be60d043567f89beb10fe2511998",
+      "git_blob_oid": "3bdf2b5aeea6b8ef0aa732e6a22de784e4339411",
+      "hash_basis": "worker_worktree_file_bytes_at_implementation_head"
+    },
+    {
+      "path": "scripts/run_native_provider_conformance.py",
+      "sha256": "834f87bc9ee04fac6c4247aab7f352c6d6f21bc92da3c4121bb2303ce6f6a95d",
+      "git_blob_oid": "d615afafd7cbb02d75e571a06c82b7e6d16a9821",
+      "hash_basis": "worker_worktree_file_bytes_at_implementation_head"
+    },
+    {
+      "path": "tests/test_native_provider_evaluator.py",
+      "sha256": "57cf5a03f70f682b3cc132844ec29b82178870d562d99bd546aff1dd2997c5db",
+      "git_blob_oid": "ed8fa8d7d9238ec9a2abf871353af8665604988a",
+      "hash_basis": "worker_worktree_file_bytes_at_implementation_head"
+    },
+    {
+      "path": "tests/test_native_provider_cli.py",
+      "sha256": "aa1a4419329e6f1ea37c7714b70c185810914e223524563e4afe2aceb362fe51",
+      "git_blob_oid": "e64cfb8b26a6ade52c325d4f6e48978704d5d4db",
+      "hash_basis": "worker_worktree_file_bytes_at_implementation_head"
+    },
+    {
+      "path": ".codex/eval/handoffs/EVAL-052-H.json",
+      "persistence": "Metadata-only commit generated after the immutable implementation content commit."
+    }
+  ],
+  "frozen_hashes": {
+    "formal_freeze": "b4893c10887bb774dda860a5f4b13ec6fa9b8c014e0cb0257e409c0f27df6ba6",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "sdk_dependency_lock": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+    "live_runner": "afe17b8044da11802883311f01f5ad9819fb657fd3d042604e5d70c129eabcf2",
+    "public_profile_schema": "c664de9fc4ba4abfa1c5ee4450425e9ef5e3b638d990c2fc42e343d9a63a1625",
+    "public_profile_example": "135095b602ffd386a4227bce817a5edd0242a8b2df68dc50ca42d44ec106de3f",
+    "selected_provider_profile": null,
+    "native_deterministic_gate": "2fc1ebbe4d64c5be80e7fe063584915f12aabf3a8f8c08796d2cf009e94849a5",
+    "provider_selection": "e51ec2b3fd45c6f22f87e1db619c1c2cfc3fdc2304821ca92540fd24479f71df",
+    "native_resume_gate": null,
+    "cases_sha256": "92f746b113a88ceb652e4e8ec651021b1358d9922ab91c0dad34e62c0068b9e3",
+    "cases_git_blob_oid": "f513f6e15c521104b12fe348dc280f73624acd56"
+  },
+  "native_protocol_observations": {
+    "observation_scope": "Offline synthetic evaluator tests and TOOL-051-L production Runtime tests with deterministic no-network transports. No real provider HTTP, live artifact, formal effectiveness evaluation, human smoke, or Resume evaluation was run.",
+    "real_http_attempt_count": 0,
+    "text_envelope_seen_in_passing_suite": false,
+    "implicit_sdk_retry_seen_in_passing_suite": false,
+    "unknown_block_loss_count_in_adjacent_suite": 0,
+    "safety_chain_bypass_count_in_adjacent_suite": 0,
+    "call_id_result_cardinality_preserved": true,
+    "case_started_exceptions_materialized_as_rows": true,
+    "sdk_tool_runner_used": false,
+    "sdk_agent_runner_used": false,
+    "sdk_managed_pico_tool_execution_used": false,
+    "display_text_parsed_as_protocol": false
+  },
+  "defects": [],
+  "risks": [
+    "Formal run shards must set PICO_NATIVE_PROVIDER_CONFIG to the audited secret-bearing config file outside the immutable source snapshot. The locator value is consumed only in memory and is not persisted.",
+    "No real endpoint was contacted, so provider eligibility, selected profile, and recovered Gate N1 remain unresolved until separately authorized run tickets.",
+    "The wider Windows safety/tool-policy suite retains 10 platform-specific baseline failures outside this ticket; ticket tests and scoped architecture/provider/runtime regressions are green."
+  ],
+  "ownership_change_request": null,
+  "status_proposal": {
+    "ticket_id": "EVAL-052-H",
+    "status": "complete",
+    "head_sha": "d3f22239ef797a4e685790ed73584e0c582249ab",
+    "reason": "The formal harness now has one frozen CLI, one fixed live runner, native case-major repetitions, atomic four-file bundles, safe zero-row preflight evidence, and a versioned credential-safe locator for configs outside immutable run snapshots."
+  },
+  "freeze_proposal": null,
+  "formal_status_written": false,
+  "formal_freeze_written": false,
+  "live_artifacts_generated": false,
+  "downstream_ticket_started": false,
+  "reviewer_started": false,
+  "ready_for_integration": true
+}

@@ -1,0 +1,127 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "EVAL-080",
+  "instance_id": "W2-EVAL-080-01",
+  "wave": "W2",
+  "role": "implementer",
+  "status": "complete",
+  "base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+  "head_sha": "968d21a013afc1828cf7d0861d33d53fb60c3a0a",
+  "head_sha_semantics": "implementation head; the metadata-only commit containing this handoff is intentionally not embedded to avoid a recursive commit claim",
+  "branch": "codex/eval-v3-w2-eval-080",
+  "dependency_commits": [],
+  "applied_dependency_commits": [],
+  "dependency_handoff_hashes": {
+    "EVAL-001": "cc8c951e0a0e0dac20e46c611b102bc538a6863099310a90690eb639f931a3be"
+  },
+  "own_commits": [
+    "968d21a013afc1828cf7d0861d33d53fb60c3a0a"
+  ],
+  "files_changed": [
+    "pico/evaluation/evidence_bundle.py",
+    "scripts/build_v3_evidence_bundle.py",
+    "tests/fixtures/evidence_bundle/native-rows.json",
+    "tests/fixtures/evidence_bundle/resume-rows.json",
+    "tests/test_evidence_bundle.py"
+  ],
+  "commands_run": [
+    "uv run pytest tests/test_evidence_bundle.py -q",
+    "uv run ruff check pico/evaluation/evidence_bundle.py scripts/build_v3_evidence_bundle.py tests/test_evidence_bundle.py",
+    "git diff --check",
+    "uv run pytest tests -q",
+    "uv run ruff check .",
+    "uv run pytest tests -q --ignore=tests/test_sdk_probe_anthropic.py --ignore=tests/test_sdk_probe_openai.py",
+    "uv run pytest tests/test_evidence_bundle.py tests/test_evaluation_contracts.py -q",
+    "git diff --cached --check"
+  ],
+  "tests": [
+    {
+      "command": "uv run pytest tests/test_evidence_bundle.py tests/test_evaluation_contracts.py -q",
+      "result": "passed",
+      "details": "13 passed; covers row/hash/formula traceability, failure and exclusion preservation, gate bindings, optional Context, experimental-only Multi-agent, hash bases, tamper detection, and EVAL-001 artifact contract regressions"
+    },
+    {
+      "command": "uv run ruff check pico/evaluation/evidence_bundle.py scripts/build_v3_evidence_bundle.py tests/test_evidence_bundle.py",
+      "result": "passed",
+      "details": "All checks passed"
+    },
+    {
+      "command": "git diff --check and git diff --cached --check",
+      "result": "passed",
+      "details": "No whitespace errors"
+    },
+    {
+      "command": "uv run pytest tests -q",
+      "result": "failed",
+      "details": "Collection blocked by baseline environment: tests/test_sdk_probe_anthropic.py and tests/test_sdk_probe_openai.py import undeclared httpx (ModuleNotFoundError); no EVAL-080 test failed"
+    },
+    {
+      "command": "uv run ruff check .",
+      "result": "failed",
+      "details": "Baseline scope-external scripts/readable_session.py has 14 existing F401/F541 findings; all EVAL-080 paths pass targeted ruff"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "pico/evaluation/evidence_bundle.py",
+      "sha256": "e9c58dcfc81f81770579ca94217bedc22d29189676a3c48579a8a83fd97a3840",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "scripts/build_v3_evidence_bundle.py",
+      "sha256": "9a9b85cca6c1df8844efbb7ef8ac2709cf4a287374eb6340664d3e66dbbfa845",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "tests/test_evidence_bundle.py",
+      "sha256": "8bf2b96455548d4ff5ed05fc120c3e67df23046962b2c4462a81431a9b432b62",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "tests/fixtures/evidence_bundle/native-rows.json",
+      "sha256": "b3c1414742115d89f64d0d7f7e2392f63ba10d76ac04355810c382233d63193a",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "tests/fixtures/evidence_bundle/resume-rows.json",
+      "sha256": "90c4d2067599da83c4a09a387fe270938f629c2f19b26d0a199f42a0490fa039",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": ".codex/eval/handoffs/EVAL-080.json",
+      "persistence": "force-added in one metadata-only descendant commit; that self-containing commit is intentionally excluded from head_sha and own_commits"
+    }
+  ],
+  "contract_hashes": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "artifact_contract_hash_basis": "git_blob_bytes",
+    "claim_registry_schema": "pico-native-claim-registry-v1",
+    "evidence_bundle_schema": "pico-evidence-bundle-v1"
+  },
+  "frozen_hashes": {
+    "native_contract": null,
+    "tool_schema": null,
+    "sdk_transport_decision": null,
+    "provider_selection": null,
+    "native_resume_gate": null,
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1"
+  },
+  "native_protocol_observations": {
+    "observation_scope": "synthetic evidence-bundle unit tests only; no provider request or live result was produced",
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0
+  },
+  "defects": [],
+  "risks": [
+    "The full pytest suite cannot collect two SDK probe tests until the baseline environment supplies httpx.",
+    "Full-repository ruff remains blocked by existing scope-external findings in scripts/readable_session.py.",
+    "Live evidence is intentionally absent; synthetic tests establish bundle and claim behavior without making effectiveness claims."
+  ],
+  "status_proposal": null,
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}

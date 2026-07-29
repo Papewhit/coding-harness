@@ -1,0 +1,139 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-010",
+  "instance_id": "W1-TOOL-010-01",
+  "wave": "W1",
+  "role": "implementer",
+  "status": "complete",
+  "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+  "head_sha": "387216cf4393edc34bce30e7facfa2dbc35cc524",
+  "branch": "codex/eval-v3-w1-tool-010",
+  "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\caa6\\pico",
+  "prompt_sha256": "bd2f2566aa2e31a25fbeba4019170f3db591f9dd64fff981a12990efbecc8c42",
+  "dependency_commits": [],
+  "applied_dependency_commits": [],
+  "dependency_handoff_hashes": {
+    "EVAL-001": "cc8c951e0a0e0dac20e46c611b102bc538a6863099310a90690eb639f931a3be"
+  },
+  "dependency_freeze_hashes": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1"
+  },
+  "own_commits": [
+    "387216cf4393edc34bce30e7facfa2dbc35cc524"
+  ],
+  "files_changed": [
+    "docs/architecture/native-tool-contract.md",
+    "pico/providers/base.py",
+    "pico/providers/contracts.py",
+    "tests/test_provider_contracts.py"
+  ],
+  "commands_run": [
+    "uv run pytest tests/test_provider_contracts.py -q",
+    "uv run ruff check pico/providers/contracts.py pico/providers/base.py tests/test_provider_contracts.py",
+    "uv run pytest tests/test_provider_protocol.py -q",
+    "uv run pytest tests/test_provider_contracts.py tests/test_provider_protocol.py -q",
+    "uv run pytest tests/test_architecture_boundaries.py tests/test_safety_invariants.py tests/test_pico.py -q",
+    "git diff --check",
+    "git diff --cached --check",
+    "SHA-256 Git blob bytes for committed outputs"
+  ],
+  "tests": [
+    {
+      "command": "uv run pytest tests/test_provider_contracts.py -q",
+      "result": "passed",
+      "details": "11 passed; covers JSON safety, stable continuation hashing, non-empty and unique call IDs, text plus tool calls plus stop reason, explicit tool choice, and legacy boundary behavior"
+    },
+    {
+      "command": "uv run ruff check pico/providers/contracts.py pico/providers/base.py tests/test_provider_contracts.py",
+      "result": "passed",
+      "details": "All checks passed"
+    },
+    {
+      "command": "uv run pytest tests/test_provider_contracts.py tests/test_provider_protocol.py -q",
+      "result": "passed",
+      "details": "12 passed after preserving standalone loading of the existing provider base module"
+    },
+    {
+      "command": "uv run pytest tests/test_architecture_boundaries.py tests/test_safety_invariants.py tests/test_pico.py -q",
+      "result": "failed",
+      "details": "67 passed, 13 failed. No failure references a TOOL-010 file: the immutable base already has pico/core/runtime.py at 952 lines versus its 950-line budget; Windows lacks symlink privilege; tests that clear the environment cannot resolve Path.home(); and an existing POSIX shell-quoting assertion fails under Windows. These paths are outside TOOL-010 ownership."
+    },
+    {
+      "command": "git diff --check && git diff --cached --check",
+      "result": "passed",
+      "details": "No whitespace errors"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "pico/providers/contracts.py",
+      "sha256": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+      "hash_basis": "git_blob_bytes",
+      "hash_source": "387216cf4393edc34bce30e7facfa2dbc35cc524:pico/providers/contracts.py",
+      "coverage": "ModelRequest, ModelResponse, ToolDefinition, ToolCall, ToolCallResult, ProviderContinuation, ToolChoice, StopReason, JSON-safe normalization and serialization"
+    },
+    {
+      "path": "pico/providers/base.py",
+      "sha256": "00a8e00a0c2b2f1d17389cbd79f2ad8522d9d61e041fb8263e42ea987e88d4d7",
+      "hash_basis": "git_blob_bytes",
+      "hash_source": "387216cf4393edc34bce30e7facfa2dbc35cc524:pico/providers/base.py",
+      "coverage": "NativeModelClient protocol beside the unchanged active legacy ModelClient and complete_model behavior"
+    },
+    {
+      "path": "tests/test_provider_contracts.py",
+      "sha256": "77d0a496d036abfb3c6f0523a3ec3d5303c59352b3651a80298d3a5612789da2",
+      "hash_basis": "git_blob_bytes",
+      "hash_source": "387216cf4393edc34bce30e7facfa2dbc35cc524:tests/test_provider_contracts.py"
+    },
+    {
+      "path": "docs/architecture/native-tool-contract.md",
+      "sha256": "11e8c72a5330512610a64789fa31df96387fc1fa7476a7bb5ded6f1368204ddf",
+      "hash_basis": "git_blob_bytes",
+      "hash_source": "387216cf4393edc34bce30e7facfa2dbc35cc524:docs/architecture/native-tool-contract.md",
+      "coverage": "exchange invariants, profile identity, continuation schema, persistence and public evidence boundaries"
+    },
+    {
+      "path": ".codex/eval/handoffs/TOOL-010.json",
+      "persistence": "ticket output generated after the content commit so it can record the immutable head SHA"
+    }
+  ],
+  "contract_hashes": {
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "native_contract_hash_basis": "git_blob_bytes"
+  },
+  "frozen_hashes": {
+    "native_contract": null,
+    "tool_schema": null,
+    "sdk_transport_decision": null,
+    "provider_selection": null,
+    "native_resume_gate": null
+  },
+  "native_protocol_observations": {
+    "observation_scope": "contract and legacy-boundary unit tests only; no provider request or online evaluation was issued",
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0
+  },
+  "defects": [],
+  "risks": [
+    "NativeModelClient is intentionally not wired into the active Runtime; integration remains owned by later tickets.",
+    "Adapter and Runtime owners must enforce continuation profile identity matching and exact call/result pairing when they consume these contracts.",
+    "The extra architecture/safety/core regression suite has 13 base/environment failures documented in tests; none are in TOOL-010 ownership."
+  ],
+  "status_proposal": {
+    "ticket_id": "TOOL-010",
+    "status": "complete",
+    "head_sha": "387216cf4393edc34bce30e7facfa2dbc35cc524"
+  },
+  "freeze_proposal": {
+    "native_contract": {
+      "sha256": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+      "hash_basis": "git_blob_bytes",
+      "source": "387216cf4393edc34bce30e7facfa2dbc35cc524:pico/providers/contracts.py"
+    }
+  },
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}

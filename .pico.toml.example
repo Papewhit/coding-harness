@@ -1,22 +1,74 @@
 provider = "deepseek"
 
 [providers.openai]
-protocol = "openai"
+wire_dialect = "openai-responses"
 api_key = "your-api-key"
 base_url = "https://www.right.codes/codex/v1"
 model = "gpt-5.4"
 
+[providers.openai.capabilities]
+native_tools = true
+strict_tool_schema = true
+parallel_tool_calls = false
+reasoning = true
+thinking = false
+opaque_continuation = true
+
 [providers.anthropic]
-protocol = "anthropic"
+wire_dialect = "anthropic-messages"
 api_key = "your-api-key"
 base_url = "https://www.right.codes/claude/v1"
 model = "claude-sonnet-4-6"
 
+[providers.anthropic.capabilities]
+native_tools = true
+strict_tool_schema = false
+parallel_tool_calls = false
+reasoning = false
+thinking = true
+opaque_continuation = true
+
 [providers.deepseek]
-protocol = "anthropic"
+wire_dialect = "anthropic-messages"
 api_key = "your-api-key"
 base_url = "https://api.deepseek.com/anthropic"
 model = "deepseek-v4-pro"
+
+[providers.deepseek.capabilities]
+native_tools = true
+strict_tool_schema = false
+parallel_tool_calls = false
+reasoning = false
+thinking = true
+opaque_continuation = true
+
+[providers.dashscope-o]
+wire_dialect = "openai-responses"
+api_key = "your-api-key"
+base_url = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+model = "qwen3.6-plus"
+
+[providers.dashscope-o.capabilities]
+native_tools = false # This profile is intentionally ineligible for coding startup.
+strict_tool_schema = false
+parallel_tool_calls = false
+reasoning = true
+thinking = true
+opaque_continuation = true
+
+[providers.dashscope-a]
+wire_dialect = "anthropic-messages"
+api_key = "your-api-key"
+base_url = "https://dashscope.aliyuncs.com/apps/anthropic"
+model = "qwen3.6-plus"
+
+[providers.dashscope-a.capabilities]
+native_tools = true
+strict_tool_schema = false
+parallel_tool_calls = false
+reasoning = false
+thinking = true
+opaque_continuation = true
 
 [sandbox]
 mode = "off"

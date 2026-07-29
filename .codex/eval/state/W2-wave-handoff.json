@@ -1,0 +1,174 @@
+{
+  "schema_version": "pico-eval-wave-handoff-v1",
+  "wave": "W2",
+  "wave_base_sha": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+  "control_overlay_sha256": "5954e177e3bd0f7585786a42654e868b017b167d52172df03c56da116628faaf",
+  "integration_sha": "8d0404d52f894e5876b76ad1cf7c9de5c883cd95",
+  "integration_sha_role": "canonical W2 code/state snapshot before the wave-handoff metadata commit",
+  "canonical_tag": {
+    "name": "eval-v3/w2-canonical",
+    "type": "annotated",
+    "object_sha": "1aee986df5397afb805a64e9ee9361d3025102c6",
+    "target_sha": "8d0404d52f894e5876b76ad1cf7c9de5c883cd95",
+    "verified": true
+  },
+  "metadata_commit": {
+    "role": "commit adding this handoff after the canonical integration snapshot",
+    "parent_sha": "8d0404d52f894e5876b76ad1cf7c9de5c883cd95",
+    "sha_resolution": "git log -1 --format=%H -- .codex/eval/state/W2-wave-handoff.json"
+  },
+  "status_sha256": "d57747a867ccae58b9979c63db8c3c7d8557114b35cb9436f2a7d49819014682",
+  "freeze_sha256": "501b12e40614977af84aa27aa31699fb8efb19bc53a3ecf0b0e1466fa2b50497",
+  "commit_map": {
+    "path": ".codex/eval/state/W2-commit-map.json",
+    "sha256": "c95e47c18c028a3440e54b688f5652ca10b578825a579667f5e33c3a54517d35",
+    "entry_count": 10,
+    "stable_patch_ids_verified": true
+  },
+  "worker_bundle": {
+    "path": "F:/dev/llm/pico-eval-artifacts/wave-bundles/W2-workers.bundle",
+    "sha256": "a3cbcba639217b054bc30494b8a3a092ee041670390a574dde226155dd18fc19",
+    "size_bytes": 16111628,
+    "ref_count": 10,
+    "verification": "git bundle verify passed; complete history"
+  },
+  "accepted_tickets": [
+    "TOOL-012-QO-R",
+    "TOOL-012-QA-R",
+    "TOOL-012-DA-R",
+    "TOOL-015",
+    "EVAL-031-I",
+    "EVAL-031-A",
+    "EVAL-031-B",
+    "EVAL-040-M",
+    "EVAL-080",
+    "TOOL-013-S"
+  ],
+  "blocked_tickets": [],
+  "ticket_handoffs": {
+    "TOOL-012-QO-R": {
+      "path": ".codex/eval/handoffs/TOOL-012-QO-R.json",
+      "sha256": "efd10f6c8e0400ebcbc18df4fbd05cc31ab693cce9f12b23b39ca2e01bedef3f",
+      "branch_head": "7a38d3b28dcb15c7fa1d7c90c1bfca5e14d28b7b",
+      "integration_commit": "3dda76cb41677148ccafb13b8cd2cb3b27346b86",
+      "outcome": "protocol_ineligible_after_3_provider_http_400_responses"
+    },
+    "TOOL-012-QA-R": {
+      "path": ".codex/eval/handoffs/TOOL-012-QA-R.json",
+      "sha256": "f13c3cf6918e72af438237b551220ebec89bd7f81a162baddf01ea4b3268f151",
+      "branch_head": "71958e79ecbdb9b82f17bfdc57f97925045d15b7",
+      "integration_commit": "3dda76cb41677148ccafb13b8cd2cb3b27346b86",
+      "outcome": "3_of_3_native_roundtrips"
+    },
+    "TOOL-012-DA-R": {
+      "path": ".codex/eval/handoffs/TOOL-012-DA-R.json",
+      "sha256": "8a22e252cdbfa1072ff6bd74dae1e30b8aa39b86cae235b1c6998043459b63fc",
+      "branch_head": "65d7142cf3a5ed9a15fc0689f3022d521369252b",
+      "integration_commit": "3dda76cb41677148ccafb13b8cd2cb3b27346b86",
+      "outcome": "3_of_3_native_roundtrips"
+    },
+    "TOOL-015": {
+      "path": ".codex/eval/handoffs/TOOL-015.json",
+      "sha256": "e3e37d00beba52addbea070666f932b71593a131dfa67778b42f7216ec6bc413",
+      "branch_head": "69369dfadb3165108d2cb11bc28076dce73e18f7",
+      "integration_commit": "d6991e3d0a47ba86c7f0662c47f0166d026089a6"
+    },
+    "EVAL-031-I": {
+      "path": ".codex/eval/handoffs/EVAL-031-I.json",
+      "sha256": "3ae1145487d17faca6a5443a4e229eddc2e6eed9aff18242a1cada8ce644ead4",
+      "branch_head": "cbd077c2246212e37224c1a9f6f38564f92490a5",
+      "integration_commit": "363e8fa1219181ff11e638db583705f7ba8c5ef2"
+    },
+    "EVAL-031-A": {
+      "path": ".codex/eval/handoffs/EVAL-031-A.json",
+      "sha256": "c875c4ede3a0e4330a2ea45d6266ded2c9882ad2943e05432794ab3eeb4ba1bd",
+      "branch_head": "f745704edb63f22b2ef8da99a0636aa041000ec7",
+      "integration_commit": "0352cb98192b23976ce40bf0aa3b2a0ac6197f9f"
+    },
+    "EVAL-031-B": {
+      "path": ".codex/eval/handoffs/EVAL-031-B.json",
+      "sha256": "abda701d825119311a68795edfc89d145ded6e72dae454ecf78c134cd624a904",
+      "branch_head": "d0f34d12cbbd13798665986ced61f6eda38bdb81",
+      "integration_commit": "8e5f9d8864521214b1eb455c3faab96e61fae59a"
+    },
+    "EVAL-040-M": {
+      "path": ".codex/eval/handoffs/EVAL-040-M.json",
+      "sha256": "e7046cae4ee5d88e02a0b6eb9a74b2652c2d4419f1988cb72f7db70995b5b2ee",
+      "branch_head": "a357ea96a9d5a977f292a878fa2e8914fd6e8403",
+      "integration_commit": "059f176a31539b475573524bff640f1a34b9609c"
+    },
+    "EVAL-080": {
+      "path": ".codex/eval/handoffs/EVAL-080.json",
+      "sha256": "c4092e79cc02a84d8378b941219be729cdd133e80842306c2d010bea69e2f7a3",
+      "branch_head": "d808f72561ba2be0f51518ed8fc94b26a1174fe8",
+      "integration_commit": "f1e8b5c880674d990bf48d66bc9e3cebaf1eea3e"
+    },
+    "TOOL-013-S": {
+      "path": ".codex/eval/handoffs/TOOL-013-S.json",
+      "sha256": "0eb6213eab7261daf535b9b30cce5787533c4070195f7a5e6b2c383ab40ee55a",
+      "branch_head": "1347952a3d6af33714074b5d837a11685fde67a3",
+      "integration_commit": "b76d5332343a5273c676b707d9077087a9fbf6db"
+    }
+  },
+  "frozen_artifacts": {
+    "sdk_transport_decision": {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-sdk-spike/decision.json",
+      "sha256": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+      "openai_responses": "typed_sdk",
+      "anthropic_messages": "sdk_raw_response",
+      "raw_http_selections": []
+    },
+    "native_scripted_fixtures": {
+      "path": "pico/testing.py",
+      "sha256": "ff2a8febe36730b6c18d096312f9455dce0793c9d1f975ffb941c726706904cf"
+    },
+    "context_fragments": {
+      "c01_c08_sha256": "6bef856d9df68209d60d0ef7e9df1dc927fd861f64a6f646f0cc58fba9c808b8",
+      "c09_c15_sha256": "1c2975e53696faed737a676e14faef7008cb4a2c4c5db27c804a903af3e1455c"
+    },
+    "local_taskset": {
+      "taskset_sha256": "b6c1d16720583767b86cf8c8f535b0ff744a84216e0843a79660fea87389909a",
+      "lock_sha256": "f12b2171da87ca6602e8574cfcc6e9621f792c7453bd3c806ad70dbe716fa2e2",
+      "repositories": 3,
+      "tasks": 9
+    }
+  },
+  "exit_gate": {
+    "status": "accepted",
+    "evidence": [
+      "PLAN validation passed: 63 ticket templates, 11 waves.",
+      "All 10 W2 tickets are accepted; active_tickets and blocked_tickets are empty.",
+      "W2 deterministic target suite passed: 52 tests; changed-path Ruff passed.",
+      "Local task matrix recorded 9 expected baseline failures, 9 reference passes, and 9 inverted failures.",
+      "Architecture/safety/policy/permissions suite exactly matched wave base: 16 passed, 11 known failures.",
+      "All four W2 freeze components were rehashed against canonical Git blobs or external file bytes.",
+      "Worker bundle contains 10 refs and complete history; git bundle verify passed.",
+      "Annotated tag eval-v3/w2-canonical resolves to the canonical W2 snapshot.",
+      "No formal online effectiveness evaluation, final provider selection, Resume evaluation, or W3 work was started."
+    ]
+  },
+  "risks": [
+    "dashscope-o in the tested thinking configuration rejects tool_choice=required; this is a protocol exclusion, not an effectiveness ranking.",
+    "The immutable architecture baseline remains at pico/core/runtime.py 952 lines against the 950-line budget.",
+    "Ten Windows permission/path/home/shell-command test failures remain unchanged and exactly match the wave base.",
+    "native_eval_ready and native_resume_ready remain pending; formal online and Resume evaluation remain prohibited by their later gates."
+  ],
+  "cleanup_candidates": [
+    {"branch": "codex/eval-v3-w2-tool-012-qo-r", "worktree": "C:/Users/Papewhit/.codex/worktrees/29cb/pico"},
+    {"branch": "codex/eval-v3-w2-tool-012-qa-r", "worktree": "C:/Users/Papewhit/.codex/worktrees/8ebc/pico"},
+    {"branch": "codex/eval-v3-w2-tool-012-da-r", "worktree": "C:/Users/Papewhit/.codex/worktrees/2b0f/pico"},
+    {"branch": "codex/eval-v3-w2-tool-013-s", "worktree": "C:/Users/Papewhit/.codex/worktrees/4e17/pico"},
+    {"branch": "codex/eval-v3-w2-tool-015", "worktree": "C:/Users/Papewhit/.codex/worktrees/c016/pico"},
+    {"branch": "codex/eval-v3-w2-eval-031-i", "worktree": "C:/Users/Papewhit/.codex/worktrees/4afc/pico"},
+    {"branch": "codex/eval-v3-w2-eval-031-a", "worktree": "C:/Users/Papewhit/.codex/worktrees/de94/pico"},
+    {"branch": "codex/eval-v3-w2-eval-031-b", "worktree": "C:/Users/Papewhit/.codex/worktrees/fd6e/pico"},
+    {"branch": "codex/eval-v3-w2-eval-040-m", "worktree": "C:/Users/Papewhit/.codex/worktrees/7529/pico"},
+    {"branch": "codex/eval-v3-w2-eval-080", "worktree": "C:/Users/Papewhit/.codex/worktrees/4c6a/pico"}
+  ],
+  "cleanup_action_taken": false,
+  "user_decisions_required": [],
+  "next_wave": "W3",
+  "next_wave_ready_tickets": ["TOOL-019-D", "TOOL-021-P"],
+  "next_wave_started": false,
+  "completed_at": "2026-07-21T16:27:38.7821693+08:00"
+}

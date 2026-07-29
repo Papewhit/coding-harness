@@ -1,0 +1,279 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-042-G-R2",
+  "instance_id": "W5R2-TOOL-042-G-R2-01",
+  "wave": "W5R2",
+  "role": "integrator_ticket/gate",
+  "status": "complete",
+  "source_thread_id": "019f8967-207e-7461-82aa-dcc2239049ab",
+  "base_sha": "aab051fbf30c50df3af6ed2df5954717e104eac0",
+  "wave_base_sha": "aab051fbf30c50df3af6ed2df5954717e104eac0",
+  "w5r_canonical_sha": "0c87dca9c823c98237cb50baf4cf7f2494cb69ef",
+  "run_snapshot_sha": "dd8a677782f90c749a422ee066daa1afcb36c516",
+  "head_sha": "24793ef98ffd1e2ccdba6c77db56c0b38629fcd2",
+  "head_sha_semantics": "Ticket proposal content head before the metadata-only commit containing this handoff; the final branch HEAD is reported to the W5R2 Wave Integrator after committing this file.",
+  "branch": "codex/eval-v3-w5r2-tool-042-g-r2",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/5e0d/pico",
+  "canonical_clone": "/home/papewhit/dev/pico-w5r2-gate-dd8a677",
+  "canonical_to_applied_commits": [
+    {
+      "ticket": "ARCH-046-T",
+      "canonical": "cbf71d4fdbf7c9971b8af3dfc7d76ef5a0765efb",
+      "applied": "126434913d03d662be378d14dda708f7bcff5ce9",
+      "stable_patch_id": "07d39a7bc6fea1778e53609df76ace2e965a0462"
+    },
+    {
+      "ticket": "ARCH-046-T",
+      "canonical": "6dad1263f57196e9e9b41402306bd920636c4cca",
+      "applied": "5c3f95e0afa109f3b4f98b45f7bec49f4517cc7c",
+      "stable_patch_id": "de5d30900934d9725c7685d2e5b618d0dab52384"
+    },
+    {
+      "ticket": "TEST-046-P",
+      "canonical": "3f95f6ae5bdec56e75367cfcad1aadb9526332dd",
+      "applied": "e89d03115909a4104d024dbe0d64f43647e97e25",
+      "stable_patch_id": "abff381049a1a73af408652b9577fa03c365278a"
+    },
+    {
+      "ticket": "TEST-046-P",
+      "canonical": "7dd7a08440848b01cc3863dd286610e3cc7ce7b2",
+      "applied": "b07a2b3256ef785f47b6d5915aaaa5f5d35caecd",
+      "stable_patch_id": "6d12db5933be1bad9a2220c3cb5b536e92ba0d72"
+    },
+    {
+      "ticket": "TOOL-046-W",
+      "canonical": "0f1dc6b706ab8f86bd1f0e1d6b047fefce2d16de",
+      "applied": "8b237f7a46c5d71f38e55ac3b79ca534951316d5",
+      "stable_patch_id": "27ae0323a41a165808abf854d8368b3a9affcb25"
+    },
+    {
+      "ticket": "TOOL-046-W",
+      "canonical": "6207efe389bd92f1388330e656f297b64f8d676a",
+      "applied": "198ffa7e269cd19318d0f52c2cd2716cfed39b8c",
+      "stable_patch_id": "a2560da6f0966554ff04cf71cd4b5e3d0e2857f7"
+    },
+    {
+      "ticket": "TEST-046-T",
+      "canonical": "7cc5933a570ec98f4479dd00b71223d6f3d5d9e6",
+      "applied": "1900d3e1a15d2ceca439f982f19bffd4f5228c1b",
+      "stable_patch_id": "a3e8b1cbb0a9ac433c94d94a24c292dddfe4c30c"
+    },
+    {
+      "ticket": "TEST-046-T",
+      "canonical": "bb9a4b40b9eb6266a17abd537781d632a6a82c79",
+      "applied": "dd8a677782f90c749a422ee066daa1afcb36c516",
+      "stable_patch_id": "3e08ec3857f24a314ced43930dd6f483239588b8"
+    }
+  ],
+  "dependency_handoff_hashes": {
+    "W5R-wave-handoff": "bcc4432477409529a46085441c4717188b77ab3aea5943565f3a7dd552da2665",
+    "ARCH-046-T": "b452db6941c3ea4de13b373fb08927536b807cb3df0197f140a7bde383c68838",
+    "TEST-046-P": "f061aa3e8bfc28c93616f57eb63416afe9b774c3038dc0aa5361186c257eab75",
+    "TOOL-046-W": "18b314728ca7b40fe7598a8c58737d7d4db79f02ead8792e1e84be72ddf3f78e",
+    "TEST-046-T": "673eaa4fc31939ae2299edd8bf9e894844e27472b4ca1d2ee3dd6c16226464dc",
+    "EVAL-032-F": "e051f284b03fedb266e145144c246ffa025c55b19bca045417fb5f7e62d0c0b1",
+    "TOOL-049-I": "5eef3b00058eb07ec33527ff6e33ba628dea5ec27967a0ae0caf6b60e1cb2936",
+    "TOOL-042-G-R1": "f44e7f3764ad4c834c6fc9bb12651647aa71c5094c5836f4e5d647bd3be9d679"
+  },
+  "dependency_artifact_hashes": {
+    "ARCH-046-T": "dd7fb90e472fe7dade3d4cef66d0d4efc7b8d8b281a94588c1f3c6c33c2467a2",
+    "TEST-046-P": "f8b564b44c62d29481b20a30f17ac09fcb0afa2e269cbf04b364576f1cf48bec",
+    "TOOL-046-W": "ef4307744eb96552ac4f838c01ae615c08e2c38305c6a663867d361cd1600ffa",
+    "TEST-046-T": "bae3fc49ebddc58296a9b85ef60dab8ea87d7ba6ff5ed3a4d9778a25e0edcef5"
+  },
+  "existing_canonical_proposal_hashes": {
+    "EVAL-032-F.freeze": "bffb87a6b0b886899a704660435fc3673a5a06fbf5d92cbeb1556549e1b8d199",
+    "TOOL-042-G-R1.freeze": "3e427f291bebb711a58efb7458cb8abbd766c49898170fa8eb797da5508acb1a",
+    "TOOL-042-G-R1.status": "336ee843226ac544e142503a0f0c54b958cf6c5c1ee95c764686101ef77ab289"
+  },
+  "own_commits": [
+    "24793ef98ffd1e2ccdba6c77db56c0b38629fcd2"
+  ],
+  "allowed_write_paths": [
+    "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate-w5r2/**",
+    ".codex/eval/proposals/TOOL-042-G-R2.freeze.json",
+    ".codex/eval/proposals/TOOL-042-G-R2.status.json",
+    ".codex/eval/handoffs/TOOL-042-G-R2.json"
+  ],
+  "files_changed_by_ticket": [
+    ".codex/eval/proposals/TOOL-042-G-R2.freeze.json",
+    ".codex/eval/proposals/TOOL-042-G-R2.status.json",
+    ".codex/eval/handoffs/TOOL-042-G-R2.json"
+  ],
+  "tests": [
+    {
+      "command": "uv sync --locked --extra providers --python 3.12",
+      "exit_code": 0,
+      "result": "passed",
+      "details": "Committed uv.lock resolved with user-level uv 0.11.19 and CPython 3.12.13 in the fresh Ubuntu WSL2 ext4 clone."
+    },
+    {
+      "command": "uv run ruff check .",
+      "exit_code": 0,
+      "result": "passed",
+      "details": "All checks passed."
+    },
+    {
+      "command": "uv run pytest tests/test_architecture_boundaries.py tests/test_safety_invariants.py tests/test_tool_policy_acceptance.py tests/test_permissions_acceptance.py -q",
+      "exit_code": 0,
+      "result": "27 passed",
+      "details": "Protected architecture, safety-invariant, tool-policy and permissions acceptance Gate passed."
+    },
+    {
+      "command": "uv run pytest tests/test_provider_contracts.py tests/test_openai_responses_tools.py tests/test_anthropic_messages_tools.py tests/test_native_tool_loop.py tests/test_native_session_exchange.py tests/test_native_request_context.py tests/test_native_runtime_integration.py tests/test_native_provider_evaluator.py tests/test_native_tool_repetition.py tests/test_context_freeze_integrity.py -q",
+      "exit_code": 0,
+      "result": "92 passed",
+      "details": "Native deterministic provider, Runtime, Session, evaluator, repetition and Context integrity Gate passed."
+    },
+    {
+      "command": "uv run pytest tests -q",
+      "exit_code": 0,
+      "result": "487 passed, 2 skipped, 6 warnings",
+      "details": "The only skips are the two pre-existing live-provider opt-in tests; no live provider was run."
+    },
+    {
+      "command": "supplemental locked-profile fixture, repetition, worker and TUI suite",
+      "exit_code": 0,
+      "result": "48 passed",
+      "details": "Locked profile fixture/worker/TUI recovery symptoms are zero; retry-after-read, true repeated mutation rejection, safety chain and fixture negative control passed."
+    },
+    {
+      "command": "uv run python scripts/verify_context_freeze.py --binding benchmarks/v3/context-assets/cases-v2.binding.json",
+      "exit_code": 0,
+      "result": "passed",
+      "details": "Reconstructed 15 cases from Git blob OID 5e9bdf06e75f6661660947e880f07edfe7480880 with SHA-256 e08066749520a52af5bb14a9435e359f4a85d3f3ae6e8dd0e962001f99c2df17."
+    },
+    {
+      "command": "architecture, native positive protocol, static scope and bypass audits",
+      "exit_code": 0,
+      "result": "passed",
+      "details": "24 tracked modules; runtime.py 923/1000 with one aggregate assertion and zero violations. Text envelopes, SDK Tool/Agent Runner usage, unknown-block loss, call-ID mismatch, safety bypass, monkey patch, skip/xfail additions and failure reclassification are all zero."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate-w5r2/W5R2-TOOL-042-G-R2-01/gate-report.json",
+      "sha256": "2fc1ebbe4d64c5be80e7fe063584915f12aabf3a8f8c08796d2cf009e94849a5",
+      "role": "passed_native_deterministic_gate"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate-w5r2/W5R2-TOOL-042-G-R2-01/artifact-manifest.json",
+      "sha256": "1c859f11adebceaa13115c7a9947d19de23014f9abbfc1d47bdaf02b0494620f",
+      "file_count": 31,
+      "aggregate_sha256": "bee6e70c66cad4555aa394b94ee3ec174b67a62ef39fc11655a3d0e3133f234a"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate-w5r2/W5R2-TOOL-042-G-R2-01/environment-manifest.json",
+      "sha256": "7f058fd6d824e6e0ae6a4c7fb152476062240d6c14dff4aef6471b67ced065e2"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate-w5r2/W5R2-TOOL-042-G-R2-01/command-results.json",
+      "sha256": "469a0b85f1c39569e5631b899995cf4be68d67ed87ab3f42f074b11e7fed165b"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate-w5r2/W5R2-TOOL-042-G-R2-01/junit-summary.json",
+      "sha256": "da9a9642cc4dfbd300e620047e70ade735b2cf3efed61c4947ca67d8b62ebd4b"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-deterministic-gate-w5r2/W5R2-TOOL-042-G-R2-01/run-snapshot-evidence.json",
+      "sha256": "e6f1154287ef635faa9a70bdd7521eab8fa64271845bc21809caf7ba6cb37213"
+    },
+    {
+      "path": ".codex/eval/proposals/TOOL-042-G-R2.freeze.json",
+      "sha256": "2ed13f6b58b7b8486920453d58c587d5ec36dcf251e839d05bba3212078d3134"
+    },
+    {
+      "path": ".codex/eval/proposals/TOOL-042-G-R2.status.json",
+      "sha256": "0823fecd62ea1796db2b8f9e4c19c00e5c3515b9c815d8c24f99cb48b004118d"
+    },
+    {
+      "path": ".codex/eval/handoffs/TOOL-042-G-R2.json",
+      "persistence": "Metadata-only commit generated after the immutable run snapshot, artifacts, and proposal commit."
+    }
+  ],
+  "frozen_hashes": {
+    "formal_freeze": "dbedbc07dcc042546ec37392fb17214b2947bdbfe757d872bb438b9f7cca6f8e",
+    "formal_status": "7a908883bdac3e82b49a4e8fbd47946b46e56b000a2a58dacd36d82822f00162",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "sdk_dependency_lock": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+    "context_v2_cases_git_blob_oid": "5e9bdf06e75f6661660947e880f07edfe7480880",
+    "context_v2_cases_git_blob_sha256": "e08066749520a52af5bb14a9435e359f4a85d3f3ae6e8dd0e962001f99c2df17",
+    "native_deterministic_gate_report": "2fc1ebbe4d64c5be80e7fe063584915f12aabf3a8f8c08796d2cf009e94849a5",
+    "native_deterministic_gate_artifact_manifest": "1c859f11adebceaa13115c7a9947d19de23014f9abbfc1d47bdaf02b0494620f"
+  },
+  "native_protocol_observations": {
+    "observation_scope": "Offline deterministic positive Gate paths only; no live-provider, formal effectiveness or Resume evaluation was executed.",
+    "positive_cases": "8/8",
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_match_count": "11/11",
+    "call_id_result_mismatch_count": 0,
+    "batch_completeness_count": "9/9",
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0,
+    "sdk_tool_runner_used": false,
+    "sdk_agent_runner_used": false,
+    "sdk_managed_pico_tool_execution_used": false
+  },
+  "acceptance_checklist": {
+    "source_checkout_equals_run_snapshot": true,
+    "fresh_ubuntu_wsl2_ext4_clone": true,
+    "python_3_12_committed_lock_user_uv": true,
+    "repository_ruff_exit_zero": true,
+    "protected_suite_exit_zero": true,
+    "deterministic_suite_exit_zero": true,
+    "full_suite_exit_zero": true,
+    "all_required_commands_exit_zero": true,
+    "only_preexisting_live_provider_opt_in_skips": true,
+    "architecture_24_modules_runtime_1000_aggregate": true,
+    "locked_provider_profile_fixture_symptoms_zero": true,
+    "worker_and_tui_profile_symptoms_zero": true,
+    "retry_after_read_passed": true,
+    "genuine_repeated_mutation_rejected": true,
+    "safety_chain_preserved": true,
+    "fixture_negative_control_verified": true,
+    "context_v2_fresh_clone_reconstruction": true,
+    "text_envelope_seen_zero": true,
+    "call_id_result_batch_complete": true,
+    "unknown_block_loss_zero": true,
+    "sdk_tool_agent_runner_absent": true,
+    "no_monkey_patch_or_autouse_bypass": true,
+    "no_skip_or_xfail_added": true,
+    "no_failure_reclassification": true,
+    "sudo_not_used": true,
+    "live_provider_not_used": true,
+    "formal_effectiveness_not_run": true,
+    "resume_evaluation_not_run": true,
+    "canonical_status_or_freeze_written": false,
+    "w6_not_started": true
+  },
+  "defects": [],
+  "risks": [
+    "The two skipped tests remain explicitly excluded because live-provider execution is opt-in and forbidden for this ticket; the skips were pre-existing and were not added or modified by W5R2 dependencies."
+  ],
+  "minimal_followups": [
+    "The W5R2 Wave Integrator must independently verify and, if accepted, write the proposed structured_context_deterministic_gate_v2 and native_deterministic_gate promotions to canonical FREEZE/STATUS.",
+    "Do not start W6 from this ticket; downstream work continues only after canonical integration."
+  ],
+  "status_proposal": {
+    "path": ".codex/eval/proposals/TOOL-042-G-R2.status.json",
+    "sha256": "0823fecd62ea1796db2b8f9e4c19c00e5c3515b9c815d8c24f99cb48b004118d",
+    "status": "complete",
+    "native_eval_ready": true,
+    "w5r2_exit_gate_satisfied": true,
+    "w6_ready": true,
+    "w6_started": false
+  },
+  "freeze_proposal": {
+    "path": ".codex/eval/proposals/TOOL-042-G-R2.freeze.json",
+    "sha256": "2ed13f6b58b7b8486920453d58c587d5ec36dcf251e839d05bba3212078d3134",
+    "promotion_allowed": true,
+    "structured_context_deterministic_gate_v2_proposed": true,
+    "native_deterministic_gate_proposed": true
+  },
+  "canonical_state_written": false,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}

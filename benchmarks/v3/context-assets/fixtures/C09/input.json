@@ -1,0 +1,18 @@
+{
+  "id": "C09",
+  "title": "all assets retain their canonical surfaces",
+  "budget": {"unit": "utf8_bytes", "system_text": 2048, "messages": 2048, "tools": 1024},
+  "assets": {
+    "skills": {"surface": "system_text", "content": "SKILL-C09-ALPHA"},
+    "todo": {"surface": "system_text", "content": "TODO-C09-ACTIVE"},
+    "plan": {"surface": "system_text", "content": "PLAN-C09-CONTROL"},
+    "checkpoint": {"surface": "system_text", "content": "CHECKPOINT-C09-FRESH"},
+    "worker": {"surface": "messages", "content": "WORKER-C09-UNDRAINED"},
+    "durable": {"surface": "system_text", "content": "DURABLE-C09-SELECTED"},
+    "compact": {"surface": "messages", "content": "COMPACT-C09-LATEST"},
+    "pointer": {"surface": "messages", "content": "POINTER-C09-RESOLVABLE", "metadata": {"target_path": "fixtures/C09/targets/design.md", "content_hash": "sha256:3a5c23d47827981aadd19df94531895a57c775bb5762970c8b97c095fbfb62b0", "freshness": "fresh", "producer": "checkpoint", "resolvable": true}}
+  },
+  "current_request": "REQUEST-C09-KEEP-VERBATIM",
+  "native_turn": {"status": "terminal"},
+  "tools": [{"name": "inspect_c09", "description": "TOOL-C09-SCHEMA", "parameters": {"type": "object", "properties": {"path": {"type": "string"}}}}]
+}

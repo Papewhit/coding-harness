@@ -1,0 +1,155 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-032-C",
+  "instance_id": "W4-TOOL-032-C-01",
+  "wave": "W4",
+  "role": "implementer",
+  "status": "complete",
+  "base_sha": "005ded3eceaaa13e816ae8073973a50db87772f2",
+  "head_sha": "93a323fdf7fe2b6e0381b315ae6e2b248b154627",
+  "branch": "codex/eval-v3-w4-tool-032-c",
+  "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\w4-032c\\pico",
+  "prompt_sha256": "801578312a9c0fe334458ddde4524e7b4a90701c844245207c9d4ebda2c91bd3",
+  "dependency_commits": [],
+  "applied_dependency_commits": [],
+  "dependency_handoff_hashes": {
+    "TOOL-010": "300faf3f58f369248291ba72be3aefca9e3444dac9999cf45c5767c4eefbde0d",
+    "TOOL-011": "825e0d3a64abd065e3a9c67a3ce3d1bb9c06d2bbe1b5b00b8b24423cfa3d4dfa",
+    "EVAL-030": "40834e95152f29485dcaa6f94d63ce5e28fb4791ad3f33a2bb09d2e03564df84"
+  },
+  "dependency_freeze_hashes": {
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "context_assets": "d8349c034524cc488958a1f3b460a7b6080915eed0b03b64c635810c21bf8e15"
+  },
+  "own_commits": [
+    "93a323fdf7fe2b6e0381b315ae6e2b248b154627"
+  ],
+  "files_changed": [
+    "pico/core/request_context.py",
+    "pico/core/context_manager.py",
+    "pico/core/runtime.py",
+    "pico/core/compact.py",
+    "pico/core/context_usage.py",
+    "tests/test_native_request_context.py",
+    ".codex/eval/handoffs/TOOL-032-C.json"
+  ],
+  "commands_run": [
+    "uv run pytest tests/test_native_request_context.py tests/test_context_manager.py tests/test_context_governance_acceptance.py tests/test_architecture_boundaries.py -q",
+    "uv run pytest tests/test_native_request_context.py tests/test_context_manager.py tests/test_context_governance_acceptance.py -q",
+    "uv run ruff check pico/core/request_context.py pico/core/context_manager.py pico/core/runtime.py pico/core/compact.py pico/core/context_usage.py pico/core/tool_profiles.py tests/test_native_request_context.py",
+    "uv run pytest tests/test_pico.py tests/test_tool_schema_export.py tests/test_provider_protocol.py -q",
+    "git diff --check",
+    "SHA-256 Git blob bytes for committed outputs"
+  ],
+  "tests": [
+    {
+      "command": "uv run pytest tests/test_native_request_context.py tests/test_context_manager.py tests/test_context_governance_acceptance.py -q",
+      "result": "passed",
+      "details": "17 passed; covers explicit request surfaces, exact current-request preservation under pressure, eight-asset attribution, separate tool-schema usage, continuation evidence, text-envelope instruction removal, and unfinished-native-turn compaction safety."
+    },
+    {
+      "command": "uv run pytest tests/test_native_request_context.py tests/test_context_manager.py tests/test_context_governance_acceptance.py tests/test_architecture_boundaries.py -q",
+      "result": "failed",
+      "details": "17 passed, 1 failed only because immutable base pico/core/worker_manager.py is already 232 lines against its 220-line budget. That file is unchanged and outside TOOL-032-C ownership. Ticket-owned runtime.py is 903/950, context_manager.py 420/420, compact.py 154/180, context_usage.py 69/120, and tool_profiles.py 55/80."
+    },
+    {
+      "command": "uv run ruff check pico/core/request_context.py pico/core/context_manager.py pico/core/runtime.py pico/core/compact.py pico/core/context_usage.py pico/core/tool_profiles.py tests/test_native_request_context.py",
+      "result": "passed",
+      "details": "All checks passed."
+    },
+    {
+      "command": "uv run pytest tests/test_pico.py tests/test_tool_schema_export.py tests/test_provider_protocol.py -q",
+      "result": "failed",
+      "details": "80 passed, 5 failed in pre-existing Windows tests that clear the environment and then cannot resolve Path.home(); no failure references a changed assertion or TOOL-032-C behavior."
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed",
+      "details": "No whitespace errors."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "pico/core/request_context.py",
+      "sha256": "6724fb439984fae58bd12cec6215b997e614762e6ee6d7e4b7409584b50f95e1",
+      "hash_basis": "git_blob_bytes",
+      "coverage": "ModelRequestContext, public RequestMessage, native tool export, surface hashes/usage, continuation-safe evidence, and stable protocol-free system text."
+    },
+    {
+      "path": "pico/core/context_manager.py",
+      "sha256": "786e09855e69319153505260b080910b1cc6f451d365afaf3adac546c738f82d",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "pico/core/runtime.py",
+      "sha256": "31df5a061ec060dc691e475e06c9a1313ab10533810c7c3d9c2ce195f6cb5828",
+      "hash_basis": "git_blob_bytes",
+      "coverage": "Structured context entry point and protocol-free prefix; 903 lines against the unchanged 950-line budget."
+    },
+    {
+      "path": "pico/core/compact.py",
+      "sha256": "417feeded8590752e7495cb400ee7bcd9f00b8d1fc2256baae2b007485a61af0",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "pico/core/context_usage.py",
+      "sha256": "09a7c933ac4a298430a63bc4e5f7b690ea6ff2f59749317433894707c09b0a38",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "tests/test_native_request_context.py",
+      "sha256": "154f7bd067268a037dcd94ce527107c9dee4bc0920383a7181a0bdaa4985bc7b",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": ".codex/eval/handoffs/TOOL-032-C.json",
+      "persistence": "Committed in a follow-up metadata commit; head_sha above identifies the immutable implementation commit."
+    }
+  ],
+  "contract_hashes": {
+    "context_assets": "d8349c034524cc488958a1f3b460a7b6080915eed0b03b64c635810c21bf8e15",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema_catalog": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f"
+  },
+  "frozen_hashes": {
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "provider_selection": null,
+    "native_resume_gate": null
+  },
+  "native_protocol_observations": {
+    "observation_scope": "Static request composition and deterministic local tests only; no provider request or online evaluation was issued.",
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0
+  },
+  "defects": [
+    {
+      "id": "pre-existing-worker-manager-budget",
+      "scope": "pico/core/worker_manager.py",
+      "details": "The immutable wave base already contains 232 lines against the architecture budget of 220; TOOL-032-C did not modify this forbidden/out-of-scope file."
+    },
+    {
+      "id": "pre-existing-windows-home-tests",
+      "scope": "tests/test_pico.py environment-isolation cases",
+      "details": "Five tests clear all home-directory environment variables and Path.home() fails on Windows before reaching changed behavior."
+    }
+  ],
+  "risks": [
+    "Final native Runtime/Adapter wiring remains owned by TOOL-040-I; this ticket exposes the structured request surface without changing provider adapters.",
+    "Legacy parser removal remains owned by TOOL-041-M; this ticket removes executable text-envelope instructions from formal Runtime request composition but does not edit parser ownership.",
+    "The architecture gate remains red on the immutable-base worker_manager.py budget until its designated owner resolves it."
+  ],
+  "status_proposal": {
+    "ticket_id": "TOOL-032-C",
+    "status": "complete",
+    "head_sha": "93a323fdf7fe2b6e0381b315ae6e2b248b154627"
+  },
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}

@@ -1,0 +1,127 @@
+{
+  "schema_version": "pico-eval-freeze-proposal-v1",
+  "ticket_id": "TOOL-054-G",
+  "instance_id": "W6R-TOOL-054-G-01",
+  "wave": "W6R",
+  "role": "integrator_ticket/gate",
+  "status": "complete",
+  "gate_status": "blocked",
+  "immutable_base_sha": "48a39193580e48acee3fea5c3bfa107e46443d04",
+  "candidate_source_sha": "7eb736b3af73c5a82cb46ee3828b6e29a9ebb909",
+  "candidate_source_tree": "08f05c340bb2caa65c8de5ced5200e4d0b6b1b78",
+  "dependency_commits": [
+    {
+      "ticket_id": "TOOL-051-L",
+      "original": "cc5c18c8734301655dc1d0d841972067701c9c2e",
+      "applied": "54ea23c8d05fb8e9eea5e3a271066534c29ffa71",
+      "stable_patch_id": "084df602a69cc3dfe62423b164cafef0471f642f"
+    },
+    {
+      "ticket_id": "EVAL-052-H",
+      "original": "d3f22239ef797a4e685790ed73584e0c582249ab",
+      "applied": "7eb736b3af73c5a82cb46ee3828b6e29a9ebb909",
+      "stable_patch_id": "97789245c812198324dae4d258f2e109db16ef85"
+    }
+  ],
+  "dependency_handoff_hashes": {
+    "TOOL-051-L": "64d276287e7921a620e0e9e80e3e59b89c97be8f79ea97599767bbf93eb6c9d7",
+    "EVAL-052-H": "660d01fbdb45af6663d3a8f937a06acf92b7c78ff2d34f84ec4e8955c5e2b5db",
+    "W6-wave-handoff": "6055eca111fe08ebd11448e41550402096b017b34d50e2efde1aea906de8fc4f"
+  },
+  "source_state_hashes": {
+    "formal_status": "ce0e69ce1bc6da75c4710459eb44bf35e6b75cd79df501e0885a9b66b3c9df3a",
+    "formal_freeze": "b4893c10887bb774dda860a5f4b13ec6fa9b8c014e0cb0257e409c0f27df6ba6"
+  },
+  "gate_artifact": {
+    "root": "F:/dev/llm/pico-eval-artifacts/native-provider-preflight/W6R-TOOL-054-G-01",
+    "gate_report_sha256": "8be0a1e8a1bee9e00448d0dfe97aacd1b83111f66ab4d4bc590ca976897d6333",
+    "artifact_inventory_sha256": "f3b66c381712857098a17c74b5aa5d1fcb79c30b48be7351ff93ba1aef765e5a",
+    "artifact_inventory_file_count": 56,
+    "artifact_inventory_aggregate_sha256": "e821475d4c6ecb3a729bda9042cbd4b41801dbf4efb6583cb03d20d883ac6b33",
+    "credential_scan_sha256": "50808c5bcb2b47009ccce06f6fad69e198bd8b2a1dd660aa8e96699d70587c97",
+    "dependency_application_sha256": "e54438c912592ab205cb79974e1283bb90211a9b49e9a6e35de9c09b743b574e",
+    "source_bindings_sha256": "7b1d57017822f0b596d65b8409d801897b40bf5e8710453c802c31592eb1f1cd",
+    "command_results_sha256": "d1001f8ad2199034fd0efbca208d1a3405dcfc4ff72bd8a8d2b5c838ae8209c9"
+  },
+  "freeze_proposal": {
+    "native_conformance_preflight": {
+      "version": "pico-native-provider-preflight-gate-w6r-v1",
+      "status": "blocked",
+      "run_snapshot_approved_for_live_conformance": false,
+      "proposed_run_snapshot_sha": null,
+      "source": {
+        "sha": "7eb736b3af73c5a82cb46ee3828b6e29a9ebb909",
+        "tree": "08f05c340bb2caa65c8de5ced5200e4d0b6b1b78"
+      },
+      "bindings": {
+        "cases": {
+          "path": "benchmarks/v3/native-provider/cases.json",
+          "git_blob_oid": "f513f6e15c521104b12fe348dc280f73624acd56",
+          "windows_checkout_sha256": "92f746b113a88ceb652e4e8ec651021b1358d9922ab91c0dad34e62c0068b9e3",
+          "git_blob_sha256": "b20cdf446a21e20db035213c9308b47daa252cb9b0aadbebf7ec5747750e9f4d"
+        },
+        "evaluator_git_blob_sha256": "6763e33078bb78c7065c5c5c530fda0f4882c0a216cb93ebf0a422be5d75bdf0",
+        "live_runner_git_blob_sha256": "afe17b8044da11802883311f01f5ad9819fb657fd3d042604e5d70c129eabcf2",
+        "formal_cli_git_blob_sha256": "834f87bc9ee04fac6c4247aab7f352c6d6f21bc92da3c4121bb2303ce6f6a95d",
+        "profile_builder_git_blob_sha256": "186c5cd950f7418c8a9fb0f80b3f06ce190f3b0ab1e5b54a4d042159ee991be5",
+        "profile_builder_cli_git_blob_sha256": "58e64b5321aee07b585fb78548434e4f7b7dbab59fd0d8452e34b7c599785005",
+        "bundle_schema_version": "pico-native-provider-conformance-bundle-v2",
+        "public_profiles": [
+          {
+            "provider": "dashscope-o",
+            "status": "bound",
+            "profile_id": "sha256:41ebb321c6332867f0bb020621b7e1c17f8c60430374c37c3a670c916326ee70",
+            "canonical_sha256": "499655acd72b0c10f0bd0a938a032060fb7a5b776e74e478742078da1a137331"
+          },
+          {
+            "provider": "dashscope-a",
+            "status": "bound",
+            "profile_id": "sha256:fccbdcb07f4c3fff931d5c7540673ca8aafc1e57a8389b5042a377916d670fd9",
+            "canonical_sha256": "3ec252354cae811672d4af618be3cb2aa1911f6e766ae577db56189712a2574f"
+          },
+          {
+            "provider": "deepseek",
+            "status": "bound",
+            "profile_id": "sha256:d7f29754016394922b48edb3ac4211d3920c333e386e7cf4d76f0ff178beb4a5",
+            "canonical_sha256": "5e4a4c3af56f492ee066835b8657748ec430cc6f11f8f0aebe39d2ea4cfac2e6"
+          }
+        ],
+        "sdk_transport_decision_sha256": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+        "sdk_versions": {
+          "openai": "2.46.0",
+          "anthropic": "0.117.0"
+        },
+        "sdk_max_retries": 0,
+        "reviewer_handoff_sha256": "f6c0bc418876a9cbeb16d9617bd1cb724aa2a00736bcf5130324543cce5d8938",
+        "reviewer_audit_report_sha256": "24e95f24f5bfcce771c22fd20f426ef2aa7da82bfffbcbb16a6f40180ba13f4c",
+        "reviewer_audit_hashes_sha256": "e6522711ca97e4c91d8f042451f6caeb35b51652b54d496dce6abf3698f6f88f"
+      },
+      "gate_result": {
+        "windows_targeted": "27 passed",
+        "windows_protected": "10 failed, 17 passed",
+        "windows_full_suite": "two attempts terminated with exit 137 at 14 percent",
+        "windows_ruff": "passed",
+        "windows_runtime_adapter": "53 passed",
+        "wsl_targeted": "27 passed",
+        "wsl_protected": "27 passed",
+        "wsl_full_suite": "507 passed, 2 skipped, 6 warnings",
+        "wsl_ruff": "passed",
+        "bound_profile_count": 3,
+        "fake_transport_cli_smoke": "24/24 passed",
+        "preflight_failure_semantics": "0 rows and not_computable",
+        "credential_scan_match_count": 0,
+        "live_provider_http_attempt_count": 0,
+        "all_required_tests_passed": false
+      },
+      "blocking_defects": [
+        "TOOL-054-G-WIN-PROTECTED-001",
+        "TOOL-054-G-WIN-FULL-002"
+      ]
+    }
+  },
+  "promotion_allowed": false,
+  "canonical_state_write_required": false,
+  "canonical_status_written": false,
+  "canonical_freeze_written": false,
+  "canonical_state_owner": "W6R Wave Integrator"
+}

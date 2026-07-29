@@ -1,0 +1,106 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "EVAL-001",
+  "instance_id": "W0-EVAL-001-01",
+  "wave": "W0",
+  "role": "implementer",
+  "status": "complete",
+  "base_sha": "8ff3a261aa246ddd2798c2f065cac188766ef99c",
+  "head_sha": "96add601b99cb347b7a4aa509a57e25ad4a8d073",
+  "dependency_commits": [
+    "31fded1559fed404cb26018a2a009a0f1fa727b0",
+    "9d6bfc4567b6c1dff45908a3ed00335b947a52f9"
+  ],
+  "applied_dependency_commits": [
+    "4c820b32015c716c3169bd97b22a0aa9ba6b8138",
+    "dc0fe5684ebcaa9793731f7740317196cdcc6bb6"
+  ],
+  "dependency_handoff_hashes": {
+    "EVAL-000": "2dc1741e0081e8724cb16a46c6a655847bdb0ce8539d7e15252a18d6fb2faf18"
+  },
+  "own_commits": [
+    "f964d6bd9accf8137679acda044b62ff52c8a154",
+    "34620f5672d2ad7ccdb3481feded9892d3a62b6f",
+    "96add601b99cb347b7a4aa509a57e25ad4a8d073"
+  ],
+  "files_changed": [
+    "pico/evaluation/contracts.py",
+    "tests/test_evaluation_contracts.py"
+  ],
+  "commands_run": [
+    "uv run pytest tests/test_evaluation_contracts.py -q",
+    "uv run ruff check pico/evaluation/contracts.py tests/test_evaluation_contracts.py",
+    "git diff --check",
+    "git diff --cached --check",
+    "SHA-256 Git blob bytes for HEAD:pico/evaluation/contracts.py across LF and CRLF checkouts",
+    "SHA-256 Git blob bytes for HEAD:tests/test_evaluation_contracts.py across LF and CRLF checkouts"
+  ],
+  "tests": [
+    {
+      "command": "uv run pytest tests/test_evaluation_contracts.py -q",
+      "result": "passed",
+      "details": "6 passed; includes strict JSON integer/boolean, opaque continuation, credential suffix, token usage, and fail-closed JSON-safety regressions"
+    },
+    {
+      "command": "uv run ruff check pico/evaluation/contracts.py tests/test_evaluation_contracts.py",
+      "result": "passed",
+      "details": "All checks passed"
+    },
+    {
+      "command": "Git blob SHA-256 for HEAD:pico/evaluation/contracts.py",
+      "result": "passed",
+      "details": "Both LF and CRLF checkout commits resolve to identical Git blob bytes SHA-256 2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1."
+    },
+    {
+      "command": "Git blob SHA-256 for HEAD:tests/test_evaluation_contracts.py",
+      "result": "passed",
+      "details": "Both LF and CRLF checkout commits resolve to identical Git blob bytes SHA-256 ceffe45b03d8a8eb2cf24fb8671bf1129f278e1d965b7e569fa71136cb6f950e."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "pico/evaluation/contracts.py",
+      "sha256": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+      "hash_basis": "git_blob_bytes",
+      "hash_source": "head_sha:pico/evaluation/contracts.py; independent of checkout line endings"
+    },
+    {
+      "path": "tests/test_evaluation_contracts.py",
+      "sha256": "ceffe45b03d8a8eb2cf24fb8671bf1129f278e1d965b7e569fa71136cb6f950e",
+      "hash_basis": "git_blob_bytes",
+      "hash_source": "head_sha:tests/test_evaluation_contracts.py; independent of checkout line endings",
+      "coverage": "legacy-field preservation, strict ratios and booleans, native protocol fields, retry/attempt evidence, profile sanitization, opaque continuation sanitization, credential suffixes, public token usage, fail-closed JSON safety"
+    },
+    {
+      "path": ".codex/eval/handoffs/EVAL-001.json",
+      "persistence": "ticket output generated after the content commit; it is intentionally not amended into that commit"
+    }
+  ],
+  "contract_hashes": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "artifact_contract_hash_basis": "git_blob_bytes"
+  },
+  "frozen_hashes": {
+    "native_contract": null,
+    "tool_schema": null,
+    "sdk_transport_decision": null,
+    "provider_selection": null,
+    "native_resume_gate": null
+  },
+  "native_protocol_observations": {
+    "observation_scope": "contract unit tests only; no provider request was issued",
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0
+  },
+  "defects": [],
+  "risks": [
+    "This ticket defines only the provider-neutral evaluation contract; Runtime and adapter wiring remain owned by their respective tickets."
+  ],
+  "status_proposal": null,
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}

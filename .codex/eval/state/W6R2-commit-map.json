@@ -1,0 +1,70 @@
+{
+  "schema_version": "pico-eval-wave-commit-map-v1",
+  "wave": "W6R2",
+  "wave_base_sha": "6b4fa94948888b7c95dfbe4cd0134205356decba",
+  "run_snapshot_sha": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+  "integration_branch": "eval/v3-integration",
+  "tickets": {
+    "TOOL-055-E": {
+      "worker_head": "43337909ea0a918a41b46e8babf33ea7e8bc09f7",
+      "source_commit": "50f728ba824a142ba0d64a5f820c80bbc1942496",
+      "integration_commits": [
+        "8ab0f5f277a30bfd1ccaaedd82f4987b64073936",
+        "9637a7eca3bf34d0fc67670e1eb2736a0c01f5bc"
+      ]
+    },
+    "EVAL-056-H": {
+      "worker_head": "08c7c348743207a29a951f59313bd25da5b8fe3d",
+      "source_commit": "c7a4a16cd124349448952063894f81d18c0b50c9",
+      "integration_commits": [
+        "1d16508a6f68ea33d3ecda0a84c63cf89db37606",
+        "3f8a5ac681611652571584e2b53c6e666fa14d28"
+      ]
+    },
+    "TOOL-057-A": {
+      "worker_head": "81cf6c5bed6a3906c9d8240b71c3fb762b30263b",
+      "integration_commits": [
+        "183f59e9afb506b7c3eeb96336803a1ea69c9c2a",
+        "ec3bab1fa1ad5ca09bd929ac5ee8dbb9c7283a13",
+        "d7475ce8a082b5f54ebe9a14cfd5705e8b9e88de"
+      ]
+    },
+    "TOOL-058-G": {
+      "worker_head": "79d610c4fdf8c70c56d546d09911af97e5504ccb",
+      "integration_commits": [
+        "b90ed60ea15cd54ccb3f000015bfd9f93eb96de8"
+      ]
+    },
+    "TOOL-050-QO-R2": {
+      "worker_head": "12e8409e49cf54a670a863687de92e9749bdef18",
+      "integration_commits": [
+        "f93b3a3353da4ccfc06c2cf476a82cfff85a83f2"
+      ]
+    },
+    "TOOL-050-QA-R2": {
+      "worker_head": "f31ad612cf8652dccd9dd5996203e8f534ab9634",
+      "integration_commits": [
+        "1ca2102db6ecd487509c666c842f4bbfc43f5623",
+        "4939b654ff4cf302eec8ac7e437a616e37f8d15b",
+        "52c296c414cd0202b76347e292ac3ab60c222b98"
+      ]
+    },
+    "TOOL-050-DA-R2": {
+      "worker_head": "fba24a10b68b95413f9b168385eeb8a658e9982f",
+      "integration_commits": [
+        "bb1ff4506ff5361f31ed0a51af0b9c3ceb0f33cf",
+        "1641e3c44748b2ccfe8cbb6d89ca9729a0df0499"
+      ]
+    },
+    "TOOL-050-S-R1": {
+      "worker_head": "7fb9c4ac80d7447fff5fc1ff09cd316f7ef47190",
+      "worker_payload_commit": "df19376d2298c610f1923cedbc58a64f293f52d8",
+      "integration_commits": [
+        "ef15567e55a34253fb2e027c49041a08920060e4",
+        "5da1f9dcf5d4e4c180ff708241320ed2bc5c96e8"
+      ]
+    }
+  },
+  "human_smoke_source_commit": "62e0a441b9321d96f50f2863f97ed7e96ace8c9d",
+  "human_smoke_source_semantics": "Immutable dependency-applied runtime source used by all three R2 shards; metadata integration commits are not runtime source."
+}

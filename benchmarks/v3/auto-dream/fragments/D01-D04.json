@@ -1,0 +1,60 @@
+{
+  "schema_version": "pico-auto-dream-cases-v1",
+  "cases": [
+    {
+      "id": "D01",
+      "description": "Stable facts are retained when repeated session evidence agrees with existing durable memory.",
+      "fixture": {"memory": "fixtures/D01/input/memory", "sessions": "fixtures/D01/input/sessions.json", "reference_time": "2026-01-13T00:00:00Z"},
+      "oracle": {
+        "facts": [
+          {"id": "async-concise-collaboration", "disposition": "must_keep", "anchors": ["The user collaborates asynchronously and wants concise change summaries."], "topics": ["topics/user-preferences.md"]},
+          {"id": "uv-project-commands", "disposition": "must_keep", "anchors": ["Use uv for project commands."], "topics": ["topics/project-conventions.md"]}
+        ],
+        "topics": [{"path": "topics/user-preferences.md", "facts": ["async-concise-collaboration"]}, {"path": "topics/project-conventions.md", "facts": ["uv-project-commands"]}],
+        "index": {"path": "MEMORY.md", "must_link": ["topics/user-preferences.md", "topics/project-conventions.md"], "max_lines": 200},
+        "frontmatter": {"required": ["name", "description", "type"], "allowed_types": ["user", "feedback", "project", "reference"]},
+        "allowed_write_scope": ".pico/memory",
+        "snapshot": {"ignore_frontmatter_fields": ["updated_at", "last_dream_at"]}
+      }
+    },
+    {
+      "id": "D02",
+      "description": "Repeated identical evidence is consolidated into one durable atomic fact.",
+      "fixture": {"memory": "fixtures/D02/input/memory", "sessions": "fixtures/D02/input/sessions.json", "reference_time": "2026-02-06T00:00:00Z"},
+      "oracle": {
+        "facts": [{"id": "uv-project-commands", "disposition": "must_keep", "anchors": ["Use uv for project commands."], "topics": ["topics/project-conventions.md"]}],
+        "topics": [{"path": "topics/project-conventions.md", "facts": ["uv-project-commands"]}],
+        "index": {"path": "MEMORY.md", "must_link": ["topics/project-conventions.md"], "max_lines": 200},
+        "frontmatter": {"required": ["name", "description", "type"], "allowed_types": ["user", "feedback", "project", "reference"]},
+        "allowed_write_scope": ".pico/memory",
+        "snapshot": {"ignore_frontmatter_fields": ["updated_at", "last_dream_at"]}
+      }
+    },
+    {
+      "id": "D03",
+      "description": "A newer durable deployment fact replaces the obsolete deployment fact.",
+      "fixture": {"memory": "fixtures/D03/input/memory", "sessions": "fixtures/D03/input/sessions.json", "reference_time": "2026-03-09T00:00:00Z"},
+      "oracle": {
+        "facts": [{"id": "deployment-target", "disposition": "replace", "anchors": ["The deployment target is Fly.io"], "old_anchors": ["The deployment target is Render."], "topics": ["topics/key-decisions.md"]}],
+        "topics": [{"path": "topics/key-decisions.md", "facts": ["deployment-target"]}],
+        "index": {"path": "MEMORY.md", "must_link": ["topics/key-decisions.md"], "max_lines": 200},
+        "frontmatter": {"required": ["name", "description", "type"], "allowed_types": ["user", "feedback", "project", "reference"]},
+        "allowed_write_scope": ".pico/memory",
+        "snapshot": {"ignore_frontmatter_fields": ["updated_at", "last_dream_at"]}
+      }
+    },
+    {
+      "id": "D04",
+      "description": "When timestamps conflict, the later explicit release-window fact replaces the earlier fact.",
+      "fixture": {"memory": "fixtures/D04/input/memory", "sessions": "fixtures/D04/input/sessions.json", "reference_time": "2026-04-15T12:00:00Z"},
+      "oracle": {
+        "facts": [{"id": "weekly-release-window", "disposition": "replace", "anchors": ["The weekly release window is Friday at 15:00 UTC."], "old_anchors": ["The weekly release window is Thursday at 16:00 UTC."], "topics": ["topics/project-conventions.md"]}],
+        "topics": [{"path": "topics/project-conventions.md", "facts": ["weekly-release-window"]}],
+        "index": {"path": "MEMORY.md", "must_link": ["topics/project-conventions.md"], "max_lines": 200},
+        "frontmatter": {"required": ["name", "description", "type"], "allowed_types": ["user", "feedback", "project", "reference"]},
+        "allowed_write_scope": ".pico/memory",
+        "snapshot": {"ignore_frontmatter_fields": ["updated_at", "last_dream_at"]}
+      }
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "schema_version": "pico-context-asset-cases-binding-v2",
+  "binding_version": 2,
+  "source": {
+    "path": "benchmarks/v3/context-assets/cases.json",
+    "revision": "HEAD",
+    "git_blob_oid": "5e9bdf06e75f6661660947e880f07edfe7480880",
+    "sha256": "e08066749520a52af5bb14a9435e359f4a85d3f3ae6e8dd0e962001f99c2df17",
+    "hash_basis": "git_blob_bytes",
+    "size_bytes": 59801,
+    "content_schema_version": "pico-context-asset-cases-v1",
+    "case_count": 15
+  },
+  "checkout_policy": {
+    "canonical_hash_basis": "git_blob_bytes",
+    "checkout_bytes_authoritative": false,
+    "line_ending_normalization": "none",
+    "reason": "Git blob bytes are stable across LF and CRLF checkout policies."
+  },
+  "evaluator_input": {
+    "resolution": "materialize_exact_git_blob_bytes",
+    "must_match_source_git_blob_oid": true,
+    "must_match_source_sha256": true
+  },
+  "supersession": {
+    "supersedes": [
+      {
+        "declaration_version": "pico-context-asset-gate-v1",
+        "declaration_source": ".codex/eval/proposals/EVAL-031-G.freeze.json",
+        "declaration_handoff_sha256": "c317b79cd19afdcac2df3de5e71cf08748647fac8fcb9e4244e5b669826fb31c",
+        "declared_sha256": "d69dfc1808cb12b179f8a1fb30ffa74136339d7783d9f11a5fbe8fd4259400ba",
+        "declared_hash_basis": "UTF-8 file bytes",
+        "status": "invalidated",
+        "superseded_by": "pico-context-asset-cases-binding-v2",
+        "invalidated_reason": "The declared digest cannot be reproduced from the W5 canonical Git blob or the Windows checkout bytes; it is retained as historical evidence and is not authoritative."
+      }
+    ]
+  }
+}

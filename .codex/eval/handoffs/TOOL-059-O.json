@@ -1,0 +1,191 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-059-O",
+  "instance_id": "W6R3-TOOL-059-O-01",
+  "revision": 2,
+  "supersedes_handoff_sha256": "ad18b730148979e5f46149432484072c1414fb4dc39f90ad074a0539bfdb49cd",
+  "finding_ids": [
+    "AUDIT-059-A-P1-002"
+  ],
+  "wave": "W6R3",
+  "role": "adapter_implementer/openai-responses-stateless-transcript",
+  "status": "complete",
+  "source_thread_id": "019f91dc-1940-7b31-9e6f-086f4941922b",
+  "base_sha": "ed287daaf9e88d59b5a027e759032e022a138d27",
+  "wave_base_sha": "697de9d86b3e38186a957f158ba85cab3beacfdf",
+  "source_head_sha": "92477c1f140c09d007b77bad22737c477a975c47",
+  "source_head_semantics": "Revision 2 product implementation head before the metadata-only commit that updates this handoff; the handoff commit intentionally cannot self-record its own SHA.",
+  "branch": "codex/w6r3-tool-059-o-r2",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/4b6c/pico",
+  "remediation_candidate": {
+    "sha": "ed287daaf9e88d59b5a027e759032e022a138d27",
+    "tree": "72f68c764b26830fb8c86f6bd11f95c3b452b9c4",
+    "ref": "codex/w6r3-remediation-r1-candidate"
+  },
+  "prior_revision": {
+    "branch": "codex/w6r3-tool-059-o",
+    "head": "6cd6f68eaa44ae5ac73dc2d748359989186e6e55",
+    "handoff_sha256": "ad18b730148979e5f46149432484072c1414fb4dc39f90ad074a0539bfdb49cd",
+    "preserved": true
+  },
+  "revision_branch": {
+    "branch": "codex/w6r3-tool-059-o-r2",
+    "head_before_handoff": "92477c1f140c09d007b77bad22737c477a975c47"
+  },
+  "dependency_commits": [
+    {
+      "ticket_id": "TEST-059-C",
+      "revision": 2,
+      "original": "e076fb0c616d900b3445f9ddb93103bdd2243a7b",
+      "applied": "f9c6eb4f8d560625c0cfca9e3f5a8bd3ca50ef33",
+      "stable_patch_id": "6af75813f31d2b16992f4d35b13e8637edd463e0"
+    }
+  ],
+  "dependency_hashes": {
+    "TEST-059-C_revision_2_handoff": "2f806adbce6e29e8161ef5039a9be0cc2fc74eb66fca3f17a4dcda054bf3e75e",
+    "formal_STATUS": "df244ea8e5237702d09ba2f0f9eb5e88ea3c6f29e95573afd33ae243d6cac846",
+    "formal_FREEZE": "09a6d2143f279ec64bbcacfe48bd9b27f0aac1a377679987dcd6ab411fd67219"
+  },
+  "own_commits": [
+    "92477c1f140c09d007b77bad22737c477a975c47"
+  ],
+  "own_stable_patch_ids": {
+    "92477c1f140c09d007b77bad22737c477a975c47": "d1033309ab4743db7f6d01ac75d7ddcf73dd77a0"
+  },
+  "revision_commits": [
+    {
+      "commit": "92477c1f140c09d007b77bad22737c477a975c47",
+      "tree": "8bcd9513ddfd00cbad8e1ffa22c381f0f52519b1",
+      "stable_patch_id": "d1033309ab4743db7f6d01ac75d7ddcf73dd77a0",
+      "subject": "fix(openai): [TOOL-059-O][R2] close result batches before transport"
+    }
+  ],
+  "allowed_write_paths": [
+    "pico/providers/openai_responses.py",
+    ".codex/eval/handoffs/TOOL-059-O.json"
+  ],
+  "files_changed": [
+    "pico/providers/openai_responses.py",
+    ".codex/eval/handoffs/TOOL-059-O.json"
+  ],
+  "git_blob_bindings": {
+    "pico/providers/openai_responses.py": {
+      "oid": "ce80c279d0d762d9c9a813b881898959405bf4f6",
+      "windows_worktree_sha256": "cded90fb1f525284b14ec36b1d2d8be248e0317dacec91c4a3707b31de5c8bca"
+    }
+  },
+  "implementation": {
+    "finding": {
+      "id": "AUDIT-059-A-P1-002",
+      "classification": "responses_call_result_cardinality_not_fail_closed",
+      "status": "resolved_in_worker"
+    },
+    "current_batch_closure": {
+      "validation_point": "compile_request input construction, before transport.create",
+      "unresolved_call_definition": "Ordered function_call IDs in the complete v2 transcript that do not yet have a function_call_output.",
+      "result_set_requirement": "Current ModelRequest tool result IDs must exactly equal the unresolved call ID set.",
+      "missing_result": "fail_closed_invalid_continuation",
+      "unknown_result": "fail_closed_invalid_continuation",
+      "extra_closed_result": "fail_closed_invalid_continuation",
+      "duplicate_result": "fail_closed_by_ModelRequest_contract",
+      "complete_reordered_results": "normalized_to_original_function_call_order",
+      "historically_closed_calls_counted": false
+    },
+    "preserved_invariants": {
+      "complete_accumulated_transcript": true,
+      "store": false,
+      "previous_response_id_used": false,
+      "legacy_v1_decision": "fail_closed",
+      "continuation_json_safe_pico_contract_only": true,
+      "provider_sdk_objects_persisted": false,
+      "sdk_managed_tool_execution": false
+    }
+  },
+  "tests": [
+    {
+      "environment": "Windows / CPython 3.12.13 / deterministic stub transport",
+      "command": "uv run pytest -p no:cacheprovider tests/test_openai_responses_tools.py -q",
+      "result": "expected_red_baseline",
+      "details": "Before the revision 2 product fix: 2 failed, 20 passed in 2.88s. Failures were incomplete unresolved batch acceptance and reversed complete result ordering."
+    },
+    {
+      "environment": "Windows / CPython 3.12.13 / deterministic stub transport",
+      "command": "uv run pytest -p no:cacheprovider tests/test_openai_responses_tools.py -q",
+      "result": "passed",
+      "details": "After the revision 2 product fix: 22 passed in 1.14s."
+    },
+    {
+      "environment": "Windows / CPython 3.12.13 / deterministic stub transport",
+      "command": "uv run pytest -p no:cacheprovider tests/test_openai_responses_tools.py tests/test_native_stateless_transcript.py tests/test_native_runtime_integration.py -q",
+      "result": "passed",
+      "details": "27 passed in 5.17s. Frozen R2 cardinality/order coverage and all stateless/runtime adjacency are green."
+    },
+    {
+      "environment": "Windows / CPython 3.12.13",
+      "command": "uv run ruff check --no-cache pico/providers/openai_responses.py tests/test_openai_responses_tools.py tests/test_native_stateless_transcript.py tests/test_native_runtime_integration.py",
+      "result": "passed",
+      "details": "All checks passed."
+    },
+    {
+      "environment": "Windows",
+      "command": "git diff --check",
+      "result": "passed"
+    }
+  ],
+  "hashes": {
+    "formal_status": "df244ea8e5237702d09ba2f0f9eb5e88ea3c6f29e95573afd33ae243d6cac846",
+    "formal_freeze": "09a6d2143f279ec64bbcacfe48bd9b27f0aac1a377679987dcd6ab411fd67219",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "sdk_dependency_lock": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+    "native_deterministic_gate": "2fc1ebbe4d64c5be80e7fe063584915f12aabf3a8f8c08796d2cf009e94849a5"
+  },
+  "native_protocol_observations": {
+    "provider_http_attempts": 0,
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count_after_fix": 0,
+    "duplicate_function_output_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0,
+    "sdk_tool_runner_used": false,
+    "sdk_agent_runner_used": false,
+    "sdk_managed_pico_tool_execution_used": false
+  },
+  "acceptance_checklist": {
+    "test_059_c_revision_2_green_unchanged": true,
+    "incomplete_batch_rejected_before_transport": true,
+    "unknown_result_rejected_before_transport": true,
+    "extra_closed_result_rejected_before_transport": true,
+    "duplicate_result_rejected_before_transport": true,
+    "complete_reordered_results_normalized": true,
+    "historical_closed_calls_excluded": true,
+    "complete_transcript_preserved": true,
+    "store_false": true,
+    "previous_response_id_absent": true,
+    "continuation_json_safe": true,
+    "legacy_continuation_fail_closed": true,
+    "test_files_modified_by_worker": false,
+    "formal_status_or_freeze_written": false
+  },
+  "defects": [],
+  "risks": [
+    "Canonical Ubuntu WSL2 validation remains the Wave Integrator gate; this worker used the deterministic Windows lane only.",
+    "Persisted v1 OpenAI Responses continuations still intentionally require restarting the current model turn because v1 cannot reconstruct the complete stateless transcript."
+  ],
+  "ownership_change_request": null,
+  "provider_http_attempts": 0,
+  "formal_effectiveness_run": false,
+  "human_smoke_run": false,
+  "profile_reselection_run": false,
+  "w6r4_started": false,
+  "w7_started": false,
+  "formal_status_written": false,
+  "formal_freeze_written": false,
+  "merge_performed": false,
+  "rebase_performed": false,
+  "ready_for_integration": true,
+  "ready_for_audit_revision_2": true,
+  "stop_after_handoff": true
+}

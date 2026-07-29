@@ -6,16 +6,18 @@ public release:
 1. **basic edit flow** — read a file, propose a patch, apply it
 2. **dream consolidation** — auto-dream produces non-empty topic files
 
-These tests use ScriptedModelClient (deterministic) by default so CI always runs.
+These tests use provider-native deterministic fixtures by default so CI always runs.
 Set PICO_LIVE_SMOKE=1 with a provider configured to run them against a real model.
 """
+
 import os
 import textwrap
 
 import pytest
 
 from pico import Pico, SessionStore, WorkspaceContext
-from pico.testing import ScriptedModelClient
+from tests.native_fixtures import final as final_response
+from tests.native_fixtures import lock_scripted_provider_profile, scripted_client, tool
 
 
 def _build_workspace(tmp_path):
@@ -29,12 +31,14 @@ def _build_workspace(tmp_path):
 def _build_agent(tmp_path, outputs):
     workspace = _build_workspace(tmp_path)
     store = SessionStore(tmp_path / ".pico" / "sessions")
-    return Pico(
-        model_client=ScriptedModelClient(outputs),
-        workspace=workspace,
-        session_store=store,
-        approval_policy="auto",
-        auto_dream=False,
+    return lock_scripted_provider_profile(
+        Pico(
+            model_client=scripted_client(outputs),
+            workspace=workspace,
+            session_store=store,
+            approval_policy="auto",
+            auto_dream=False,
+        )
     )
 
 
@@ -43,9 +47,16 @@ def test_read_then_edit_completes_in_one_turn(tmp_path):
     agent = _build_agent(
         tmp_path,
         [
-            '<tool>{"name":"read_file","args":{"path":"README.md","start":1,"end":20}}</tool>',
-            '<tool>{"name":"patch_file","args":{"path":"README.md","old_text":"Quick Start coming soon.","new_text":"Quick Start: pico --help"}}</tool>',
-            "<final>已把 Quick Start 段从占位文本改成实际的 pico --help 提示。</final>",
+            tool("read_file", path="README.md", start=1, end=20),
+            tool(
+                "patch_file",
+                path="README.md",
+                old_text="Quick Start coming soon.",
+                new_text="Quick Start: pico --help",
+            ),
+            final_response(
+                "已把 Quick Start 段从占位文本改成实际的 pico --help 提示。"
+            ),
         ],
     )
 
@@ -62,8 +73,8 @@ def test_search_then_summarize_succeeds(tmp_path):
     agent = _build_agent(
         tmp_path,
         [
-            '<tool>{"name":"search","args":{"pattern":"TODO","path":"."}}</tool>',
-            "<final>workspace 里有 1 条 TODO：在 TODO 文件里。</final>",
+            tool("search", pattern="TODO", path="."),
+            final_response("workspace 里有 1 条 TODO：在 TODO 文件里。"),
         ],
     )
 
@@ -80,10 +91,8 @@ def test_step_limit_default_can_handle_realistic_workflows(tmp_path):
     脚手架（17+ 文件写入）。"""
     outputs = []
     for i in range(7):
-        outputs.append(
-            f'<tool>{{"name":"read_file","args":{{"path":"README.md","start":1,"end":{i+5}}}}}</tool>'
-        )
-    outputs.append("<final>看完了。</final>")
+        outputs.append(tool("read_file", path="README.md", start=1, end=i + 5))
+    outputs.append(final_response("看完了。"))
 
     agent = _build_agent(tmp_path, outputs)
     assert agent.max_steps >= 50
@@ -107,7 +116,6 @@ def test_empty_response_does_not_silently_stop(tmp_path):
         code="empty_response",
         retryable=False,
     )
-    # 两次空响应：第一次会被 should_retry_model_error 重试一次，第二次报失败
     agent = _build_agent(tmp_path, [err, err])
 
     final = agent.engine.ask("hello")
@@ -119,7 +127,10 @@ def test_empty_response_does_not_silently_stop(tmp_path):
 
 def _has_live_provider():
     keys = ("ANTHROPIC_API_KEY", "OPENAI_API_KEY", "DEEPSEEK_API_KEY")
-    return any(os.environ.get(k) for k in keys) and os.environ.get("PICO_LIVE_SMOKE") == "1"
+    return (
+        any(os.environ.get(k) for k in keys)
+        and os.environ.get("PICO_LIVE_SMOKE") == "1"
+    )
 
 
 @pytest.mark.skipif(
@@ -129,24 +140,20 @@ def _has_live_provider():
 def test_dream_produces_non_empty_topics_with_live_provider(tmp_path):
     """End-to-end: 真实 provider 跑一次 dream，topics/ 必须产出非空文件。"""
     from pico.config import resolve_provider_config
-    from pico.providers import (
-        AnthropicCompatibleModelClient,
-        OpenAICompatibleModelClient,
-    )
+    from pico.providers import build_native_model_client
 
     workspace = _build_workspace(tmp_path)
     store = SessionStore(tmp_path / ".pico" / "sessions")
 
     config = resolve_provider_config(None, start=str(tmp_path))
-    client_cls = (
-        OpenAICompatibleModelClient if config.protocol == "openai" else AnthropicCompatibleModelClient
-    )
-    model = client_cls(
+    model = build_native_model_client(
+        wire_dialect=config.wire_dialect,
         model=config.model,
         base_url=config.base_url,
         api_key=config.api_key,
-        temperature=0.0,
+        profile_id=config.public_identity()["profile_id"],
         timeout=180,
+        max_retries=0,
     )
 
     log_path = tmp_path / ".pico" / "memory" / "logs" / "2026" / "05" / "2026-05-13.md"
@@ -175,7 +182,9 @@ def test_dream_produces_non_empty_topics_with_live_provider(tmp_path):
     agent.run_dream()
 
     topics_dir = tmp_path / ".pico" / "memory" / "topics"
-    written = [p for p in topics_dir.glob("*.md") if p.read_text(encoding="utf-8").strip()]
+    written = [
+        p for p in topics_dir.glob("*.md") if p.read_text(encoding="utf-8").strip()
+    ]
     assert written, "dream 必须至少产出一个非空 topic 文件"
 
     index = (tmp_path / ".pico" / "memory" / "MEMORY.md").read_text(encoding="utf-8")

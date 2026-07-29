@@ -1,0 +1,166 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "EVAL-031-G",
+  "instance_id": "W5-EVAL-031-G-01",
+  "wave": "W5",
+  "role": "integrator_ticket/aggregator",
+  "status": "complete",
+  "base_sha": "a834e78098487888264b5ffdea37f52a8d635fbf",
+  "head_sha": "df4f6567cda2955d347fc18df82a85c01e887323",
+  "head_sha_semantics": "Content head containing cases.json and the freeze proposal; the metadata-only commit containing this handoff is the final branch HEAD reported to the Wave Integrator.",
+  "branch": "codex/eval-v3-w5-eval-031-g",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/w5-031g/pico",
+  "dependency_commits": [
+    "68d1829babe6d2908bc22ee52488098962aa94c5",
+    "3dd42df4981febb00f221f8c3471640eeb5efb8d"
+  ],
+  "applied_dependency_commits": [
+    "d101d4dff392632f6ad47e17a28f63cb7de509ea",
+    "a77b4a9177838120bdcdaebd3f3320b57f83f4a9"
+  ],
+  "dependency_handoff_hashes": {
+    "EVAL-031-I": "3ae1145487d17faca6a5443a4e229eddc2e6eed9aff18242a1cada8ce644ead4",
+    "EVAL-031-A": "c875c4ede3a0e4330a2ea45d6266ded2c9882ad2943e05432794ab3eeb4ba1bd",
+    "EVAL-031-B": "abda701d825119311a68795edfc89d145ded6e72dae454ecf78c134cd624a904",
+    "TOOL-041-M": "7b3b413cc1f41f8db5f5d218936013e32ea41059dfe0505b74a5eefc7fbd64d5"
+  },
+  "dependency_freeze_hashes": {
+    "context_assets": "d8349c034524cc488958a1f3b460a7b6080915eed0b03b64c635810c21bf8e15",
+    "fragment_C01_C08": "6bef856d9df68209d60d0ef7e9df1dc927fd861f64a6f646f0cc58fba9c808b8",
+    "fragment_C09_C15": "1c2975e53696faed737a676e14faef7008cb4a2c4c5db27c804a903af3e1455c",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb"
+  },
+  "own_commits": [
+    "df4f6567cda2955d347fc18df82a85c01e887323"
+  ],
+  "files_changed": [
+    "benchmarks/v3/context-assets/cases.json",
+    ".codex/eval/proposals/EVAL-031-G.freeze.json",
+    ".codex/eval/handoffs/EVAL-031-G.json"
+  ],
+  "commands_run": [
+    "git cherry-pick 68d1829babe6d2908bc22ee52488098962aa94c5",
+    "git cherry-pick 3dd42df4981febb00f221f8c3471640eeb5efb8d",
+    "uv run pytest tests/test_context_asset_evaluator.py tests/test_context_manager.py tests/test_context_governance_acceptance.py tests/test_native_request_context.py -q",
+    "uv run python scripts/run_context_asset_evaluation.py --output F:/dev/llm/pico-eval-artifacts/phase-2-context-assets",
+    "uv run python scripts/run_context_asset_evaluation.py --cases benchmarks/v3/context-assets/cases.json --workspace-root F:/dev/llm/pico-eval-artifacts/phase-2-context-assets --artifact F:/dev/llm/pico-eval-artifacts/phase-2-context-assets/structured-context-evaluation.json --shard-id W5-EVAL-031-G --repetition 1",
+    "offline artifact invariant and SHA-256 verifier",
+    "git diff --check",
+    "git diff --cached --check"
+  ],
+  "tests": [
+    {
+      "command": "uv run pytest tests/test_context_asset_evaluator.py tests/test_context_manager.py tests/test_context_governance_acceptance.py tests/test_native_request_context.py -q",
+      "result": "passed",
+      "details": "27 passed in 21.00s. Covers the evaluator, context budgeting/governance, final native request surfaces, tool separation, current-request survival, unfinished native turn compaction, and absence of active text-envelope instructions."
+    },
+    {
+      "command": "uv run python scripts/run_context_asset_evaluation.py --output F:/dev/llm/pico-eval-artifacts/phase-2-context-assets",
+      "result": "failed",
+      "details": "The exact ticket command exited 2 because the integrated CLI requires --cases and --artifact; recorded as ticket-cli-command-drift and not repaired outside ticket ownership."
+    },
+    {
+      "command": "uv run python scripts/run_context_asset_evaluation.py --cases benchmarks/v3/context-assets/cases.json --workspace-root F:/dev/llm/pico-eval-artifacts/phase-2-context-assets --artifact F:/dev/llm/pico-eval-artifacts/phase-2-context-assets/structured-context-evaluation.json --shard-id W5-EVAL-031-G --repetition 1",
+      "result": "passed",
+      "details": "15 total, 15 passed, 0 failed, pass rate 1.0. C01-C08 evidence all eight asset classes; all 15 current requests are exact; system/tool definition matches total zero; C14 remains awaiting_result with one provider call ID, no result, non-compactable public call, and hash-only continuation evidence."
+    },
+    {
+      "command": "offline artifact invariant and SHA-256 verifier",
+      "result": "passed",
+      "details": "Validated ordered C01-C15 rows, all hard gates, eight normal-budget asset records, C14 call/result/compaction state, absence of opaque fixture continuation content from the public evaluator artifact, and all frozen hashes."
+    },
+    {
+      "command": "git diff --check and git diff --cached --check",
+      "result": "passed",
+      "details": "No whitespace errors in ticket-owned files."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "benchmarks/v3/context-assets/cases.json",
+      "schema_version": "pico-context-asset-cases-v1",
+      "case_count": 15,
+      "sha256": "d69dfc1808cb12b179f8a1fb30ffa74136339d7783d9f11a5fbe8fd4259400ba",
+      "hash_basis": "UTF-8 file bytes"
+    },
+    {
+      "path": ".codex/eval/proposals/EVAL-031-G.freeze.json",
+      "sha256": "6f8ef9f2725da04b6283bf37b7900df86120a7bde89700f505f852626d5f1f48"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/phase-2-context-assets/structured-context-evaluation.json",
+      "sha256": "b941868234be06832f5b1d3f246d4015baf39d69fac65c01a3c15a94228fdd65"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/phase-2-context-assets/gate-summary.json",
+      "sha256": "0a04d182aa2d4decd53600b98acb072fd653bd939e989b32f8da5aebd13b8223"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/phase-2-context-assets/fixtures/C09/targets/design.md",
+      "sha256": "3a5c23d47827981aadd19df94531895a57c775bb5762970c8b97c095fbfb62b0"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/phase-2-context-assets/fixtures/C13/targets/runbook.md",
+      "sha256": "545518d10e4112ba524bfcb76a4b9e7eab4200659f83563093c9db7256a68dbd"
+    }
+  ],
+  "frozen_hashes": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "context_assets": "d8349c034524cc488958a1f3b460a7b6080915eed0b03b64c635810c21bf8e15",
+    "fragment_C01_C08": "6bef856d9df68209d60d0ef7e9df1dc927fd861f64a6f646f0cc58fba9c808b8",
+    "fragment_C09_C15": "1c2975e53696faed737a676e14faef7008cb4a2c4c5db27c804a903af3e1455c",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "cases": "d69dfc1808cb12b179f8a1fb30ffa74136339d7783d9f11a5fbe8fd4259400ba",
+    "evaluation_artifact": "b941868234be06832f5b1d3f246d4015baf39d69fac65c01a3c15a94228fdd65",
+    "gate_summary": "0a04d182aa2d4decd53600b98acb072fd653bd939e989b32f8da5aebd13b8223",
+    "sdk_transport_decision": null,
+    "provider_selection": null,
+    "native_resume_gate": null
+  },
+  "native_protocol_observations": {
+    "observation_scope": "Offline deterministic fixture expansion, provider-neutral ModelRequest evaluation, and targeted Runtime native-context tests only; no provider request, live endpoint, or formal effectiveness evaluation was issued.",
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0,
+    "sdk_tool_runner_used": false,
+    "sdk_agent_runner_used": false,
+    "sdk_managed_pico_tool_execution_used": false
+  },
+  "defects": [
+    {
+      "id": "runtime-asset-record-contract-incomplete",
+      "scope": "pico/core/request_context.py::_asset_records",
+      "details": "Runtime asset records omit required producer, priority, floor_satisfied, raw_size, rendered_size, content_hash, and per-asset metadata evidence. The frozen fixture captures carry the full contract; no product fix was made in this Gate ticket."
+    },
+    {
+      "id": "runtime-provider-request-flattens-structured-context",
+      "scope": "pico/core/engine_helpers.py::run_native_turn",
+      "details": "The final Runtime passes context.legacy_prompt() into ModelRequest.prompt; explicit system/messages surfaces remain context capture metadata rather than first-class provider-neutral request fields. No product fix was made."
+    },
+    {
+      "id": "ticket-cli-command-drift",
+      "scope": ".codex/eval/tickets/EVAL-031-G.md versus scripts/run_context_asset_evaluation.py",
+      "details": "The prescribed --output command exits 2; the integrated CLI uses --cases and --artifact. The equivalent current CLI command completed the evaluator."
+    }
+  ],
+  "risks": [
+    "Pointer fixture hashes are Git-blob/LF based; Windows checkout CRLF bytes differ, so the artifact workspace contains exact frozen LF mirrors for C09 and C13 pointer verification.",
+    "The deterministic 15/15 result validates frozen structured captures and evaluator semantics; the separately listed Runtime evidence gaps remain product work outside this ticket.",
+    "The public continuation artifact exposes type/count/hash only; token_usage from the private fixture is not present in evaluator continuation evidence."
+  ],
+  "status_proposal": {
+    "ticket_id": "EVAL-031-G",
+    "status": "complete",
+    "head_sha": "df4f6567cda2955d347fc18df82a85c01e887323",
+    "reason": "The frozen 15-case deterministic structured-context gate is complete and green; Runtime defects are recorded without product changes."
+  },
+  "freeze_proposal": {
+    "path": ".codex/eval/proposals/EVAL-031-G.freeze.json",
+    "sha256": "6f8ef9f2725da04b6283bf37b7900df86120a7bde89700f505f852626d5f1f48"
+  },
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}

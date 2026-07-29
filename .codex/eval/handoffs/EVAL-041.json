@@ -1,0 +1,142 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "EVAL-041",
+  "instance_id": "W1-EVAL-041-01",
+  "wave": "W1",
+  "role": "implementer",
+  "status": "complete",
+  "base_sha": "67be0ecc161cd6060a8417d29b1e5bc40b10e080",
+  "head_sha": "69347c68453eea4649078091f7de0c8057d02539",
+  "branch": "codex/eval-v3-w1-eval-041",
+  "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\1296\\pico",
+  "prompt_sha256": "6ba88b4c19734a725992114a958d0327ec8a39c1f22cff3e248499971623a473",
+  "dependency_commits": [
+    "387216cf4393edc34bce30e7facfa2dbc35cc524"
+  ],
+  "applied_dependency_commits": [
+    "8323b7f42614513999342b6dc05e4fbc52f2111e"
+  ],
+  "dependency_handoff_hashes": {
+    "EVAL-001": "cc8c951e0a0e0dac20e46c611b102bc538a6863099310a90690eb639f931a3be",
+    "TOOL-010": "300faf3f58f369248291ba72be3aefca9e3444dac9999cf45c5767c4eefbde0d"
+  },
+  "dependency_freeze_hashes": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb"
+  },
+  "own_commits": [
+    "69347c68453eea4649078091f7de0c8057d02539"
+  ],
+  "files_changed": [
+    "pico/evaluation/live_tasks.py",
+    "scripts/run_local_coding_tasks.py",
+    "tests/fixtures/live_task_runner/hidden/reference.txt",
+    "tests/fixtures/live_task_runner/hidden/verifier.py",
+    "tests/fixtures/live_task_runner/public_repo/calculator.py",
+    "tests/fixtures/live_task_runner/task-manifest.json",
+    "tests/test_live_task_evaluator.py"
+  ],
+  "commands_run": [
+    "task-specific UV_CACHE_DIR/UV_PROJECT_ENVIRONMENT: uv run --no-project --with pytest --with ruff --with pydantic --with textual pytest tests/test_live_task_evaluator.py -q",
+    "task-specific UV_CACHE_DIR/UV_PROJECT_ENVIRONMENT: uv run --no-project --with pytest --with ruff --with pydantic --with textual pytest tests/test_live_task_evaluator.py tests/test_evaluation_contracts.py tests/test_provider_contracts.py -q",
+    "task-specific UV_CACHE_DIR/UV_PROJECT_ENVIRONMENT: uv run --no-project --with pytest --with ruff --with pydantic --with textual ruff check pico/evaluation/live_tasks.py scripts/run_local_coding_tasks.py tests/test_live_task_evaluator.py",
+    "task-specific UV_CACHE_DIR/UV_PROJECT_ENVIRONMENT: uv run --no-project --with pytest --with ruff --with pydantic --with textual python scripts/run_local_coding_tasks.py --help",
+    "git diff --check",
+    "git diff --cached --check",
+    "SHA-256 Git blob bytes for committed outputs"
+  ],
+  "tests": [
+    {
+      "command": "uv run --no-project --with pytest --with ruff --with pydantic --with textual pytest tests/test_live_task_evaluator.py -q",
+      "result": "passed",
+      "details": "12 passed using a task-specific temporary UV cache and environment; synthetic client only"
+    },
+    {
+      "command": "uv run --no-project --with pytest --with ruff --with pydantic --with textual pytest tests/test_live_task_evaluator.py tests/test_evaluation_contracts.py tests/test_provider_contracts.py -q",
+      "result": "passed",
+      "details": "29 passed using a fresh task-specific temporary UV cache and environment"
+    },
+    {
+      "command": "uv run --no-project --with pytest --with ruff --with pydantic --with textual ruff check pico/evaluation/live_tasks.py scripts/run_local_coding_tasks.py tests/test_live_task_evaluator.py",
+      "result": "passed",
+      "details": "All checks passed"
+    },
+    {
+      "command": "uv run --no-project --with pytest --with ruff --with pydantic --with textual python scripts/run_local_coding_tasks.py --help",
+      "result": "passed",
+      "details": "CLI exposes task, repo, run-kind, and shard filters"
+    },
+    {
+      "command": "initial isolated test bootstrap attempts",
+      "result": "failed",
+      "details": "Two collection-only setup attempts failed before tests ran: this checkout has no uv.lock for --frozen, then --no-project lacked Pico runtime dependencies. The final isolated commands supplied pydantic/textual explicitly and passed. No repository lock or environment was written."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "pico/evaluation/live_tasks.py",
+      "sha256": "9254bf0204176d2a07c50542d8fa8955b61066f05b2aea93992c855a19dca5d2",
+      "hash_basis": "git_blob_bytes",
+      "coverage": "fresh workspace copy, hidden verifier isolation, manifest diff, native evidence, sanitization, failure taxonomy, filtering, and formal gate"
+    },
+    {
+      "path": "scripts/run_local_coding_tasks.py",
+      "sha256": "a9df2ea58fb01e4f8f94319ef90bef066249514f34afa234fe11dbd0390dddee",
+      "hash_basis": "git_blob_bytes",
+      "coverage": "standalone manifest CLI and provider-neutral subprocess client evidence boundary"
+    },
+    {
+      "path": "tests/test_live_task_evaluator.py",
+      "sha256": "ec93dc0a741afba5459be25f90f9b9a69104f59cb88c8fa36a72f29e3c87a3a0",
+      "hash_basis": "git_blob_bytes",
+      "coverage": "synthetic isolation, fresh copies, native evidence, trace sanitization, failure taxonomy, filters, and TOOL-050-S refusal"
+    },
+    {
+      "path": "tests/fixtures/live_task_runner/task-manifest.json",
+      "sha256": "289072c488ac439f3e6e0ceb18b134d4ce1e5784f7a27a6c99add205d5b74342",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": "tests/fixtures/live_task_runner/hidden/verifier.py",
+      "sha256": "bbfb7baeb6dbe227ee6f37cf610d24bfc24069954022ab4601a5cde79ef001c6",
+      "hash_basis": "git_blob_bytes"
+    },
+    {
+      "path": ".codex/eval/handoffs/EVAL-041.json",
+      "persistence": "ticket output generated after the content commit so it can record the immutable head SHA"
+    }
+  ],
+  "contract_hashes": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb"
+  },
+  "frozen_hashes": {
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": null,
+    "sdk_transport_decision": null,
+    "provider_selection": null,
+    "native_resume_gate": null
+  },
+  "native_protocol_observations": {
+    "observation_scope": "synthetic client and fake evidence only; no provider request or online evaluation was issued",
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "synthetic_call_id_mismatch_cases_exercised": 1,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0
+  },
+  "defects": [],
+  "risks": [
+    "The subprocess client boundary requires its transport adapter to emit provider-neutral evidence JSON; production provider/Runtime wiring remains owned by later tickets.",
+    "Formal runs validate presence and SHA-256 shape of the supplied TOOL-050-S selection hash; the run orchestrator must source that value from the frozen control-plane artifact."
+  ],
+  "status_proposal": {
+    "ticket_id": "EVAL-041",
+    "status": "complete",
+    "head_sha": "69347c68453eea4649078091f7de0c8057d02539"
+  },
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}

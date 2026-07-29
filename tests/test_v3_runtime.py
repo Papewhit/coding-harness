@@ -1,6 +1,6 @@
 import json
 
-from pico.testing import ScriptedModelClient
+from tests.native_fixtures import final, lock_scripted_provider_profile, scripted_client, tool
 from pico import Engine, Pico, SessionEventBus, SessionStore, WorkspaceContext
 
 
@@ -8,12 +8,14 @@ def build_agent(tmp_path, outputs, **kwargs):
     (tmp_path / "README.md").write_text("demo\n", encoding="utf-8")
     workspace = WorkspaceContext.build(tmp_path)
     store = SessionStore(tmp_path / ".pico" / "sessions")
-    return Pico(
-        model_client=ScriptedModelClient(outputs),
-        workspace=workspace,
-        session_store=store,
-        approval_policy="auto",
-        **kwargs,
+    return lock_scripted_provider_profile(
+        Pico(
+            model_client=scripted_client(outputs),
+            workspace=workspace,
+            session_store=store,
+            approval_policy="auto",
+            **kwargs,
+        )
     )
 
 
@@ -32,7 +34,7 @@ def event_names(agent):
 
 
 def test_engine_drives_real_session_and_persists_event_timeline(tmp_path):
-    agent = build_agent(tmp_path, ["<final>Done.</final>"])
+    agent = build_agent(tmp_path, [final("Done.")])
 
     assert isinstance(agent.engine, Engine)
     assert isinstance(agent.session_event_bus, SessionEventBus)
@@ -51,7 +53,7 @@ def test_engine_drives_real_session_and_persists_event_timeline(tmp_path):
         "user_message",
         "context_usage_recorded",
         "model_requested",
-        "model_parsed",
+        "model_exchange",
         "assistant_message",
         "turn_finished",
     ]
@@ -61,8 +63,8 @@ def test_engine_wraps_real_tools_with_session_events(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            '<tool name="write_file" path="notes/result.txt"><content>ok\n</content></tool>',
-            "<final>Wrote it.</final>",
+            tool("write_file", path="notes/result.txt", content="ok\n"),
+            final("Wrote it."),
         ],
     )
 
@@ -84,8 +86,12 @@ def test_plan_mode_allows_only_the_active_plan_artifact_until_plan_is_written(tm
     agent = build_agent(
         tmp_path,
         [
-            '<tool name="write_file" path=".pico/plans/v3-plan.md"><content># Plan\n- Build Engine\n</content></tool>',
-            "<final>Plan ready.</final>",
+            tool(
+                "write_file",
+                path=".pico/plans/v3-plan.md",
+                content="# Plan\n- Build Engine\n",
+            ),
+            final("Plan ready."),
         ],
         max_steps=3,
     )
@@ -117,9 +123,9 @@ def test_plan_mode_rejects_final_before_the_plan_artifact_exists(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            "<final>Looks done.</final>",
-            '<tool name="write_file" path=".pico/plans/v3-plan.md"><content># Plan\n</content></tool>',
-            "<final>Now done.</final>",
+            final("Looks done."),
+            tool("write_file", path=".pico/plans/v3-plan.md", content="# Plan\n"),
+            final("Now done."),
         ],
         max_steps=3,
     )
@@ -159,9 +165,7 @@ def test_plan_path_accepts_absolute_path_inside_workspace(tmp_path):
         _plan_path("Student Mgmt", "/Users/u/repo/.pico/plans/student-mgmt.md")
         == ".pico/plans/student-mgmt.md"
     )
-    assert (
-        _plan_path("X", "./.pico/plans/x-plan.md") == ".pico/plans/x-plan.md"
-    )
+    assert _plan_path("X", "./.pico/plans/x-plan.md") == ".pico/plans/x-plan.md"
     # 真正越界的还是要拒
     import pytest
 

@@ -1,0 +1,58 @@
+{
+  "schema_version": "pico-eval-control-overlay-v1",
+  "wave": "W5",
+  "purpose": "readable canonical integration history",
+  "overlay_parent_sha": "310e55451948d497a7d0b6418d821b512f44808b",
+  "upstream_canonical_sha": "8fbd4af8832dde1d44ee39cfd70763aedfca4397",
+  "upstream_handoff": {
+    "path": ".codex/eval/state/W4-wave-handoff.json",
+    "sha256": "36d9ec41a14f9b7d1c0804267c315022b88639e39f1bf8c27024ff95c88057b9"
+  },
+  "upstream_status_sha256": "c8cf220c9eac2fc023b075c20c61ccd122fb6364ab148a9a1f3c881f98485693",
+  "upstream_freeze_sha256": "0e985d4a46479c34f4bf4567191f487e5f3e530671129b6974c86316e03a400f",
+  "rules": {
+    "normalized_ticket_commit": {
+      "maximum_per_ticket_with_source_or_fixture_changes": 1,
+      "subject_must_contain_ticket_id": true,
+      "merge_method": "git cherry-pick --no-commit for every worker-owned commit, followed by one canonical commit",
+      "required_commit_body_fields": [
+        "worker_head",
+        "worker_commits",
+        "dependency_commits",
+        "handoff_sha256",
+        "tests",
+        "stable_patch_id_verification"
+      ],
+      "stable_patch_id_command": "git diff <wave-base>..<worker-head> | git patch-id --stable"
+    },
+    "control_commits": {
+      "forbid_per_ticket_dispatch_commits": true,
+      "forbid_per_ticket_accept_commits": true,
+      "allowed_kinds": [
+        "wave_open",
+        "batch_checkpoint",
+        "wave_close",
+        "wave_handoff"
+      ]
+    },
+    "commit_map": {
+      "path": ".codex/eval/state/W5-commit-map.json",
+      "must_map_every_worker_commit_to_canonical_commit": true
+    },
+    "worker_bundle": {
+      "required_at_wave_close": true,
+      "artifact_path": "F:\\dev\\llm\\pico-eval-artifacts\\wave-bundles\\W5-workers.bundle",
+      "verification_command": "git bundle verify <bundle>",
+      "record_sha256": true
+    },
+    "cleanup": {
+      "delete_worker_branches_or_worktrees_without_user_approval": false,
+      "report_cleanup_candidates_only": true
+    },
+    "canonical_tag": {
+      "name": "eval-v3/w5-canonical",
+      "annotated": true,
+      "must_verify_target": true
+    }
+  }
+}

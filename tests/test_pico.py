@@ -11,7 +11,13 @@ from unittest.mock import patch
 import pico as pico_pkg
 import pico.providers as providers_pkg
 import pytest
-from pico.testing import ScriptedModelClient
+from pico.testing import native_final_response, native_protocol_error_response
+from tests.native_fixtures import (
+    final,
+    lock_scripted_provider_profile,
+    scripted_client,
+    tool,
+)
 from pico import (
     AnthropicCompatibleModelClient,
     Pico,
@@ -32,12 +38,14 @@ def build_agent(tmp_path, outputs, **kwargs):
     workspace = build_workspace(tmp_path)
     store = SessionStore(tmp_path / ".pico" / "sessions")
     approval_policy = kwargs.pop("approval_policy", "auto")
-    return Pico(
-        model_client=ScriptedModelClient(outputs),
-        workspace=workspace,
-        session_store=store,
-        approval_policy=approval_policy,
-        **kwargs,
+    return lock_scripted_provider_profile(
+        Pico(
+            model_client=scripted_client(outputs),
+            workspace=workspace,
+            session_store=store,
+            approval_policy=approval_policy,
+            **kwargs,
+        )
     )
 
 
@@ -46,15 +54,18 @@ def test_agent_runs_tool_then_final(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            '<tool>{"name":"read_file","args":{"path":"hello.txt","start":1,"end":2}}</tool>',
-            "<final>Read the file successfully.</final>",
+            tool("read_file", path="hello.txt", start=1, end=2),
+            final("Read the file successfully."),
         ],
     )
 
     answer = agent.ask("Inspect hello.txt")
 
     assert answer == "Read the file successfully."
-    assert any(item["role"] == "tool" and item["name"] == "read_file" for item in agent.session["history"])
+    assert any(
+        item["role"] == "tool" and item["name"] == "read_file"
+        for item in agent.session["history"]
+    )
     assert "hello.txt" in agent.session["memory"]["files"]
 
 
@@ -62,8 +73,8 @@ def test_agent_updates_task_summary_on_each_request(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            "<final>First pass.</final>",
-            "<final>Second pass.</final>",
+            final("First pass."),
+            final("Second pass."),
         ],
     )
 
@@ -79,9 +90,9 @@ def test_agent_only_stores_reusable_epistemic_notes(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            '<tool>{"name":"read_file","args":{"path":"facts.txt","start":1,"end":1}}</tool>',
-            "<final>Done.</final>",
-            "<final>It is red.</final>",
+            tool("read_file", path="facts.txt", start=1, end=1),
+            final("Done."),
+            final("It is red."),
         ],
     )
 
@@ -92,7 +103,7 @@ def test_agent_only_stores_reusable_epistemic_notes(tmp_path):
     assert not any(note["text"] == "Done." for note in notes)
 
     resumed = Pico.from_session(
-        model_client=ScriptedModelClient(["<final>It is red.</final>"]),
+        model_client=scripted_client([final("It is red.")]),
         workspace=agent.workspace,
         session_store=agent.session_store,
         session_id=agent.session["id"],
@@ -105,7 +116,9 @@ def test_agent_only_stores_reusable_epistemic_notes(tmp_path):
     assert "deploy key is red" in prompt
 
 
-def test_file_summary_cache_is_invalidated_on_out_of_band_edit_and_path_spelling(tmp_path):
+def test_file_summary_cache_is_invalidated_on_out_of_band_edit_and_path_spelling(
+    tmp_path,
+):
     file_path = tmp_path / "sample.txt"
     file_path.write_text("alpha\n", encoding="utf-8")
     agent = build_agent(tmp_path, [])
@@ -118,7 +131,7 @@ def test_file_summary_cache_is_invalidated_on_out_of_band_edit_and_path_spelling
     file_path.write_text("beta\n", encoding="utf-8")
 
     resumed = Pico.from_session(
-        model_client=ScriptedModelClient([]),
+        model_client=scripted_client(),
         workspace=agent.workspace,
         session_store=agent.session_store,
         session_id=agent.session["id"],
@@ -130,20 +143,19 @@ def test_file_summary_cache_is_invalidated_on_out_of_band_edit_and_path_spelling
     assert "sample.txt" not in resumed.memory.to_dict()["file_summaries"]
 
 
-def test_agent_retries_after_empty_model_output(tmp_path):
+def test_agent_reports_native_protocol_error_without_text_retry(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            "",
-            "<final>Recovered after retry.</final>",
+            native_protocol_error_response("empty response", code="empty_response"),
         ],
     )
 
     answer = agent.ask("Do the task")
 
-    assert answer == "Recovered after retry."
-    notices = [item["content"] for item in agent.session["history"] if item["role"] == "assistant"]
-    assert any("empty response" in item for item in notices)
+    assert "empty response" in answer
+    assert agent.current_task_state.status == "failed"
+    assert not any(item.get("kind") == "retry" for item in agent.session["history"])
 
 
 def test_agent_retries_after_malformed_tool_payload(tmp_path):
@@ -151,26 +163,30 @@ def test_agent_retries_after_malformed_tool_payload(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            '<tool>{"name":"read_file","args":"bad"}</tool>',
-            '<tool>{"name":"read_file","args":{"path":"hello.txt","start":1,"end":1}}</tool>',
-            "<final>Recovered after malformed tool output.</final>",
+            tool("read_file", arguments={}),
+            tool("read_file", path="hello.txt", start=1, end=1),
+            final("Recovered after malformed tool output."),
         ],
     )
 
     answer = agent.ask("Inspect hello.txt")
 
     assert answer == "Recovered after malformed tool output."
-    assert any(item["role"] == "tool" and item["name"] == "read_file" for item in agent.session["history"])
-    notices = [item["content"] for item in agent.session["history"] if item["role"] == "assistant"]
-    assert any("valid <tool> call" in item for item in notices)
+    assert any(
+        item["role"] == "tool" and item["name"] == "read_file"
+        for item in agent.session["history"]
+    )
+    tool_items = [item for item in agent.session["history"] if item["role"] == "tool"]
+    assert "invalid arguments" in tool_items[0]["content"]
+    assert "alpha" in tool_items[1]["content"]
 
 
-def test_agent_accepts_xml_write_file_tool(tmp_path):
+def test_agent_accepts_native_write_file_tool(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            '<tool name="write_file" path="hello.py"><content>print("hi")\n</content></tool>',
-            "<final>Done.</final>",
+            tool("write_file", path="hello.py", content='print("hi")\n'),
+            final("Done."),
         ],
     )
 
@@ -180,28 +196,28 @@ def test_agent_accepts_xml_write_file_tool(tmp_path):
     assert (tmp_path / "hello.py").read_text(encoding="utf-8") == 'print("hi")\n'
 
 
-def test_retries_do_not_consume_the_whole_budget(tmp_path):
+def test_protocol_errors_do_not_trigger_a_text_retry_loop(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            "",
-            "",
-            "<final>Recovered after several retries.</final>",
+            native_protocol_error_response("bad native payload"),
+            final("must remain unused"),
         ],
         max_steps=1,
     )
 
     answer = agent.ask("Do the task")
 
-    assert answer == "Recovered after several retries."
+    assert "bad native payload" in answer
+    assert agent.model_client.remaining_responses == 1
 
 
 def test_agent_saves_and_resumes_session(tmp_path):
-    agent = build_agent(tmp_path, ["<final>First pass.</final>"])
+    agent = build_agent(tmp_path, [final("First pass.")])
     assert agent.ask("Start a session") == "First pass."
 
     resumed = Pico.from_session(
-        model_client=ScriptedModelClient(["<final>Resumed.</final>"]),
+        model_client=scripted_client([final("Resumed.")]),
         workspace=agent.workspace,
         session_store=agent.session_store,
         session_id=agent.session["id"],
@@ -238,7 +254,7 @@ def test_invalid_risky_tool_does_not_prompt_for_approval(tmp_path):
         result = agent.run_tool("write_file", {})
 
     assert result.startswith("error: invalid arguments for write_file: 'path'")
-    assert 'example: <tool name="write_file"' in result
+    assert "example: {'path': 'binary_search.py'" in result
     mock_input.assert_not_called()
 
 
@@ -257,16 +273,46 @@ def test_list_files_hides_internal_agent_state(tmp_path):
 
 def test_repeated_identical_tool_call_is_rejected(tmp_path):
     agent = build_agent(tmp_path, [])
-    agent.record({"role": "tool", "name": "list_files", "args": {}, "content": "(empty)", "created_at": "1"})
-    agent.record({"role": "tool", "name": "list_files", "args": {}, "content": "(empty)", "created_at": "2"})
+    agent.record(
+        {
+            "role": "tool",
+            "name": "list_files",
+            "args": {},
+            "content": "(empty)",
+            "created_at": "1",
+        }
+    )
+    agent.record(
+        {
+            "role": "tool",
+            "name": "list_files",
+            "args": {},
+            "content": "(empty)",
+            "created_at": "2",
+        }
+    )
 
     result = agent.run_tool("list_files", {})
 
-    assert result == "error: repeated identical tool call for list_files; choose a different tool or return a final answer"
+    assert (
+        result
+        == "error: repeated identical tool call for list_files; choose a different tool or return a final answer"
+    )
 
 
 def test_welcome_screen_keeps_box_shape_for_long_paths(tmp_path):
-    deep = tmp_path / "very" / "long" / "path" / "for" / "the" / "mini" / "agent" / "welcome" / "screen"
+    deep = (
+        tmp_path
+        / "very"
+        / "long"
+        / "path"
+        / "for"
+        / "the"
+        / "mini"
+        / "agent"
+        / "welcome"
+        / "screen"
+    )
     deep.mkdir(parents=True)
     agent = build_agent(deep, [])
 
@@ -298,7 +344,7 @@ def test_openai_compatible_client_posts_expected_responses_payload():
             return False
 
         def read(self):
-            return json.dumps({"output_text": "<final>ok</final>"}).encode("utf-8")
+            return json.dumps({"output_text": "ok"}).encode("utf-8")
 
     def fake_urlopen(request, timeout):
         captured["url"] = request.full_url
@@ -318,7 +364,7 @@ def test_openai_compatible_client_posts_expected_responses_payload():
     with patch("urllib.request.urlopen", fake_urlopen):
         result = client.complete("hello", 42)
 
-    assert result == "<final>ok</final>"
+    assert result == "ok"
     assert captured["url"] == "https://right.codes/v1/responses"
     assert captured["timeout"] == 30
     assert captured["headers"]["Authorization"] == "Bearer sk-test"
@@ -359,7 +405,7 @@ def test_openai_compatible_client_sends_prompt_cache_fields_and_records_usage():
         def read(self):
             return json.dumps(
                 {
-                    "output_text": "<final>ok</final>",
+                    "output_text": "ok",
                     "usage": {
                         "input_tokens": 2048,
                         "input_tokens_details": {"cached_tokens": 1536},
@@ -392,7 +438,7 @@ def test_openai_compatible_client_sends_prompt_cache_fields_and_records_usage():
             prompt_cache_retention="in_memory",
         )
 
-    assert result == "<final>ok</final>"
+    assert result == "ok"
     assert captured["body"]["prompt_cache_key"] == "prefix-hash-123"
     assert captured["body"]["prompt_cache_retention"] == "in_memory"
     assert client.last_completion_metadata["prompt_cache_supported"] is True
@@ -415,7 +461,7 @@ def test_openai_compatible_client_retries_rate_limit_and_records_retry_metadata(
             return False
 
         def read(self):
-            return json.dumps({"output_text": "<final>ok</final>"}).encode("utf-8")
+            return json.dumps({"output_text": "ok"}).encode("utf-8")
 
     def fake_urlopen(request, timeout):
         del request, timeout
@@ -438,10 +484,13 @@ def test_openai_compatible_client_retries_rate_limit_and_records_retry_metadata(
         timeout=30,
     )
 
-    with patch("urllib.request.urlopen", fake_urlopen), patch("pico.providers.clients.time.sleep"):
+    with (
+        patch("urllib.request.urlopen", fake_urlopen),
+        patch("pico.providers.clients.time.sleep"),
+    ):
         result = client.complete("hello", 42)
 
-    assert result == "<final>ok</final>"
+    assert result == "ok"
     assert calls["count"] == 2
     assert client.last_completion_metadata["provider_attempts"] == 2
     assert client.last_completion_metadata["provider_retry_count"] == 1
@@ -468,7 +517,10 @@ def test_openai_compatible_client_classifies_invalid_json_provider_failure():
         timeout=30,
     )
 
-    with patch("urllib.request.urlopen", return_value=FakeResponse()), pytest.raises(ProviderError) as exc:
+    with (
+        patch("urllib.request.urlopen", return_value=FakeResponse()),
+        pytest.raises(ProviderError) as exc,
+    ):
         client.complete("hello", 42)
 
     assert exc.value.code == "invalid_json"
@@ -503,7 +555,7 @@ def test_provider_success_metadata_sanitizes_url_credentials():
             return False
 
         def read(self):
-            return json.dumps({"output_text": "<final>ok</final>"}).encode("utf-8")
+            return json.dumps({"output_text": "ok"}).encode("utf-8")
 
     client = OpenAICompatibleModelClient(
         model="right.codes/codex-mini",
@@ -514,14 +566,25 @@ def test_provider_success_metadata_sanitizes_url_credentials():
     )
 
     with patch("urllib.request.urlopen", return_value=FakeResponse()):
-        assert client.complete("hello", 42) == "<final>ok</final>"
+        assert client.complete("hello", 42) == "ok"
 
-    assert client.last_completion_metadata["provider_base_url"] == "https://example.test:8443/v1"
+    assert (
+        client.last_completion_metadata["provider_base_url"]
+        == "https://example.test:8443/v1"
+    )
 
 
 def test_provider_url_sanitizer_handles_invalid_ports_and_ipv6():
-    assert ProviderError("failed", base_url="https://example.test:bad/v1?api_key=sk-real-secret").base_url == "https://example.test/v1"
-    assert ProviderError("failed", base_url="http://user:secret@[::1]:8080/v1").base_url == "http://[::1]:8080/v1"
+    assert (
+        ProviderError(
+            "failed", base_url="https://example.test:bad/v1?api_key=sk-real-secret"
+        ).base_url
+        == "https://example.test/v1"
+    )
+    assert (
+        ProviderError("failed", base_url="http://user:secret@[::1]:8080/v1").base_url
+        == "http://[::1]:8080/v1"
+    )
 
 
 def test_openai_compatible_client_extracts_text_from_event_stream():
@@ -537,7 +600,7 @@ def test_openai_compatible_client_extracts_text_from_event_stream():
         def read(self):
             return (
                 'data: {"type":"response.created","response":{"id":"resp_1","output":[]}}\n'
-                'data: {"type":"response.completed","response":{"output":[{"content":[{"text":"<final>stream ok</final>"}]}]}}\n'
+                'data: {"type":"response.completed","response":{"output":[{"content":[{"text":"stream ok"}]}]}}\n'
                 "data: [DONE]\n"
             ).encode("utf-8")
 
@@ -552,7 +615,7 @@ def test_openai_compatible_client_extracts_text_from_event_stream():
     with patch("urllib.request.urlopen", return_value=FakeResponse()):
         result = client.complete("hello", 42)
 
-    assert result == "<final>stream ok</final>"
+    assert result == "stream ok"
 
 
 def test_openai_compatible_client_extracts_text_from_event_stream_deltas():
@@ -567,12 +630,12 @@ def test_openai_compatible_client_extracts_text_from_event_stream_deltas():
 
         def read(self):
             return (
-                'event: response.output_text.delta\n'
-                'data: {"type":"response.output_text.delta","delta":"<final>"}\n'
-                'event: response.output_text.delta\n'
+                "event: response.output_text.delta\n"
                 'data: {"type":"response.output_text.delta","delta":"OK"}\n'
-                'event: response.output_text.done\n'
-                'data: {"type":"response.output_text.done","text":"<final>OK</final>"}\n'
+                "event: response.output_text.delta\n"
+                'data: {"type":"response.output_text.delta","delta":"!"}\n'
+                "event: response.output_text.done\n"
+                'data: {"type":"response.output_text.done","text":"OK!"}\n'
                 "data: [DONE]\n"
             ).encode("utf-8")
 
@@ -587,7 +650,7 @@ def test_openai_compatible_client_extracts_text_from_event_stream_deltas():
     with patch("urllib.request.urlopen", return_value=FakeResponse()):
         result = client.complete("hello", 42)
 
-    assert result == "<final>OK</final>"
+    assert result == "OK!"
 
 
 def test_anthropic_compatible_client_posts_expected_messages_payload():
@@ -608,7 +671,7 @@ def test_anthropic_compatible_client_posts_expected_messages_payload():
                     "content": [
                         {
                             "type": "text",
-                            "text": "<final>ok</final>",
+                            "text": "ok",
                         }
                     ]
                 }
@@ -632,7 +695,7 @@ def test_anthropic_compatible_client_posts_expected_messages_payload():
     with patch("urllib.request.urlopen", fake_urlopen):
         result = client.complete("hello", 42)
 
-    assert result == "<final>ok</final>"
+    assert result == "ok"
     assert captured["url"] == "https://www.right.codes/claude-aws/v1/messages"
     assert captured["timeout"] == 30
     assert captured["headers"]["X-api-key"] == "sk-test"
@@ -672,7 +735,7 @@ def test_anthropic_compatible_client_extracts_first_text_block():
                 {
                     "content": [
                         {"type": "thinking", "thinking": "hidden"},
-                        {"type": "text", "text": "<final>ok</final>"},
+                        {"type": "text", "text": "ok"},
                     ]
                 }
             ).encode("utf-8")
@@ -688,7 +751,7 @@ def test_anthropic_compatible_client_extracts_first_text_block():
     with patch("urllib.request.urlopen", return_value=FakeResponse()):
         result = client.complete("hello", 42)
 
-    assert result == "<final>ok</final>"
+    assert result == "ok"
 
 
 def test_build_agent_uses_openai_provider_and_model_override(tmp_path):
@@ -726,7 +789,9 @@ def test_build_agent_uses_openai_provider_and_model_override(tmp_path):
 
     mock_openai.assert_called_once()
     assert mock_openai.call_args.kwargs["model"] == "override-model"
-    assert mock_openai.call_args.kwargs["base_url"] == "https://www.right.codes/codex/v1"
+    assert (
+        mock_openai.call_args.kwargs["base_url"] == "https://www.right.codes/codex/v1"
+    )
     assert mock_openai.call_args.kwargs["api_key"] == "sk-test"
     assert agent.model_client is fake_client
 
@@ -738,13 +803,17 @@ def test_build_arg_parser_leaves_provider_to_config_by_default(tmp_path):
 
 
 def test_build_arg_parser_accepts_anthropic_provider(tmp_path):
-    args = pico_pkg.build_arg_parser().parse_args(["--cwd", str(tmp_path), "--provider", "anthropic"])
+    args = pico_pkg.build_arg_parser().parse_args(
+        ["--cwd", str(tmp_path), "--provider", "anthropic"]
+    )
 
     assert args.provider == "anthropic"
 
 
 def test_build_arg_parser_accepts_deepseek_provider(tmp_path):
-    args = pico_pkg.build_arg_parser().parse_args(["--cwd", str(tmp_path), "--provider", "deepseek"])
+    args = pico_pkg.build_arg_parser().parse_args(
+        ["--cwd", str(tmp_path), "--provider", "deepseek"]
+    )
 
     assert args.provider == "deepseek"
 
@@ -777,22 +846,30 @@ def test_build_agent_uses_anthropic_provider_and_openai_key_fallback(tmp_path):
         },
         clear=True,
     ):
-        with patch(
-            "pico.cli.OpenAICompatibleModelClient",
-            side_effect=AssertionError("openai client should not be used"),
-        ), patch("pico.cli.AnthropicCompatibleModelClient") as mock_anthropic:
+        with (
+            patch(
+                "pico.cli.OpenAICompatibleModelClient",
+                side_effect=AssertionError("openai client should not be used"),
+            ),
+            patch("pico.cli.AnthropicCompatibleModelClient") as mock_anthropic,
+        ):
             fake_client = mock_anthropic.return_value
             agent = pico_pkg.build_agent(args)
 
     mock_anthropic.assert_called_once()
     assert mock_anthropic.call_args.kwargs["model"] == "claude-sonnet-4-5-20250929"
-    assert mock_anthropic.call_args.kwargs["base_url"] == "https://www.right.codes/claude/v1"
+    assert (
+        mock_anthropic.call_args.kwargs["base_url"]
+        == "https://www.right.codes/claude/v1"
+    )
     assert mock_anthropic.call_args.kwargs["api_key"] == "sk-openai-fallback"
     assert agent.model_client is fake_client
 
 
 def test_build_agent_uses_anthropic_default_model_when_env_is_missing(tmp_path):
-    args = pico_pkg.build_arg_parser().parse_args(["--cwd", str(tmp_path), "--provider", "anthropic"])
+    args = pico_pkg.build_arg_parser().parse_args(
+        ["--cwd", str(tmp_path), "--provider", "anthropic"]
+    )
 
     with patch.dict(
         os.environ,
@@ -843,16 +920,22 @@ def test_build_agent_uses_deepseek_provider_and_env_configuration(tmp_path):
         {"ANTHROPIC_API_KEY": "sk-anthropic", "OPENAI_API_KEY": "sk-openai"},
         clear=True,
     ):
-        with patch(
-            "pico.cli.OpenAICompatibleModelClient",
-            side_effect=AssertionError("openai client should not be used"),
-        ), patch("pico.cli.AnthropicCompatibleModelClient") as mock_anthropic:
+        with (
+            patch(
+                "pico.cli.OpenAICompatibleModelClient",
+                side_effect=AssertionError("openai client should not be used"),
+            ),
+            patch("pico.cli.AnthropicCompatibleModelClient") as mock_anthropic,
+        ):
             fake_client = mock_anthropic.return_value
             agent = pico_pkg.build_agent(args)
 
     mock_anthropic.assert_called_once()
     assert mock_anthropic.call_args.kwargs["model"] == "deepseek-v4-pro"
-    assert mock_anthropic.call_args.kwargs["base_url"] == "https://api.deepseek.com/anthropic"
+    assert (
+        mock_anthropic.call_args.kwargs["base_url"]
+        == "https://api.deepseek.com/anthropic"
+    )
     assert mock_anthropic.call_args.kwargs["api_key"] == "sk-project-deepseek"
     assert agent.model_client is fake_client
 
@@ -876,29 +959,40 @@ def test_build_agent_uses_provider_profile_protocol_from_project_toml(tmp_path):
     args = pico_pkg.build_arg_parser().parse_args(["--cwd", str(tmp_path)])
 
     with patch.dict(os.environ, {"PICO_DEEPSEEK_API_KEY": "sk-legacy-env"}, clear=True):
-        with patch(
-            "pico.cli.OpenAICompatibleModelClient",
-            side_effect=AssertionError("openai client should not be used"),
-        ), patch("pico.cli.AnthropicCompatibleModelClient") as mock_anthropic:
+        with (
+            patch(
+                "pico.cli.OpenAICompatibleModelClient",
+                side_effect=AssertionError("openai client should not be used"),
+            ),
+            patch("pico.cli.AnthropicCompatibleModelClient") as mock_anthropic,
+        ):
             fake_client = mock_anthropic.return_value
             agent = pico_pkg.build_agent(args)
 
     mock_anthropic.assert_called_once()
     assert mock_anthropic.call_args.kwargs["model"] == "deepseek-v4-pro"
-    assert mock_anthropic.call_args.kwargs["base_url"] == "https://api.deepseek.com/anthropic"
+    assert (
+        mock_anthropic.call_args.kwargs["base_url"]
+        == "https://api.deepseek.com/anthropic"
+    )
     assert mock_anthropic.call_args.kwargs["api_key"] == "sk-config-deepseek"
     assert agent.model_client is fake_client
 
 
 def test_build_agent_uses_deepseek_default_model_when_env_is_missing(tmp_path):
-    args = pico_pkg.build_arg_parser().parse_args(["--cwd", str(tmp_path), "--provider", "deepseek"])
+    args = pico_pkg.build_arg_parser().parse_args(
+        ["--cwd", str(tmp_path), "--provider", "deepseek"]
+    )
 
     with patch.dict(os.environ, {"DEEPSEEK_API_KEY": "sk-deepseek"}, clear=True):
         with patch("pico.cli.AnthropicCompatibleModelClient") as mock_anthropic:
             pico_pkg.build_agent(args)
 
     assert mock_anthropic.call_args.kwargs["model"] == "deepseek-v4-pro"
-    assert mock_anthropic.call_args.kwargs["base_url"] == "https://api.deepseek.com/anthropic"
+    assert (
+        mock_anthropic.call_args.kwargs["base_url"]
+        == "https://api.deepseek.com/anthropic"
+    )
 
 
 def test_build_agent_uses_openai_provider_by_default(tmp_path):
@@ -918,7 +1012,9 @@ def test_build_agent_uses_openai_provider_by_default(tmp_path):
 
     mock_openai.assert_called_once()
     assert mock_openai.call_args.kwargs["model"] == "gpt-5.4"
-    assert mock_openai.call_args.kwargs["base_url"] == "https://www.right.codes/codex/v1"
+    assert (
+        mock_openai.call_args.kwargs["base_url"] == "https://www.right.codes/codex/v1"
+    )
     assert mock_openai.call_args.kwargs["api_key"] == "sk-test"
     assert agent.model_client is fake_client
 
@@ -928,8 +1024,8 @@ def test_successful_run_persists_run_artifacts_and_stop_reason(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            '<tool>{"name":"read_file","args":{"path":"hello.txt","start":1,"end":2}}</tool>',
-            "<final>Finished.</final>",
+            tool("read_file", path="hello.txt", start=1, end=2),
+            final("Finished."),
         ],
     )
 
@@ -957,7 +1053,7 @@ def test_successful_run_persists_run_artifacts_and_stop_reason(tmp_path):
     trace_events = [json.loads(line)["event"] for line in trace_lines]
     assert trace_events[0] == "run_started"
     assert trace_events[-1] == "run_finished"
-    assert trace_events.count("prompt_built") == 2
+    assert trace_events.count("prompt_built") == 1
     assert "tool_executed" in trace_events
 
 
@@ -967,8 +1063,10 @@ def test_trace_and_report_redact_secret_env_values(tmp_path):
         agent = build_agent(
             tmp_path,
             [
-                '<tool>{"name":"run_shell","args":{"command":"printf \'%s\' \'sk-test-secret-123\'","timeout":20}}</tool>',
-                "<final>Masked.</final>",
+                tool(
+                    "run_shell", command="printf '%s' 'sk-test-secret-123'", timeout=20
+                ),
+                final("Masked."),
             ],
         )
 
@@ -986,7 +1084,9 @@ def test_trace_and_report_redact_secret_env_values(tmp_path):
     assert secret not in trace_text
     assert secret not in report_text
 
-    prompt_events = [event for event in trace_events if event["event"] == "prompt_built"]
+    prompt_events = [
+        event for event in trace_events if event["event"] == "prompt_built"
+    ]
     assert prompt_events
     assert prompt_events[0]["prompt_metadata"]["secret_env_count"] >= 1
     assert "OPENAI_API_KEY" in prompt_events[0]["prompt_metadata"]["secret_env_names"]
@@ -998,10 +1098,21 @@ def test_trace_and_report_redact_secret_env_values(tmp_path):
 
 
 def test_prompt_budget_metadata_records_budget_decisions(tmp_path):
-    agent = build_agent(tmp_path, ["<final>Done.</final>"])
-    agent.memory.append_note("alpha episodic note " + ("A" * 120), tags=("recall",), created_at="2026-04-07T10:00:00+00:00")
-    agent.memory.append_note("beta episodic recall note " + ("B" * 120), created_at="2026-04-07T10:01:00+00:00")
-    agent.memory.append_note("gamma episodic note " + ("C" * 120), tags=("recall",), created_at="2026-04-07T10:02:00+00:00")
+    agent = build_agent(tmp_path, [final("Done.")])
+    agent.memory.append_note(
+        "alpha episodic note " + ("A" * 120),
+        tags=("recall",),
+        created_at="2026-04-07T10:00:00+00:00",
+    )
+    agent.memory.append_note(
+        "beta episodic recall note " + ("B" * 120),
+        created_at="2026-04-07T10:01:00+00:00",
+    )
+    agent.memory.append_note(
+        "gamma episodic note " + ("C" * 120),
+        tags=("recall",),
+        created_at="2026-04-07T10:02:00+00:00",
+    )
 
     for index in range(4):
         agent.record(
@@ -1024,16 +1135,29 @@ def test_prompt_budget_metadata_records_budget_decisions(tmp_path):
 
     trace_events = [
         json.loads(line)
-        for line in (agent.run_store.trace_path(agent.current_task_state).read_text(encoding="utf-8").splitlines())
+        for line in (
+            agent.run_store.trace_path(agent.current_task_state)
+            .read_text(encoding="utf-8")
+            .splitlines()
+        )
     ]
-    prompt_events = [event for event in trace_events if event["event"] == "prompt_built"]
+    prompt_events = [
+        event for event in trace_events if event["event"] == "prompt_built"
+    ]
     assert prompt_events
     metadata = prompt_events[0]["prompt_metadata"]
-    relevant_section = agent.model_client.prompts[0].split("Relevant memory:\n", 1)[1].split("\n\nTranscript:", 1)[0]
+    relevant_section = (
+        agent.model_client.prompts[0]
+        .split("Relevant memory:\n", 1)[1]
+        .split("\n\nTranscript:", 1)[0]
+    )
 
     assert metadata["relevant_memory"]["selected_count"] == 3
     assert len(metadata["relevant_memory"]["rendered_notes"]) == 3
-    assert len([line for line in relevant_section.splitlines() if line.startswith("- ")]) == 3
+    assert (
+        len([line for line in relevant_section.splitlines() if line.startswith("- ")])
+        == 3
+    )
     assert "alpha episodic" in relevant_section
     assert "beta episodic" in relevant_section
     assert "gamma episodic" in relevant_section
@@ -1061,8 +1185,10 @@ def test_prompt_metadata_refreshes_prefix_when_workspace_changes(tmp_path):
     assert "demo changed" in agent.prefix
 
 
-def test_agent_creates_checkpoint_when_context_reduction_happens_and_artifacts_only_reference_it(tmp_path):
-    agent = build_agent(tmp_path, ["<final>Done after checkpoint.</final>"])
+def test_agent_creates_checkpoint_when_context_reduction_happens_and_artifacts_only_reference_it(
+    tmp_path,
+):
+    agent = build_agent(tmp_path, [final("Done after checkpoint.")])
     for index in range(10):
         agent.record(
             {
@@ -1071,7 +1197,11 @@ def test_agent_creates_checkpoint_when_context_reduction_happens_and_artifacts_o
                 "created_at": f"2026-04-07T10:{index:02d}:00+00:00",
             }
         )
-    agent.memory.append_note("checkpoint note " + ("B" * 220), tags=("checkpoint",), created_at="2026-04-07T11:00:00+00:00")
+    agent.memory.append_note(
+        "checkpoint note " + ("B" * 220),
+        tags=("checkpoint",),
+        created_at="2026-04-07T11:00:00+00:00",
+    )
     agent.context_manager.total_budget = 900
     agent.context_manager.section_budgets = {
         "prefix": 120,
@@ -1091,11 +1221,21 @@ def test_agent_creates_checkpoint_when_context_reduction_happens_and_artifacts_o
     assert checkpoint["current_blocker"] == ""
     assert checkpoint["next_step"]
 
-    task_state = json.loads(agent.run_store.task_state_path(agent.current_task_state).read_text(encoding="utf-8"))
-    report = json.loads(agent.run_store.report_path(agent.current_task_state).read_text(encoding="utf-8"))
+    task_state = json.loads(
+        agent.run_store.task_state_path(agent.current_task_state).read_text(
+            encoding="utf-8"
+        )
+    )
+    report = json.loads(
+        agent.run_store.report_path(agent.current_task_state).read_text(
+            encoding="utf-8"
+        )
+    )
     trace_events = [
         json.loads(line)
-        for line in agent.run_store.trace_path(agent.current_task_state).read_text(encoding="utf-8").splitlines()
+        for line in agent.run_store.trace_path(agent.current_task_state)
+        .read_text(encoding="utf-8")
+        .splitlines()
     ]
 
     assert task_state["checkpoint_id"] == checkpoint["checkpoint_id"]
@@ -1103,14 +1243,16 @@ def test_agent_creates_checkpoint_when_context_reduction_happens_and_artifacts_o
     assert report["task_state"]["checkpoint_id"] == checkpoint["checkpoint_id"]
     assert "current_goal" not in task_state
     assert "current_goal" not in report
-    checkpoint_events = [event for event in trace_events if event["event"] == "checkpoint_created"]
+    checkpoint_events = [
+        event for event in trace_events if event["event"] == "checkpoint_created"
+    ]
     assert checkpoint_events
     assert checkpoint_events[-1]["checkpoint_id"] == checkpoint["checkpoint_id"]
     assert "current_goal" not in checkpoint_events[-1]
 
 
 def test_resume_prompt_uses_checkpoint_state_not_just_history(tmp_path):
-    agent = build_agent(tmp_path, ["<final>checkpoint ready.</final>"])
+    agent = build_agent(tmp_path, [final("checkpoint ready.")])
     agent.session["checkpoints"] = {
         "current_id": "ckpt_manual",
         "items": {
@@ -1134,7 +1276,7 @@ def test_resume_prompt_uses_checkpoint_state_not_just_history(tmp_path):
     agent.session_store.save(agent.session)
 
     resumed = Pico.from_session(
-        model_client=ScriptedModelClient(["<final>Resumed.</final>"]),
+        model_client=scripted_client([final("Resumed.")]),
         workspace=build_workspace(tmp_path),
         session_store=agent.session_store,
         session_id=agent.session["id"],
@@ -1153,7 +1295,7 @@ def test_resume_prompt_uses_checkpoint_state_not_just_history(tmp_path):
 def test_resume_invalidates_stale_file_summaries_and_marks_partial_stale(tmp_path):
     file_path = tmp_path / "runtime.py"
     file_path.write_text("alpha\n", encoding="utf-8")
-    agent = build_agent(tmp_path, ["<final>checkpoint ready.</final>"])
+    agent = build_agent(tmp_path, [final("checkpoint ready.")])
     agent.memory.set_file_summary("runtime.py", "runtime.py: alpha")
     freshness = agent.memory.to_dict()["file_summaries"]["runtime.py"]["freshness"]
     agent.session["checkpoints"] = {
@@ -1172,7 +1314,9 @@ def test_resume_invalidates_stale_file_summaries_and_marks_partial_stale(tmp_pat
                 "key_files": [{"path": "runtime.py", "freshness": freshness}],
                 "freshness": {"runtime.py": freshness},
                 "summary": "runtime.py is important",
-                "runtime_identity": {"workspace_fingerprint": agent.workspace.fingerprint()},
+                "runtime_identity": {
+                    "workspace_fingerprint": agent.workspace.fingerprint()
+                },
             }
         },
     }
@@ -1180,7 +1324,7 @@ def test_resume_invalidates_stale_file_summaries_and_marks_partial_stale(tmp_pat
     file_path.write_text("beta\n", encoding="utf-8")
 
     resumed = Pico.from_session(
-        model_client=ScriptedModelClient(["<final>Resumed.</final>"]),
+        model_client=scripted_client([final("Resumed.")]),
         workspace=build_workspace(tmp_path),
         session_store=agent.session_store,
         session_id=agent.session["id"],
@@ -1194,7 +1338,9 @@ def test_resume_invalidates_stale_file_summaries_and_marks_partial_stale(tmp_pat
     assert resumed.last_prompt_metadata["stale_summary_invalidations"] == 1
 
 
-def test_run_shell_nonzero_with_workspace_change_is_recorded_as_partial_success(tmp_path):
+def test_run_shell_nonzero_with_workspace_change_is_recorded_as_partial_success(
+    tmp_path,
+):
     agent = build_agent(tmp_path, [])
 
     result = agent.run_tool(
@@ -1211,8 +1357,10 @@ def test_run_shell_nonzero_with_workspace_change_is_recorded_as_partial_success(
     assert agent._last_tool_result_metadata["workspace_changed"] is True
 
 
-def test_resume_marks_workspace_mismatch_when_checkpoint_runtime_identity_is_stale(tmp_path):
-    agent = build_agent(tmp_path, ["<final>checkpoint ready.</final>"])
+def test_resume_marks_workspace_mismatch_when_checkpoint_runtime_identity_is_stale(
+    tmp_path,
+):
+    agent = build_agent(tmp_path, [final("checkpoint ready.")])
     agent.session["checkpoints"] = {
         "current_id": "ckpt_workspace",
         "items": {
@@ -1236,7 +1384,7 @@ def test_resume_marks_workspace_mismatch_when_checkpoint_runtime_identity_is_sta
     agent.session_store.save(agent.session)
 
     resumed = Pico.from_session(
-        model_client=ScriptedModelClient(["<final>Resumed.</final>"]),
+        model_client=scripted_client([final("Resumed.")]),
         workspace=build_workspace(tmp_path),
         session_store=agent.session_store,
         session_id=agent.session["id"],
@@ -1251,8 +1399,8 @@ def test_write_file_trace_records_minimum_tool_contract_fields(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            '<tool>{"name":"write_file","args":{"path":"notes.txt","content":"hello\\n"}}</tool>',
-            "<final>Done.</final>",
+            tool("write_file", path="notes.txt", content="hello\n"),
+            final("Done."),
         ],
     )
 
@@ -1260,9 +1408,13 @@ def test_write_file_trace_records_minimum_tool_contract_fields(tmp_path):
 
     trace_events = [
         json.loads(line)
-        for line in agent.run_store.trace_path(agent.current_task_state).read_text(encoding="utf-8").splitlines()
+        for line in agent.run_store.trace_path(agent.current_task_state)
+        .read_text(encoding="utf-8")
+        .splitlines()
     ]
-    tool_event = [event for event in trace_events if event["event"] == "tool_executed"][-1]
+    tool_event = [event for event in trace_events if event["event"] == "tool_executed"][
+        -1
+    ]
 
     assert tool_event["name"] == "write_file"
     assert tool_event["risk_level"] == "high"
@@ -1274,7 +1426,7 @@ def test_write_file_trace_records_minimum_tool_contract_fields(tmp_path):
 
 
 def test_resume_marks_schema_mismatch_when_checkpoint_version_is_incompatible(tmp_path):
-    agent = build_agent(tmp_path, ["<final>checkpoint ready.</final>"])
+    agent = build_agent(tmp_path, [final("checkpoint ready.")])
     agent.session["checkpoints"] = {
         "current_id": "ckpt_schema",
         "items": {
@@ -1291,14 +1443,16 @@ def test_resume_marks_schema_mismatch_when_checkpoint_version_is_incompatible(tm
                 "key_files": [],
                 "freshness": {},
                 "summary": "schema changed",
-                "runtime_identity": {"workspace_fingerprint": agent.workspace.fingerprint()},
+                "runtime_identity": {
+                    "workspace_fingerprint": agent.workspace.fingerprint()
+                },
             }
         },
     }
     agent.session_store.save(agent.session)
 
     resumed = Pico.from_session(
-        model_client=ScriptedModelClient(["<final>Resumed.</final>"]),
+        model_client=scripted_client([final("Resumed.")]),
         workspace=build_workspace(tmp_path),
         session_store=agent.session_store,
         session_id=agent.session["id"],
@@ -1310,12 +1464,12 @@ def test_resume_marks_schema_mismatch_when_checkpoint_version_is_incompatible(tm
 
 
 def test_resume_marks_no_checkpoint_when_session_has_no_checkpoint_state(tmp_path):
-    agent = build_agent(tmp_path, ["<final>checkpoint ready.</final>"])
+    agent = build_agent(tmp_path, [final("checkpoint ready.")])
     agent.session.pop("checkpoints", None)
     agent.session_store.save(agent.session)
 
     resumed = Pico.from_session(
-        model_client=ScriptedModelClient(["<final>Resumed.</final>"]),
+        model_client=scripted_client([final("Resumed.")]),
         workspace=build_workspace(tmp_path),
         session_store=agent.session_store,
         session_id=agent.session["id"],
@@ -1330,7 +1484,7 @@ def test_resume_marks_no_checkpoint_when_session_has_no_checkpoint_state(tmp_pat
 def test_freshness_mismatch_creates_checkpoint_before_model_completion(tmp_path):
     file_path = tmp_path / "runtime.py"
     file_path.write_text("alpha\n", encoding="utf-8")
-    agent = build_agent(tmp_path, ["<final>Resumed.</final>"])
+    agent = build_agent(tmp_path, [final("Resumed.")])
     agent.memory.set_file_summary("runtime.py", "runtime.py: alpha")
     freshness = agent.memory.to_dict()["file_summaries"]["runtime.py"]["freshness"]
     agent.session["checkpoints"] = {
@@ -1349,7 +1503,9 @@ def test_freshness_mismatch_creates_checkpoint_before_model_completion(tmp_path)
                 "key_files": [{"path": "runtime.py", "freshness": freshness}],
                 "freshness": {"runtime.py": freshness},
                 "summary": "runtime.py changed",
-                "runtime_identity": {"workspace_fingerprint": agent.workspace.fingerprint()},
+                "runtime_identity": {
+                    "workspace_fingerprint": agent.workspace.fingerprint()
+                },
             }
         },
     }
@@ -1360,9 +1516,13 @@ def test_freshness_mismatch_creates_checkpoint_before_model_completion(tmp_path)
 
     trace_events = [
         json.loads(line)
-        for line in agent.run_store.trace_path(agent.current_task_state).read_text(encoding="utf-8").splitlines()
+        for line in agent.run_store.trace_path(agent.current_task_state)
+        .read_text(encoding="utf-8")
+        .splitlines()
     ]
-    checkpoint_events = [event for event in trace_events if event["event"] == "checkpoint_created"]
+    checkpoint_events = [
+        event for event in trace_events if event["event"] == "checkpoint_created"
+    ]
 
     assert checkpoint_events
     assert checkpoint_events[0]["trigger"] == "freshness_mismatch"
@@ -1371,14 +1531,16 @@ def test_freshness_mismatch_creates_checkpoint_before_model_completion(tmp_path)
 def test_runtime_identity_persists_key_execution_metadata(tmp_path):
     workspace = build_workspace(tmp_path)
     store = SessionStore(tmp_path / ".pico" / "sessions")
-    agent = Pico(
-        model_client=ScriptedModelClient(["<final>Done.</final>"]),
-        workspace=workspace,
-        session_store=store,
-        approval_policy="never",
-        max_steps=9,
-        max_new_tokens=1024,
-        feature_flags={"memory": True, "relevant_memory": False},
+    agent = lock_scripted_provider_profile(
+        Pico(
+            model_client=scripted_client([final("Done.")]),
+            workspace=workspace,
+            session_store=store,
+            approval_policy="never",
+            max_steps=9,
+            max_new_tokens=1024,
+            feature_flags={"memory": True, "relevant_memory": False},
+        )
     )
 
     runtime_identity = agent.session["runtime_identity"]
@@ -1394,8 +1556,10 @@ def test_runtime_identity_persists_key_execution_metadata(tmp_path):
     assert runtime_identity["shell_env_allowlist"] == list(agent.shell_env_allowlist)
 
 
-def test_resume_records_runtime_identity_mismatch_fields_in_metadata_and_trace(tmp_path):
-    agent = build_agent(tmp_path, ["<final>checkpoint ready.</final>"])
+def test_resume_records_runtime_identity_mismatch_fields_in_metadata_and_trace(
+    tmp_path,
+):
+    agent = build_agent(tmp_path, [final("checkpoint ready.")])
     agent.session["checkpoints"] = {
         "current_id": "ckpt_identity",
         "items": {
@@ -1419,7 +1583,7 @@ def test_resume_records_runtime_identity_mismatch_fields_in_metadata_and_trace(t
                     "max_steps": 6,
                     "max_new_tokens": 512,
                     "model": "old-model",
-                    "model_client": "ScriptedModelClient",
+                    "model_client": "OldModelClient",
                     "feature_flags": {"memory": True, "relevant_memory": True},
                     "shell_env_allowlist": ["PATH"],
                     "session_id": agent.session["id"],
@@ -1431,7 +1595,7 @@ def test_resume_records_runtime_identity_mismatch_fields_in_metadata_and_trace(t
     agent.session_store.save(agent.session)
 
     resumed = Pico.from_session(
-        model_client=ScriptedModelClient(["<final>Resumed.</final>"]),
+        model_client=scripted_client([final("Resumed.")]),
         workspace=build_workspace(tmp_path),
         session_store=agent.session_store,
         session_id=agent.session["id"],
@@ -1450,14 +1614,19 @@ def test_resume_records_runtime_identity_mismatch_fields_in_metadata_and_trace(t
         "max_new_tokens",
         "max_steps",
         "model",
+        "model_client",
         "shell_env_allowlist",
     ]
 
     trace_events = [
         json.loads(line)
-        for line in resumed.run_store.trace_path(resumed.current_task_state).read_text(encoding="utf-8").splitlines()
+        for line in resumed.run_store.trace_path(resumed.current_task_state)
+        .read_text(encoding="utf-8")
+        .splitlines()
     ]
-    mismatch_events = [event for event in trace_events if event["event"] == "runtime_identity_mismatch"]
+    mismatch_events = [
+        event for event in trace_events if event["event"] == "runtime_identity_mismatch"
+    ]
     assert mismatch_events
     assert mismatch_events[0]["fields"] == [
         "approval_policy",
@@ -1465,6 +1634,7 @@ def test_resume_records_runtime_identity_mismatch_fields_in_metadata_and_trace(t
         "max_new_tokens",
         "max_steps",
         "model",
+        "model_client",
         "shell_env_allowlist",
     ]
 
@@ -1487,7 +1657,10 @@ def test_partial_success_creates_process_note_for_exploration_history(tmp_path):
     ]
 
     assert process_notes
-    assert process_notes[-1]["text"] == "run_shell partial_success on README.md; inspect diff before retry"
+    assert (
+        process_notes[-1]["text"]
+        == "run_shell partial_success on README.md; inspect diff before retry"
+    )
     assert "partial_success" in process_notes[-1]["tags"]
     assert "README.md" in process_notes[-1]["tags"]
 
@@ -1496,9 +1669,11 @@ def test_explicit_memory_promotion_persists_durable_memory_topics(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            "<final>Project convention: Use constrained tools instead of guessing.\n"
-            "Project convention: Preserve local agent state under .pico/.\n"
-            "Decision: Keep durable memory topic-based and lightweight.</final>",
+            final(
+                "Project convention: Use constrained tools instead of guessing.\n"
+                "Project convention: Preserve local agent state under .pico/.\n"
+                "Decision: Keep durable memory topic-based and lightweight."
+            ),
         ],
     )
 
@@ -1510,16 +1685,27 @@ def test_explicit_memory_promotion_persists_durable_memory_topics(tmp_path):
     assert "Project convention:" in answer
 
     index_path = tmp_path / ".pico" / "memory" / "MEMORY.md"
-    conventions_path = tmp_path / ".pico" / "memory" / "topics" / "project-conventions.md"
+    conventions_path = (
+        tmp_path / ".pico" / "memory" / "topics" / "project-conventions.md"
+    )
     decisions_path = tmp_path / ".pico" / "memory" / "topics" / "key-decisions.md"
-    report = json.loads(agent.run_store.report_path(agent.current_task_state).read_text(encoding="utf-8"))
+    report = json.loads(
+        agent.run_store.report_path(agent.current_task_state).read_text(
+            encoding="utf-8"
+        )
+    )
 
     assert index_path.exists()
     assert conventions_path.exists()
     assert decisions_path.exists()
     assert "project-conventions" in index_path.read_text(encoding="utf-8")
-    assert "Use constrained tools instead of guessing." in conventions_path.read_text(encoding="utf-8")
-    assert "Keep durable memory topic-based and lightweight." in decisions_path.read_text(encoding="utf-8")
+    assert "Use constrained tools instead of guessing." in conventions_path.read_text(
+        encoding="utf-8"
+    )
+    assert (
+        "Keep durable memory topic-based and lightweight."
+        in decisions_path.read_text(encoding="utf-8")
+    )
     assert report["durable_promotions"] == [
         "project-conventions: Use constrained tools instead of guessing.",
         "project-conventions: Preserve local agent state under .pico/.",
@@ -1530,32 +1716,56 @@ def test_explicit_memory_promotion_persists_durable_memory_topics(tmp_path):
 def test_final_memory_tags_are_appended_to_daily_log(tmp_path):
     agent = build_agent(
         tmp_path,
-        ["<final>Done. <memory>Preference: keep reports concise.</memory></final>"],
+        [final("Done. <memory>Preference: keep reports concise.</memory>")],
     )
 
-    assert agent.ask("Remember this if useful") == "Done. <memory>Preference: keep reports concise.</memory>"
+    assert (
+        agent.ask("Remember this if useful")
+        == "Done. <memory>Preference: keep reports concise.</memory>"
+    )
 
     log_files = list((tmp_path / ".pico" / "memory" / "logs").rglob("*.md"))
-    report = json.loads(agent.run_store.report_path(agent.current_task_state).read_text(encoding="utf-8"))
-    events = agent.session_store.event_path(agent.session["id"]).read_text(encoding="utf-8")
-    trace = agent.run_store.trace_path(agent.current_task_state).read_text(encoding="utf-8")
+    report = json.loads(
+        agent.run_store.report_path(agent.current_task_state).read_text(
+            encoding="utf-8"
+        )
+    )
+    events = agent.session_store.event_path(agent.session["id"]).read_text(
+        encoding="utf-8"
+    )
+    trace = agent.run_store.trace_path(agent.current_task_state).read_text(
+        encoding="utf-8"
+    )
 
     assert len(log_files) == 1
-    assert "Preference: keep reports concise." in log_files[0].read_text(encoding="utf-8")
-    assert report["memory_maintenance"]["memory_tags_appended"][0]["source"] == "final_answer"
-    assert report["memory_maintenance"]["memory_tags_appended"][0]["path"].startswith(".pico/memory/logs/")
+    assert "Preference: keep reports concise." in log_files[0].read_text(
+        encoding="utf-8"
+    )
+    assert (
+        report["memory_maintenance"]["memory_tags_appended"][0]["source"]
+        == "final_answer"
+    )
+    assert report["memory_maintenance"]["memory_tags_appended"][0]["path"].startswith(
+        ".pico/memory/logs/"
+    )
     assert report["memory_maintenance"]["auto_dream"]["triggered"] is False
     assert "memory_note_appended" in events
     assert "memory_auto_dream_skipped" in trace
 
 
 def test_memory_maintenance_report_explains_auto_dream_skip_reason(tmp_path):
-    agent = build_agent(tmp_path, ["<final>Done.</final>"])
+    agent = build_agent(tmp_path, [final("Done.")])
 
     assert agent.ask("Finish without enough sessions") == "Done."
 
-    report = json.loads(agent.run_store.report_path(agent.current_task_state).read_text(encoding="utf-8"))
-    trace = agent.run_store.trace_path(agent.current_task_state).read_text(encoding="utf-8")
+    report = json.loads(
+        agent.run_store.report_path(agent.current_task_state).read_text(
+            encoding="utf-8"
+        )
+    )
+    trace = agent.run_store.trace_path(agent.current_task_state).read_text(
+        encoding="utf-8"
+    )
 
     assert report["memory_maintenance"]["auto_dream"] == {
         "enabled": True,
@@ -1569,7 +1779,7 @@ def test_memory_maintenance_report_explains_auto_dream_skip_reason(tmp_path):
 
 
 def test_memory_maintenance_failure_does_not_mask_final_answer(tmp_path, monkeypatch):
-    agent = build_agent(tmp_path, ["<final>Done.</final>"])
+    agent = build_agent(tmp_path, [final("Done.")])
 
     def fail_memory_maintenance(_final_answer):
         raise RuntimeError("memory disk is unavailable")
@@ -1577,9 +1787,17 @@ def test_memory_maintenance_failure_does_not_mask_final_answer(tmp_path, monkeyp
     monkeypatch.setattr(agent, "maintain_memory_after_turn", fail_memory_maintenance)
 
     assert agent.ask("Finish the task") == "Done."
-    report = json.loads(agent.run_store.report_path(agent.current_task_state).read_text(encoding="utf-8"))
-    events = agent.session_store.event_path(agent.session["id"]).read_text(encoding="utf-8")
-    trace = agent.run_store.trace_path(agent.current_task_state).read_text(encoding="utf-8")
+    report = json.loads(
+        agent.run_store.report_path(agent.current_task_state).read_text(
+            encoding="utf-8"
+        )
+    )
+    events = agent.session_store.event_path(agent.session["id"]).read_text(
+        encoding="utf-8"
+    )
+    trace = agent.run_store.trace_path(agent.current_task_state).read_text(
+        encoding="utf-8"
+    )
     assert report["memory_maintenance"]["errors"] == ["memory disk is unavailable"]
     assert "memory_maintenance_failed" in events
     assert "memory_maintenance_failed" in trace
@@ -1589,18 +1807,20 @@ def test_memory_dir_is_workspace_relative_and_repo_local(tmp_path):
     workspace = build_workspace(tmp_path)
     store = SessionStore(tmp_path / ".pico" / "sessions")
 
-    agent = Pico(
-        model_client=ScriptedModelClient([]),
-        workspace=workspace,
-        session_store=store,
-        memory_dir="custom-memory",
+    agent = lock_scripted_provider_profile(
+        Pico(
+            model_client=scripted_client(),
+            workspace=workspace,
+            session_store=store,
+            memory_dir="custom-memory",
+        )
     )
 
     assert agent.memory_dir == tmp_path / "custom-memory"
 
     with pytest.raises(ValueError, match="memory_dir must stay inside workspace"):
         Pico(
-            model_client=ScriptedModelClient([]),
+            model_client=scripted_client(),
             workspace=workspace,
             session_store=store,
             memory_dir=tmp_path.parent / f"{tmp_path.name}-outside",
@@ -1609,15 +1829,23 @@ def test_memory_dir_is_workspace_relative_and_repo_local(tmp_path):
 
 def test_auto_dream_runs_in_background_after_session_gate(tmp_path):
     for index in range(2):
-        (tmp_path / ".pico" / "sessions" / f"older-{index}.json").parent.mkdir(parents=True, exist_ok=True)
-        (tmp_path / ".pico" / "sessions" / f"older-{index}.json").write_text("{}", encoding="utf-8")
+        (tmp_path / ".pico" / "sessions" / f"older-{index}.json").parent.mkdir(
+            parents=True, exist_ok=True
+        )
+        (tmp_path / ".pico" / "sessions" / f"older-{index}.json").write_text(
+            "{}", encoding="utf-8"
+        )
     agent = build_agent(
         tmp_path,
         [
-            "<final><memory>Project: use repo-local memory.</memory></final>",
-            '<tool>{"name":"read_file","args":{"path":".pico/memory/MEMORY.md","start":1,"end":50}}</tool>',
-            '<tool>{"name":"write_file","args":{"path":".pico/memory/MEMORY.md","content":"# Durable Memory Index\\n\\n- [Project](topics/project.md): Project memory\\n"}}</tool>',
-            "<final>Dreamed.</final>",
+            final("<memory>Project: use repo-local memory.</memory>"),
+            tool("read_file", path=".pico/memory/MEMORY.md", start=1, end=50),
+            tool(
+                "write_file",
+                path=".pico/memory/MEMORY.md",
+                content="# Durable Memory Index\n\n- [Project](topics/project.md): Project memory\n",
+            ),
+            final("Dreamed."),
         ],
         dream_min_sessions=2,
         dream_interval_hours=0,
@@ -1625,7 +1853,11 @@ def test_auto_dream_runs_in_background_after_session_gate(tmp_path):
 
     answer = agent.ask("Finish and trigger memory maintenance")
 
-    report = json.loads(agent.run_store.report_path(agent.current_task_state).read_text(encoding="utf-8"))
+    report = json.loads(
+        agent.run_store.report_path(agent.current_task_state).read_text(
+            encoding="utf-8"
+        )
+    )
 
     assert answer == "<memory>Project: use repo-local memory.</memory>"
     assert report["memory_maintenance"]["auto_dream"]["triggered"] is True
@@ -1635,16 +1867,28 @@ def test_auto_dream_runs_in_background_after_session_gate(tmp_path):
 
     assert agent.wait_for_memory_maintenance(timeout=10) is True
 
-    post_report = json.loads(agent.run_store.report_path(agent.current_task_state).read_text(encoding="utf-8"))
-    trace = agent.run_store.trace_path(agent.current_task_state).read_text(encoding="utf-8")
-    assert "Project memory" in (tmp_path / ".pico" / "memory" / "MEMORY.md").read_text(encoding="utf-8")
+    post_report = json.loads(
+        agent.run_store.report_path(agent.current_task_state).read_text(
+            encoding="utf-8"
+        )
+    )
+    trace = agent.run_store.trace_path(agent.current_task_state).read_text(
+        encoding="utf-8"
+    )
+    assert "Project memory" in (tmp_path / ".pico" / "memory" / "MEMORY.md").read_text(
+        encoding="utf-8"
+    )
     assert agent.last_memory_maintenance["auto_dream"]["status"] == "finished"
-    assert post_report["memory_maintenance"]["auto_dream"]["changed_files"] == [".pico/memory/MEMORY.md"]
+    assert post_report["memory_maintenance"]["auto_dream"]["changed_files"] == [
+        ".pico/memory/MEMORY.md"
+    ]
     assert "memory_auto_dream_finished" in trace
     assert ".pico/memory/MEMORY.md" in trace
 
 
-def test_background_auto_dream_failure_restores_lock_and_reports_error(tmp_path, monkeypatch):
+def test_background_auto_dream_failure_restores_lock_and_reports_error(
+    tmp_path, monkeypatch
+):
     memory_root = tmp_path / ".pico" / "memory"
     memory_root.mkdir(parents=True)
     lock_path = memory_root / ".consolidate-lock"
@@ -1666,20 +1910,31 @@ def test_background_auto_dream_failure_restores_lock_and_reports_error(tmp_path,
     monkeypatch.setattr("pico.features.memory.run_dream", fail_dream)
     agent = build_agent(
         tmp_path,
-        ["<final><memory>Project: keep memory observable.</memory></final>"],
+        [final("<memory>Project: keep memory observable.</memory>")],
         dream_min_sessions=2,
         dream_interval_hours=0,
     )
 
-    assert agent.ask("Finish and trigger failing memory maintenance") == "<memory>Project: keep memory observable.</memory>"
+    assert (
+        agent.ask("Finish and trigger failing memory maintenance")
+        == "<memory>Project: keep memory observable.</memory>"
+    )
     assert dream_started.wait(timeout=10)
     release_failure.set()
 
     assert agent.wait_for_memory_maintenance(timeout=10) is True
 
-    report = json.loads(agent.run_store.report_path(agent.current_task_state).read_text(encoding="utf-8"))
-    events = agent.session_store.event_path(agent.session["id"]).read_text(encoding="utf-8")
-    trace = agent.run_store.trace_path(agent.current_task_state).read_text(encoding="utf-8")
+    report = json.loads(
+        agent.run_store.report_path(agent.current_task_state).read_text(
+            encoding="utf-8"
+        )
+    )
+    events = agent.session_store.event_path(agent.session["id"]).read_text(
+        encoding="utf-8"
+    )
+    trace = agent.run_store.trace_path(agent.current_task_state).read_text(
+        encoding="utf-8"
+    )
     assert report["memory_maintenance"]["auto_dream"]["status"] == "failed"
     assert report["memory_maintenance"]["errors"] == ["dream provider unavailable"]
     assert int(lock_path.stat().st_mtime) == 123
@@ -1691,22 +1946,36 @@ def test_explicit_memory_promotion_accepts_bullet_prefixed_labels(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            "<final>Promoted facts:\n"
-            "- Project convention: Keep manual black-box artifacts under artifacts/.\n"
-            "- Decision: Use CLI-level testing before implementation claims.</final>",
+            final(
+                "Promoted facts:\n"
+                "- Project convention: Keep manual black-box artifacts under artifacts/.\n"
+                "- Decision: Use CLI-level testing before implementation claims."
+            ),
         ],
     )
 
     agent.ask("Remember these stable facts and return only the promoted facts.")
 
-    conventions_path = tmp_path / ".pico" / "memory" / "topics" / "project-conventions.md"
+    conventions_path = (
+        tmp_path / ".pico" / "memory" / "topics" / "project-conventions.md"
+    )
     decisions_path = tmp_path / ".pico" / "memory" / "topics" / "key-decisions.md"
-    report = json.loads(agent.run_store.report_path(agent.current_task_state).read_text(encoding="utf-8"))
+    report = json.loads(
+        agent.run_store.report_path(agent.current_task_state).read_text(
+            encoding="utf-8"
+        )
+    )
 
     assert conventions_path.exists()
     assert decisions_path.exists()
-    assert "Keep manual black-box artifacts under artifacts/." in conventions_path.read_text(encoding="utf-8")
-    assert "Use CLI-level testing before implementation claims." in decisions_path.read_text(encoding="utf-8")
+    assert (
+        "Keep manual black-box artifacts under artifacts/."
+        in conventions_path.read_text(encoding="utf-8")
+    )
+    assert (
+        "Use CLI-level testing before implementation claims."
+        in decisions_path.read_text(encoding="utf-8")
+    )
     assert report["durable_promotions"] == [
         "project-conventions: Keep manual black-box artifacts under artifacts/.",
         "key-decisions: Use CLI-level testing before implementation claims.",
@@ -1717,8 +1986,10 @@ def test_explicit_memory_promotion_supports_chinese_intent_and_labels(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            "<final>项目约定：优先使用受约束工具，不要靠猜。\n"
-            "决策：持久记忆保持轻量、按 topic 管理。</final>",
+            final(
+                "项目约定：优先使用受约束工具，不要靠猜。\n"
+                "决策：持久记忆保持轻量、按 topic 管理。"
+            ),
         ],
     )
 
@@ -1726,28 +1997,42 @@ def test_explicit_memory_promotion_supports_chinese_intent_and_labels(tmp_path):
 
     assert "项目约定：" in answer
 
-    conventions_path = tmp_path / ".pico" / "memory" / "topics" / "project-conventions.md"
+    conventions_path = (
+        tmp_path / ".pico" / "memory" / "topics" / "project-conventions.md"
+    )
     decisions_path = tmp_path / ".pico" / "memory" / "topics" / "key-decisions.md"
 
-    assert "优先使用受约束工具，不要靠猜。" in conventions_path.read_text(encoding="utf-8")
-    assert "持久记忆保持轻量、按 topic 管理。" in decisions_path.read_text(encoding="utf-8")
+    assert "优先使用受约束工具，不要靠猜。" in conventions_path.read_text(
+        encoding="utf-8"
+    )
+    assert "持久记忆保持轻量、按 topic 管理。" in decisions_path.read_text(
+        encoding="utf-8"
+    )
 
 
 def test_explicit_memory_promotion_rejects_secret_shaped_and_transient_lines(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            "<final>Project convention: Use constrained tools instead of guessing.\n"
-            "Dependency: API key is sk-live-secret-abc.\n"
-            "Decision: Current goal is fix flaky tests.\n"
-            "Dependency: stdout: FAIL test_one FAIL test_two FAIL test_three.</final>",
+            final(
+                "Project convention: Use constrained tools instead of guessing.\n"
+                "Dependency: API key is sk-live-secret-abc.\n"
+                "Decision: Current goal is fix flaky tests.\n"
+                "Dependency: stdout: FAIL test_one FAIL test_two FAIL test_three."
+            ),
         ],
     )
 
     agent.ask("Capture these stable facts into durable memory.")
 
-    report = json.loads(agent.run_store.report_path(agent.current_task_state).read_text(encoding="utf-8"))
-    conventions_path = tmp_path / ".pico" / "memory" / "topics" / "project-conventions.md"
+    report = json.loads(
+        agent.run_store.report_path(agent.current_task_state).read_text(
+            encoding="utf-8"
+        )
+    )
+    conventions_path = (
+        tmp_path / ".pico" / "memory" / "topics" / "project-conventions.md"
+    )
     dependency_path = tmp_path / ".pico" / "memory" / "topics" / "dependency-facts.md"
 
     assert report["durable_promotions"] == [
@@ -1758,7 +2043,9 @@ def test_explicit_memory_promotion_rejects_secret_shaped_and_transient_lines(tmp
         "key-decisions:transient_task_state",
         "dependency-facts:noisy_output",
     ]
-    assert "Use constrained tools instead of guessing." in conventions_path.read_text(encoding="utf-8")
+    assert "Use constrained tools instead of guessing." in conventions_path.read_text(
+        encoding="utf-8"
+    )
     assert not dependency_path.exists()
 
 
@@ -1766,16 +2053,26 @@ def test_explicit_memory_promotion_supersedes_matching_durable_fact(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            "<final>Dependency: Python runtime is 3.11.</final>",
-            "<final>Dependency: Python runtime is 3.12.</final>",
+            final("Dependency: Python runtime is 3.11."),
+            final("Dependency: Python runtime is 3.12."),
         ],
     )
 
-    assert agent.ask("Capture this stable dependency fact into durable memory.") == "Dependency: Python runtime is 3.11."
-    assert agent.ask("Save the updated dependency fact into durable memory.") == "Dependency: Python runtime is 3.12."
+    assert (
+        agent.ask("Capture this stable dependency fact into durable memory.")
+        == "Dependency: Python runtime is 3.11."
+    )
+    assert (
+        agent.ask("Save the updated dependency fact into durable memory.")
+        == "Dependency: Python runtime is 3.12."
+    )
 
     dependency_path = tmp_path / ".pico" / "memory" / "topics" / "dependency-facts.md"
-    report = json.loads(agent.run_store.report_path(agent.current_task_state).read_text(encoding="utf-8"))
+    report = json.loads(
+        agent.run_store.report_path(agent.current_task_state).read_text(
+            encoding="utf-8"
+        )
+    )
     text = dependency_path.read_text(encoding="utf-8")
 
     assert "Python runtime is 3.12." in text
@@ -1789,38 +2086,44 @@ def test_explicit_memory_promotion_dedupes_duplicate_durable_note(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            "<final>Project convention: Use constrained tools instead of guessing.</final>",
-            "<final>Project convention: Use constrained tools instead of guessing.</final>",
+            final("Project convention: Use constrained tools instead of guessing."),
+            final("Project convention: Use constrained tools instead of guessing."),
         ],
     )
 
     agent.ask("Capture the stable fact into durable memory.")
     agent.ask("Capture the stable fact into durable memory again.")
 
-    conventions_path = tmp_path / ".pico" / "memory" / "topics" / "project-conventions.md"
+    conventions_path = (
+        tmp_path / ".pico" / "memory" / "topics" / "project-conventions.md"
+    )
     text = conventions_path.read_text(encoding="utf-8")
 
     assert text.count("Use constrained tools instead of guessing.") == 1
 
 
 def test_agent_records_model_cache_metadata_in_last_prompt_metadata(tmp_path):
-    class CacheAwareScriptedModelClient(ScriptedModelClient):
-        def complete(self, prompt, max_new_tokens, **kwargs):
-            self.last_completion_metadata = {
-                "prompt_cache_supported": True,
-                "cached_tokens": 512,
-                "cache_hit": True,
-                "input_tokens": 1024,
-            }
-            return super().complete(prompt, max_new_tokens, **kwargs)
-
     workspace = build_workspace(tmp_path)
     store = SessionStore(tmp_path / ".pico" / "sessions")
-    agent = Pico(
-        model_client=CacheAwareScriptedModelClient(["<final>Done.</final>"]),
-        workspace=workspace,
-        session_store=store,
-        approval_policy="auto",
+    agent = lock_scripted_provider_profile(
+        Pico(
+            model_client=scripted_client(
+                [
+                    native_final_response(
+                        "Done.",
+                        metadata={
+                            "prompt_cache_supported": True,
+                            "cached_tokens": 512,
+                            "cache_hit": True,
+                            "input_tokens": 1024,
+                        },
+                    )
+                ]
+            ),
+            workspace=workspace,
+            session_store=store,
+            approval_policy="auto",
+        )
     )
 
     assert agent.ask("Cache aware run") == "Done."
@@ -1829,22 +2132,69 @@ def test_agent_records_model_cache_metadata_in_last_prompt_metadata(tmp_path):
     assert agent.last_prompt_metadata["cached_tokens"] == 512
     assert agent.last_prompt_metadata["cache_hit"] is True
     assert agent.last_prompt_metadata["prefix_hash"]
-    assert agent.last_prompt_metadata["prompt_cache_key"] == agent.last_prompt_metadata["prefix_hash"]
+    assert (
+        agent.last_prompt_metadata["prompt_cache_key"]
+        == agent.last_prompt_metadata["prefix_hash"]
+    )
 
 
 def test_recent_transcript_entries_stay_richer_than_older_ones(tmp_path):
-    agent = build_agent(tmp_path, ["<final>Done.</final>"])
+    agent = build_agent(tmp_path, [final("Done.")])
     old_text = "OLD-" + ("A" * 320)
     recent_text = "RECENT-" + ("B" * 320)
 
-    agent.record({"role": "user", "content": old_text, "created_at": "2026-04-07T09:00:00+00:00"})
-    agent.record({"role": "assistant", "content": old_text, "created_at": "2026-04-07T09:01:00+00:00"})
-    agent.record({"role": "user", "content": recent_text, "created_at": "2026-04-07T09:02:00+00:00"})
-    agent.record({"role": "assistant", "content": recent_text, "created_at": "2026-04-07T09:03:00+00:00"})
-    agent.record({"role": "user", "content": recent_text, "created_at": "2026-04-07T09:04:00+00:00"})
-    agent.record({"role": "assistant", "content": recent_text, "created_at": "2026-04-07T09:05:00+00:00"})
-    agent.record({"role": "user", "content": recent_text, "created_at": "2026-04-07T09:06:00+00:00"})
-    agent.record({"role": "assistant", "content": recent_text, "created_at": "2026-04-07T09:07:00+00:00"})
+    agent.record(
+        {"role": "user", "content": old_text, "created_at": "2026-04-07T09:00:00+00:00"}
+    )
+    agent.record(
+        {
+            "role": "assistant",
+            "content": old_text,
+            "created_at": "2026-04-07T09:01:00+00:00",
+        }
+    )
+    agent.record(
+        {
+            "role": "user",
+            "content": recent_text,
+            "created_at": "2026-04-07T09:02:00+00:00",
+        }
+    )
+    agent.record(
+        {
+            "role": "assistant",
+            "content": recent_text,
+            "created_at": "2026-04-07T09:03:00+00:00",
+        }
+    )
+    agent.record(
+        {
+            "role": "user",
+            "content": recent_text,
+            "created_at": "2026-04-07T09:04:00+00:00",
+        }
+    )
+    agent.record(
+        {
+            "role": "assistant",
+            "content": recent_text,
+            "created_at": "2026-04-07T09:05:00+00:00",
+        }
+    )
+    agent.record(
+        {
+            "role": "user",
+            "content": recent_text,
+            "created_at": "2026-04-07T09:06:00+00:00",
+        }
+    )
+    agent.record(
+        {
+            "role": "assistant",
+            "content": recent_text,
+            "created_at": "2026-04-07T09:07:00+00:00",
+        }
+    )
 
     assert agent.ask("Check the transcript") == "Done."
 
@@ -1856,8 +2206,8 @@ def test_recent_transcript_entries_stay_richer_than_older_ones(tmp_path):
 
 def test_public_api_exports_resolve_through_package_path():
     assert callable(build_welcome)
-    assert not hasattr(pico_pkg, "ScriptedModelClient")
-    assert not hasattr(providers_pkg, "ScriptedModelClient")
+    assert not hasattr(pico_pkg, "ScriptedNativeModelClient")
+    assert not hasattr(providers_pkg, "ScriptedNativeModelClient")
     assert Pico is not None
     assert not hasattr(pico_pkg, "OllamaModelClient")
     assert SessionStore is not None

@@ -1,0 +1,110 @@
+{
+  "schema_version": "pico-eval-preflight-v1",
+  "ticket_id": "EVAL-000",
+  "instance_id": "W0-EVAL-000-01",
+  "wave": "W0",
+  "role": "integrator",
+  "captured_at": "2026-07-20T21:40:33.5272133+08:00",
+  "instance_manifest": {
+    "thread_id": "019f7fbb-1aec-71a3-b714-36696a29a7a0",
+    "source_thread_id": "019f7fb7-97a0-7c31-bcbc-76dbfe3f7274",
+    "prompt_sha256": "ccd4e11b0771f814bc09ad1466bdfab26549b4c5b6dd4c99aadced4f71b52614",
+    "dependency_commits": [],
+    "dependency_handoff_hashes": {},
+    "freeze_hashes": {},
+    "allowed_write_paths": [
+      ".codex/eval/proposals/EVAL-000.status.json",
+      ".codex/eval/state/preflight.json",
+      ".codex/eval/state/native-baseline.json",
+      ".codex/eval/handoffs/EVAL-000.json"
+    ]
+  },
+  "repository": {
+    "worktree": "C:\\Users\\Papewhit\\.codex\\worktrees\\ad14\\pico",
+    "branch": "codex/eval-v3-w0-eval-000",
+    "base_sha": "8ff3a261aa246ddd2798c2f065cac188766ef99c",
+    "head_at_capture": "8ff3a261aa246ddd2798c2f065cac188766ef99c",
+    "head_tree": "ed8edf64f2fa0048aa383fb48b8d060d4bbb4000",
+    "parent_sha": "259316aa2c39afdf152c364e9f46a74a1aa7059f",
+    "head_subject": "docs(eval): define intra-wave dependency application",
+    "worktree_clean_at_start": true,
+    "dirty_paths_at_start": [],
+    "bootstrap_content_commit_resolution": "commit containing preflight.json, native-baseline.json, and EVAL-000.status.json"
+  },
+  "runtime_checkpoint_baseline": {
+    "path": "pico/core/runtime_checkpoints.py",
+    "tracked": true,
+    "worktree_status": "clean",
+    "dirty_at_start": false,
+    "diff_byte_count": 0,
+    "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "git_blob_sha1": "400858ee8625ef2e1c8928dce2ee02704619a59f",
+    "content_sha256": "f35b9c2b873be38fad873eb4d5bed8f0d09f7b09ec25a9b406cd5d34062b93ea",
+    "preservation_note": "The immutable wave base was clean. No pre-existing runtime_checkpoints.py worktree diff existed to preserve, and this ticket did not modify the file."
+  },
+  "configuration": {
+    "canonical_status_path": "F:\\dev\\llm\\pico\\.pico.toml",
+    "canonical_status_path_exists": true,
+    "canonical_status_path_contents_inspected": false,
+    "worktree_project_config": {
+      "path": "C:\\Users\\Papewhit\\.codex\\worktrees\\ad14\\pico\\.pico.toml",
+      "exists": false
+    },
+    "worktree_legacy_env": {
+      "path": "C:\\Users\\Papewhit\\.codex\\worktrees\\ad14\\pico\\.env",
+      "exists": false
+    },
+    "default_user_config": {
+      "path": "C:\\Users\\Papewhit\\.config\\pico\\config.toml",
+      "exists": false
+    },
+    "artifact_root": {
+      "path": "F:\\dev\\llm\\pico-eval-artifacts",
+      "exists": true
+    },
+    "profiles": {
+      "qwen_openai_responses": {
+        "local_name": "dashscope-o",
+        "configured": true
+      },
+      "qwen_anthropic_messages": {
+        "local_name": "dashscope-a",
+        "configured": false
+      },
+      "deepseek_anthropic_messages": {
+        "local_name": "deepseek",
+        "configured": true
+      }
+    },
+    "builtin_provider_profiles": [
+      "openai",
+      "anthropic",
+      "deepseek"
+    ],
+    "secret_values_recorded": false
+  },
+  "architecture_baseline": {
+    "command": "uv run pytest tests/test_architecture_boundaries.py -q",
+    "exit_code": 1,
+    "result": "expected_baseline_failure",
+    "tests_collected": 1,
+    "passed": 0,
+    "failed": 1,
+    "failure": {
+      "test": "tests/test_architecture_boundaries.py::test_core_modules_stay_below_entropy_budget",
+      "path": "pico/core/runtime.py",
+      "actual_lines": 952,
+      "budget_lines": 950,
+      "assertion": "pico/core/runtime.py has 952 lines, budget is 950"
+    },
+    "test_file_sha256": "c1583b9d4df7656782e81cf41d27becebbe0d5f53484d3255805a9d8c8ff7f7f",
+    "test_weakened": false
+  },
+  "control_inputs": {
+    ".codex/eval/CONTROL.md": "485df7a681e944a18d36fff1d28f9de397aed16c7153d52698e269e788699a95",
+    ".codex/eval/PLAN.json": "69231c4d159024750ccd4a52b45074306fe12fbd3131c3a1ebdae05ca4582c5d",
+    ".codex/eval/tickets/EVAL-000.md": "64940ec9dc95dc6891ad7b91f2300a9c1755e9a35fe9b29065df5a4ef61835a1",
+    ".codex/eval/state/STATUS.json": "c4d532d3ced5d85512ee42320f19a3eb151f20e3f4c083cecb35ce5486c187ca",
+    ".codex/eval/state/FREEZE.json": "c2138429ec04c016b225ed2888365f7e6df17db5c93aa5e14717430142f4a9cd"
+  }
+}

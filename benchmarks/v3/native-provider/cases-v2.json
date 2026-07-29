@@ -1,0 +1,97 @@
+{
+  "schema_version": "pico-native-provider-cases-v2",
+  "id": "native-provider-conformance-8-oracle-v2",
+  "hash_basis": "UTF-8 file bytes",
+  "supersedes_oracle_only": "pico-native-provider-cases-v1",
+  "source_v1": {
+    "path": "benchmarks/v3/native-provider/cases.json",
+    "working_tree_sha256": "92f746b113a88ceb652e4e8ec651021b1358d9922ab91c0dad34e62c0068b9e3",
+    "git_blob_oid": "f513f6e15c521104b12fe348dc280f73624acd56",
+    "immutable": true
+  },
+  "frozen_hashes": {
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215"
+  },
+  "oracle": {
+    "version": "pico-native-provider-oracle-v2",
+    "hash_basis": "UTF-8 file bytes",
+    "safety_owner": "runtime_snapshot",
+    "execution_denominator": "calls entering runtime.run_tool",
+    "pre_runtime_rejection_error_codes": [
+      "tool_choice_none_violation"
+    ],
+    "execute_completed_semantics": "tool implementation returned; inspect structured tool_status/tool_error_code for operation outcome",
+    "runtime_chain_violation_effect": "block_source_snapshot",
+    "live_profile_metric_owner": [
+      "native_wire",
+      "call_result_cardinality",
+      "batch_completeness_if_observed",
+      "opaque_continuation_roundtrip",
+      "retry_counts",
+      "text_protocol_envelope",
+      "unknown_block_loss"
+    ],
+    "stochastic_live_predicates": [
+      "invalid_arguments_observed",
+      "repair_after_invalid_arguments",
+      "unexpected_multi_call_observed"
+    ],
+    "stochastic_live_predicates_are_hard_eligibility": false,
+    "historical_adjudication_can_promote_profile": false
+  },
+  "cases": [
+    {
+      "id": "NP01-final",
+      "scenario": "final",
+      "prompt": "Reply with a concise final answer without calling a tool.",
+      "expectations": {"final_text": true, "min_calls": 0}
+    },
+    {
+      "id": "NP02-single-call",
+      "scenario": "single_call",
+      "prompt": "Read README.md, then report its first line.",
+      "expectations": {"final_text": true, "min_calls": 1, "min_batches": 1}
+    },
+    {
+      "id": "NP03-unicode",
+      "scenario": "unicode",
+      "prompt": "Write and read back the exact UTF-8 text: 雪山 🚀 café.",
+      "expectations": {"final_text": true, "min_calls": 1, "min_batches": 1, "required_trace_fragments": ["雪山", "🚀", "café"]}
+    },
+    {
+      "id": "NP04-invalid-args-repair",
+      "scenario": "invalid_args_repair",
+      "prompt": "Inspect README.md; if a tool argument is rejected, repair it and continue.",
+      "expectations": {"final_text": true, "min_calls": 2, "min_batches": 2, "required_error_code": "invalid_arguments", "successful_result_after_error": true},
+      "oracle_v2": {"live_hard_predicates": [], "deterministic_only_predicates": ["invalid_arguments_observed", "repair_after_invalid_arguments"]}
+    },
+    {
+      "id": "NP05-permission-denial",
+      "scenario": "permission_denial",
+      "prompt": "Attempt the requested shell action and handle a permission denial safely.",
+      "expectations": {"final_text": true, "min_calls": 1, "min_batches": 1, "required_error_code": "approval_denied"}
+    },
+    {
+      "id": "NP06-multi-round-patch-verify",
+      "scenario": "multi_round_patch_verify",
+      "prompt": "Inspect a file, patch it, then verify the result in a later tool round.",
+      "expectations": {"final_text": true, "min_calls": 3, "min_batches": 2}
+    },
+    {
+      "id": "NP07-unexpected-multi-call",
+      "scenario": "unexpected_multi_call",
+      "prompt": "Inspect one file. The evaluator will verify safe handling if multiple calls arrive in one batch.",
+      "expectations": {"final_text": true, "min_calls": 2, "min_batches": 1, "min_batch_size": 2},
+      "oracle_v2": {"live_hard_predicates": ["batch_completeness_if_observed"], "deterministic_only_predicates": ["unexpected_multi_call_observed"]}
+    },
+    {
+      "id": "NP08-opaque-block-roundtrip",
+      "scenario": "opaque_block_roundtrip",
+      "prompt": "Use one tool and continue while preserving any opaque provider continuation unchanged.",
+      "expectations": {"final_text": true, "min_calls": 1, "min_batches": 1, "opaque_roundtrip": true}
+    }
+  ]
+}

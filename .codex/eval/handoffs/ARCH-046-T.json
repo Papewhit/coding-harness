@@ -1,0 +1,151 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "ARCH-046-T",
+  "instance_id": "W5R2-ARCH-046-T-01",
+  "wave": "W5R2",
+  "role": "implementer/architecture_tripwire_reviewer",
+  "status": "completed",
+  "source_thread_id": "019f8967-207e-7461-82aa-dcc2239049ab",
+  "base_sha": "aab051fbf30c50df3af6ed2df5954717e104eac0",
+  "head_sha": "dc9960b560750df3cecabbffb99de5d77591b5ba",
+  "head_sha_semantics": "Implementation content head. The metadata-only commit containing this handoff is the final branch HEAD reported to the W5R2 Wave Integrator.",
+  "branch": "codex/eval-v3-w5r2-arch-046-t",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/a118/pico",
+  "dependency_commits": [],
+  "dependency_handoff_hashes": {
+    "ARCH-045-B": "31fbde29d32f0f6a0ea219ded1fe7460c80772659b134b248d2e4f252d6c02e9",
+    "TOOL-042-G-R1": "f44e7f3764ad4c834c6fc9bb12651647aa71c5094c5836f4e5d647bd3be9d679"
+  },
+  "upstream": {
+    "w5r_canonical_sha": "0c87dca9c823c98237cb50baf4cf7f2494cb69ef",
+    "w5r_handoff_path": ".codex/eval/state/W5R-wave-handoff.json",
+    "w5r_handoff_sha256": "bcc4432477409529a46085441c4717188b77ab3aea5943565f3a7dd552da2665",
+    "formal_freeze_sha256": "dbedbc07dcc042546ec37392fb17214b2947bdbfe757d872bb438b9f7cca6f8e"
+  },
+  "allowed_write_paths": [
+    "tests/test_architecture_boundaries.py",
+    "docs/architecture/core-module-budgets.md",
+    "F:/dev/llm/pico-eval-artifacts/w5r2-architecture-tripwire/**",
+    ".codex/eval/handoffs/ARCH-046-T.json"
+  ],
+  "own_commits": [
+    "dc9960b560750df3cecabbffb99de5d77591b5ba"
+  ],
+  "files_changed": [
+    "tests/test_architecture_boundaries.py",
+    "docs/architecture/core-module-budgets.md",
+    ".codex/eval/handoffs/ARCH-046-T.json"
+  ],
+  "commands_run": [
+    "git branch --show-current; git rev-parse HEAD; git status --short",
+    "Get-FileHash dependency handoffs, W5R handoff, and formal FREEZE",
+    "W5R canonical line-count and Git blob OID audit for all 24 tracked modules",
+    "uv run pytest tests/test_architecture_boundaries.py -q",
+    "uv run ruff check tests/test_architecture_boundaries.py",
+    "git diff --check",
+    "AST/artifact/canonical-product-blob consistency verification"
+  ],
+  "tests": [
+    {
+      "command": "uv run pytest tests/test_architecture_boundaries.py -q",
+      "result": "passed",
+      "exit_code": 0,
+      "details": "1 passed. The architecture growth-tripwire suite exits zero with all 24 modules checked."
+    },
+    {
+      "command": "uv run ruff check tests/test_architecture_boundaries.py",
+      "result": "passed",
+      "exit_code": 0,
+      "details": "All checks passed."
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed",
+      "exit_code": 0
+    },
+    {
+      "command": "AST/artifact/canonical-product-blob consistency verification",
+      "result": "passed",
+      "exit_code": 0,
+      "details": "Verified 24 thresholds, canonical splitlines counts, margins, one aggregate assertion, no lowered threshold, and unchanged product blob OIDs."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/w5r2-architecture-tripwire/W5R2-ARCH-046-T-01/core-module-tripwire-audit.json",
+      "sha256": "dd7fb90e472fe7dade3d4cef66d0d4efc7b8d8b281a94588c1f3c6c33c2467a2",
+      "role": "24-module actual-old-new-margin audit"
+    },
+    {
+      "path": "docs/architecture/core-module-budgets.md",
+      "sha256": "d7215e089dc7e037da9c2bddc32158cbf4726b2b0612b6a84a98fcd32bb81de4",
+      "role": "coarse-growth-tripwire rationale"
+    },
+    {
+      "path": "tests/test_architecture_boundaries.py",
+      "sha256": "c47f3fc261c354b6f8d15b4e173237e2096f5f787ae5b08c1e1be98ed80dd084",
+      "role": "aggregating architecture tripwire"
+    },
+    {
+      "path": ".codex/eval/handoffs/ARCH-046-T.json",
+      "persistence": "Metadata-only commit generated after the implementation content commit."
+    }
+  ],
+  "hashes": {
+    "architecture_test_git_blob": "1ad8e3e4c1a99c7fae82d76ae5515a23bda876c5",
+    "architecture_test_sha256": "c47f3fc261c354b6f8d15b4e173237e2096f5f787ae5b08c1e1be98ed80dd084",
+    "rationale_document_git_blob": "d73410893d223264f82a7092fa2c7bbb0e8d7f60",
+    "rationale_document_sha256": "d7215e089dc7e037da9c2bddc32158cbf4726b2b0612b6a84a98fcd32bb81de4",
+    "audit_artifact_sha256": "dd7fb90e472fe7dade3d4cef66d0d4efc7b8d8b281a94588c1f3c6c33c2467a2"
+  },
+  "frozen_hashes": {
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "sdk_dependency_lock": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+    "formal_provider_selection": null,
+    "formal_native_deterministic_gate": null,
+    "blocked_w5r_gate_report": "fab078c630df496a65a4835f4a0ed601240a039caca684b04e3dd8cbb315a5c4"
+  },
+  "audit_summary": {
+    "tracked_module_count": 24,
+    "runtime_tripwire": 1000,
+    "ticket_specified_thresholds_exact": true,
+    "other_thresholds_lowered": false,
+    "aggregate_violation_reporting": true,
+    "canonical_product_blobs_unchanged": true,
+    "product_source_files_changed": 0,
+    "tripwire_classification": "coarse_growth_tripwire_not_strict_module_size_budget"
+  },
+  "native_protocol_observations": {
+    "observation_scope": "Architecture-only offline ticket; no provider or Runtime execution was performed.",
+    "text_envelope_observed": false,
+    "implicit_sdk_retry_observed": false,
+    "unknown_block_loss_observed": false,
+    "safety_chain_bypass_observed": false,
+    "sdk_tool_runner_used": false,
+    "sdk_agent_runner_used": false,
+    "sdk_managed_pico_tool_execution_used": false
+  },
+  "acceptance_checklist": {
+    "runtime_tripwire_exactly_1000": true,
+    "all_24_tracked_modules_retained": true,
+    "specified_thresholds_exact": true,
+    "unspecified_thresholds_not_lowered": true,
+    "all_violations_reported_by_one_assertion": true,
+    "canonical_product_blobs_unchanged": true,
+    "coarse_tripwire_rationale_documented": true,
+    "architecture_suite_exit_zero": true,
+    "canonical_status_or_freeze_written": false,
+    "downstream_ticket_started": false
+  },
+  "defects": [],
+  "risks": [
+    "Line-count tripwires are intentionally coarse and do not replace responsibility, dependency-direction, or safety-boundary review.",
+    "The audit artifact is outside Git and must be retained at the recorded external artifact path for integration review."
+  ],
+  "ownership_change_request": null,
+  "canonical_state_written": false,
+  "ready_for_integration": true,
+  "completed_at": "2026-07-22T18:48:41.3146419+08:00"
+}

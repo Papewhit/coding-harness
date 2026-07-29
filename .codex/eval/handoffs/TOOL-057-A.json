@@ -1,0 +1,404 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-057-A",
+  "instance_id": "W6R2-TOOL-057-A-01",
+  "wave": "W6R2",
+  "role": "reviewer/dual-dialect-evidence-closure-audit",
+  "status": "complete",
+  "audit_outcome": "passed",
+  "source_thread_id": "019f8e25-2f02-73d0-9a55-3ce4ffa1bb1f",
+  "base_sha": "6b4fa94948888b7c95dfbe4cd0134205356decba",
+  "wave_base_sha": "6b4fa94948888b7c95dfbe4cd0134205356decba",
+  "starting_ref": "codex/w6r2-wave-base",
+  "starting_ref_verified_target": "6b4fa94948888b7c95dfbe4cd0134205356decba",
+  "branch": "codex/w6r2-tool-057-a",
+  "head_sha": "cf262e551ff948bc574adb574edd172635ab7877",
+  "head_tree": "158cd2abde04d20e0544c4615db3cb0676f8fc83",
+  "head_sha_semantics": "Audited dependency-applied source head before the metadata-only commit containing this handoff.",
+  "metadata_commit_semantics": "The commit containing this corrected handoff is metadata-only; its self-referential SHA is intentionally not embedded in this file.",
+  "supersedes_metadata_commits": [
+    "a456edc41ece3bb3a28445d4cfd0fb5446b2fbd5",
+    "55ec33b2971f81173bad077b5901f01773bb76e9"
+  ],
+  "superseded_handoff_sha256s": [
+    "768ce930a47e14e2fab6265b3c522ba4af92ed54dc9dab3674d0c346446ac526",
+    "7a452933ddc0f556deaf11d852a2b33d1a892a63e9f7c7c748d420c1121eebe8"
+  ],
+  "dependency_commits": [
+    "50f728ba824a142ba0d64a5f820c80bbc1942496",
+    "c7a4a16cd124349448952063894f81d18c0b50c9"
+  ],
+  "applied_dependency_commits": [
+    {
+      "ticket_id": "TOOL-055-E",
+      "original_commit": "50f728ba824a142ba0d64a5f820c80bbc1942496",
+      "applied_commit": "a02994563a6fc047dbfa49e5d38eb81cd8ee806d",
+      "stable_patch_id": "86f900fa077405162cfa49435551f500cfb2c344"
+    },
+    {
+      "ticket_id": "EVAL-056-H",
+      "original_commit": "c7a4a16cd124349448952063894f81d18c0b50c9",
+      "applied_commit": "cf262e551ff948bc574adb574edd172635ab7877",
+      "stable_patch_id": "cb8100e853515f99195e7a37f58cf690d6dc46f5"
+    }
+  ],
+  "own_commits": [
+    "a456edc41ece3bb3a28445d4cfd0fb5446b2fbd5",
+    "55ec33b2971f81173bad077b5901f01773bb76e9"
+  ],
+  "dependency_handoff_hashes": {
+    "TOOL-055-E": "733e9488b787dc0bf07d6b5f8d51b2ec502e2682feed8e139baa8cedd0c033d4",
+    "EVAL-056-H": "88dd58e2a7a726c18bc584b92538de259b02e698d15c079830be858ccacc05f5",
+    "W6R-wave-handoff": "84e0e7f57fb52de5a9aa13ed2f94e6d8ea8dd73287efb9cf8eecef50c701eb5b"
+  },
+  "allowed_write_paths": [
+    "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/**",
+    ".codex/eval/handoffs/TOOL-057-A.json"
+  ],
+  "files_changed": [
+    ".codex/eval/handoffs/TOOL-057-A.json"
+  ],
+  "audited_files": [
+    "pico/core/tool_executor.py",
+    "pico/evaluation/native_provider.py",
+    "pico/evaluation/native_provider_live.py",
+    "tests/test_native_provider_cli.py",
+    "tests/test_native_provider_evaluator.py",
+    "tests/test_native_provider_live.py",
+    "tests/test_native_safety_chain_evidence.py"
+  ],
+  "audit": {
+    "dual_dialect_assertion_matrix": {
+      "result": "passed",
+      "dialects": [
+        "openai-responses",
+        "anthropic-messages"
+      ],
+      "frozen_case_count_per_dialect": 8,
+      "repetitions_per_case": 2,
+      "rows_per_dialect": 16,
+      "same_ordered_case_repetition_matrix": true,
+      "same_row_schema": true,
+      "same_row_assertion_fields": true,
+      "same_protocol_assertion_fields": true
+    },
+    "three_repetition_control_matrix": {
+      "result": "passed",
+      "generation": "No-network fake transports driving production runner and OpenAI Responses/Anthropic Messages adapters from audited dependency source cf262e551ff948bc574adb574edd172635ab7877.",
+      "dialects": [
+        "openai-responses",
+        "anthropic-messages"
+      ],
+      "frozen_case_count_per_dialect": 8,
+      "repetitions_per_case": 3,
+      "rows_per_dialect": 24,
+      "passing_rows_per_dialect": "24/24",
+      "call_id_result_match_per_dialect": "36/36",
+      "batch_completeness_per_dialect": "33/33",
+      "safety_chain_completeness_per_dialect": "36/36",
+      "same_ordered_case_repetition_matrix": true,
+      "same_row_schema": true,
+      "same_assertion_fields": true,
+      "real_http_attempt_count": 0
+    },
+    "independent_bundle_reconstruction": {
+      "result": "passed",
+      "verifier": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/verify_artifacts.py",
+      "verifier_mode": "read_only",
+      "report_generator": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/generate_audit_report.py",
+      "inventory_generator": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/generate_inventory.py",
+      "verifier_imports_pico": false,
+      "monkey_patch_used": false,
+      "temporary_instrumentation_used": false,
+      "calls_per_dialect": 24,
+      "results_per_dialect": 24,
+      "evidence_entries_per_dialect": 24,
+      "call_result_match_per_dialect": "24/24",
+      "batch_completeness_per_dialect": "22/22",
+      "safety_chain_completeness_per_dialect": "24/24",
+      "terminal_counts_per_dialect": {
+        "execute:completed": 20,
+        "validate:rejected": 2,
+        "permission:rejected": 2
+      },
+      "three_repetition_control": {
+        "calls_per_dialect": 36,
+        "results_per_dialect": 36,
+        "evidence_entries_per_dialect": 36,
+        "terminal_counts_per_dialect": {
+          "execute:completed": 30,
+          "validate:rejected": 3,
+          "permission:rejected": 3
+        }
+      }
+    },
+    "negative_repetition_contract_controls": {
+      "result": "passed",
+      "same_read_only_verifier_code_path": true,
+      "missing_repetition_row": "rejected: frozen case/repetition matrix is incomplete or out of order",
+      "duplicate_row": "rejected: duplicate case/repetition row",
+      "dialect_repetition_mismatch": "rejected: dialect repetition sets differ"
+    },
+    "preflight_fail_closed": {
+      "result": "passed",
+      "missing_locator": {
+        "row_count": 0,
+        "computability": "not_computable",
+        "run_status": "preflight_failure"
+      },
+      "profile_mismatch": {
+        "row_count": 0,
+        "computability": "not_computable",
+        "run_status": "preflight_failure"
+      }
+    },
+    "credential_scan": {
+      "result": "passed",
+      "match_count": 0,
+      "scanned_classes": [
+        "credential token",
+        "credential assignment",
+        "raw provider URL",
+        "private config locator value"
+      ],
+      "locator_environment_variable_name_is_public_contract_only": "PICO_NATIVE_PROVIDER_CONFIG"
+    },
+    "format_validation": {
+      "result": "passed",
+      "json_files_parsed": 22,
+      "jsonl_files_parsed": 6,
+      "xml_files_parsed": 3,
+      "post_redaction_parse_failures": 0
+    },
+    "read_only_repeatability": {
+      "result": "passed",
+      "command": "python -B verify_artifacts.py --root <audit-root> --repo <repo>",
+      "run_count": 2,
+      "writes_per_run": 0,
+      "artifact_file_count_including_inventory": 44,
+      "inventory_verified_file_count_excluding_self": 43,
+      "inventory_mismatch_count_per_run": 0,
+      "snapshot_fingerprint_before": "b48480d2af4233e2af5be44c9dca97d6420c9aa46df0165cd215f622b257bac7",
+      "snapshot_fingerprint_after_first": "b48480d2af4233e2af5be44c9dca97d6420c9aa46df0165cd215f622b257bac7",
+      "snapshot_fingerprint_after_second": "b48480d2af4233e2af5be44c9dca97d6420c9aa46df0165cd215f622b257bac7",
+      "changed_file_count_first_run": 0,
+      "changed_file_count_second_run": 0
+    },
+    "artifact_supersession": {
+      "record": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/supersession.json",
+      "integrator_reproduced_report_sha256": "26fa5108ca598f204fbd54a365f91df27708f8771b72e6afdd7929aa8e8edb3f",
+      "pre_fix_inventory_expected_report_sha256": "6b4b2cdc805e5f576165722eabcb788b40a577445b5696ede7980992eca3e42a",
+      "pre_fix_inventory_mismatch_count": 1,
+      "status": "resolved_and_superseded"
+    },
+    "repetition_contract_supersession": {
+      "defect_id": "TOOL-057-A-REPETITION-CONTRACT-002",
+      "pre_fix_verifier_sha256": "b6150d9583e893eb41b332f4adbd38cc8bed1576f05060a69867ab566d86d521",
+      "status": "resolved_and_superseded",
+      "correction": "The verifier now derives a positive continuous repetition set from each bundle, requires identical dialect sets, validates manifest binding, the complete ordered eight-case matrix, and unique row IDs without weakening byte/hash/safety/call-result/privacy checks."
+    },
+    "frozen_inputs_unchanged": true
+  },
+  "tests": [
+    {
+      "command": "uv sync --frozen with UV_PROJECT_ENVIRONMENT and UV_CACHE_DIR under the exclusive artifact root",
+      "result": "passed",
+      "details": "Created an isolated Python 3.12.13 audit environment under the artifact root; the temporary environment and cache were removed after verification.",
+      "output": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/commands/uv-sync.txt"
+    },
+    {
+      "command": "uv run --no-sync pytest tests/test_native_provider_live.py tests/test_native_safety_chain_evidence.py -q -p no:cacheprovider --junitxml <artifact>/tests/dual-dialect-safety.xml",
+      "result": "passed",
+      "details": "10 passed in 74.12s.",
+      "output": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/tests/dual-dialect-safety.xml"
+    },
+    {
+      "command": "uv run --no-sync pytest tests/test_native_provider_evaluator.py tests/test_native_provider_cli.py -q -p no:cacheprovider --junitxml <artifact>/tests/evaluator-cli.xml",
+      "result": "passed",
+      "details": "23 passed in 4.06s.",
+      "output": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/tests/evaluator-cli.xml"
+    },
+    {
+      "command": "uv run --no-sync pytest tests/test_native_provider_live.py tests/test_native_safety_chain_evidence.py tests/test_native_runtime_integration.py tests/test_native_tool_loop.py tests/test_permissions_acceptance.py tests/test_architecture_boundaries.py tests/test_native_provider_profile_cli.py -q -p no:cacheprovider --junitxml <artifact>/tests/protected-native.xml",
+      "result": "passed",
+      "details": "34 passed in 104.57s.",
+      "output": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/tests/protected-native.xml"
+    },
+    {
+      "command": "uv run --no-sync ruff check audited implementation and test paths",
+      "result": "passed",
+      "details": "All checks passed.",
+      "output": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/commands/ruff-audited-paths.txt"
+    },
+    {
+      "command": "pre-supersession stdlib verifier over both dual-dialect bundles and both preflight bundles",
+      "result": "superseded",
+      "details": "The bundle reconstruction was correct, but Integrator acceptance proved this entrypoint mutated audit-report.json and invalidated inventory. The corrected workflow separates explicit report generation from read-only verification."
+    },
+    {
+      "command": "python -B generate_audit_report.py --root <audit-root> --repo <repo>; python -B generate_inventory.py --root <audit-root>",
+      "result": "passed",
+      "details": "Explicitly regenerated the corrected deterministic report bound to source-provenance audited_head_sha, then regenerated an inventory that excludes exactly inventory.json."
+    },
+    {
+      "command": "python -B verify_artifacts.py --root <audit-root> --repo <repo> run twice with full artifact hash snapshots before and after each run",
+      "result": "passed",
+      "details": "Both final runs reported passed=true, writes_performed=0, 43 verified inventory entries, and 0 mismatches. All three 44-file snapshot fingerprints were b48480d2af4233e2af5be44c9dca97d6420c9aa46df0165cd215f622b257bac7; each run changed 0 files."
+    },
+    {
+      "command": "final JSON/JSONL/XML parse and credential/raw URL/config locator scan over all public artifact files",
+      "result": "passed",
+      "details": "22 JSON, 6 JSONL, and 3 XML files parsed; credential/raw URL/private config locator scan found 0 matches."
+    },
+    {
+      "command": "generate_three_repetition_controls.py through isolated artifact-root uv environment, then read-only verify_artifacts.py over both positive bundle groups and three in-memory negative variants",
+      "result": "passed",
+      "details": "Generated no-network production-runner/adapter controls: each dialect passed 24/24 rows, 36/36 call-result, 33/33 batch, and 36/36 safety. Missing repetition row, duplicate row, and dialect repetition mismatch were all rejected. Temporary environment, cache, private config, workspaces, and uv lock files were removed before final inventory."
+    },
+    {
+      "command": "initial uv run --no-sync collection attempt before isolated environment creation",
+      "result": "environment_failure_superseded",
+      "details": "The worktree had no project virtual environment; uv created an empty .venv and pytest imported global Pydantic v1, causing two collection errors. The newly created directory was moved under the exclusive artifact root, the correct frozen environment was synced there, all required suites then passed, and all temporary environment files were removed.",
+      "output": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/commands/pytest-dual-dialect-safety.txt"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/audit-report.json",
+      "sha256": "0726c7daf6023322b7b1c3e3abfdab20209128c91d7940f915bec6df42f26482"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/inventory.json",
+      "sha256": "7fa96fdcfa46dc1ed0f9d6a6e354614c5116a94b8963e27c057eace507046100",
+      "inventory_self_excluded_paths": [
+        "inventory.json"
+      ],
+      "inventory_file_count_excluding_self": 43,
+      "inventory_mismatch_count": 0
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/source-provenance.json",
+      "sha256": "7e015abc90e212c416b001678962c28848a23a4c9ff54917c2d6dfef5e5017b7"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/verify_artifacts.py",
+      "sha256": "a9cc6a85be6287bbf3fbd2c2eb0d16efc7f898a2140da01aa4f0edb47e16e27c"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/generate_audit_report.py",
+      "sha256": "a783486a3266ec38dfe137d8e2cac8778519ad85df7b945b5d3b40ce8da2db3d"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/generate_inventory.py",
+      "sha256": "5116e16fa70d8db0b0f8463d2ae364ca0bdc7a6b558ca30c9d92a87d099c35ab"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/supersession.json",
+      "sha256": "027db259ae1170c1571587ce9d0b8da8f90a0f0f52d190b45757a01d317a5314"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/generate_three_repetition_controls.py",
+      "sha256": "96d109548b0a7e1b770c626928519803602e6a5269848c66515f71cd7f7e5c81"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/controls/three-repetitions/openai-responses/manifest.json",
+      "sha256": "b6a3a210d675728a90b151ddac06bd004945d65367d230554cfebbc6676cabc4"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/controls/three-repetitions/openai-responses/rows.jsonl",
+      "sha256": "37ba7ee6de99b83c2331b163a3f75ce0efd92e6aca1da76507548d82ae49f8c2"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/controls/three-repetitions/anthropic-messages/manifest.json",
+      "sha256": "953a93d4d45cf659821f904f025b672196eb984a4bb878fe790fcb3e431a1a30"
+    },
+    {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-harness-audit/W6R2-TOOL-057-A-01/controls/three-repetitions/anthropic-messages/rows.jsonl",
+      "sha256": "abcd614a33842effd92f09eccb324ca04b821fc4d49d023912d1ae9c21f348c4"
+    }
+  ],
+  "frozen_hashes": {
+    "formal_freeze": "b4893c10887bb774dda860a5f4b13ec6fa9b8c014e0cb0257e409c0f27df6ba6",
+    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "sdk_dependency_lock": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+    "public_profile_schema": "c664de9fc4ba4abfa1c5ee4450425e9ef5e3b638d990c2fc42e343d9a63a1625",
+    "public_profile_example": "135095b602ffd386a4227bce817a5edd0242a8b2df68dc50ca42d44ec106de3f",
+    "native_deterministic_gate": "2fc1ebbe4d64c5be80e7fe063584915f12aabf3a8f8c08796d2cf009e94849a5",
+    "provider_selection": "e51ec2b3fd45c6f22f87e1db619c1c2cfc3fdc2304821ca92540fd24479f71df",
+    "cases_sha256": "92f746b113a88ceb652e4e8ec651021b1358d9922ab91c0dad34e62c0068b9e3",
+    "cases_git_blob_oid": "f513f6e15c521104b12fe348dc280f73624acd56"
+  },
+  "native_protocol_observations": {
+    "observation_scope": "Offline deterministic fake transports driving production OpenAI Responses and Anthropic Messages adapters, production Pico Runtime/tool executor, and the provider-neutral evaluator. No real provider HTTP, formal effectiveness evaluation, human smoke, Resume evaluation, WSL preflight gate, or downstream ticket was run.",
+    "wire_dialects": [
+      "openai-responses",
+      "anthropic-messages"
+    ],
+    "passing_frozen_rows_per_dialect": "16/16",
+    "frozen_cases_per_dialect": "8/8",
+    "repetitions_per_case": 2,
+    "call_id_result_match_per_dialect": "24/24",
+    "batch_completeness_per_dialect": "22/22",
+    "safety_chain_completeness_per_dialect": "24/24",
+    "three_repetition_control_rows_per_dialect": "24/24",
+    "three_repetition_control_call_id_result_match_per_dialect": "36/36",
+    "three_repetition_control_batch_completeness_per_dialect": "33/33",
+    "three_repetition_control_safety_chain_completeness_per_dialect": "36/36",
+    "three_repetition_control_fake_transport_http_attempt_evidence_per_dialect": 57,
+    "fake_transport_http_attempt_evidence_per_dialect": 38,
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0,
+    "real_http_attempt_count": 0,
+    "sdk_tool_runner_used": false,
+    "sdk_agent_runner_used": false,
+    "sdk_managed_pico_tool_execution_used": false,
+    "display_text_parsed_as_protocol": false,
+    "private_config_locator_value_persisted": false,
+    "credential_or_raw_provider_url_persisted": false
+  },
+  "defects": [
+    {
+      "id": "TOOL-057-A-ARTIFACT-SELF-MUTATION-001",
+      "severity": "blocking",
+      "detected_by": "Wave Integrator",
+      "status": "resolved_and_superseded",
+      "description": "The original acceptance verifier rewrote audit-report.json and invalidated its own inventory entry.",
+      "resolution": "Separated explicit report/inventory generation from a permanently read-only verifier, bound report source_head to source-provenance, rebuilt inventory with a single explicit self-exclusion, and proved two read-only runs changed no artifact hashes."
+    },
+    {
+      "id": "TOOL-057-A-REPETITION-CONTRACT-002",
+      "severity": "blocking",
+      "detected_by": "TOOL-058-G preflight review",
+      "status": "resolved_and_superseded",
+      "description": "The read-only verifier hard-coded [1, 2] and 16 rows, rejecting the required eight-case, three-repetition Gate bundle.",
+      "resolution": "Made repetitions manifest/row-derived and fail closed on non-positive, non-contiguous, incomplete, duplicated, or dialect-mismatched matrices; generated and verified 8x3 dual-dialect controls plus three negative variants."
+    }
+  ],
+  "blocking_defects": [],
+  "risks": [
+    "This is an offline Windows reviewer audit; canonical Ubuntu WSL2/Python 3.12 preflight remains owned by the separately authorized downstream gate.",
+    "No real endpoint was contacted, so provider eligibility, selected profile, and recovered Gate N1 remain unresolved.",
+    "The verifier proves the persisted fake-transport evidence closure and safety-chain semantics; it does not broaden the ticket into live conformance or effectiveness evaluation.",
+    "Both prior artifact-only defects are retained in supersession.json for auditability; consumers must use the corrected hashes in this handoff and the read-only verify_artifacts.py entrypoint.",
+    "The verifier intentionally accepts any positive continuous repetition count that is identically bound by both dialect manifests and complete row matrices; this generality is constrained by the unchanged frozen eight-case IDs, row/assertion parity, byte hashes, safety chains, call/result matching, and privacy checks."
+  ],
+  "ownership_change_request": null,
+  "status_proposal": {
+    "ticket_id": "TOOL-057-A",
+    "status": "complete",
+    "head_sha": "cf262e551ff948bc574adb574edd172635ab7877",
+    "reason": "The read-only verifier now validates both eight-case x2 and x3 dual-dialect matrices through one manifest-bound fail-closed repetitions contract, reconstructs every persisted safety chain, rejects three malformed matrix controls, and leaves the complete artifact byte-identical across repeated acceptance runs."
+  },
+  "freeze_proposal": null,
+  "formal_status_written": false,
+  "formal_freeze_written": false,
+  "live_provider_http_sent": false,
+  "tool_058_g_started": false,
+  "downstream_ticket_started": false,
+  "ready_for_wsl_preflight_gate": true
+}

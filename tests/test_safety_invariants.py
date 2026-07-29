@@ -3,7 +3,8 @@ import shlex
 import sys
 from unittest.mock import patch
 
-from pico.testing import ScriptedModelClient
+from pico.providers.contracts import ModelRequest, ModelResponse
+from tests.native_fixtures import lock_scripted_provider_profile, scripted_client
 from pico import Pico, SessionStore, WorkspaceContext
 from pico import cli as pico_cli
 from pico.core.task_state import TaskState
@@ -18,13 +19,13 @@ def build_agent(tmp_path, outputs, **kwargs):
     workspace = build_workspace(tmp_path)
     store = SessionStore(tmp_path / ".pico" / "sessions")
     approval_policy = kwargs.pop("approval_policy", "auto")
-    return Pico(
-        model_client=ScriptedModelClient(outputs),
+    return lock_scripted_provider_profile(Pico(
+        model_client=scripted_client(outputs),
         workspace=workspace,
         session_store=store,
         approval_policy=approval_policy,
         **kwargs,
-    )
+    ))
 
 
 def test_workspace_escape_is_rejected(tmp_path):
@@ -61,7 +62,7 @@ def test_cli_build_agent_wires_secret_env_names_from_parser(tmp_path):
             self.args = args
             self.kwargs = kwargs
 
-        def complete(self, prompt, max_new_tokens):
+        def request(self, request: ModelRequest) -> ModelResponse:
             raise AssertionError("model should not be invoked")
 
     (tmp_path / "README.md").write_text("demo\n", encoding="utf-8")
@@ -91,7 +92,7 @@ def test_cli_build_agent_uses_default_configured_secret_names(tmp_path):
             self.args = args
             self.kwargs = kwargs
 
-        def complete(self, prompt, max_new_tokens):
+        def request(self, request: ModelRequest) -> ModelResponse:
             raise AssertionError("model should not be invoked")
 
     (tmp_path / "README.md").write_text("demo\n", encoding="utf-8")
@@ -110,7 +111,7 @@ def test_cli_build_agent_loads_project_env_secrets_before_redaction_setup(tmp_pa
             self.args = args
             self.kwargs = kwargs
 
-        def complete(self, prompt, max_new_tokens):
+        def request(self, request: ModelRequest) -> ModelResponse:
             raise AssertionError("model should not be invoked")
 
     (tmp_path / "README.md").write_text("demo\n", encoding="utf-8")
@@ -127,7 +128,7 @@ def test_cli_build_agent_reads_secret_names_from_environment_config(tmp_path):
             self.args = args
             self.kwargs = kwargs
 
-        def complete(self, prompt, max_new_tokens):
+        def request(self, request: ModelRequest) -> ModelResponse:
             raise AssertionError("model should not be invoked")
 
     (tmp_path / "README.md").write_text("demo\n", encoding="utf-8")

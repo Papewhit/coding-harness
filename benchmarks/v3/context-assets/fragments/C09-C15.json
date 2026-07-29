@@ -1,0 +1,15 @@
+{
+  "schema_version": "pico-context-asset-cases-fragment-v1",
+  "fragment_id": "C09-C15",
+  "contract": {"context_assets_sha256": "d8349c034524cc488958a1f3b460a7b6080915eed0b03b64c635810c21bf8e15", "native_contract_sha256": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb", "tool_schema_sha256": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f"},
+  "cases": [
+    {"id":"C09","fixture":"fixtures/C09/input.json","expectations":"fixtures/C09/expectations.json","focus":["all_assets","canonical_surfaces","duplication"]},
+    {"id":"C10","fixture":"fixtures/C10/input.json","expectations":"fixtures/C10/expectations.json","focus":["memory_pressure","history_pressure","drop_evidence"]},
+    {"id":"C11","fixture":"fixtures/C11/input.json","expectations":"fixtures/C11/expectations.json","focus":["system_pressure","plan_floor"]},
+    {"id":"C12","fixture":"fixtures/C12/input.json","expectations":"fixtures/C12/expectations.json","focus":["tools_budget","surface_isolation"]},
+    {"id":"C13","fixture":"fixtures/C13/input.json","expectations":"fixtures/C13/expectations.json","focus":["pointer_integrity","externalized_body"]},
+    {"id":"C14","fixture":"fixtures/C14/input.json","expectations":"fixtures/C14/expectations.json","focus":["unfinished_native_turn","continuation_privacy"]},
+    {"id":"C15","fixture":"fixtures/C15/input.json","expectations":"fixtures/C15/expectations.json","focus":["extreme_pressure","current_request_survival"]}
+  ],
+  "common_invariants": ["current_request_never_drop", "native_tool_definitions_tools_only", "unfinished_native_turn_non_compactable", "pointer_requires_resolvable_identity", "record_size_unit_and_drop_action"]
+}

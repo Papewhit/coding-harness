@@ -20,6 +20,7 @@ from .commands.slash import command_help_text, parse_subagent_args, resolve_comm
 from .config import (
     DEFAULT_PROVIDER,
     PROVIDER_DEFAULTS,
+    ProviderConfig,
     default_max_tokens_for_provider,
     load_project_env,
     resolve_project_sandbox_config,
@@ -27,7 +28,14 @@ from .config import (
 )
 from .features import skills as skillslib
 from .features.skills_runtime import invoke_skill
-from .providers import ModelClient, AnthropicCompatibleModelClient, OpenAICompatibleModelClient
+from .providers import (
+    ModelClient,
+    NativeModelClient,
+    AnthropicCompatibleModelClient,
+    OpenAICompatibleModelClient,
+    build_native_model_client,
+    native_provider_profile,
+)
 from .core.runtime import Pico, SessionStore
 from .core.workspace import WorkspaceContext, middle
 
@@ -71,6 +79,8 @@ HELP_DETAILS = (
 DEFAULT_OPENAI_MODEL = PROVIDER_DEFAULTS["openai"]["model"]
 DEFAULT_OPENAI_BASE_URL = PROVIDER_DEFAULTS["openai"]["base_url"]
 SECRET_ENV_NAMES_VAR = "PICO_SECRET_ENV_NAMES"
+_LEGACY_OPENAI_CLIENT = OpenAICompatibleModelClient
+_LEGACY_ANTHROPIC_CLIENT = AnthropicCompatibleModelClient
 
 
 def _configured_secret_names(args: argparse.Namespace) -> list[str]:
@@ -84,8 +94,48 @@ def _configured_secret_names(args: argparse.Namespace) -> list[str]:
     return sorted(configured_secret_names)
 
 
-def _build_model_client(args: argparse.Namespace) -> ModelClient:
-    config = resolve_provider_config(
+def _build_model_client(
+    args: argparse.Namespace, config: ProviderConfig | None = None
+) -> NativeModelClient | ModelClient:
+    config = config or _resolve_cli_provider_config(args)
+    if not config.capabilities.native_tools:
+        raise ValueError(
+            f"provider profile {config.name!r} cannot start a coding session: "
+            "capabilities.native_tools must be true"
+        )
+    # Preserve explicit embedding/test injection while the legacy classes await
+    # removal; unmodified CLI startup always constructs the native adapter path.
+    legacy_override = (
+        OpenAICompatibleModelClient
+        if config.protocol == "openai"
+        else AnthropicCompatibleModelClient
+    )
+    original = (
+        _LEGACY_OPENAI_CLIENT
+        if config.protocol == "openai"
+        else _LEGACY_ANTHROPIC_CLIENT
+    )
+    if legacy_override is not original:
+        return legacy_override(
+            model=config.model,
+            base_url=config.base_url,
+            api_key=config.api_key,
+            temperature=args.temperature,
+            timeout=getattr(args, "openai_timeout", 300),
+        )
+    return build_native_model_client(
+        wire_dialect=config.wire_dialect,
+        model=config.model,
+        base_url=config.base_url,
+        api_key=config.api_key,
+        profile_id=config.public_identity()["profile_id"],
+        timeout=getattr(args, "openai_timeout", 300),
+        max_retries=0,
+    )
+
+
+def _resolve_cli_provider_config(args: argparse.Namespace) -> ProviderConfig:
+    return resolve_provider_config(
         getattr(args, "provider", None),
         start=getattr(args, "cwd", "."),
         config_path=getattr(args, "config", None),
@@ -93,26 +143,34 @@ def _build_model_client(args: argparse.Namespace) -> ModelClient:
         base_url=getattr(args, "base_url", None),
         api_key=getattr(args, "api_key", None),
     )
-    # CLI 只负责把 provider profile 翻译成具体协议 client。
-    # 例如 deepseek 是 profile，protocol=anthropic 才决定走 Messages API。
-    if config.protocol == "openai":
-        return OpenAICompatibleModelClient(
-            model=config.model,
-            base_url=config.base_url,
-            api_key=config.api_key,
-            temperature=args.temperature,
-            timeout=getattr(args, "openai_timeout", 300),
-        )
-    if config.protocol == "anthropic":
-        return AnthropicCompatibleModelClient(
-            model=config.model,
-            base_url=config.base_url,
-            api_key=config.api_key,
-            temperature=args.temperature,
-            timeout=getattr(args, "openai_timeout", 300),
-        )
 
-    raise ValueError(f"unknown provider protocol: {config.protocol}")
+
+def inspect_provider_config(config: ProviderConfig) -> dict[str, Any]:
+    """Render a credential-free startup profile for humans and automation."""
+
+    return {**config.public_identity(), **native_provider_profile(config.wire_dialect)}
+
+
+def _lock_provider_session(
+    agent: Pico, config: ProviderConfig, *, resumed: bool
+) -> None:
+    identity = {
+        **config.public_identity(tool_schema=agent.tool_signature()),
+        **native_provider_profile(config.wire_dialect),
+    }
+    existing = agent.session.get("provider_profile")
+    if existing is None and resumed:
+        raise ValueError(
+            f"session {agent.session['id']!r} predates provider profile locking; "
+            "start a new session instead of resuming it"
+        )
+    if existing is not None and existing != identity:
+        raise ValueError(
+            f"session {agent.session['id']!r} is locked to a different "
+            "model/profile/wire dialect/tool schema"
+        )
+    agent.session["provider_profile"] = identity
+    agent.session_path = agent.session_store.save(agent.session)
 
 
 def build_welcome(agent: Pico, model: str, host: str) -> str:
@@ -180,18 +238,11 @@ def build_agent(args: argparse.Namespace) -> Pico:
     # 先采集工作区快照，再整理 secret 名单、模型后端和 session。
     workspace = WorkspaceContext.build(args.cwd)
     store = SessionStore(workspace.repo_root + "/.pico/sessions")
-    provider_config = resolve_provider_config(
-        getattr(args, "provider", None),
-        start=getattr(args, "cwd", "."),
-        config_path=getattr(args, "config", None),
-        model=getattr(args, "model", None),
-        base_url=getattr(args, "base_url", None),
-        api_key=getattr(args, "api_key", None),
-    )
-    model = _build_model_client(args)
+    provider_config = _resolve_cli_provider_config(args)
+    model = _build_model_client(args, provider_config)
 
     def model_client_factory():
-        return _build_model_client(args)
+        return _build_model_client(args, provider_config)
 
     if args.max_new_tokens is None:
         args.max_new_tokens = default_max_tokens_for_provider(provider_config.name)
@@ -213,7 +264,7 @@ def build_agent(args: argparse.Namespace) -> Pico:
     dream_min_sessions = getattr(args, "dream_min_sessions", 5)
     ask_user_callback = None if getattr(args, "prompt", None) else _cli_ask_user
     if session_id:
-        return Pico.from_session(
+        agent = Pico.from_session(
             model_client=model,
             workspace=workspace,
             session_store=store,
@@ -230,7 +281,9 @@ def build_agent(args: argparse.Namespace) -> Pico:
             sandbox_config=sandbox_config,
             ask_user_callback=ask_user_callback,
         )
-    return Pico(
+        _lock_provider_session(agent, provider_config, resumed=True)
+        return agent
+    agent = Pico(
         model_client=model,
         workspace=workspace,
         session_store=store,
@@ -246,6 +299,8 @@ def build_agent(args: argparse.Namespace) -> Pico:
         sandbox_config=sandbox_config,
         ask_user_callback=ask_user_callback,
     )
+    _lock_provider_session(agent, provider_config, resumed=False)
+    return agent
 
 
 def build_arg_parser() -> argparse.ArgumentParser:
@@ -277,6 +332,11 @@ def build_arg_parser() -> argparse.ArgumentParser:
         "--base-url",
         default=None,
         help="API base URL override for the selected provider profile.",
+    )
+    parser.add_argument(
+        "--inspect-provider",
+        action="store_true",
+        help="Print the selected provider's credential-free native profile and exit.",
     )
     parser.add_argument(
         "--openai-timeout",
@@ -609,6 +669,14 @@ def interaction_mode(args: argparse.Namespace) -> str:
 
 def main(argv: list[str] | None = None) -> int:
     args = build_arg_parser().parse_args(argv)
+    if args.inspect_provider:
+        try:
+            inspected = inspect_provider_config(_resolve_cli_provider_config(args))
+        except ValueError as exc:
+            print(str(exc), file=sys.stderr)
+            return 2
+        print(json.dumps(inspected, ensure_ascii=False, indent=2, sort_keys=True))
+        return 0
     try:
         agent = build_agent(args)
     except ValueError as exc:

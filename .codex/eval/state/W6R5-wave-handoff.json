@@ -1,0 +1,160 @@
+{
+  "schema_version": "pico-eval-wave-handoff-v2",
+  "control_revision": "eval-control-v4.2",
+  "wave": "W6R5",
+  "status": "blocked",
+  "closed_at": "2026-07-26",
+  "action": "close",
+  "source": {
+    "base_sha": "f9626c0a6c3c72907318f0616d0379cbb586404f",
+    "accepted_source_sha": "e65f370e49fe2ef749e017f33f509997eb1a0cd5",
+    "accepted_source_tree": "b306d8a29f863b64fcb2a45316a5cee8aa44dc7e",
+    "revision_5_retained_as_historical_implementation": true,
+    "further_source_changes_authorized": false
+  },
+  "ticket_states": {
+    "EVAL-063-H": "needs_remediation",
+    "AUDIT-063-A": "accepted",
+    "TOOL-063-G": "accepted",
+    "EVAL-063-R": "needs_remediation",
+    "EVAL-063-M": "pending"
+  },
+  "accepted_commit_mappings": [
+    {
+      "ticket_id": "EVAL-063-H",
+      "revision": 1,
+      "original_head_sha": "5f24a2aba95d0367bdac5c65ae584ef4fff6d7d4",
+      "handoff_sha256": null,
+      "stable_patch_id": "1d0808dc37b2756258aab46852b05e557fba57b4",
+      "accepted_commit_sha": "b6e640b9eae6a9552562ade95608abdf25a6e6da",
+      "mapping_note": "The original head and stable patch ID are retained in the Accepted commit; the superseded handoff hash is not present in the latest authoritative handoff."
+    },
+    {
+      "ticket_id": "EVAL-063-H",
+      "revision": 2,
+      "original_head_sha": "8bb8e4ba40ed965f924d9f6c708eabb33f102a86",
+      "handoff_sha256": null,
+      "stable_patch_id": "341361234ca33976f496ecb6af1d3b8644b8536d",
+      "accepted_commit_sha": "8bb8e4ba40ed965f924d9f6c708eabb33f102a86",
+      "mapping_note": "Direct Accepted commit; the superseded handoff hash is not present in the latest authoritative handoff."
+    },
+    {
+      "ticket_id": "EVAL-063-H",
+      "revision": 3,
+      "original_head_sha": "776d7fc093476c5eeccb1badeefe11a75015b592",
+      "handoff_sha256": null,
+      "stable_patch_id": "6b6f76054a37e18d9193db16c9e67df57accde6c",
+      "accepted_commit_sha": "776d7fc093476c5eeccb1badeefe11a75015b592",
+      "mapping_note": "Direct Accepted commit; the superseded handoff hash is not present in the latest authoritative handoff."
+    },
+    {
+      "ticket_id": "EVAL-063-H",
+      "revision": 4,
+      "original_head_sha": "b165961658abe737ad2f56f00ef727b2caac2d94",
+      "handoff_sha256": "50b5b88bc5c6d4f88135a7724080074f949bad3d5748f59e91a335a1c3714218",
+      "stable_patch_id": "258475f3a346147f7c98f8e446e3423d1206300e",
+      "accepted_commit_sha": "e8cebc7f5d882552840c8a2614d5d0f2946626eb"
+    },
+    {
+      "ticket_id": "EVAL-063-H",
+      "revision": 5,
+      "original_head_sha": "adc934f4c3edd3d9d58d45caed6d8633e4e0c1a6",
+      "handoff_sha256": "163de1abc1c2ed170db559d31e463c3def12de54d8565a602b7fed040a354dae",
+      "stable_patch_id": "a0dbb6a23088b4daa49d6dfb21be8639242a568e",
+      "accepted_commit_sha": "e65f370e49fe2ef749e017f33f509997eb1a0cd5"
+    }
+  ],
+  "findings": [
+    {
+      "id": "W6R5-EVAL-063-R-MD-003",
+      "classification": "measurement_defect",
+      "status": "open",
+      "responsible_ticket": "EVAL-063-H",
+      "affected_ticket": "EVAL-063-R",
+      "invalidated_rows": 1,
+      "invalidated_process": "W6R5-EVAL-063-R-03",
+      "basis": "HSMOKE-V4-A completed the required read_file -> patch_file -> read_file sequence and produced a semantically correct final file. The only failure was a literal contains Oracle mismatch between 'so that all dependencies are ready' and 'so dependencies are ready'.",
+      "product_semantic_conclusion_valid": false,
+      "automatic_remediation_authorized": false,
+      "replacement_live_authorized": false
+    },
+    {
+      "id": "W6R5-CR-001",
+      "classification": "change_request",
+      "status": "open",
+      "automatic_implementation_authorized": false
+    }
+  ],
+  "live_processes": {
+    "W6R5-EVAL-063-R-01": {
+      "product_result_valid": false,
+      "classification": "measurement_defect",
+      "evidence_preserved": true
+    },
+    "W6R5-EVAL-063-R-02": {
+      "product_result_valid": false,
+      "classification": "measurement_defect",
+      "process_result_sha256": "b24d648712f6cad3253e5bb6e4ddea15e1d080f8d3e9b575863e5aeaedfc5d39",
+      "provider_http_attempts": 4,
+      "evidence_preserved": true
+    },
+    "W6R5-EVAL-063-R-03": {
+      "product_result_valid": false,
+      "classification": "measurement_defect",
+      "artifact_root": "F:/dev/llm/pico-eval-artifacts/native-provider-human-smoke-v4/e65f370e49fe2ef749e017f33f509997eb1a0cd5",
+      "process_manifest_sha256": "b2c3a97c16ba570df3780b40eb1644beb9e6bef516f1e80f185cbb62a575b82b",
+      "process_result_sha256": "8ecd883349d8a12a560953fd7b2c6e3b7e06c9c3f2ed7e6dcf625497a0afc08d",
+      "summary_sha256": "6e6227693e8ff1b6590b06df2b8e8b8b51bea93dd5df5d96898b4fc63bbf0906",
+      "inventory_sha256": "6ffbfad170604827fd6956a4af7aec6be9a387ad11ae6cfffa7a56811f723cdd",
+      "ticket_handoff_sha256": "05066a7ebdbca1459a91dd245b015a2aaa1eca15af34f9d6fb2c245bf80c8b88",
+      "provider_http_attempts": 6,
+      "hsmoke_v4_a_observation": "invalid measurement due exact-string Oracle",
+      "hsmoke_v4_b_observation": "PASS retained as observation but not promoted to a W6R5 product conclusion",
+      "evidence_preserved": true,
+      "automatic_rerun": false
+    }
+  },
+  "decision": {
+    "native_eval_ready": "pending",
+    "native_resume_ready": "pending",
+    "w7_authorized": false,
+    "w7_started": false,
+    "evaluation_v2_proposals_accepted": false,
+    "wave_block_reason": "The user stopped W6R5 remediation after the R-03 exact-string Oracle measurement defect. No valid EVAL-063-R dependency or authorized compliant continuation remains.",
+    "eval_063_m_executed": false,
+    "eval_063_m_handoff_created": false
+  },
+  "execution_accounting": {
+    "r02_provider_http_attempts": 4,
+    "r03_provider_http_attempts": 6,
+    "r03_automatic_reruns": 0,
+    "close_provider_http_attempts": 0,
+    "formal_effectiveness_run": false,
+    "resume_evaluation_run": false
+  },
+  "freeze": {
+    "path": ".codex/eval/state/FREEZE.json",
+    "sha256": "3e593c72bcba9e98c5808ee02e0e010b48a1dcadb0cda0a4e42a56594bc99989",
+    "status": "needs_remediation",
+    "finding_id": "W6R5-EVAL-063-R-MD-003"
+  },
+  "close_checkpoint": {
+    "scope": ".codex/eval/** only",
+    "bundle_created": false,
+    "tag_created": false,
+    "source_or_measurement_files_modified_during_close": false,
+    "commit_sha_recorded_post_commit_in_current": false
+  },
+  "next_action": "The program_supervisor and user review the two unaccepted proposals under docs/enhancements/pico-v3-evaluation-v2/ and decide whether and how to establish a new plan revision.",
+  "constraints": {
+    "proposal_documents_read_during_close": false,
+    "proposal_documents_modified_or_staged": false,
+    "product_or_measurement_remediation_authorized": false,
+    "provider_http_authorized": false,
+    "new_wave_authorized": false
+  },
+  "stop": {
+    "after_conclusion_report": true,
+    "do_not_enter_w7": true
+  }
+}

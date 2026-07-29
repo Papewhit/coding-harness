@@ -1,0 +1,226 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-059-A-R1",
+  "instance_id": "W6R3-TOOL-059-A-R1-01",
+  "revision": 1,
+  "wave": "W6R3",
+  "remediation_round": 1,
+  "finding_ids": [
+    "AUDIT-059-A-P1-001"
+  ],
+  "role": "adapter_implementer/anthropic-complete-stateless-transcript",
+  "status": "complete",
+  "source_thread_id": "019f91dc-1940-7b31-9e6f-086f4941922b",
+  "candidate_sha": "ed287daaf9e88d59b5a027e759032e022a138d27",
+  "base_sha": "ed287daaf9e88d59b5a027e759032e022a138d27",
+  "candidate_tree": "72f68c764b26830fb8c86f6bd11f95c3b452b9c4",
+  "starting_ref": "codex/w6r3-remediation-r1-candidate",
+  "starting_ref_verified_target": "ed287daaf9e88d59b5a027e759032e022a138d27",
+  "branch": "codex/w6r3-tool-059-a-r1",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/f8c2/pico",
+  "source_head_sha": "8de52e054b6824792010eee019dec01ac853c0a2",
+  "source_head_tree": "c2dbf13b4dae6cd2b292541ec9e1d1fe71dc6cdf",
+  "source_head_semantics": "Red baseline plus Anthropic product fix before the metadata-only commit that adds this handoff; the handoff commit cannot self-record its own SHA.",
+  "dependency_commits": [],
+  "dependency_verification": {
+    "manifest_dependency_count": 0,
+    "merge_performed": false,
+    "rebase_performed": false,
+    "integration_commits_absorbed": false
+  },
+  "formal_state_verification": {
+    "tracked_clean_before_branch": true,
+    "candidate_head_verified": true,
+    "candidate_tree_verified": true,
+    "candidate_ref_verified": true,
+    "audit_handoff_sha256": "659d898a96fab1514b6a78027f886fcefedcff859a2e29f22dc87e293ec06d5b",
+    "formal_STATUS_sha256": "df244ea8e5237702d09ba2f0f9eb5e88ea3c6f29e95573afd33ae243d6cac846",
+    "formal_FREEZE_sha256": "09a6d2143f279ec64bbcacfe48bd9b27f0aac1a377679987dcd6ab411fd67219",
+    "formal_status_written": false,
+    "formal_freeze_written": false
+  },
+  "prompt_bindings": {
+    "ticket_file_sha256": "a05a7ba407bdc9882b6d1be034346ba4920124b7657d76fef9d3cc5f4d52e24b",
+    "thread_prompt_template_sha256": "50d138081ddc45d4ad5a62fa23fd7a370bbf8ef977890de7e8151c37488b6fc9",
+    "instance_manifest_sha256": "0e0392a465d22b693b3be673ec4bb416ebac975949b0b2883544f1430a454355",
+    "instance_manifest_hash_basis": "canonical JSON, UTF-8, sorted keys, compact separators, ensure_ascii=false"
+  },
+  "own_commits": [
+    {
+      "sha": "454a7550e16fc9c17f62837f8bb19b404364be6d",
+      "purpose": "independent red baseline",
+      "stable_patch_id": "28bbc816a74a728b4058d2103c9c44b1419600e5"
+    },
+    {
+      "sha": "8de52e054b6824792010eee019dec01ac853c0a2",
+      "purpose": "Anthropic complete stateless transcript fix",
+      "stable_patch_id": "130ba115e87316119b24dafde071682e9635399f"
+    }
+  ],
+  "red_baseline": {
+    "commit": "454a7550e16fc9c17f62837f8bb19b404364be6d",
+    "test": "tests/test_anthropic_stateless_transcript.py::test_three_tool_rounds_replay_complete_anthropic_stateless_transcript",
+    "command": "PYTHONDONTWRITEBYTECODE=1 uv run pytest -p no:cacheprovider tests/test_anthropic_stateless_transcript.py::test_three_tool_rounds_replay_complete_anthropic_stateless_transcript -q",
+    "result": "expected_failure_reproduced_twice",
+    "runs": [
+      "1 failed in 2.05s",
+      "1 failed in 1.47s"
+    ],
+    "assertion": "Every follow-up Messages request equals the original Runtime prompt followed by all prior assistant block lists and exactly one matching ordered tool_result block per provider call ID.",
+    "failure_reason": "On the third wire request the v1 continuation replayed only assistant round 2 and its result; assistant round 1 and toolu-read-1's result were absent. The assertion failed before the fourth request because context loss was already proven.",
+    "source_modified_before_red_commit": false,
+    "xfail_or_skip_used": false
+  },
+  "fix_commit": "8de52e054b6824792010eee019dec01ac853c0a2",
+  "files_changed": [
+    "pico/providers/anthropic_messages.py",
+    "tests/test_anthropic_stateless_transcript.py",
+    ".codex/eval/handoffs/TOOL-059-A-R1.json"
+  ],
+  "git_blob_bindings": {
+    "pico/providers/anthropic_messages.py": {
+      "oid_at_fix_commit": "2dcdac9ff3cedda57177ba21ed1ebf7a991039d8",
+      "windows_worktree_sha256": "902ea86ab387252087afd36140e25d81e0760ad15925f85bddf2805d0ca88ecb"
+    },
+    "tests/test_anthropic_stateless_transcript.py": {
+      "oid_at_fix_commit": "886ceb973a574666ce6f08eca000396c3848ddcb",
+      "windows_worktree_sha256": "2f9bbfb27203071affa20bb532bdedadea2e445b507bac1d3994e1076e3dd3af"
+    }
+  },
+  "implementation": {
+    "continuation": {
+      "version": "pico-anthropic-messages-continuation-v2",
+      "json_safe_pico_contract_only": true,
+      "persisted_sdk_objects": false,
+      "ordered_contents": [
+        "original Runtime prompt as the first user message",
+        "every complete assistant content block list, including thinking, redacted and unknown JSON-safe blocks",
+        "one immediately following user tool_result block list ordered by the matching provider tool_use IDs"
+      ],
+      "request_path_behavior": "The adapter combines the exact wire messages with the newly parsed assistant blocks after each transport response, then replays the accumulated transcript on the next stateless request.",
+      "prompt_duplicate_count": 0,
+      "call_duplicate_count": 0,
+      "result_duplicate_count": 0
+    },
+    "validation": {
+      "original_prompt_identity": "required",
+      "message_roles": "strictly alternating user/assistant",
+      "provider_call_ids": "non-empty and globally unique",
+      "tool_results": "exact ordered one-to-one closure for the immediately preceding assistant tool_use batch",
+      "legacy_v1": "fails closed before transport because it cannot reconstruct prior rounds",
+      "incomplete_v2_request_continuation": "fails closed before transport",
+      "parser_only_fragment": "parse_response retains a JSON-safe assistant_content fragment internally; production request upgrades it to a complete transcript and rejects persisted fragments before transport"
+    },
+    "transport_and_sdk_boundary": {
+      "provider_storage_enabled": false,
+      "server_side_state_required": false,
+      "sdk_tool_runner_used": false,
+      "sdk_agent_runner_used": false,
+      "sdk_managed_pico_tool_execution_used": false,
+      "provider_sdk_objects_crossed_adapter_boundary": false
+    }
+  },
+  "tests": [
+    {
+      "environment": "Windows / CPython 3.12.13",
+      "command": "PYTHONDONTWRITEBYTECODE=1 uv run pytest -p no:cacheprovider tests/test_anthropic_stateless_transcript.py tests/test_anthropic_messages_tools.py -q",
+      "result": "passed",
+      "details": "19 passed in 1.67s; deterministic queue/stub transports only."
+    },
+    {
+      "environment": "Windows / CPython 3.12.13",
+      "command": "PYTHONDONTWRITEBYTECODE=1 uv run pytest -p no:cacheprovider tests/test_anthropic_stateless_transcript.py tests/test_anthropic_messages_tools.py tests/test_native_stateless_transcript.py tests/test_openai_responses_tools.py tests/test_native_provider_evaluator.py tests/test_native_provider_live.py tests/test_native_tool_repetition.py tests/test_native_safety_chain_evidence.py -q",
+      "result": "passed",
+      "details": "78 passed in 98.04s; dual-dialect, evaluator, live-harness fake/stub, repetition and native safety-chain adjacency; provider HTTP attempts=0."
+    },
+    {
+      "environment": "Windows / CPython 3.12.13",
+      "command": "PYTHONDONTWRITEBYTECODE=1 uv run pytest -p no:cacheprovider tests/test_architecture_boundaries.py tests/test_permissions_acceptance.py -q",
+      "result": "passed",
+      "details": "9 passed in 12.93s."
+    },
+    {
+      "environment": "Windows / CPython 3.12.13 best-effort lane",
+      "command": "PYTHONDONTWRITEBYTECODE=1 uv run pytest -p no:cacheprovider tests/test_architecture_boundaries.py tests/test_safety_invariants.py tests/test_tool_policy_acceptance.py tests/test_permissions_acceptance.py -q",
+      "result": "platform_failures",
+      "details": "17 passed, 10 failed in 39.84s. The unrelated pre-existing Windows conditions were unavailable symlink privilege, Path.home failure in tests that clear all environment variables, POSIX shell quoting/commands, and slash rendering differences. No failure referenced either ticket-owned file."
+    },
+    {
+      "environment": "Windows / CPython 3.12.13",
+      "command": "uv run ruff check --no-cache .",
+      "result": "passed",
+      "details": "All checks passed."
+    },
+    {
+      "environment": "Windows / CPython 3.12.13",
+      "command": "uv run python .codex/eval/validate_plan.py",
+      "result": "passed",
+      "details": "VALID: 94 ticket templates, 16 waves."
+    },
+    {
+      "environment": "Windows",
+      "command": "git diff --check",
+      "result": "passed"
+    }
+  ],
+  "hashes": {
+    "audit_059_a_handoff": "659d898a96fab1514b6a78027f886fcefedcff859a2e29f22dc87e293ec06d5b",
+    "formal_status": "df244ea8e5237702d09ba2f0f9eb5e88ea3c6f29e95573afd33ae243d6cac846",
+    "formal_freeze": "09a6d2143f279ec64bbcacfe48bd9b27f0aac1a377679987dcd6ab411fd67219",
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "sdk_dependency_lock": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+    "native_deterministic_gate": "2fc1ebbe4d64c5be80e7fe063584915f12aabf3a8f8c08796d2cf009e94849a5",
+    "provider_selection_w6r2": "e94483ef222373139b9f07173632d579416056248431deaafcf0bcaf0c7a1278"
+  },
+  "acceptance_checklist": {
+    "independent_three_round_red_baseline_committed_before_source_fix": true,
+    "red_test_green_after_fix": true,
+    "legal_multiround_user_assistant_ordering": true,
+    "original_runtime_prompt_preserved_once": true,
+    "all_assistant_blocks_preserved": true,
+    "all_provider_call_ids_preserved_once": true,
+    "all_matching_tool_results_preserved_once": true,
+    "continuation_json_safe": true,
+    "provider_storage_disabled": true,
+    "sdk_managed_execution_absent": true,
+    "legacy_continuation_fails_closed_before_transport": true,
+    "allowed_write_paths_only": true,
+    "formal_status_or_freeze_written": false
+  },
+  "native_protocol_observations": {
+    "provider_http_attempts": 0,
+    "live_provider_http_sent": false,
+    "human_smoke_run": false,
+    "formal_effectiveness_run": false,
+    "profile_reselection_run": false,
+    "w6r4_started": false,
+    "w7_started": false,
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0,
+    "sdk_tool_runner_used": false,
+    "sdk_agent_runner_used": false,
+    "sdk_managed_pico_tool_execution_used": false
+  },
+  "defects": [],
+  "risks": [
+    "Persisted Anthropic continuation v1 and incomplete v2 fragments cannot be resumed; callers must restart the current model turn. This is intentional fail-closed behavior because those payloads cannot reconstruct the complete stateless transcript.",
+    "The full protected suite remains non-green in the Windows best-effort lane for unrelated platform assumptions. Canonical Ubuntu WSL2 validation remains the Wave Integrator/Gate responsibility and was not started by this ticket.",
+    "Parser-only parse_response callers receive a JSON-safe assistant-content fragment; the production request path upgrades parser output to a complete v2 transcript and rejects any fragment supplied as persisted request continuation before transport."
+  ],
+  "ownership_change_request": null,
+  "provider_http_attempts": 0,
+  "formal_effectiveness_run": false,
+  "human_smoke_run": false,
+  "profile_reselection_run": false,
+  "w6r4_started": false,
+  "w7_started": false,
+  "formal_status_written": false,
+  "formal_freeze_written": false,
+  "ready_for_integration": true,
+  "ready_for_audit_return": true,
+  "stop_after_handoff": true
+}

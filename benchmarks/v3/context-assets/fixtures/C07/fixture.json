@@ -1,0 +1,17 @@
+{
+  "schema_version": "pico-context-asset-fixture-v1",
+  "case_id": "C07",
+  "budget": {"kind": "normal", "max_utf8_bytes": 8192},
+  "assets": {
+    "compact": {
+      "activation_state": "active",
+      "compaction_id": "compact-qz-3375",
+      "trigger": "manual",
+      "covered_turn_ids": ["turn-17", "turn-18"],
+      "source_hash": "sha256:9ca42e1f7b09",
+      "pre_tokens": 840,
+      "post_tokens": 210,
+      "summary": "Compaction QZ-3375 preserved the deployment decision and pending verification."
+    }
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "schema_version": "pico-eval-artifact-index-v1",
+  "wave": "W6",
+  "wave_base_sha": "365732ded80bd5af2fdb60bb4d52c7bae6792d3e",
+  "run_snapshot_sha": "dd8a677782f90c749a422ee066daa1afcb36c516",
+  "shards": {
+    "TOOL-050-QO-R": {
+      "profile": "dashscope-o",
+      "root": "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/dd8a677782f90c749a422ee066daa1afcb36c516/TOOL-050-QO-R",
+      "manifest_sha256": "83e6c784cfcfe18354238f8238adf01f75ec57cb9ec0eff6c4255847d3d87bbd",
+      "rows_sha256": "641cfe9550e79441b064df1829debeb69c257e343a616d687fa75d8e19f511cb",
+      "evidence_sha256": "96ec1d2c696b3738d3ef7f1289eb61745b54acc536ba992cf2d6af488d6ca51a",
+      "handoff_sha256": "af2f24021009fa1b9ea9a294d6226ca3dba3316f595f9542d0ca45b554a4168e",
+      "row_count": 24,
+      "http_attempt_count": 0,
+      "outcome": "blocked_pre_http"
+    },
+    "TOOL-050-QA-R": {
+      "profile": "dashscope-a",
+      "root": "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/dd8a677782f90c749a422ee066daa1afcb36c516/TOOL-050-QA-R",
+      "manifest_sha256": "c4cde64ac86c344f3f4589507b02e2c96f9b044a6ffad3013759cb2df73641d1",
+      "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidence_sha256": "a945adb197fe0e01b4d636d00218300951176d0defa8d2d82999a83924a07937",
+      "handoff_sha256": "66cfb9a8a069075e313894cea600ba98f931d3a74ecd1d05c9d8d71afb6f75e7",
+      "row_count": 0,
+      "parser_stage_exclusion_count": 1,
+      "http_attempt_count": 0,
+      "outcome": "excluded_pre_http"
+    },
+    "TOOL-050-DA-R": {
+      "profile": "deepseek",
+      "root": "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/dd8a677782f90c749a422ee066daa1afcb36c516/TOOL-050-DA-R",
+      "manifest_sha256": "9c806284b39051b2b7adfd30519798741a58c519434926961443f64cdee78ddb",
+      "rows_sha256": "b5f389e0f2e253094475202b4a581a244aca00e09d52f0ef7107af665d8ef977",
+      "evidence_sha256": "60cf5a652e61f9694be9b2b85b01945440d0b9a479579e791524350a51bf4aea",
+      "handoff_sha256": "1f4e84cca8073d9708c968610e1d29c61f91d36710da88c1591706fd9428ed17",
+      "row_count": 24,
+      "http_attempt_count": 0,
+      "outcome": "blocked_pre_http"
+    }
+  },
+  "aggregate": {
+    "selection": {
+      "path": "benchmarks/v3/native-provider/selection.json",
+      "sha256": "e51ec2b3fd45c6f22f87e1db619c1c2cfc3fdc2304821ca92540fd24479f71df",
+      "hash_basis": "git_blob_bytes"
+    },
+    "summary_json": {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/summary.json",
+      "sha256": "f291706780d48f4d9c2a1ee113992f5bf7bcbe981f2ee6b9642b6203960e0368"
+    },
+    "summary_markdown": {
+      "path": "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/summary.md",
+      "sha256": "3d9b7d7a9d3778b9beacd8208061fe6949ee40606d3df7a5879ae5aa33188186"
+    },
+    "handoff": {
+      "path": ".codex/eval/handoffs/TOOL-050-S.json",
+      "sha256": "e263d3d1a2e2efb1871a7f7af504b1a56ae7ab3bae30d86ac6f91ffd7a8da205"
+    },
+    "status_proposal": {
+      "path": ".codex/eval/proposals/TOOL-050-S.status.json",
+      "sha256": "58ac1ad0c8ecf19f419c3bb95c8169c155a132b1ae3393f6718d8b923ba102df"
+    },
+    "freeze_proposal": {
+      "path": ".codex/eval/proposals/TOOL-050-S.freeze.json",
+      "sha256": "2d2a272378e3fa10c63ed36c39212fa931d7d8bfb784b3469341fa4fc83e389e"
+    }
+  },
+  "totals": {
+    "configured_profile_count": 3,
+    "eligible_profile_count": 0,
+    "selected_profile": null,
+    "materialized_row_count": 48,
+    "parser_stage_exclusion_count": 1,
+    "http_attempt_count": 0,
+    "provider_observation_count": 0,
+    "protocol_metrics_status": "not_computable"
+  },
+  "credential_pattern_scan": "passed_no_matches",
+  "formal_effectiveness_evaluation_run": false,
+  "auto_dream_pilot_run": false,
+  "local_task_pilot_run": false,
+  "resume_evaluation_run": false,
+  "updated_at": "2026-07-23T11:46:26.2550772+08:00"
+}

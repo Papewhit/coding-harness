@@ -1,0 +1,33 @@
+diff --git a/tinyconfig/config.py b/tinyconfig/config.py
+index 7f9f345..eee3846 100644
+--- a/tinyconfig/config.py
++++ b/tinyconfig/config.py
+@@ -17,9 +17,21 @@ class Settings:
+     database_port: int
+-
++
+-
++
+-def _read_value(values: Mapping[str, str], key: str, default: str) -> str:
+-    return values.get(key, default)
+-
+-
+-def load_settings(values: Mapping[str, str]) -> Settings:
++def _read_value(values: Mapping[str, object], key: str, default: str) -> str:
++    if key in values:
++        return str(values[key])
++    section, _, field = key.partition("_")
++    nested_name = {"APP": "app", "DATABASE": "database"}.get(section)
++    if not nested_name:
++        return default
++    nested = values.get(nested_name, {})
++    if not isinstance(nested, Mapping):
++        raise ConfigError(f"{nested_name} must be a mapping")
++    nested_key = {"DEBUG": "debug", "HOST": "host", "PORT": "port"}.get(field)
++    if nested_key and nested_key in nested:
++        return str(nested[nested_key])
++    return default
++
++
++def load_settings(values: Mapping[str, object]) -> Settings:
+     """Build settings from a mapping such as ``os.environ``.

@@ -1,0 +1,141 @@
+{
+  "schema_version": "pico-eval-ticket-handoff-v1",
+  "ticket_id": "TOOL-020-A",
+  "instance_id": "W3-TOOL-020-A-01",
+  "wave": "W3",
+  "role": "implementer",
+  "status": "complete",
+  "base_sha": "807dc8f348c609bf885f4b65e69cebd781e8f1ba",
+  "head_sha": "4f5f91b0fee2bd711b290835f17a0b2fd633252d",
+  "head_sha_semantics": "Implementation-content head before the metadata-only commit containing this handoff; the containing commit is the final branch HEAD reported to the Wave Integrator.",
+  "branch": "codex/eval-v3-w3-tool-020-a",
+  "worktree": "C:/Users/Papewhit/.codex/worktrees/w3-020a/pico",
+  "dependency_commits": [
+    "4f1a74a67a02f84ad6c4cbe14b318790d2754177",
+    "9fe84c249ccab450504a7928c1ad8a3b2649b175"
+  ],
+  "applied_dependency_commits": [
+    "ed12994ee8ae003cd276c76090cdd1a5f78a5ce9",
+    "8c5d575b32b4e8ffd1e71e206466cd28e9b57562"
+  ],
+  "dependency_handoff_hashes": {
+    "TOOL-010": "300faf3f58f369248291ba72be3aefca9e3444dac9999cf45c5767c4eefbde0d",
+    "TOOL-011": "825e0d3a64abd065e3a9c67a3ce3d1bb9c06d2bbe1b5b00b8b24423cfa3d4dfa",
+    "TOOL-013-S": "0eb6213eab7261daf535b9b30cce5787533c4070195f7a5e6b2c383ab40ee55a",
+    "TOOL-019-D": "22c3072d90b258717ee1b20261b4f22d19c4f049a05d663bb8d40717b3b0ac64"
+  },
+  "own_commits": [
+    "4f5f91b0fee2bd711b290835f17a0b2fd633252d"
+  ],
+  "files_changed": [
+    "pico/providers/anthropic_messages.py",
+    "tests/test_anthropic_messages_tools.py",
+    ".codex/eval/handoffs/TOOL-020-A.json"
+  ],
+  "commands_run": [
+    "SHA-256 verification of four dependency handoffs and frozen inputs; base/dependency history verification",
+    "uv run pytest tests/test_anthropic_messages_tools.py -q",
+    "uv run ruff check pico/providers/anthropic_messages.py tests/test_anthropic_messages_tools.py",
+    "uv sync --extra providers --locked",
+    "locked anthropic==0.117.0 MockTransport validation for auto/none/required/named tool_choice payloads",
+    "locked anthropic==0.117.0 two-turn MockTransport validation for thinking + tool_use + matching tool_result",
+    "uv run pytest tests/test_anthropic_messages_tools.py tests/test_provider_contracts.py tests/test_provider_transport.py -q",
+    "uv run ruff check pico tests",
+    "uv run pytest tests/test_architecture_boundaries.py tests/test_safety_invariants.py -q",
+    "git diff --check and git diff --cached --check",
+    "SHA-256 Git blob bytes for committed implementation outputs"
+  ],
+  "tests": [
+    {
+      "command": "uv run pytest tests/test_anthropic_messages_tools.py -q",
+      "result": "passed",
+      "details": "17 passed; covers system/messages/tools/tool_choice golden payloads, full block parsing, exact batch result pairing and order, private thinking/redacted-thinking/unknown preservation, profile validation, stop reasons, sanitized transport evidence, and SDK-object rejection."
+    },
+    {
+      "command": "uv run pytest tests/test_anthropic_messages_tools.py tests/test_provider_contracts.py tests/test_provider_transport.py -q",
+      "result": "passed",
+      "details": "36 passed across the ticket suite plus provider-neutral contract and locked transport regressions."
+    },
+    {
+      "command": "uv run ruff check pico tests",
+      "result": "passed",
+      "details": "All repository Python source and tests passed lint."
+    },
+    {
+      "command": "locked anthropic==0.117.0 local MockTransport wire validations",
+      "result": "passed",
+      "details": "The raw SDK accepted auto, none, any, and named tool_choice forms with retries disabled; a two-turn thinking/tool_use/tool_result request preserved blocks and provider tool_use_id without real network access."
+    },
+    {
+      "command": "uv run pytest tests/test_architecture_boundaries.py tests/test_safety_invariants.py -q",
+      "result": "failed",
+      "details": "3 passed and 8 failed on unchanged out-of-scope base conditions already recorded by dependencies: runtime.py is 952 lines against a 950-line budget; Windows lacks symlink privilege; tests clearing environment variables cannot resolve Path.home(); and one POSIX shell-quoting assertion fails on Windows. No failure references a TOOL-020-A file."
+    },
+    {
+      "command": "git diff --check and git diff --cached --check",
+      "result": "passed",
+      "details": "No whitespace errors in ticket-owned outputs."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "pico/providers/anthropic_messages.py",
+      "sha256": "ab0622ea2db850633850b259b3d54b83d5bca449e348d86881e971815b667b34",
+      "hash_basis": "git_blob_bytes",
+      "hash_source": "4f5f91b0fee2bd711b290835f17a0b2fd633252d:pico/providers/anthropic_messages.py",
+      "coverage": "Non-streaming Anthropic Messages request compilation, raw JSON response parsing, private lossless continuation, exact provider call/result matching, stop normalization, and sanitized transport evidence."
+    },
+    {
+      "path": "tests/test_anthropic_messages_tools.py",
+      "sha256": "6662660b5f21e519e3bcc6953e7db44911988bc64a751a0d288393cca65cda22",
+      "hash_basis": "git_blob_bytes",
+      "hash_source": "4f5f91b0fee2bd711b290835f17a0b2fd633252d:tests/test_anthropic_messages_tools.py"
+    },
+    {
+      "path": ".codex/eval/handoffs/TOOL-020-A.json",
+      "persistence": "Ticket output generated after the implementation commit so it can record the immutable implementation head SHA."
+    }
+  ],
+  "frozen_hashes": {
+    "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
+    "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
+    "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215",
+    "sdk_dependency_lock": "47864b0004fa1153e66af3d6296e2cb2595559c3f89031eb679c8dcf4e589657",
+    "sdk_profile": null,
+    "provider_selection": null,
+    "native_deterministic_gate": null,
+    "native_resume_gate": null
+  },
+  "native_protocol_observations": {
+    "observation_scope": "Golden/unit tests and locked-SDK local MockTransport validation only; no live provider or formal effectiveness evaluation was issued.",
+    "text_envelope_seen_count": 0,
+    "implicit_sdk_retry_seen": false,
+    "call_id_result_mismatch_count": 0,
+    "unknown_block_loss_count": 0,
+    "safety_chain_bypass_count": 0,
+    "sdk_tool_runner_used": false,
+    "sdk_agent_runner_used": false,
+    "sdk_managed_pico_tool_execution_used": false
+  },
+  "defects": [
+    {
+      "code": "pre_existing_platform_and_architecture_gate_failures",
+      "scope": "unchanged base outside TOOL-020-A ownership",
+      "detail": "The architecture/safety run retains the same 8 immutable-base and Windows-environment failures documented by TOOL-013-S and TOOL-019-D; all ticket-owned and adjacent provider tests pass."
+    }
+  ],
+  "risks": [
+    "Active Runtime wiring remains owned by downstream tickets; this adapter is not connected to the legacy text completion path.",
+    "Assistant blocks, including thinking and future unknown types, intentionally remain in ProviderContinuation private payload; public evidence consumers must continue recording only its count/type/hash contract.",
+    "No live endpoint was contacted in this ticket; locked SDK validation used deterministic local MockTransport only.",
+    "The repository baseline architecture/safety failures remain outside this ticket's allowed write paths."
+  ],
+  "status_proposal": {
+    "ticket_id": "TOOL-020-A",
+    "status": "complete",
+    "reason": "The single Anthropic Messages native adapter compiles requests, parses and privately preserves all blocks, pairs complete tool batches by provider ID, and passes its ticket and adjacent provider suites."
+  },
+  "freeze_proposal": null,
+  "ownership_change_request": null,
+  "ready_for_integration": true
+}

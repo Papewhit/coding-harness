@@ -1,0 +1,121 @@
+{
+  "schema_version": "pico-eval-wave-handoff-v1",
+  "wave": "W4",
+  "wave_base_sha": "005ded3eceaaa13e816ae8073973a50db87772f2",
+  "control_overlay_sha256": "55ec6149ce76bd87d344185d4828fcdf719483572ab1444d46c454d5e5b1429c",
+  "integration_sha": "8fbd4af8832dde1d44ee39cfd70763aedfca4397",
+  "integration_sha_role": "canonical W4 code/state snapshot before the wave-handoff metadata commit",
+  "canonical_tag": {
+    "name": "eval-v3/w4-canonical",
+    "type": "annotated",
+    "object_sha": "f023b78dafb59db32c3b1b7f58030ab1d51c4146",
+    "target_sha": "8fbd4af8832dde1d44ee39cfd70763aedfca4397",
+    "verified": true
+  },
+  "metadata_commit": {
+    "role": "commit adding this handoff after the canonical integration snapshot",
+    "parent_sha": "8fbd4af8832dde1d44ee39cfd70763aedfca4397",
+    "sha_resolution": "git log -1 --format=%H -- .codex/eval/state/W4-wave-handoff.json"
+  },
+  "status_sha256": "c8cf220c9eac2fc023b075c20c61ccd122fb6364ab148a9a1f3c881f98485693",
+  "freeze_sha256": "0e985d4a46479c34f4bf4567191f487e5f3e530671129b6974c86316e03a400f",
+  "freeze_changed": false,
+  "commit_map": {
+    "path": ".codex/eval/state/W4-commit-map.json",
+    "sha256": "3d62039bdc2377e22e7dfe4d79f0eebc1188e3be9e9772b95080681adfa19cd8",
+    "entry_count": 3,
+    "stable_patch_ids_verified": true
+  },
+  "worker_bundle": {
+    "path": "F:/dev/llm/pico-eval-artifacts/wave-bundles/W4-workers.bundle",
+    "sha256": "46b0000eeadd66be2261c20b8cb9d22ae78c336086a1eaf67f1dfa394bc4236c",
+    "size_bytes": 16255358,
+    "ref_count": 3,
+    "verification": "git bundle verify passed; complete history"
+  },
+  "accepted_tickets": [
+    "TOOL-031-S",
+    "TOOL-030-E",
+    "TOOL-032-C"
+  ],
+  "blocked_tickets": [],
+  "ticket_handoffs": {
+    "TOOL-031-S": {
+      "path": ".codex/eval/handoffs/TOOL-031-S.json",
+      "sha256": "2f74b423a92ce989a54e86be60a64f875c350f8ee407862c9dfa475b99801cdc",
+      "branch_head": "03d517db8fdf027376db13be2e577b43b0c7463b",
+      "integration_commit": "6f223413c11941c36f978c6547ba4dd60afd44d6",
+      "outcome": "native session exchange journal, private JSON-safe continuation and profile lock accepted"
+    },
+    "TOOL-030-E": {
+      "path": ".codex/eval/handoffs/TOOL-030-E.json",
+      "sha256": "da88292e505b9c12beff59513a06ca9ddbee181d9e5754a26c78907d211b6970",
+      "branch_head": "3549254bdb99582cb5bb38418ea6d959d51b9a78",
+      "integration_commit": "1f12821bbc8e5dd1242b23807cb0356dcb486fc4",
+      "outcome": "native Engine batch loop, durable lifecycle hooks and one-to-one result bridge accepted"
+    },
+    "TOOL-032-C": {
+      "path": ".codex/eval/handoffs/TOOL-032-C.json",
+      "sha256": "e657ffc685f32ae3df036c4d0a36bc491d2c6577f47aefcaf12090bcb5142843",
+      "branch_head": "26910493a30460016d327c6451f249902eec9221",
+      "integration_commit": "a215f15cd8019ff2d8f0b936745c83bfd0009fe4",
+      "outcome": "structured request context, continuation-aware compaction and protocol-free Runtime prefix accepted"
+    }
+  },
+  "subagent_identity": {
+    "durable_thread_uuid_available": false,
+    "unavailability_reason": "the collaboration interface returned canonical agent paths but no durable thread UUID",
+    "recorded_basis": "agent_path_and_prompt_sha256",
+    "instances": {
+      "TOOL-030-E": {
+        "agent_path": "/root/w4_tool_030_e",
+        "prompt_sha256": "43313eb872e8356e161f4c98faad6574afb8b03f7ad113dcc6c967ba7c7c7b63"
+      },
+      "TOOL-031-S": {
+        "agent_path": "/root/w4_tool_031_s",
+        "prompt_sha256": "775f266b3dd989a3890a6e1c96f72a3e022ea2c2c3e94a1718bc9d43100f23d2"
+      },
+      "TOOL-032-C": {
+        "agent_path": "/root/w4_tool_032_c",
+        "prompt_sha256": "801578312a9c0fe334458ddde4524e7b4a90701c844245207c9d4ebda2c91bd3"
+      }
+    }
+  },
+  "exit_gate": {
+    "status": "accepted",
+    "evidence": [
+      "PLAN validation passed: 63 ticket templates, 11 waves.",
+      "All 3 W4 tickets were accepted in PLAN integration order; active_tickets and blocked_tickets are empty.",
+      "Combined Engine, Session, Context, provider-contract and governance suite passed: 134 tests.",
+      "Ruff passed for pico and tests; Python compileall passed for pico.",
+      "Prescribed ticket groups produced 113 passes and only 4 proven non-W4 failures: 3 known Windows tool-policy differences and the unchanged latent worker_manager.py budget failure.",
+      "Runtime.py was reduced from 952 to 903 lines against the unchanged 950-line budget; no architecture test was modified.",
+      "All W4-owned budgeted modules are within their unchanged budgets: engine.py 465/470, context_manager.py 420/420, compact.py 154/180 and context_usage.py 69/120.",
+      "The architecture/safety/tool-policy/permissions suite remained 16 passed and 11 failed: the 10 Windows failures are unchanged and the architecture first failure now exposes an unchanged W3 worker_manager.py blob after runtime.py became compliant.",
+      "Core has no OpenAI/Anthropic SDK imports; no SDK Tool/Agent Runner was introduced.",
+      "Changed production request-composition files contain no <tool>/<final> reference; formal online and Resume evaluation were not run.",
+      "All three worker-to-canonical ticket patch IDs and handoff hashes were independently verified.",
+      "Worker bundle contains 3 refs and complete history; git bundle verify passed.",
+      "Annotated tag eval-v3/w4-canonical resolves to the canonical W4 snapshot.",
+      "No W5 ticket, branch, worktree or evaluation was started."
+    ]
+  },
+  "risks": [
+    "pico/core/worker_manager.py is already 232 lines against its 220-line architecture budget. Its W3 canonical, W4 base and W4 canonical blobs are identical (a0b07d1b8cca2b7918b830979c962296ec8c1a1f); it was previously masked by runtime.py being the first failing budget assertion.",
+    "Final native Runtime/Adapter wiring and legacy parser removal remain W5 work; W4 only exposes and validates the disjoint Engine, Session and structured Context lanes.",
+    "Crash replay and uncertain side-effect policy remain deferred to the later Resume wave; W4 covers same-process private continuation only.",
+    "Ten Windows symlink/home/path/shell-command failures remain unchanged from the W3 baseline.",
+    "native_eval_ready and native_resume_ready remain pending; formal online and Resume evaluation remain prohibited by their later gates."
+  ],
+  "cleanup_candidates": [
+    {"branch": "codex/eval-v3-w4-tool-030-e", "worktree": "C:/Users/Papewhit/.codex/worktrees/w4-030e/pico"},
+    {"branch": "codex/eval-v3-w4-tool-031-s", "worktree": "C:/Users/Papewhit/.codex/worktrees/w4-031s/pico"},
+    {"branch": "codex/eval-v3-w4-tool-032-c", "worktree": "C:/Users/Papewhit/.codex/worktrees/w4-032c/pico"}
+  ],
+  "cleanup_action_taken": false,
+  "user_decisions_required": [],
+  "next_wave": "W5",
+  "next_wave_ready_tickets": ["TOOL-040-I"],
+  "next_wave_started": false,
+  "completed_at": "2026-07-22T10:18:58.1370838+08:00"
+}

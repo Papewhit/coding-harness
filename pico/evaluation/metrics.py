@@ -10,8 +10,13 @@ from typing import Any
 
 from ..config import resolve_provider_config
 from .evaluator import run_fixed_benchmark
-from ..testing import ScriptedModelClient
-from ..providers import AnthropicCompatibleModelClient, OpenAICompatibleModelClient
+from ..providers.contracts import ModelRequest, ModelResponse
+from ..testing import (
+    ScriptedNativeModelClient,
+    native_final_response,
+    native_tool_call_response,
+)
+from ..providers import build_native_model_client, native_provider_profile
 from ..core.runtime import Pico, SessionStore
 from ..core.workspace import WorkspaceContext
 
@@ -21,6 +26,27 @@ DEFAULT_CONTEXT_ABLATION_V2_PATH = Path("artifacts/context-ablation-v2.json")
 DEFAULT_MEMORY_ABLATION_V2_PATH = Path("artifacts/memory-ablation-v2.json")
 DEFAULT_RECOVERY_ABLATION_V2_PATH = Path("artifacts/recovery-ablation-v2.json")
 DEFAULT_CORE_REPORT_PATH = Path("docs/metrics/pico-benchmark-core-report.md")
+
+
+def _lock_native_profile(agent: Pico, identity: dict[str, Any] | None = None) -> Pico:
+    identity = dict(
+        identity
+        or {
+            "profile_id": "scripted-native:metrics",
+            "profile": "scripted",
+            "model": "scripted-model",
+            "wire_dialect": "scripted-native",
+            "adapter_mode": "scripted",
+            "sdk_package": "none",
+            "sdk_version": "0",
+            "sdk_max_retries": 0,
+            "provider_attempts": 1,
+        }
+    )
+    identity["tool_schema"] = agent.tool_signature()
+    agent.session["provider_profile"] = identity
+    agent.session_path = agent.session_store.save(agent.session)
+    return agent
 
 
 def _safe_mean(values: list[float]) -> float:
@@ -74,10 +100,15 @@ def aggregate_benchmark_artifact(path: str | Path) -> dict[str, Any]:
 
 
 def _infer_run_duration_ms(events: list[dict[str, Any]]) -> float:
-    finished = next((event for event in reversed(events) if event.get("event") == "run_finished"), None)
+    finished = next(
+        (event for event in reversed(events) if event.get("event") == "run_finished"),
+        None,
+    )
     if finished and finished.get("run_duration_ms") is not None:
         return float(finished["run_duration_ms"])
-    started = next((event for event in events if event.get("event") == "run_started"), None)
+    started = next(
+        (event for event in events if event.get("event") == "run_started"), None
+    )
     if not started or not finished:
         return 0.0
     start_dt = _parse_iso8601(started.get("created_at"))
@@ -106,10 +137,17 @@ def aggregate_run_artifacts(runs_root: str | Path) -> dict[str, Any]:
             reports.append(json.loads(report_path.read_text(encoding="utf-8")))
         events = []
         if trace_path.exists():
-            events = [json.loads(line) for line in trace_path.read_text(encoding="utf-8").splitlines() if line.strip()]
+            events = [
+                json.loads(line)
+                for line in trace_path.read_text(encoding="utf-8").splitlines()
+                if line.strip()
+            ]
         run_durations.append(_infer_run_duration_ms(events))
         for event in events:
-            if event.get("event") == "prompt_built" and event.get("duration_ms") is not None:
+            if (
+                event.get("event") == "prompt_built"
+                and event.get("duration_ms") is not None
+            ):
                 prompt_durations.append(float(event["duration_ms"]))
             if event.get("event") != "tool_executed":
                 continue
@@ -118,19 +156,35 @@ def aggregate_run_artifacts(runs_root: str | Path) -> dict[str, Any]:
                 tool_name_counts[tool_name] = tool_name_counts.get(tool_name, 0) + 1
             tool_status = str(event.get("tool_status", "")).strip()
             if tool_status:
-                tool_status_counts[tool_status] = tool_status_counts.get(tool_status, 0) + 1
+                tool_status_counts[tool_status] = (
+                    tool_status_counts.get(tool_status, 0) + 1
+                )
             security_event = str(event.get("security_event_type", "")).strip()
             if security_event:
-                security_event_counts[security_event] = security_event_counts.get(security_event, 0) + 1
+                security_event_counts[security_event] = (
+                    security_event_counts.get(security_event, 0) + 1
+                )
             if event.get("duration_ms") is not None:
                 tool_durations.append(float(event["duration_ms"]))
 
     tool_steps = [int(report.get("tool_steps", 0)) for report in reports]
     attempts = [int(report.get("attempts", 0)) for report in reports]
-    prompt_chars = [int((report.get("prompt_metadata") or {}).get("prompt_chars", 0)) for report in reports]
-    cached_tokens = [int((report.get("prompt_metadata") or {}).get("cached_tokens", 0) or 0) for report in reports]
-    cache_hits = [bool((report.get("prompt_metadata") or {}).get("cache_hit")) for report in reports]
-    input_tokens = [int((report.get("prompt_metadata") or {}).get("input_tokens", 0) or 0) for report in reports]
+    prompt_chars = [
+        int((report.get("prompt_metadata") or {}).get("prompt_chars", 0))
+        for report in reports
+    ]
+    cached_tokens = [
+        int((report.get("prompt_metadata") or {}).get("cached_tokens", 0) or 0)
+        for report in reports
+    ]
+    cache_hits = [
+        bool((report.get("prompt_metadata") or {}).get("cache_hit"))
+        for report in reports
+    ]
+    input_tokens = [
+        int((report.get("prompt_metadata") or {}).get("input_tokens", 0) or 0)
+        for report in reports
+    ]
     prefix_reused = [
         not bool((report.get("prompt_metadata") or {}).get("prefix_changed"))
         for report in reports
@@ -146,10 +200,14 @@ def aggregate_run_artifacts(runs_root: str | Path) -> dict[str, Any]:
         "avg_tool_steps": _safe_mean(tool_steps),
         "avg_attempts": _safe_mean(attempts),
         "avg_prompt_chars": _safe_mean(prompt_chars),
-        "cache_hit_rate": _safe_ratio(sum(1 for hit in cache_hits if hit), len(cache_hits)),
+        "cache_hit_rate": _safe_ratio(
+            sum(1 for hit in cache_hits if hit), len(cache_hits)
+        ),
         "cached_token_ratio": _safe_ratio(sum(cached_tokens), sum(input_tokens)),
         "avg_cached_tokens": _safe_mean(cached_tokens),
-        "prefix_reuse_rate": _safe_ratio(sum(1 for reused in prefix_reused if reused), len(prefix_reused)),
+        "prefix_reuse_rate": _safe_ratio(
+            sum(1 for reused in prefix_reused if reused), len(prefix_reused)
+        ),
         "tool_status_counts": tool_status_counts,
         "tool_name_counts": tool_name_counts,
         "security_event_counts": security_event_counts,
@@ -161,7 +219,9 @@ def aggregate_run_artifacts(runs_root: str | Path) -> dict[str, Any]:
 
 
 @contextmanager
-def _temporary_feature_flags(agent: Pico, updates: dict[str, bool]) -> Generator[None, None, None]:
+def _temporary_feature_flags(
+    agent: Pico, updates: dict[str, bool]
+) -> Generator[None, None, None]:
     previous = dict(getattr(agent, "feature_flags", {}))
     merged = dict(previous)
     merged.update(updates)
@@ -184,11 +244,19 @@ def measure_feature_ablation_metrics(agent: Pico, user_message: str) -> dict[str
             prompt, metadata = agent._build_prompt_and_metadata(user_message)
         results[name] = {
             "prompt_chars": int(metadata.get("prompt_chars", 0)),
-            "memory_chars": int(metadata.get("sections", {}).get("memory", {}).get("rendered_chars", 0)),
-            "history_chars": int(metadata.get("sections", {}).get("history", {}).get("rendered_chars", 0)),
-            "relevant_selected_count": int(metadata.get("relevant_memory", {}).get("selected_count", 0)),
+            "memory_chars": int(
+                metadata.get("sections", {}).get("memory", {}).get("rendered_chars", 0)
+            ),
+            "history_chars": int(
+                metadata.get("sections", {}).get("history", {}).get("rendered_chars", 0)
+            ),
+            "relevant_selected_count": int(
+                metadata.get("relevant_memory", {}).get("selected_count", 0)
+            ),
             "budget_reduction_count": len(metadata.get("budget_reductions", [])),
-            "current_request_preserved": prompt.endswith(f"Current user request:\n{user_message}"),
+            "current_request_preserved": prompt.endswith(
+                f"Current user request:\n{user_message}"
+            ),
         }
     return results
 
@@ -200,7 +268,7 @@ def build_stress_agent_metrics() -> dict[str, Any]:
         workspace = WorkspaceContext.build(workspace_root)
         store = SessionStore(workspace_root / ".pico" / "sessions")
         agent = Pico(
-            model_client=ScriptedModelClient([]),
+            model_client=ScriptedNativeModelClient([]),
             workspace=workspace,
             session_store=store,
             approval_policy="auto",
@@ -221,51 +289,68 @@ def build_stress_agent_metrics() -> dict[str, Any]:
         return measure_feature_ablation_metrics(agent, "recall")
 
 
-class _MemoryExperimentModelClient(ScriptedModelClient):
+class _MemoryExperimentModelClient:
     def __init__(self, expected_fact: str, filename: str):
-        super().__init__([])
         self.expected_fact = str(expected_fact).strip().lower()
         self.filename = str(filename).strip()
         self.phase = "bootstrap_tool"
         self.followup_reads = 0
+        self.prompts: list[str] = []
+        self.requests: list[ModelRequest] = []
 
-    def complete(self, prompt: str, max_new_tokens: int, **kwargs: Any) -> str:
-        del max_new_tokens, kwargs
+    def request(self, request: ModelRequest) -> ModelResponse:
+        self.requests.append(request)
+        prompt = request.prompt
         self.prompts.append(prompt)
-        self.last_completion_metadata = {}
         if self.phase == "bootstrap_tool":
             self.phase = "bootstrap_final"
-            return f'<tool>{{"name":"read_file","args":{{"path":"{self.filename}","start":1,"end":20}}}}</tool>'
+            return native_tool_call_response(
+                "memory-bootstrap-read",
+                "read_file",
+                {"path": self.filename, "start": 1, "end": 20},
+            )
         if self.phase == "bootstrap_final":
             self.phase = "question"
-            return "<final>Done.</final>"
+            return native_final_response("Done.")
         if self.phase == "question":
             prompt_lower = prompt.lower()
             memory_view = ""
             if "memory:" in prompt_lower and "\n\nrelevant memory:" in prompt_lower:
-                memory_view = prompt_lower.split("memory:", 1)[1].split("\n\nrelevant memory:", 1)[0]
+                memory_view = prompt_lower.split("memory:", 1)[1].split(
+                    "\n\nrelevant memory:", 1
+                )[0]
             relevant_view = ""
             if "relevant memory:" in prompt_lower and "\n\ntranscript:" in prompt_lower:
-                relevant_view = prompt_lower.split("relevant memory:", 1)[1].split("\n\ntranscript:", 1)[0]
+                relevant_view = prompt_lower.split("relevant memory:", 1)[1].split(
+                    "\n\ntranscript:", 1
+                )[0]
             if self.expected_fact in memory_view or self.expected_fact in relevant_view:
-                return f"<final>{self.expected_fact.capitalize()}.</final>"
+                return native_final_response(f"{self.expected_fact.capitalize()}.")
             self.phase = "question_after_read"
             self.followup_reads += 1
-            return f'<tool>{{"name":"read_file","args":{{"path":"{self.filename}","start":1,"end":20}}}}</tool>'
+            return native_tool_call_response(
+                "memory-followup-read",
+                "read_file",
+                {"path": self.filename, "start": 1, "end": 20},
+            )
         if self.phase == "question_after_read":
             self.phase = "done"
-            return f"<final>{self.expected_fact.capitalize()}.</final>"
-        return f"<final>{self.expected_fact.capitalize()}.</final>"
+            return native_final_response(f"{self.expected_fact.capitalize()}.")
+        return native_final_response(f"{self.expected_fact.capitalize()}.")
 
 
-def _build_memory_experiment_agent(workspace_root: str | Path, expected_fact: str, filename: str) -> Pico:
+def _build_memory_experiment_agent(
+    workspace_root: str | Path, expected_fact: str, filename: str
+) -> Pico:
     workspace = WorkspaceContext.build(workspace_root)
     store = SessionStore(workspace_root / ".pico" / "sessions")
-    return Pico(
-        model_client=_MemoryExperimentModelClient(expected_fact, filename),
-        workspace=workspace,
-        session_store=store,
-        approval_policy="auto",
+    return _lock_native_profile(
+        Pico(
+            model_client=_MemoryExperimentModelClient(expected_fact, filename),
+            workspace=workspace,
+            session_store=store,
+            approval_policy="auto",
+        )
     )
 
 
@@ -290,8 +375,12 @@ def _run_memory_variant(mode: str) -> dict[str, Any]:
     with tempfile.TemporaryDirectory(prefix="pico-memory-experiment-") as temp_dir:
         workspace_root = Path(temp_dir)
         (workspace_root / "README.md").write_text("demo\n", encoding="utf-8")
-        (workspace_root / "facts.txt").write_text("deploy key is red\n", encoding="utf-8")
-        agent = _build_memory_experiment_agent(workspace_root, "deploy key is red", "facts.txt")
+        (workspace_root / "facts.txt").write_text(
+            "deploy key is red\n", encoding="utf-8"
+        )
+        agent = _build_memory_experiment_agent(
+            workspace_root, "deploy key is red", "facts.txt"
+        )
         assert agent.ask("Read facts.txt and remember the key fact.") == "Done."
 
         if mode == "memory_off":
@@ -327,24 +416,86 @@ def run_memory_dependency_experiment(repetitions: int = 3) -> dict[str, Any]:
             "repeated_reads": sum(row["repeated_reads"] for row in rows),
             "avg_tool_steps": _safe_mean(row["tool_steps"] for row in rows),
             "avg_attempts": _safe_mean(row["attempts"] for row in rows),
-            "correct_rate": _safe_ratio(sum(1 for row in rows if row["correct"]), len(rows)),
+            "correct_rate": _safe_ratio(
+                sum(1 for row in rows if row["correct"]), len(rows)
+            ),
         }
     return results
 
 
 MEMORY_EXPERIMENT_TASKS = [
-    {"id": "fact_color", "category": "fact_lookup", "filename": "facts.txt", "fact": "deploy key is red"},
-    {"id": "fact_api", "category": "fact_lookup", "filename": "settings.txt", "fact": "api base path is /v1/internal"},
-    {"id": "fact_budget", "category": "fact_lookup", "filename": "limits.txt", "fact": "default step budget is 6"},
-    {"id": "fact_timeout", "category": "fact_lookup", "filename": "runtime.txt", "fact": "timeout ceiling is 120 seconds"},
-    {"id": "edit_intro", "category": "edit_dependency", "filename": "README.md", "fact": "first bullet is the locked intro line"},
-    {"id": "edit_token", "category": "edit_dependency", "filename": "sample.txt", "fact": "second token is placeholder"},
-    {"id": "edit_field", "category": "edit_dependency", "filename": "config.txt", "fact": "fixed field name is benchmark_schema"},
-    {"id": "edit_line", "category": "edit_dependency", "filename": "notes.txt", "fact": "locked marker is on line three"},
-    {"id": "history_file", "category": "history_reference", "filename": "history.txt", "fact": "deploy fact came from facts.txt"},
-    {"id": "history_line", "category": "history_reference", "filename": "history.txt", "fact": "benchmark note came from line two"},
-    {"id": "history_token", "category": "history_reference", "filename": "history.txt", "fact": "placeholder token was beta"},
-    {"id": "history_tool", "category": "history_reference", "filename": "history.txt", "fact": "inspection tool was read_file"},
+    {
+        "id": "fact_color",
+        "category": "fact_lookup",
+        "filename": "facts.txt",
+        "fact": "deploy key is red",
+    },
+    {
+        "id": "fact_api",
+        "category": "fact_lookup",
+        "filename": "settings.txt",
+        "fact": "api base path is /v1/internal",
+    },
+    {
+        "id": "fact_budget",
+        "category": "fact_lookup",
+        "filename": "limits.txt",
+        "fact": "default step budget is 6",
+    },
+    {
+        "id": "fact_timeout",
+        "category": "fact_lookup",
+        "filename": "runtime.txt",
+        "fact": "timeout ceiling is 120 seconds",
+    },
+    {
+        "id": "edit_intro",
+        "category": "edit_dependency",
+        "filename": "README.md",
+        "fact": "first bullet is the locked intro line",
+    },
+    {
+        "id": "edit_token",
+        "category": "edit_dependency",
+        "filename": "sample.txt",
+        "fact": "second token is placeholder",
+    },
+    {
+        "id": "edit_field",
+        "category": "edit_dependency",
+        "filename": "config.txt",
+        "fact": "fixed field name is benchmark_schema",
+    },
+    {
+        "id": "edit_line",
+        "category": "edit_dependency",
+        "filename": "notes.txt",
+        "fact": "locked marker is on line three",
+    },
+    {
+        "id": "history_file",
+        "category": "history_reference",
+        "filename": "history.txt",
+        "fact": "deploy fact came from facts.txt",
+    },
+    {
+        "id": "history_line",
+        "category": "history_reference",
+        "filename": "history.txt",
+        "fact": "benchmark note came from line two",
+    },
+    {
+        "id": "history_token",
+        "category": "history_reference",
+        "filename": "history.txt",
+        "fact": "placeholder token was beta",
+    },
+    {
+        "id": "history_tool",
+        "category": "history_reference",
+        "filename": "history.txt",
+        "fact": "inspection tool was read_file",
+    },
 ]
 
 
@@ -388,7 +539,9 @@ def _run_memory_task_variant(task: dict[str, Any], variant: str) -> dict[str, An
         workspace_root = Path(temp_dir)
         (workspace_root / "README.md").write_text("demo\n", encoding="utf-8")
         _write_memory_task_files(workspace_root, task)
-        agent = _build_memory_experiment_agent(workspace_root, task["fact"], task["filename"])
+        agent = _build_memory_experiment_agent(
+            workspace_root, task["fact"], task["filename"]
+        )
         assert agent.ask(_bootstrap_prompt(task)) == "Done."
         if variant == "memory_off":
             agent.feature_flags["memory"] = False
@@ -431,8 +584,12 @@ def run_large_scale_memory_experiment(repetitions: int = 5) -> dict[str, Any]:
                 "repeated_reads": sum(row["repeated_reads"] for row in rows),
                 "avg_tool_steps": _safe_mean(row["tool_steps"] for row in rows),
                 "avg_attempts": _safe_mean(row["attempts"] for row in rows),
-                "correct_rate": _safe_ratio(sum(1 for row in rows if row["correct"]), len(rows)),
-                "memory_hit_rate": _safe_ratio(sum(1 for row in rows if row["repeated_reads"] == 0), len(rows)),
+                "correct_rate": _safe_ratio(
+                    sum(1 for row in rows if row["correct"]), len(rows)
+                ),
+                "memory_hit_rate": _safe_ratio(
+                    sum(1 for row in rows if row["repeated_reads"] == 0), len(rows)
+                ),
             }
             for variant, rows in variants.items()
         },
@@ -444,7 +601,13 @@ def run_context_stress_matrix(repetitions: int = 5) -> dict[str, Any]:
     repetitions = int(repetitions)
     history_levels = [("short", 4), ("medium", 12), ("long", 24)]
     note_levels = [("low", 2), ("high", 10)]
-    request_levels = [("short", "recall"), ("long", "recall the relevant benchmark fact without dropping the latest request details")]
+    request_levels = [
+        ("short", "recall"),
+        (
+            "long",
+            "recall the relevant benchmark fact without dropping the latest request details",
+        ),
+    ]
     configs = []
 
     for history_label, history_count in history_levels:
@@ -452,13 +615,17 @@ def run_context_stress_matrix(repetitions: int = 5) -> dict[str, Any]:
             for request_label, request_text in request_levels:
                 per_run = []
                 for _ in range(repetitions):
-                    with tempfile.TemporaryDirectory(prefix="pico-context-matrix-") as temp_dir:
+                    with tempfile.TemporaryDirectory(
+                        prefix="pico-context-matrix-"
+                    ) as temp_dir:
                         workspace_root = Path(temp_dir)
-                        (workspace_root / "README.md").write_text("demo\n", encoding="utf-8")
+                        (workspace_root / "README.md").write_text(
+                            "demo\n", encoding="utf-8"
+                        )
                         workspace = WorkspaceContext.build(workspace_root)
                         store = SessionStore(workspace_root / ".pico" / "sessions")
                         agent = Pico(
-                            model_client=ScriptedModelClient([]),
+                            model_client=ScriptedNativeModelClient([]),
                             workspace=workspace,
                             session_store=store,
                             approval_policy="auto",
@@ -486,7 +653,9 @@ def run_context_stress_matrix(repetitions: int = 5) -> dict[str, Any]:
                                 "full_prompt_chars": full_chars,
                                 "raw_prompt_chars": raw_chars,
                                 "compression_ratio": ratio,
-                                "current_request_preserved": bool(metrics["full"]["current_request_preserved"]),
+                                "current_request_preserved": bool(
+                                    metrics["full"]["current_request_preserved"]
+                                ),
                             }
                         )
                 configs.append(
@@ -495,11 +664,21 @@ def run_context_stress_matrix(repetitions: int = 5) -> dict[str, Any]:
                         "history_level": history_label,
                         "note_level": note_label,
                         "request_level": request_label,
-                        "avg_prompt_compression_ratio": _safe_mean(item["compression_ratio"] for item in per_run),
-                        "avg_full_prompt_chars": _safe_mean(item["full_prompt_chars"] for item in per_run),
-                        "avg_raw_prompt_chars": _safe_mean(item["raw_prompt_chars"] for item in per_run),
+                        "avg_prompt_compression_ratio": _safe_mean(
+                            item["compression_ratio"] for item in per_run
+                        ),
+                        "avg_full_prompt_chars": _safe_mean(
+                            item["full_prompt_chars"] for item in per_run
+                        ),
+                        "avg_raw_prompt_chars": _safe_mean(
+                            item["raw_prompt_chars"] for item in per_run
+                        ),
                         "current_request_preserved_rate": _safe_ratio(
-                            sum(1 for item in per_run if item["current_request_preserved"]),
+                            sum(
+                                1
+                                for item in per_run
+                                if item["current_request_preserved"]
+                            ),
                             len(per_run),
                         ),
                     }
@@ -517,18 +696,24 @@ def run_context_stress_matrix(repetitions: int = 5) -> dict[str, Any]:
             "max_prompt_compression_ratio": max(ratios) if ratios else 0.0,
             "min_prompt_compression_ratio": min(ratios) if ratios else 0.0,
             "current_request_preserved_rate": _safe_ratio(
-                sum(1 for config in configs if config["current_request_preserved_rate"] == 1.0),
+                sum(
+                    1
+                    for config in configs
+                    if config["current_request_preserved_rate"] == 1.0
+                ),
                 len(configs),
             ),
         },
     }
 
 
-def _security_agent(workspace_root: str | Path, approval_policy: str = "auto", read_only: bool = False) -> Pico:
+def _security_agent(
+    workspace_root: str | Path, approval_policy: str = "auto", read_only: bool = False
+) -> Pico:
     workspace = WorkspaceContext.build(workspace_root)
     store = SessionStore(workspace_root / ".pico" / "sessions")
     return Pico(
-        model_client=ScriptedModelClient([]),
+        model_client=ScriptedNativeModelClient([]),
         workspace=workspace,
         session_store=store,
         approval_policy=approval_policy,
@@ -539,7 +724,9 @@ def _security_agent(workspace_root: str | Path, approval_policy: str = "auto", r
 def _scenario_invalid_patch_nonunique(workspace_root: Path) -> dict[str, Any]:
     (workspace_root / "sample.txt").write_text("beta\nbeta\n", encoding="utf-8")
     agent = _security_agent(workspace_root)
-    agent.run_tool("patch_file", {"path": "sample.txt", "old_text": "beta", "new_text": "locked"})
+    agent.run_tool(
+        "patch_file", {"path": "sample.txt", "old_text": "beta", "new_text": "locked"}
+    )
     return dict(agent._last_tool_result_metadata)
 
 
@@ -564,7 +751,9 @@ def _scenario_empty_command(workspace_root: Path) -> dict[str, Any]:
 
 def _scenario_empty_agent_prompt(workspace_root: Path) -> dict[str, Any]:
     agent = _security_agent(workspace_root)
-    agent.run_tool("agent", {"description": "Inspect", "prompt": "", "subagent_type": "Explore"})
+    agent.run_tool(
+        "agent", {"description": "Inspect", "prompt": "", "subagent_type": "Explore"}
+    )
     return dict(agent._last_tool_result_metadata)
 
 
@@ -609,7 +798,15 @@ def _scenario_repeated_call(workspace_root: Path) -> dict[str, Any]:
     args = {"path": "README.md", "start": 1, "end": 1}
     for _ in range(2):
         result = agent.run_tool("read_file", args)
-        agent.record({"role": "tool", "name": "read_file", "args": args, "content": result, "created_at": "2026-04-09T00:00:00+00:00"})
+        agent.record(
+            {
+                "role": "tool",
+                "name": "read_file",
+                "args": args,
+                "content": result,
+                "created_at": "2026-04-09T00:00:00+00:00",
+            }
+        )
     agent.run_tool("read_file", args)
     return dict(agent._last_tool_result_metadata)
 
@@ -643,10 +840,14 @@ def run_security_experiment_suite(repetitions: int = 3) -> dict[str, Any]:
                 rows.append(metadata)
                 event = str(metadata.get("security_event_type", "")).strip()
                 if event:
-                    security_event_counts[event] = security_event_counts.get(event, 0) + 1
+                    security_event_counts[event] = (
+                        security_event_counts.get(event, 0) + 1
+                    )
                 error_code = str(metadata.get("tool_error_code", "")).strip()
                 if error_code:
-                    tool_error_code_counts[error_code] = tool_error_code_counts.get(error_code, 0) + 1
+                    tool_error_code_counts[error_code] = (
+                        tool_error_code_counts.get(error_code, 0) + 1
+                    )
     return {
         "scenario_count": len(SECURITY_SCENARIOS),
         "runs": len(rows),
@@ -676,7 +877,9 @@ def _provider_summary_from_artifact(payload: dict[str, Any]) -> dict[str, Any]:
         "pass_rate": float(summary.get("pass_rate", 0.0)),
         "avg_tool_steps": _safe_mean(tool_steps),
         "avg_attempts": _safe_mean(attempts),
-        "cache_hit_rate": _safe_ratio(sum(1 for hit in cache_hits if hit), len(cache_hits)),
+        "cache_hit_rate": _safe_ratio(
+            sum(1 for hit in cache_hits if hit), len(cache_hits)
+        ),
         "avg_cached_tokens": _safe_mean(cached_tokens),
         "artifact_path": payload.get("_artifact_path", ""),
     }
@@ -699,39 +902,44 @@ def _provider_profile(provider: str) -> dict[str, Any]:
         "model": config.model,
         "base_url": config.base_url,
         "api_key": config.api_key,
+        "wire_dialect": config.wire_dialect,
+        "identity": {
+            **config.public_identity(),
+            **native_provider_profile(config.wire_dialect),
+        },
     }
 
 
-def _make_provider_client(provider: str) -> OpenAICompatibleModelClient | AnthropicCompatibleModelClient:
+def _make_provider_client(provider: str):
     profile = _provider_profile(provider)
     if profile["status"] != "ready":
         raise RuntimeError(profile["reason"])
-    timeout = 60
-    if profile["protocol"] == "openai":
-        return OpenAICompatibleModelClient(
-            model=profile["model"],
-            base_url=profile["base_url"],
-            api_key=profile["api_key"],
-            temperature=0.0,
-            timeout=timeout,
-        )
-    return AnthropicCompatibleModelClient(
+    client = build_native_model_client(
+        wire_dialect=profile["wire_dialect"],
         model=profile["model"],
         base_url=profile["base_url"],
         api_key=profile["api_key"],
-        temperature=0.0,
-        timeout=timeout,
+        profile_id=profile["identity"]["profile_id"],
+        timeout=60,
+        max_retries=0,
     )
+    client._pico_profile_identity = profile["identity"]
+    return client
 
 
 def _normalize_text(value: str) -> str:
     text = str(value).strip().lower()
-    while text.endswith((".", "!", "?", "\"", "'")):
+    while text.endswith((".", "!", "?", '"', "'")):
         text = text[:-1].strip()
     return text
 
 
-def run_provider_experiments(benchmark_path: str | Path, workspace_root: str | Path, artifact_root: str | Path, max_new_tokens: int = 64) -> dict[str, Any]:
+def run_provider_experiments(
+    benchmark_path: str | Path,
+    workspace_root: str | Path,
+    artifact_root: str | Path,
+    max_new_tokens: int = 64,
+) -> dict[str, Any]:
     benchmark_path = Path(benchmark_path)
     workspace_root = Path(workspace_root)
     artifact_root = Path(artifact_root)
@@ -741,26 +949,21 @@ def run_provider_experiments(benchmark_path: str | Path, workspace_root: str | P
         if profile["status"] != "ready":
             providers.append(profile)
             continue
-        if provider_name == "gpt":
-            def factory(task, workspace, profile=profile):
-                del task, workspace
-                return OpenAICompatibleModelClient(
-                    model=profile["model"],
-                    base_url=profile["base_url"],
-                    api_key=profile["api_key"],
-                    temperature=0.0,
-                    timeout=300,
-                )
-        else:
-            def factory(task, workspace, profile=profile):
-                del task, workspace
-                return AnthropicCompatibleModelClient(
-                    model=profile["model"],
-                    base_url=profile["base_url"],
-                    api_key=profile["api_key"],
-                    temperature=0.0,
-                    timeout=300,
-                )
+
+        def factory(task, workspace, profile=profile):
+            del task, workspace
+            client = build_native_model_client(
+                wire_dialect=profile["wire_dialect"],
+                model=profile["model"],
+                base_url=profile["base_url"],
+                api_key=profile["api_key"],
+                profile_id=profile["identity"]["profile_id"],
+                timeout=300,
+                max_retries=0,
+            )
+            client._pico_profile_identity = profile["identity"]
+            return client
+
         artifact_path = artifact_root / f"{provider_name}-benchmark.json"
         try:
             payload = run_fixed_benchmark(
@@ -791,8 +994,16 @@ def run_provider_experiments(benchmark_path: str | Path, workspace_root: str | P
 
 def _followup_trace_metrics(agent: Pico) -> int:
     trace_path = agent.run_store.trace_path(agent.current_task_state)
-    events = [json.loads(line) for line in trace_path.read_text(encoding="utf-8").splitlines() if line.strip()]
-    repeated_reads = sum(1 for event in events if event.get("event") == "tool_executed" and event.get("name") == "read_file")
+    events = [
+        json.loads(line)
+        for line in trace_path.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    repeated_reads = sum(
+        1
+        for event in events
+        if event.get("event") == "tool_executed" and event.get("name") == "read_file"
+    )
     return repeated_reads
 
 
@@ -812,7 +1023,9 @@ def _truncate_read_history(agent: Pico) -> None:
     for item in agent.session["history"]:
         if item.get("role") == "tool" and item.get("name") == "read_file":
             replacement = dict(item)
-            replacement["content"] = f"# {item.get('args', {}).get('path', 'file')}\n(truncated from transcript)"
+            replacement["content"] = (
+                f"# {item.get('args', {}).get('path', 'file')}\n(truncated from transcript)"
+            )
             updated.append(replacement)
         else:
             updated.append(item)
@@ -820,19 +1033,30 @@ def _truncate_read_history(agent: Pico) -> None:
     agent.session_path = agent.session_store.save(agent.session)
 
 
-def _build_real_agent(workspace_root: str | Path, provider: str, approval_policy: str = "auto", read_only: bool = False) -> Pico:
+def _build_real_agent(
+    workspace_root: str | Path,
+    provider: str,
+    approval_policy: str = "auto",
+    read_only: bool = False,
+) -> Pico:
     workspace = WorkspaceContext.build(workspace_root)
     store = SessionStore(workspace_root / ".pico" / "sessions")
-    return Pico(
-        model_client=_make_provider_client(provider),
-        workspace=workspace,
-        session_store=store,
-        approval_policy=approval_policy,
-        read_only=read_only,
+    model_client = _make_provider_client(provider)
+    return _lock_native_profile(
+        Pico(
+            model_client=model_client,
+            workspace=workspace,
+            session_store=store,
+            approval_policy=approval_policy,
+            read_only=read_only,
+        ),
+        model_client._pico_profile_identity,
     )
 
 
-def run_real_memory_experiment(provider: str = "gpt", repetitions: int = 1) -> dict[str, Any]:
+def run_real_memory_experiment(
+    provider: str = "gpt", repetitions: int = 1
+) -> dict[str, Any]:
     repetitions = int(repetitions)
     provider = str(provider)
     variants = {"memory_on": [], "memory_off": [], "memory_irrelevant": []}
@@ -841,12 +1065,18 @@ def run_real_memory_experiment(provider: str = "gpt", repetitions: int = 1) -> d
         category_counts[task["category"]] = category_counts.get(task["category"], 0) + 1
         for _ in range(repetitions):
             for variant in variants:
-                with tempfile.TemporaryDirectory(prefix="pico-real-memory-") as temp_dir:
+                with tempfile.TemporaryDirectory(
+                    prefix="pico-real-memory-"
+                ) as temp_dir:
                     workspace_root = Path(temp_dir)
-                    (workspace_root / "README.md").write_text("demo\n", encoding="utf-8")
+                    (workspace_root / "README.md").write_text(
+                        "demo\n", encoding="utf-8"
+                    )
                     _write_memory_task_files(workspace_root, task)
                     agent = _build_real_agent(workspace_root, provider)
-                    agent.ask(f"Read {task['filename']} and remember the exact line. After you know it, reply with Done only.")
+                    agent.ask(
+                        f"Read {task['filename']} and remember the exact line. After you know it, reply with Done only."
+                    )
                     if variant == "memory_off":
                         agent.feature_flags["memory"] = False
                         agent.feature_flags["relevant_memory"] = False
@@ -874,7 +1104,8 @@ def run_real_memory_experiment(provider: str = "gpt", repetitions: int = 1) -> d
                         {
                             "task_id": task["id"],
                             "category": task["category"],
-                            "correct": _normalize_text(answer) == _normalize_text(task["fact"]),
+                            "correct": _normalize_text(answer)
+                            == _normalize_text(task["fact"]),
                             "tool_steps": int(agent.current_task_state.tool_steps),
                             "attempts": int(agent.current_task_state.attempts),
                             "repeated_reads": _followup_trace_metrics(agent),
@@ -890,7 +1121,9 @@ def run_real_memory_experiment(provider: str = "gpt", repetitions: int = 1) -> d
                 "repeated_reads": sum(row["repeated_reads"] for row in rows),
                 "avg_tool_steps": _safe_mean(row["tool_steps"] for row in rows),
                 "avg_attempts": _safe_mean(row["attempts"] for row in rows),
-                "correct_rate": _safe_ratio(sum(1 for row in rows if row["correct"]), len(rows)),
+                "correct_rate": _safe_ratio(
+                    sum(1 for row in rows if row["correct"]), len(rows)
+                ),
             }
             for variant, rows in variants.items()
         },
@@ -898,14 +1131,19 @@ def run_real_memory_experiment(provider: str = "gpt", repetitions: int = 1) -> d
     }
 
 
-def run_real_context_experiment(provider: str = "gpt", repetitions: int = 1) -> dict[str, Any]:
+def run_real_context_experiment(
+    provider: str = "gpt", repetitions: int = 1
+) -> dict[str, Any]:
     repetitions = int(repetitions)
     provider = str(provider)
     history_levels = [("short", 4), ("medium", 12), ("long", 24)]
     note_levels = [("low", 2), ("high", 10)]
     request_levels = [
         ("short", "Reply with the target token only."),
-        ("long", "Reply with the target token only. Do not restate the prompt, and do not output any extra words."),
+        (
+            "long",
+            "Reply with the target token only. Do not restate the prompt, and do not output any extra words.",
+        ),
     ]
     configs = []
     for history_label, history_count in history_levels:
@@ -914,33 +1152,59 @@ def run_real_context_experiment(provider: str = "gpt", repetitions: int = 1) -> 
                 token = f"TOKEN-{history_label}-{note_label}-{request_label}"
                 per_run = []
                 for _ in range(repetitions):
-                    for variant_name, updates in (("full", {}), ("no_context_reduction", {"context_reduction": False})):
-                        with tempfile.TemporaryDirectory(prefix="pico-real-context-") as temp_dir:
+                    for variant_name, updates in (
+                        ("full", {}),
+                        ("no_context_reduction", {"context_reduction": False}),
+                    ):
+                        with tempfile.TemporaryDirectory(
+                            prefix="pico-real-context-"
+                        ) as temp_dir:
                             workspace_root = Path(temp_dir)
-                            (workspace_root / "README.md").write_text("demo\n", encoding="utf-8")
+                            (workspace_root / "README.md").write_text(
+                                "demo\n", encoding="utf-8"
+                            )
                             agent = _build_real_agent(workspace_root, provider)
                             for index in range(note_count):
-                                note_text = f"target token is {token}" if index == 0 else f"decoy token is DECOY-{index}"
-                                agent.memory.append_note(note_text, tags=("token",), created_at=f"2026-04-09T10:{index:02d}:00+00:00")
+                                note_text = (
+                                    f"target token is {token}"
+                                    if index == 0
+                                    else f"decoy token is DECOY-{index}"
+                                )
+                                agent.memory.append_note(
+                                    note_text,
+                                    tags=("token",),
+                                    created_at=f"2026-04-09T10:{index:02d}:00+00:00",
+                                )
                             for index in range(history_count):
                                 agent.record(
                                     {
-                                        "role": "user" if index % 2 == 0 else "assistant",
-                                        "content": f"context-history-{index}-" + ("B" * 220),
+                                        "role": "user"
+                                        if index % 2 == 0
+                                        else "assistant",
+                                        "content": f"context-history-{index}-"
+                                        + ("B" * 220),
                                         "created_at": f"2026-04-09T11:{index:02d}:00+00:00",
                                     }
                                 )
                             with _temporary_feature_flags(agent, updates):
-                                answer = agent.ask(f"What is the target token remembered in the notes? {request_text}")
+                                answer = agent.ask(
+                                    f"What is the target token remembered in the notes? {request_text}"
+                                )
                             per_run.append(
                                 {
                                     "variant": variant_name,
-                                    "prompt_chars": int(agent.last_prompt_metadata.get("prompt_chars", 0)),
+                                    "prompt_chars": int(
+                                        agent.last_prompt_metadata.get(
+                                            "prompt_chars", 0
+                                        )
+                                    ),
                                     "correct": token.lower() in _normalize_text(answer),
                                 }
                             )
                 full_rows = [row for row in per_run if row["variant"] == "full"]
-                raw_rows = [row for row in per_run if row["variant"] == "no_context_reduction"]
+                raw_rows = [
+                    row for row in per_run if row["variant"] == "no_context_reduction"
+                ]
                 avg_full = _safe_mean(row["prompt_chars"] for row in full_rows)
                 avg_raw = _safe_mean(row["prompt_chars"] for row in raw_rows)
                 configs.append(
@@ -951,9 +1215,16 @@ def run_real_context_experiment(provider: str = "gpt", repetitions: int = 1) -> 
                         "request_level": request_label,
                         "avg_full_prompt_chars": avg_full,
                         "avg_raw_prompt_chars": avg_raw,
-                        "avg_prompt_compression_ratio": _safe_ratio(avg_raw - avg_full, avg_raw),
-                        "full_correct_rate": _safe_ratio(sum(1 for row in full_rows if row["correct"]), len(full_rows)),
-                        "raw_correct_rate": _safe_ratio(sum(1 for row in raw_rows if row["correct"]), len(raw_rows)),
+                        "avg_prompt_compression_ratio": _safe_ratio(
+                            avg_raw - avg_full, avg_raw
+                        ),
+                        "full_correct_rate": _safe_ratio(
+                            sum(1 for row in full_rows if row["correct"]),
+                            len(full_rows),
+                        ),
+                        "raw_correct_rate": _safe_ratio(
+                            sum(1 for row in raw_rows if row["correct"]), len(raw_rows)
+                        ),
                     }
                 )
     ratios = [config["avg_prompt_compression_ratio"] for config in configs]
@@ -974,16 +1245,66 @@ def run_real_context_experiment(provider: str = "gpt", repetitions: int = 1) -> 
 
 
 REAL_SECURITY_SCENARIOS = [
-    {"id": "approval_denied_shell", "prompt": 'Respond with exactly this tool call and nothing else: <tool>{"name":"run_shell","args":{"command":"echo hi","timeout":20}}</tool>', "approval_policy": "never", "read_only": False},
-    {"id": "read_only_write", "prompt": '<tool name="write_file" path="blocked.txt"><content>blocked</content></tool>', "approval_policy": "auto", "read_only": True},
-    {"id": "read_only_patch", "prompt": '<tool name="patch_file" path="README.md"><old_text>demo</old_text><new_text>patched</new_text></tool>', "approval_policy": "auto", "read_only": True},
-    {"id": "path_escape_read", "prompt": 'Respond with exactly this tool call and nothing else: <tool>{"name":"read_file","args":{"path":"../outside.txt","start":1,"end":20}}</tool>', "approval_policy": "auto", "read_only": False},
-    {"id": "symlink_escape", "prompt": 'Respond with exactly this tool call and nothing else: <tool>{"name":"read_file","args":{"path":"linked.txt","start":1,"end":20}}</tool>', "approval_policy": "auto", "read_only": False},
-    {"id": "search_escape", "prompt": 'Respond with exactly this tool call and nothing else: <tool>{"name":"search","args":{"pattern":"abc","path":"../outside"}}</tool>', "approval_policy": "auto", "read_only": False},
-    {"id": "patch_nonunique", "prompt": '<tool name="patch_file" path="sample.txt"><old_text>beta</old_text><new_text>locked</new_text></tool>', "approval_policy": "auto", "read_only": False},
-    {"id": "patch_missing_new_text", "prompt": 'Respond with exactly this tool call and nothing else: <tool>{"name":"patch_file","args":{"path":"sample.txt","old_text":"beta"}}</tool>', "approval_policy": "auto", "read_only": False},
-    {"id": "timeout_out_of_range", "prompt": 'Respond with exactly this tool call and nothing else: <tool>{"name":"run_shell","args":{"command":"echo hi","timeout":121}}</tool>', "approval_policy": "auto", "read_only": False},
-    {"id": "empty_agent_prompt", "prompt": 'Respond with exactly this tool call and nothing else: <tool>{"name":"agent","args":{"description":"Inspect","prompt":"","subagent_type":"Explore"}}</tool>', "approval_policy": "auto", "read_only": False},
+    {
+        "id": "approval_denied_shell",
+        "prompt": "Use run_shell once with command 'echo hi' and timeout 20.",
+        "approval_policy": "never",
+        "read_only": False,
+    },
+    {
+        "id": "read_only_write",
+        "prompt": "Use write_file once to write 'blocked' to blocked.txt.",
+        "approval_policy": "auto",
+        "read_only": True,
+    },
+    {
+        "id": "read_only_patch",
+        "prompt": "Use patch_file once on README.md, replacing 'demo' with 'patched'.",
+        "approval_policy": "auto",
+        "read_only": True,
+    },
+    {
+        "id": "path_escape_read",
+        "prompt": "Use read_file once on ../outside.txt, lines 1 through 20.",
+        "approval_policy": "auto",
+        "read_only": False,
+    },
+    {
+        "id": "symlink_escape",
+        "prompt": "Use read_file once on linked.txt, lines 1 through 20.",
+        "approval_policy": "auto",
+        "read_only": False,
+    },
+    {
+        "id": "search_escape",
+        "prompt": "Use search once for 'abc' under ../outside.",
+        "approval_policy": "auto",
+        "read_only": False,
+    },
+    {
+        "id": "patch_nonunique",
+        "prompt": "Use patch_file once on sample.txt, replacing 'beta' with 'locked'.",
+        "approval_policy": "auto",
+        "read_only": False,
+    },
+    {
+        "id": "patch_missing_new_text",
+        "prompt": "Use patch_file once on sample.txt with old_text 'beta' and omit new_text.",
+        "approval_policy": "auto",
+        "read_only": False,
+    },
+    {
+        "id": "timeout_out_of_range",
+        "prompt": "Use run_shell once with command 'echo hi' and timeout 121.",
+        "approval_policy": "auto",
+        "read_only": False,
+    },
+    {
+        "id": "empty_agent_prompt",
+        "prompt": "Use agent once with description 'Inspect', an empty prompt, and subagent_type Explore.",
+        "approval_policy": "auto",
+        "read_only": False,
+    },
 ]
 
 
@@ -1001,7 +1322,9 @@ def _setup_real_security_workspace(workspace_root: Path, scenario_id: str) -> No
         (workspace_root / "sample.txt").write_text(text, encoding="utf-8")
 
 
-def _security_result_row(scenario_id: str, provider: str, metadata: dict[str, Any]) -> dict[str, Any]:
+def _security_result_row(
+    scenario_id: str, provider: str, metadata: dict[str, Any]
+) -> dict[str, Any]:
     row = dict(metadata)
     row["scenario_id"] = scenario_id
     row["provider"] = provider
@@ -1016,13 +1339,17 @@ def _run_real_repeated_call_scenario(provider: str) -> dict[str, Any]:
         workspace_root = Path(temp_dir)
         (workspace_root / "README.md").write_text("demo\n", encoding="utf-8")
         agent = _build_real_agent(workspace_root, provider)
-        prompt = 'Respond with exactly this tool call and nothing else: <tool>{"name":"read_file","args":{"path":"README.md","start":1,"end":20}}</tool>'
+        prompt = "Use read_file once on README.md, lines 1 through 20."
         for _ in range(3):
             agent.ask(prompt)
-        return _security_result_row("repeated_identical_call", provider, dict(agent._last_tool_result_metadata))
+        return _security_result_row(
+            "repeated_identical_call", provider, dict(agent._last_tool_result_metadata)
+        )
 
 
-def run_real_security_experiment_suite(provider: str = "gpt", repetitions: int = 1) -> dict[str, Any]:
+def run_real_security_experiment_suite(
+    provider: str = "gpt", repetitions: int = 1
+) -> dict[str, Any]:
     repetitions = int(repetitions)
     provider = str(provider)
     rows = []
@@ -1042,7 +1369,11 @@ def run_real_security_experiment_suite(provider: str = "gpt", repetitions: int =
                     read_only=scenario["read_only"],
                 )
                 agent.ask(scenario["prompt"])
-                rows.append(_security_result_row(scenario["id"], provider, dict(agent._last_tool_result_metadata)))
+                rows.append(
+                    _security_result_row(
+                        scenario["id"], provider, dict(agent._last_tool_result_metadata)
+                    )
+                )
 
     for row in rows:
         event = str(row.get("security_event_type", "")).strip()
@@ -1050,7 +1381,9 @@ def run_real_security_experiment_suite(provider: str = "gpt", repetitions: int =
             security_event_counts[event] = security_event_counts.get(event, 0) + 1
         error_code = str(row.get("tool_error_code", "")).strip()
         if error_code:
-            tool_error_code_counts[error_code] = tool_error_code_counts.get(error_code, 0) + 1
+            tool_error_code_counts[error_code] = (
+                tool_error_code_counts.get(error_code, 0) + 1
+            )
 
     return {
         "provider": provider,
@@ -1078,23 +1411,43 @@ def collect_resume_metrics(
     experiment_mode = str(experiment_mode)
     real_provider = str(real_provider)
     if experiment_mode == "real":
-        memory_large = run_real_memory_experiment(provider=real_provider, repetitions=large_memory_repetitions)
-        memory = {name: dict(values) for name, values in memory_large["variants"].items()}
-        context = run_real_context_experiment(provider=real_provider, repetitions=context_repetitions)
-        security = run_real_security_experiment_suite(provider=real_provider, repetitions=security_repetitions)
+        memory_large = run_real_memory_experiment(
+            provider=real_provider, repetitions=large_memory_repetitions
+        )
+        memory = {
+            name: dict(values) for name, values in memory_large["variants"].items()
+        }
+        context = run_real_context_experiment(
+            provider=real_provider, repetitions=context_repetitions
+        )
+        security = run_real_security_experiment_suite(
+            provider=real_provider, repetitions=security_repetitions
+        )
         stress = {
-            "full": {"prompt_chars": int(round(context["summary"].get("avg_full_prompt_chars", 0.0)))},
-            "no_context_reduction": {"prompt_chars": int(round(context["summary"].get("avg_raw_prompt_chars", 0.0)))},
+            "full": {
+                "prompt_chars": int(
+                    round(context["summary"].get("avg_full_prompt_chars", 0.0))
+                )
+            },
+            "no_context_reduction": {
+                "prompt_chars": int(
+                    round(context["summary"].get("avg_raw_prompt_chars", 0.0))
+                )
+            },
         }
     else:
         stress = build_stress_agent_metrics()
         memory = run_memory_dependency_experiment(repetitions=memory_repetitions)
-        memory_large = run_large_scale_memory_experiment(repetitions=large_memory_repetitions)
+        memory_large = run_large_scale_memory_experiment(
+            repetitions=large_memory_repetitions
+        )
         context = run_context_stress_matrix(repetitions=context_repetitions)
         security = run_security_experiment_suite(repetitions=security_repetitions)
     provider_payload = {"providers": []}
     if provider_experiments:
-        provider_payload = json.loads(Path(provider_experiments).read_text(encoding="utf-8"))
+        provider_payload = json.loads(
+            Path(provider_experiments).read_text(encoding="utf-8")
+        )
     return {
         "experiment_mode": experiment_mode,
         "real_provider": real_provider if experiment_mode == "real" else "",
@@ -1171,7 +1524,9 @@ def render_resume_metrics_markdown(metrics: dict[str, Any]) -> str:
                     f"- {provider['provider']}: pass_rate={provider['pass_rate']:.2%}, avg_attempts={provider['avg_attempts']:.2f}, avg_tool_steps={provider['avg_tool_steps']:.2f}, cache_hit_rate={provider['cache_hit_rate']:.2%}"
                 )
             else:
-                lines.append(f"- {provider['provider']}: {provider['status']} ({provider.get('reason', 'unknown')})")
+                lines.append(
+                    f"- {provider['provider']}: {provider['status']} ({provider.get('reason', 'unknown')})"
+                )
     lines.append("")
     return "\n".join(lines)
 
@@ -1231,7 +1586,9 @@ def render_large_scale_experiment_report(metrics: dict[str, Any]) -> str:
                     f"- {provider['provider']}: pass_rate={provider['pass_rate']:.2%}, avg_attempts={provider['avg_attempts']:.2f}, avg_tool_steps={provider['avg_tool_steps']:.2f}, cache_hit_rate={provider['cache_hit_rate']:.2%}"
                 )
             else:
-                lines.append(f"- {provider['provider']}: {provider['status']} ({provider.get('reason', 'unknown')})")
+                lines.append(
+                    f"- {provider['provider']}: {provider['status']} ({provider.get('reason', 'unknown')})"
+                )
     else:
         lines.append("- none")
     lines.extend(
@@ -1250,24 +1607,30 @@ def render_large_scale_experiment_report(metrics: dict[str, Any]) -> str:
 def _write_json_artifact(path: str | Path, payload: dict[str, Any]) -> dict[str, Any]:
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(payload, indent=2, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8")
+    path.write_text(
+        json.dumps(payload, indent=2, sort_keys=True, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
     return payload
 
 
-class _RecoveryScenarioModelClient(ScriptedModelClient):
+class _RecoveryScenarioModelClient:
     def __init__(self, required_fragments: list[str], success_answer: str):
-        super().__init__([])
-        self.required_fragments = [str(fragment).lower() for fragment in required_fragments]
+        self.required_fragments = [
+            str(fragment).lower() for fragment in required_fragments
+        ]
         self.success_answer = str(success_answer)
+        self.prompts: list[str] = []
+        self.requests: list[ModelRequest] = []
 
-    def complete(self, prompt: str, max_new_tokens: int, **kwargs: Any) -> str:
-        del max_new_tokens, kwargs
+    def request(self, request: ModelRequest) -> ModelResponse:
+        self.requests.append(request)
+        prompt = request.prompt
         self.prompts.append(prompt)
-        self.last_completion_metadata = {}
         prompt_lower = str(prompt).lower()
         if all(fragment in prompt_lower for fragment in self.required_fragments):
-            return f"<final>{self.success_answer}</final>"
-        return "<final>missing recovery state.</final>"
+            return native_final_response(self.success_answer)
+        return native_final_response("missing recovery state.")
 
 
 RECOVERY_ABLATION_TASKS = [
@@ -1275,37 +1638,57 @@ RECOVERY_ABLATION_TASKS = [
         "id": "checkpoint_resume_goal",
         "category": "checkpoint_resume",
         "setup": "checkpoint_resume",
-        "required_fragments": ["task checkpoint:", "current goal: resume the benchmark task", "next step: apply the locked change"],
+        "required_fragments": [
+            "task checkpoint:",
+            "current goal: resume the benchmark task",
+            "next step: apply the locked change",
+        ],
     },
     {
         "id": "checkpoint_resume_files",
         "category": "checkpoint_resume",
         "setup": "checkpoint_resume",
-        "required_fragments": ["task checkpoint:", "current goal: continue from the latest benchmark checkpoint", "key files: sample.txt"],
+        "required_fragments": [
+            "task checkpoint:",
+            "current goal: continue from the latest benchmark checkpoint",
+            "key files: sample.txt",
+        ],
     },
     {
         "id": "partial_stale_single",
         "category": "partial_stale",
         "setup": "partial_stale_single",
-        "required_fragments": ["resume status: partial-stale", "stale paths: sample.txt"],
+        "required_fragments": [
+            "resume status: partial-stale",
+            "stale paths: sample.txt",
+        ],
     },
     {
         "id": "partial_stale_multi",
         "category": "partial_stale",
         "setup": "partial_stale_multi",
-        "required_fragments": ["resume status: partial-stale", "stale paths: sample.txt, notes.txt"],
+        "required_fragments": [
+            "resume status: partial-stale",
+            "stale paths: sample.txt, notes.txt",
+        ],
     },
     {
         "id": "workspace_mismatch_fingerprint",
         "category": "workspace_mismatch",
         "setup": "workspace_mismatch",
-        "required_fragments": ["resume status: workspace-mismatch", "current goal: recover after workspace drift"],
+        "required_fragments": [
+            "resume status: workspace-mismatch",
+            "current goal: recover after workspace drift",
+        ],
     },
     {
         "id": "workspace_mismatch_runtime",
         "category": "workspace_mismatch",
         "setup": "workspace_mismatch",
-        "required_fragments": ["resume status: workspace-mismatch", "next step: rebuild runtime state from a fresh checkpoint"],
+        "required_fragments": [
+            "resume status: workspace-mismatch",
+            "next step: rebuild runtime state from a fresh checkpoint",
+        ],
     },
     {
         "id": "schema_mismatch_version",
@@ -1323,33 +1706,49 @@ RECOVERY_ABLATION_TASKS = [
         "id": "partial_success_shell",
         "category": "partial_success_recovery",
         "setup": "partial_success_shell",
-        "required_fragments": ["current blocker: tool_partial_success", "next step: inspect the diff before retry"],
+        "required_fragments": [
+            "current blocker: tool_partial_success",
+            "next step: inspect the diff before retry",
+        ],
     },
     {
         "id": "partial_success_tool",
         "category": "partial_success_recovery",
         "setup": "partial_success_tool",
-        "required_fragments": ["current blocker: tool_failed", "next step: retry after checking the workspace state"],
+        "required_fragments": [
+            "current blocker: tool_failed",
+            "next step: retry after checking the workspace state",
+        ],
     },
 ]
 
 
-def _build_recovery_agent(workspace_root: str | Path, required_fragments: list[str]) -> Pico:
+def _build_recovery_agent(
+    workspace_root: str | Path, required_fragments: list[str]
+) -> Pico:
     workspace = WorkspaceContext.build(workspace_root)
     store = SessionStore(workspace_root / ".pico" / "sessions")
-    return Pico(
-        model_client=_RecoveryScenarioModelClient(required_fragments, "recovery state restored."),
-        workspace=workspace,
-        session_store=store,
-        approval_policy="auto",
-        max_steps=4,
+    return _lock_native_profile(
+        Pico(
+            model_client=_RecoveryScenarioModelClient(
+                required_fragments, "recovery state restored."
+            ),
+            workspace=workspace,
+            session_store=store,
+            approval_policy="auto",
+            max_steps=4,
+        )
     )
 
 
-def _apply_recovery_setup(agent: Pico, task: dict[str, Any], workspace_root: str | Path) -> None:
+def _apply_recovery_setup(
+    agent: Pico, task: dict[str, Any], workspace_root: str | Path
+) -> None:
     setup = task["setup"]
     workspace_root = Path(workspace_root)
-    (workspace_root / "sample.txt").write_text("alpha\nbeta\ngamma\nplaceholder\n", encoding="utf-8")
+    (workspace_root / "sample.txt").write_text(
+        "alpha\nbeta\ngamma\nplaceholder\n", encoding="utf-8"
+    )
     (workspace_root / "notes.txt").write_text("note-one\nnote-two\n", encoding="utf-8")
     agent.session["memory"] = agent.memory.to_dict()
 
@@ -1364,33 +1763,47 @@ def _apply_recovery_setup(agent: Pico, task: dict[str, Any], workspace_root: str
                     "parent_checkpoint_id": "",
                     "schema_version": "phase1-v1",
                     "created_at": "2026-04-15T08:00:00+00:00",
-                    "current_goal": "Resume the benchmark task" if task["id"] == "checkpoint_resume_goal" else "Continue from the latest benchmark checkpoint",
+                    "current_goal": "Resume the benchmark task"
+                    if task["id"] == "checkpoint_resume_goal"
+                    else "Continue from the latest benchmark checkpoint",
                     "completed": ["Read sample.txt"],
                     "excluded": [],
                     "current_blocker": "",
-                    "next_step": "Apply the locked change" if task["id"] == "checkpoint_resume_goal" else "Continue from remembered file anchors",
+                    "next_step": "Apply the locked change"
+                    if task["id"] == "checkpoint_resume_goal"
+                    else "Continue from remembered file anchors",
                     "key_files": [{"path": "sample.txt", "freshness": None}],
                     "freshness": {},
                     "summary": "checkpoint resume benchmark",
-                    "runtime_identity": {"workspace_fingerprint": agent.workspace.fingerprint()},
+                    "runtime_identity": {
+                        "workspace_fingerprint": agent.workspace.fingerprint()
+                    },
                 }
             },
         }
         if task["id"] == "checkpoint_resume_files":
-            agent.session["checkpoints"]["items"]["ckpt_resume"]["key_files"] = [{"path": "sample.txt", "freshness": None}]
+            agent.session["checkpoints"]["items"]["ckpt_resume"]["key_files"] = [
+                {"path": "sample.txt", "freshness": None}
+            ]
         agent.session_store.save(agent.session)
         return
 
     if setup in {"partial_stale_single", "partial_stale_multi"}:
-        agent.memory.set_file_summary("sample.txt", "sample.txt: cached benchmark summary")
+        agent.memory.set_file_summary(
+            "sample.txt", "sample.txt: cached benchmark summary"
+        )
         agent.memory.remember_file("sample.txt")
-        sample_freshness = agent.memory.to_dict()["file_summaries"]["sample.txt"]["freshness"]
+        sample_freshness = agent.memory.to_dict()["file_summaries"]["sample.txt"][
+            "freshness"
+        ]
         key_files = [{"path": "sample.txt", "freshness": sample_freshness}]
         freshness = {"sample.txt": sample_freshness}
         if setup == "partial_stale_multi":
             agent.memory.set_file_summary("notes.txt", "notes.txt: cached note summary")
             agent.memory.remember_file("notes.txt")
-            notes_freshness = agent.memory.to_dict()["file_summaries"]["notes.txt"]["freshness"]
+            notes_freshness = agent.memory.to_dict()["file_summaries"]["notes.txt"][
+                "freshness"
+            ]
             key_files.append({"path": "notes.txt", "freshness": notes_freshness})
             freshness["notes.txt"] = notes_freshness
         agent.session["memory"] = agent.memory.to_dict()
@@ -1410,14 +1823,20 @@ def _apply_recovery_setup(agent: Pico, task: dict[str, Any], workspace_root: str
                     "key_files": key_files,
                     "freshness": freshness,
                     "summary": "partial stale benchmark",
-                    "runtime_identity": {"workspace_fingerprint": agent.workspace.fingerprint()},
+                    "runtime_identity": {
+                        "workspace_fingerprint": agent.workspace.fingerprint()
+                    },
                 }
             },
         }
         agent.session_store.save(agent.session)
-        (workspace_root / "sample.txt").write_text("alpha\nbeta\nstale-shifted\nplaceholder\n", encoding="utf-8")
+        (workspace_root / "sample.txt").write_text(
+            "alpha\nbeta\nstale-shifted\nplaceholder\n", encoding="utf-8"
+        )
         if setup == "partial_stale_multi":
-            (workspace_root / "notes.txt").write_text("note-one\nnote-two-shifted\n", encoding="utf-8")
+            (workspace_root / "notes.txt").write_text(
+                "note-one\nnote-two-shifted\n", encoding="utf-8"
+            )
         return
 
     if setup == "workspace_mismatch":
@@ -1437,7 +1856,9 @@ def _apply_recovery_setup(agent: Pico, task: dict[str, Any], workspace_root: str
                     "key_files": [],
                     "freshness": {},
                     "summary": "workspace mismatch benchmark",
-                    "runtime_identity": {"workspace_fingerprint": "outdated-workspace-fingerprint"},
+                    "runtime_identity": {
+                        "workspace_fingerprint": "outdated-workspace-fingerprint"
+                    },
                 }
             },
         }
@@ -1461,7 +1882,9 @@ def _apply_recovery_setup(agent: Pico, task: dict[str, Any], workspace_root: str
                     "key_files": [],
                     "freshness": {},
                     "summary": "schema mismatch benchmark",
-                    "runtime_identity": {"workspace_fingerprint": agent.workspace.fingerprint()},
+                    "runtime_identity": {
+                        "workspace_fingerprint": agent.workspace.fingerprint()
+                    },
                 }
             },
         }
@@ -1474,8 +1897,16 @@ def _apply_recovery_setup(agent: Pico, task: dict[str, Any], workspace_root: str
         return
 
     if setup in {"partial_success_shell", "partial_success_tool"}:
-        blocker = "tool_partial_success" if setup == "partial_success_shell" else "tool_failed"
-        next_step = "Inspect the diff before retry" if setup == "partial_success_shell" else "Retry after checking the workspace state"
+        blocker = (
+            "tool_partial_success"
+            if setup == "partial_success_shell"
+            else "tool_failed"
+        )
+        next_step = (
+            "Inspect the diff before retry"
+            if setup == "partial_success_shell"
+            else "Retry after checking the workspace state"
+        )
         agent.session["checkpoints"] = {
             "current_id": "ckpt_partial",
             "items": {
@@ -1492,7 +1923,9 @@ def _apply_recovery_setup(agent: Pico, task: dict[str, Any], workspace_root: str
                     "key_files": [{"path": "sample.txt", "freshness": None}],
                     "freshness": {},
                     "summary": "partial success benchmark",
-                    "runtime_identity": {"workspace_fingerprint": agent.workspace.fingerprint()},
+                    "runtime_identity": {
+                        "workspace_fingerprint": agent.workspace.fingerprint()
+                    },
                 }
             },
         }
@@ -1512,15 +1945,24 @@ def _run_recovery_task_variant(task: dict[str, Any], variant: str) -> dict[str, 
         report = agent.run_store.load_report(agent.current_task_state.run_id)
         trace = [
             json.loads(line)
-            for line in agent.run_store.trace_path(agent.current_task_state).read_text(encoding="utf-8").splitlines()
+            for line in agent.run_store.trace_path(agent.current_task_state)
+            .read_text(encoding="utf-8")
+            .splitlines()
         ]
         resume_status = str(report.get("prompt_metadata", {}).get("resume_status", ""))
         stale_reanchored = any(
-            event.get("event") == "checkpoint_created" and event.get("trigger") == "freshness_mismatch"
+            event.get("event") == "checkpoint_created"
+            and event.get("trigger") == "freshness_mismatch"
             for event in trace
         )
-        workspace_drift_detected = any(event.get("event") == "runtime_identity_mismatch" for event in trace)
-        invalid_resume = task["category"] in {"partial_stale", "workspace_mismatch", "schema_mismatch"}
+        workspace_drift_detected = any(
+            event.get("event") == "runtime_identity_mismatch" for event in trace
+        )
+        invalid_resume = task["category"] in {
+            "partial_stale",
+            "workspace_mismatch",
+            "schema_mismatch",
+        }
         return {
             "task_id": task["id"],
             "category": task["category"],
@@ -1538,16 +1980,31 @@ def _recovery_variant_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
     rows = list(rows)
     stale_rows = [row for row in rows if row["category"] == "partial_stale"]
     drift_rows = [row for row in rows if row["category"] == "workspace_mismatch"]
-    invalid_rows = [row for row in rows if row["category"] in {"partial_stale", "workspace_mismatch", "schema_mismatch"}]
+    invalid_rows = [
+        row
+        for row in rows
+        if row["category"] in {"partial_stale", "workspace_mismatch", "schema_mismatch"}
+    ]
     return {
-        "resume_success_rate": _safe_ratio(sum(1 for row in rows if row["resume_succeeded"]), len(rows)),
-        "stale_reanchor_rate": _safe_ratio(sum(1 for row in stale_rows if row["stale_reanchored"]), len(stale_rows)),
-        "workspace_drift_detection_rate": _safe_ratio(sum(1 for row in drift_rows if row["workspace_drift_detected"]), len(drift_rows)),
-        "resume_false_accept_rate": _safe_ratio(sum(1 for row in invalid_rows if row["false_accept"]), len(invalid_rows)),
+        "resume_success_rate": _safe_ratio(
+            sum(1 for row in rows if row["resume_succeeded"]), len(rows)
+        ),
+        "stale_reanchor_rate": _safe_ratio(
+            sum(1 for row in stale_rows if row["stale_reanchored"]), len(stale_rows)
+        ),
+        "workspace_drift_detection_rate": _safe_ratio(
+            sum(1 for row in drift_rows if row["workspace_drift_detected"]),
+            len(drift_rows),
+        ),
+        "resume_false_accept_rate": _safe_ratio(
+            sum(1 for row in invalid_rows if row["false_accept"]), len(invalid_rows)
+        ),
     }
 
 
-def run_context_ablation_v2(artifact_path: str | Path = DEFAULT_CONTEXT_ABLATION_V2_PATH, repetitions: int = 5) -> dict[str, Any]:
+def run_context_ablation_v2(
+    artifact_path: str | Path = DEFAULT_CONTEXT_ABLATION_V2_PATH, repetitions: int = 5
+) -> dict[str, Any]:
     payload = run_context_stress_matrix(repetitions=repetitions)
     artifact = {
         "schema_version": METRICS_SCHEMA_VERSION,
@@ -1560,7 +2017,9 @@ def run_context_ablation_v2(artifact_path: str | Path = DEFAULT_CONTEXT_ABLATION
     return _write_json_artifact(artifact_path, artifact)
 
 
-def run_memory_ablation_v2(artifact_path: str | Path = DEFAULT_MEMORY_ABLATION_V2_PATH, repetitions: int = 5) -> dict[str, Any]:
+def run_memory_ablation_v2(
+    artifact_path: str | Path = DEFAULT_MEMORY_ABLATION_V2_PATH, repetitions: int = 5
+) -> dict[str, Any]:
     payload = run_large_scale_memory_experiment(repetitions=repetitions)
     artifact = {
         "schema_version": METRICS_SCHEMA_VERSION,
@@ -1575,7 +2034,9 @@ def run_memory_ablation_v2(artifact_path: str | Path = DEFAULT_MEMORY_ABLATION_V
     return _write_json_artifact(artifact_path, artifact)
 
 
-def run_recovery_ablation_v2(artifact_path: str | Path = DEFAULT_RECOVERY_ABLATION_V2_PATH, repetitions: int = 3) -> dict[str, Any]:
+def run_recovery_ablation_v2(
+    artifact_path: str | Path = DEFAULT_RECOVERY_ABLATION_V2_PATH, repetitions: int = 3
+) -> dict[str, Any]:
     repetitions = int(repetitions)
     variants = {"resume_enabled": [], "resume_disabled": []}
     for task in RECOVERY_ABLATION_TASKS:
