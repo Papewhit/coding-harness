@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pico.local/schemas/auto-dream-cases-v1.json",
-  "title": "Pico auto-dream frozen cases",
+  "$id": "https://coda.local/schemas/auto-dream-cases-v1.json",
+  "title": "Coda auto-dream frozen cases",
   "type": "object",
   "additionalProperties": false,
   "required": ["schema_version", "cases"],
   "properties": {
-    "schema_version": {"const": "pico-auto-dream-cases-v1"},
+    "schema_version": {"const": "coda-auto-dream-cases-v1"},
     "cases": {
       "type": "array",
       "minItems": 1,

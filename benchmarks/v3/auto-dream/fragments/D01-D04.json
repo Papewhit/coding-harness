@@ -1,5 +1,5 @@
 {
-  "schema_version": "pico-auto-dream-cases-v1",
+  "schema_version": "coda-auto-dream-cases-v1",
   "cases": [
     {
       "id": "D01",
@@ -13,7 +13,7 @@
         "topics": [{"path": "topics/user-preferences.md", "facts": ["async-concise-collaboration"]}, {"path": "topics/project-conventions.md", "facts": ["uv-project-commands"]}],
         "index": {"path": "MEMORY.md", "must_link": ["topics/user-preferences.md", "topics/project-conventions.md"], "max_lines": 200},
         "frontmatter": {"required": ["name", "description", "type"], "allowed_types": ["user", "feedback", "project", "reference"]},
-        "allowed_write_scope": ".pico/memory",
+        "allowed_write_scope": ".coda/memory",
         "snapshot": {"ignore_frontmatter_fields": ["updated_at", "last_dream_at"]}
       }
     },
@@ -26,7 +26,7 @@
         "topics": [{"path": "topics/project-conventions.md", "facts": ["uv-project-commands"]}],
         "index": {"path": "MEMORY.md", "must_link": ["topics/project-conventions.md"], "max_lines": 200},
         "frontmatter": {"required": ["name", "description", "type"], "allowed_types": ["user", "feedback", "project", "reference"]},
-        "allowed_write_scope": ".pico/memory",
+        "allowed_write_scope": ".coda/memory",
         "snapshot": {"ignore_frontmatter_fields": ["updated_at", "last_dream_at"]}
       }
     },
@@ -39,7 +39,7 @@
         "topics": [{"path": "topics/key-decisions.md", "facts": ["deployment-target"]}],
         "index": {"path": "MEMORY.md", "must_link": ["topics/key-decisions.md"], "max_lines": 200},
         "frontmatter": {"required": ["name", "description", "type"], "allowed_types": ["user", "feedback", "project", "reference"]},
-        "allowed_write_scope": ".pico/memory",
+        "allowed_write_scope": ".coda/memory",
         "snapshot": {"ignore_frontmatter_fields": ["updated_at", "last_dream_at"]}
       }
     },
@@ -52,7 +52,7 @@
         "topics": [{"path": "topics/project-conventions.md", "facts": ["weekly-release-window"]}],
         "index": {"path": "MEMORY.md", "must_link": ["topics/project-conventions.md"], "max_lines": 200},
         "frontmatter": {"required": ["name", "description", "type"], "allowed_types": ["user", "feedback", "project", "reference"]},
-        "allowed_write_scope": ".pico/memory",
+        "allowed_write_scope": ".coda/memory",
         "snapshot": {"ignore_frontmatter_fields": ["updated_at", "last_dream_at"]}
       }
     }

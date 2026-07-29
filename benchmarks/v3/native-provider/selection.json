@@ -1,224 +1,33 @@
 {
-  "schema_version": "pico-native-provider-selection-v1",
-  "ticket_id": "TOOL-050-S",
-  "wave": "W6",
-  "wave_base_sha": "365732ded80bd5af2fdb60bb4d52c7bae6792d3e",
-  "run_snapshot_sha": "dd8a677782f90c749a422ee066daa1afcb36c516",
-  "selection_status": "none",
-  "selected_profile": null,
-  "eligible_profile_count": 0,
-  "gate": {
-    "name": "Gate N1",
-    "status": "blocked",
-    "reason": "No candidate has real, complete live native-provider conformance evidence. All three shards were blocked before HTTP by missing frozen live runner inputs.",
-    "complete_conformance_evidence_required": true,
-    "complete_conformance_evidence_observed": false,
-    "hard_requirements": [
-      {
-        "metric": "tool_required_native_call_observed",
-        "requirement": "100%",
-        "value": null,
-        "computation_status": "not_computable"
-      },
-      {
-        "metric": "call_id_result_match",
-        "requirement": "100%",
-        "value": null,
-        "computation_status": "not_computable"
-      },
-      {
-        "metric": "batch_result_completeness",
-        "requirement": "100%",
-        "value": null,
-        "computation_status": "not_computable"
-      },
-      {
-        "metric": "duplicate_call_after_result",
-        "requirement": 0,
-        "value": null,
-        "computation_status": "not_computable"
-      },
-      {
-        "metric": "unknown_block_loss",
-        "requirement": 0,
-        "value": null,
-        "computation_status": "not_computable"
-      },
-      {
-        "metric": "safety_chain_bypass",
-        "requirement": 0,
-        "value": null,
-        "computation_status": "not_computable"
-      },
-      {
-        "metric": "text_envelope",
-        "requirement": 0,
-        "value": null,
-        "computation_status": "not_computable"
-      }
-    ],
-    "metric_interpretation": "Zero HTTP attempts and zero provider observations provide no denominator. Absence of observed errors is not a passing zero-error measurement."
-  },
-  "frozen_inputs": {
-    "formal_freeze_sha256": "538f7644f91611abcbe4822a497490e0bb6d4ffa0d39286e871c92afdd81e70e",
-    "w5r2_handoff_sha256": "101e6006e0d67c693ebe439078cbbb82779810f54dee8a3cce51256c38a44f95",
-    "cases_sha256": "92f746b113a88ceb652e4e8ec651021b1358d9922ab91c0dad34e62c0068b9e3",
-    "native_gate_handoff_sha256": "c4b0dbd9549b33397e6377d421fd59193619cf655b10a3c78185ef34abdf3c1e",
-    "evaluator_handoff_sha256": "5eef3b00058eb07ec33527ff6e33ba628dea5ec27967a0ae0caf6b60e1cb2936"
-  },
-  "profiles": [
-    {
-      "name": "dashscope-o",
-      "identity": {
-        "complete": false,
-        "model": null,
-        "base_url_fingerprint": null,
-        "wire_dialect": null,
-        "adapter_mode": null,
-        "sdk_package": null,
-        "sdk_version": null,
-        "capabilities": null,
-        "stream": false,
-        "parallel_tool_execution": false,
-        "sdk_max_retries": 0,
-        "pico_provider_attempts": 1
-      },
-      "evidence": {
-        "handoff_path": "F:/dev/llm/pico/.codex/eval/handoffs/TOOL-050-QO-R.json",
-        "handoff_sha256": "af2f24021009fa1b9ea9a294d6226ca3dba3316f595f9542d0ca45b554a4168e",
-        "artifact_root": "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/dd8a677782f90c749a422ee066daa1afcb36c516/TOOL-050-QO-R",
-        "manifest_sha256": "83e6c784cfcfe18354238f8238adf01f75ec57cb9ec0eff6c4255847d3d87bbd",
-        "rows_sha256": "641cfe9550e79441b064df1829debeb69c257e343a616d687fa75d8e19f511cb",
-        "complete_conformance_sha256": null
-      },
-      "run_result": {
-        "status": "blocked_pre_http",
-        "raw_row_count": 24,
-        "infrastructure_row_count": 24,
-        "parser_stage_exclusion_count": 0,
-        "http_attempt_count": 0,
-        "live_provider_run": false
-      },
-      "protocol_metrics": {
-        "computation_status": "not_computable",
-        "reason": "No HTTP attempt or provider observation occurred."
-      },
-      "eligibility": {
-        "eligible": false,
-        "reason": "Missing frozen public profile identity and compliant live runner plugin prevented complete live conformance evidence."
-      }
+  "schema_version": "coda-native-provider-selection-v1",
+  "selection_status": "selected",
+  "selected_profile": {
+    "name": "dashscope-o",
+    "profile_id": "sha256:41ebb321c6332867f0bb020621b7e1c17f8c60430374c37c3a670c916326ee70",
+    "model": "qwen3.6-plus",
+    "base_url_fingerprint": "sha256:0568e2eff482ec7379afab1c75b4cc21121e6a5f0b58b293b957c13199d30bc8",
+    "wire_dialect": "openai-responses",
+    "adapter_mode": "official-sdk-transport",
+    "sdk": {
+      "package": "openai",
+      "version": "2.46.0"
     },
-    {
-      "name": "dashscope-a",
-      "identity": {
-        "complete": false,
-        "model": null,
-        "base_url_fingerprint": null,
-        "wire_dialect": null,
-        "adapter_mode": null,
-        "sdk_package": null,
-        "sdk_version": null,
-        "capabilities": null,
-        "stream": false,
-        "parallel_tool_execution": false,
-        "sdk_max_retries": 0,
-        "pico_provider_attempts": 1
-      },
-      "evidence": {
-        "handoff_path": "F:/dev/llm/pico/.codex/eval/handoffs/TOOL-050-QA-R.json",
-        "handoff_sha256": "66cfb9a8a069075e313894cea600ba98f931d3a74ecd1d05c9d8d71afb6f75e7",
-        "artifact_root": "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/dd8a677782f90c749a422ee066daa1afcb36c516/TOOL-050-QA-R",
-        "manifest_sha256": "c4cde64ac86c344f3f4589507b02e2c96f9b044a6ffad3013759cb2df73641d1",
-        "rows_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-        "complete_conformance_sha256": null
-      },
-      "run_result": {
-        "status": "excluded_pre_http",
-        "raw_row_count": 0,
-        "infrastructure_row_count": 0,
-        "parser_stage_exclusion_count": 1,
-        "http_attempt_count": 0,
-        "live_provider_run": false
-      },
-      "protocol_metrics": {
-        "computation_status": "not_computable",
-        "reason": "The CLI stopped at parser stage before any case row, HTTP attempt, or provider observation."
-      },
-      "eligibility": {
-        "eligible": false,
-        "reason": "Missing frozen public profile binding and compliant live runner plugin prevented complete live conformance evidence."
-      }
+    "capabilities": {
+      "native_tools": true,
+      "opaque_continuation_support": false,
+      "parallel_tool_calls": false,
+      "reasoning_support": false,
+      "strict_tool_schema": false,
+      "thinking_support": false
     },
-    {
-      "name": "deepseek",
-      "identity": {
-        "complete": true,
-        "model": "deepseek-v4-flash",
-        "base_url_fingerprint": "efdbb18afca7615955804478fde78bff5e7336dee41fa0844bc1d5f8ec527cbe",
-        "wire_dialect": "anthropic-messages",
-        "adapter_mode": "sdk_raw_response",
-        "sdk_package": "anthropic",
-        "sdk_version": "0.117.0",
-        "capabilities": [
-          "native_tools"
-        ],
-        "stream": false,
-        "parallel_tool_execution": false,
-        "sdk_max_retries": 0,
-        "pico_provider_attempts": 1
-      },
-      "evidence": {
-        "handoff_path": "F:/dev/llm/pico/.codex/eval/handoffs/TOOL-050-DA-R.json",
-        "handoff_sha256": "1f4e84cca8073d9708c968610e1d29c61f91d36710da88c1591706fd9428ed17",
-        "artifact_root": "F:/dev/llm/pico-eval-artifacts/native-provider-conformance/dd8a677782f90c749a422ee066daa1afcb36c516/TOOL-050-DA-R",
-        "manifest_sha256": "9c806284b39051b2b7adfd30519798741a58c519434926961443f64cdee78ddb",
-        "rows_sha256": "b5f389e0f2e253094475202b4a581a244aca00e09d52f0ef7107af665d8ef977",
-        "complete_conformance_sha256": null
-      },
-      "run_result": {
-        "status": "blocked_pre_http",
-        "raw_row_count": 24,
-        "infrastructure_row_count": 24,
-        "parser_stage_exclusion_count": 0,
-        "http_attempt_count": 0,
-        "live_provider_run": false
-      },
-      "protocol_metrics": {
-        "computation_status": "not_computable",
-        "reason": "No HTTP attempt or provider observation occurred."
-      },
-      "eligibility": {
-        "eligible": false,
-        "reason": "Missing frozen public profile artifact and compliant live runner plugin prevented complete live conformance evidence."
-      }
-    }
-  ],
-  "aggregate": {
-    "candidate_profile_count": 3,
-    "raw_row_count": 48,
-    "infrastructure_row_count": 48,
-    "parser_stage_exclusion_count": 1,
-    "http_attempt_count": 0,
-    "provider_observation_count": 0
+    "stream": false,
+    "parallel_tool_execution": false,
+    "sdk_max_retries": 0,
+    "coda_provider_attempts": 1
   },
-  "substitution_policy": {
-    "w2_sdk_probe_used_as_w6_conformance": false,
-    "absence_of_observation_treated_as_pass": false,
-    "text_protocol_fallback_used": false
-  },
-  "evaluation_lanes": {
-    "formal_effectiveness": "blocked_not_run",
-    "auto_dream": "blocked_not_run",
-    "local_task": "blocked_not_run",
-    "resume": "blocked_not_run"
-  },
-  "remediation": {
-    "owner_request": "Wave Integrator must assign a new scoped evaluator/runner owner; TOOL-050-S must not implement or rerun shards.",
-    "required_inputs": [
-      "A reviewed and frozen live runner plugin that binds each candidate adapter through Pico's validate, repetition, permission, policy, and execute safety chain.",
-      "Sanitized, complete, frozen public profile artifacts for each candidate, including model, endpoint fingerprint, dialect, adapter mode, SDK package/version, capabilities, and retry/stream/parallel settings.",
-      "A corrected frozen invocation compatible with the runner CLI and the existing frozen cases."
-    ],
-    "required_follow_up": "Open new scoped implementation/run tickets, freeze corrected inputs, rerun all candidate conformance shards from an authorized immutable snapshot, and rerun TOOL-050-S."
+  "provenance": {
+    "source_ref": "eval-v2/p5-integrated",
+    "source_path_at_ref": "benchmarks/v3/native-provider/selection-w6r2.json",
+    "source_git_blob_oid": "6649c651c09e7e65936dadea0efee901e6f12d61"
   }
 }

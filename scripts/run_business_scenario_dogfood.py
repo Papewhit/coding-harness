@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run business-shaped Pico dogfood scenarios against a real provider."""
+"""Run business-shaped Coda dogfood scenarios against a real provider."""
 
 from __future__ import annotations
 
@@ -13,10 +13,10 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from pico import Pico, SessionStore, WorkspaceContext  # noqa: E402
-from pico.config import resolve_provider_config  # noqa: E402
-from pico.features.skills_runtime import invoke_skill  # noqa: E402
-from pico.providers import build_native_model_client, native_provider_profile  # noqa: E402
+from coda import Coda, SessionStore, WorkspaceContext  # noqa: E402
+from coda.config import resolve_provider_config  # noqa: E402
+from coda.features.skills_runtime import invoke_skill  # noqa: E402
+from coda.providers import build_native_model_client, native_provider_profile  # noqa: E402
 
 SUMMARY_JSON = "business-scenario-dogfood.json"
 SUMMARY_MARKDOWN = "business-scenario-dogfood.md"
@@ -92,7 +92,7 @@ def run_dogfood(
 def render_markdown(summary):
     provider = summary.get("provider", {})
     lines = [
-        "# Pico Business Scenario Dogfood",
+        "# Coda Business Scenario Dogfood",
         "",
         f"- status: `{summary['status']}`",
         f"- scenarios: `{summary['scenario_count']}`",
@@ -204,7 +204,7 @@ def _scenario_release_readiness_review(
     (workspace / "deploy.md").write_text(
         "- migrations applied\n- rollback owner assigned\n", encoding="utf-8"
     )
-    skill_dir = workspace / ".pico" / "skills" / "release"
+    skill_dir = workspace / ".coda" / "skills" / "release"
     skill_dir.mkdir(parents=True)
     (skill_dir / "SKILL.md").write_text(
         """---
@@ -281,8 +281,8 @@ def _scenario_incident_resume_fix(
         "    assert classify_latency(1500) == 'page'\n",
         encoding="utf-8",
     )
-    store = SessionStore(workspace / ".pico" / "sessions")
-    first = Pico(
+    store = SessionStore(workspace / ".coda" / "sessions")
+    first = Coda(
         model_client=client_factory(),
         workspace=_scenario_workspace(workspace),
         session_store=store,
@@ -298,7 +298,7 @@ def _scenario_incident_resume_fix(
         "3) read_file src/incident_router.py start=1 end=80。"
         "4) final，说明已定位，等待恢复继续。不要改代码。"
     )
-    resumed = Pico.from_session(
+    resumed = Coda.from_session(
         model_client=client_factory(),
         workspace=_scenario_workspace(workspace),
         session_store=store,
@@ -343,10 +343,10 @@ def _scenario_incident_resume_fix(
 
 
 def _build_agent(workspace, client_factory, max_steps=8, max_new_tokens=1024):
-    agent = Pico(
+    agent = Coda(
         model_client=client_factory(),
         workspace=_scenario_workspace(workspace),
-        session_store=SessionStore(workspace / ".pico" / "sessions"),
+        session_store=SessionStore(workspace / ".coda" / "sessions"),
         approval_policy="auto",
         max_steps=max_steps,
         max_new_tokens=max_new_tokens,
@@ -356,7 +356,7 @@ def _build_agent(workspace, client_factory, max_steps=8, max_new_tokens=1024):
 
 
 def _lock_native_profile(agent):
-    identity = dict(agent.model_client._pico_profile_identity)
+    identity = dict(agent.model_client._coda_profile_identity)
     identity["tool_schema"] = agent.tool_signature()
     existing = agent.session.get("provider_profile")
     agent.session["provider_profile"] = dict(existing or identity)
@@ -380,7 +380,7 @@ def _build_client_factory(
     )
     if not config.api_key:
         raise ValueError(
-            f"provider {config.name!r} has no api key; configure .pico.toml or pass --api-key"
+            f"provider {config.name!r} has no api key; configure .coda.toml or pass --api-key"
         )
 
     def factory():
@@ -393,7 +393,7 @@ def _build_client_factory(
             timeout=300,
             max_retries=0,
         )
-        client._pico_profile_identity = {
+        client._coda_profile_identity = {
             **config.public_identity(),
             **native_provider_profile(config.wire_dialect),
         }
@@ -486,15 +486,15 @@ def _remove_tree(path):
 
 def build_arg_parser():
     parser = argparse.ArgumentParser(
-        description="Run Pico business scenario dogfood against a real provider."
+        description="Run Coda business scenario dogfood against a real provider."
     )
     parser.add_argument(
         "--output-dir",
-        default="/tmp/pico-business-scenario-dogfood",
+        default="/tmp/coda-business-scenario-dogfood",
         help="Directory for workspaces and summary artifacts.",
     )
     parser.add_argument(
-        "--config", default=None, help="Path to a Pico TOML config file."
+        "--config", default=None, help="Path to a Coda TOML config file."
     )
     parser.add_argument("--provider", default=None, help="Provider profile to use.")
     parser.add_argument(
@@ -513,7 +513,7 @@ def build_arg_parser():
         help="Model override for the selected provider profile.",
     )
     parser.add_argument(
-        "--max-steps", type=int, default=8, help="Max Pico steps per scenario turn."
+        "--max-steps", type=int, default=8, help="Max Coda steps per scenario turn."
     )
     parser.add_argument(
         "--max-new-tokens",

@@ -5,10 +5,10 @@ from unittest.mock import patch
 
 import pytest
 
-from pico import Pico, SessionStore, WorkspaceContext
-from pico import cli
-from pico.config import ProviderCapabilities, ProviderConfig
-from pico.testing import (
+from coda import Coda, SessionStore, WorkspaceContext
+from coda import cli
+from coda.config import ProviderCapabilities, ProviderConfig
+from coda.testing import (
     ScriptedNativeModelClient,
     native_continuation,
     native_final_response,
@@ -36,12 +36,12 @@ def _profile(tool_schema: str) -> dict:
     }
 
 
-def _agent(tmp_path, responses, **kwargs) -> Pico:
+def _agent(tmp_path, responses, **kwargs) -> Coda:
     (tmp_path / "README.md").write_text("native runtime\n", encoding="utf-8")
-    agent = Pico(
+    agent = Coda(
         model_client=ScriptedNativeModelClient(responses),
         workspace=WorkspaceContext.build(tmp_path),
-        session_store=SessionStore(tmp_path / ".pico" / "sessions"),
+        session_store=SessionStore(tmp_path / ".coda" / "sessions"),
         approval_policy=kwargs.pop("approval_policy", "auto"),
         auto_dream=False,
         **kwargs,
@@ -124,7 +124,7 @@ def test_cli_factory_selects_native_adapter_and_exposes_retry_configuration() ->
     args = SimpleNamespace(temperature=0.2, openai_timeout=42)
     marker = object()
 
-    with patch("pico.cli.build_native_model_client", return_value=marker) as factory:
+    with patch("coda.cli.build_native_model_client", return_value=marker) as factory:
         assert cli._build_model_client(args, config) is marker
 
     factory.assert_called_once_with(

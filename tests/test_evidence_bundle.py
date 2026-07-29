@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from pico.evaluation.evidence_bundle import (
+from coda.evaluation.evidence_bundle import (
     ARTIFACT_CONTRACT_SHA256,
     MANIFEST_SCHEMA_VERSION,
     build_evidence_bundle,
@@ -153,7 +153,7 @@ def test_registry_validation_recomputes_claim_result() -> None:
 
 
 def test_hash_bases_are_explicit_and_artifact_contract_is_frozen(tmp_path: Path) -> None:
-    payload = {"unicode": "Pico 工具", "rows": []}
+    payload = {"unicode": "Coda 工具", "rows": []}
     path = tmp_path / "artifact.json"
     path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
     expected = hashlib.sha256(canonical_json_bytes(payload)).hexdigest()

@@ -2,15 +2,15 @@ import json
 
 import pytest
 
-from pico.core.model_exchange import (
+from coda.core.model_exchange import (
     ModelExchangeEvent,
     ProfileMismatchError,
     assert_profile_matches,
 )
-from pico.core.run_store import RunStore
-from pico.core.session_events import SessionEventBus, SessionExchangeJournal
-from pico.core.task_state import TaskState
-from pico.providers.contracts import (
+from coda.core.run_store import RunStore
+from coda.core.session_events import SessionEventBus, SessionExchangeJournal
+from coda.core.task_state import TaskState
+from coda.providers.contracts import (
     ModelResponse,
     ProviderContinuation,
     StopReason,
@@ -184,6 +184,27 @@ def test_private_continuation_roundtrips_but_public_trace_and_report_hold_hash_o
 
     assert private not in store.trace_path("run").read_text(encoding="utf-8")
     assert private not in store.report_path("run").read_text(encoding="utf-8")
+
+
+def test_previous_brand_exchange_schema_cannot_restore_continuation():
+    legacy = "pi" + "co"
+    session = {
+        "id": "session-old-schema",
+        "provider_profile": _profile(),
+        "history": [],
+        "model_exchange": {
+            "schema_version": f"{legacy}-model-exchange-v1",
+            "profile": _profile(),
+            "events": [],
+            "continuation": ProviderContinuation(
+                "profile:test", {"opaque": "old-state"}
+            ).to_dict(),
+        },
+    }
+    journal = SessionExchangeJournal(session, lambda candidate: None)
+
+    with pytest.raises(ValueError, match="unsupported session model_exchange schema"):
+        journal.latest_continuation(_profile())
 
 
 def test_session_event_bus_never_writes_private_exchange_payload(tmp_path):

@@ -4,7 +4,7 @@ import argparse
 import json
 from pathlib import Path
 
-from pico.evaluation.dream_eval import run_dream_evaluation
+from coda.evaluation.dream_eval import run_dream_evaluation
 
 
 def build_parser() -> argparse.ArgumentParser:

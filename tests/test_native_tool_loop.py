@@ -4,13 +4,13 @@ from copy import deepcopy
 
 import pytest
 
-from pico import Pico, SessionStore, WorkspaceContext
-from pico.core.tool_call_batch import NativeModelProtocolError
-from pico.providers.contracts import (
+from coda import Coda, SessionStore, WorkspaceContext
+from coda.core.tool_call_batch import NativeModelProtocolError
+from coda.providers.contracts import (
     ModelRequest,
     ToolChoiceMode,
 )
-from pico.testing import (
+from coda.testing import (
     ScriptedNativeModelClient,
     native_continuation,
     native_final_response,
@@ -23,10 +23,10 @@ from pico.testing import (
 
 def build_agent(tmp_path, responses, **kwargs):
     (tmp_path / "README.md").write_text("hello world\n", encoding="utf-8")
-    return Pico(
+    return Coda(
         model_client=ScriptedNativeModelClient(responses),
         workspace=WorkspaceContext.build(tmp_path),
-        session_store=SessionStore(tmp_path / ".pico" / "sessions"),
+        session_store=SessionStore(tmp_path / ".coda" / "sessions"),
         approval_policy=kwargs.pop("approval_policy", "auto"),
         **kwargs,
     )

@@ -4,11 +4,11 @@ import json
 
 import pytest
 
-from pico.providers.anthropic_messages import (
+from coda.providers.anthropic_messages import (
     AnthropicMessagesAdapter,
     AnthropicMessagesProtocolError,
 )
-from pico.providers.contracts import (
+from coda.providers.contracts import (
     ModelRequest,
     ProviderContinuation,
     StopReason,
@@ -17,7 +17,7 @@ from pico.providers.contracts import (
     ToolChoiceMode,
     ToolDefinition,
 )
-from pico.providers.provider_transport import (
+from coda.providers.provider_transport import (
     HttpAttempt,
     ProviderTransportResponse,
 )
@@ -90,7 +90,7 @@ def _adapter(response: dict | None = None, **kwargs) -> AnthropicMessagesAdapter
 
 def test_request_golden_compiles_system_tools_and_all_tool_choices() -> None:
     adapter = _adapter(
-        system="You are Pico.",
+        system="You are Coda.",
         thinking={"type": "enabled", "budget_tokens": 1024},
     )
     request = ModelRequest(
@@ -107,7 +107,7 @@ def test_request_golden_compiles_system_tools_and_all_tool_choices() -> None:
         "max_tokens": 256,
         "messages": [{"role": "user", "content": "Use echo."}],
         "stream": False,
-        "system": "You are Pico.",
+        "system": "You are Coda.",
         "tools": [
             {
                 "name": "echo",
@@ -254,7 +254,7 @@ def test_profile_mismatch_and_result_without_continuation_fail_closed() -> None:
     adapter = _adapter()
     wrong = ProviderContinuation(
         "anthropic-messages:other-profile",
-        {"version": "pico-anthropic-messages-continuation-v1", "assistant_content": []},
+        {"version": "coda-anthropic-messages-continuation-v1", "assistant_content": []},
     )
     with pytest.raises(AnthropicMessagesProtocolError, match="profile_id"):
         adapter.compile_request(

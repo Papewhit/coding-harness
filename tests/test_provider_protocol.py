@@ -9,14 +9,14 @@ from unittest.mock import patch
 
 import pytest
 
-from pico import cli
-from pico.config import resolve_provider_config
+from coda import cli
+from coda.config import resolve_provider_config
 
 
 def _load_provider_base_module():
-    module_path = Path(__file__).resolve().parents[1] / "pico" / "providers" / "base.py"
+    module_path = Path(__file__).resolve().parents[1] / "coda" / "providers" / "base.py"
     spec = importlib.util.spec_from_file_location(
-        "_pico_provider_base_for_test", module_path
+        "_coda_provider_base_for_test", module_path
     )
     assert spec is not None
     assert spec.loader is not None
@@ -36,7 +36,7 @@ def test_model_client_protocol_is_complete_model_contract() -> None:
 
 
 def _write_profile(path: Path, body: str) -> Path:
-    config = path / ".pico.toml"
+    config = path / ".coda.toml"
     config.write_text(body, encoding="utf-8")
     return config
 
@@ -185,7 +185,7 @@ model = "model"
 """.strip(),
     )
 
-    with patch("pico.cli.build_agent", side_effect=AssertionError("must not build")):
+    with patch("coda.cli.build_agent", side_effect=AssertionError("must not build")):
         assert cli.main(["--cwd", str(tmp_path), "--inspect-provider"]) == 0
 
     output = capsys.readouterr().out
@@ -200,7 +200,7 @@ def test_build_agent_locks_profile_and_tool_schema_in_session(tmp_path: Path) ->
     args = cli.build_arg_parser().parse_args(
         ["--cwd", str(tmp_path), "--provider", "openai"]
     )
-    with patch("pico.cli.OpenAICompatibleModelClient"):
+    with patch("coda.cli.OpenAICompatibleModelClient"):
         agent = cli.build_agent(args)
 
     locked = agent.session["provider_profile"]

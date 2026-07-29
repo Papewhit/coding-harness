@@ -7,9 +7,9 @@ import json
 from pathlib import Path
 from typing import Any
 
-from pico.evaluation import evaluation_v2_config as configlib
-from pico.evaluation.evaluation_v2_config import canonical_json, sha256_bytes
-from pico.evaluation.live_tasks import (
+from coda.evaluation import evaluation_v2_config as configlib
+from coda.evaluation.evaluation_v2_config import canonical_json, sha256_bytes
+from coda.evaluation.live_tasks import (
     ClientResult,
     FailureCategory,
     FailureOrigin,
@@ -53,7 +53,7 @@ class FakeT01Client:
         raise ConfigError("APP_DEBUG has an unsupported boolean value")""",
         )
         config.write_text(text, encoding="utf-8")
-        self._write_pico_state(workspace)
+        self._write_coda_state(workspace)
         result_id = "wrong-call" if self.mismatched else "call-1"
         return ClientResult(
             profile={"provider": "fake"},
@@ -67,9 +67,9 @@ class FakeT01Client:
             http_attempts_exact=True,
         )
 
-    def _write_pico_state(self, workspace: Path) -> None:
-        sessions = workspace / ".pico" / "sessions"
-        run = workspace / ".pico" / "runs" / "runtime-1"
+    def _write_coda_state(self, workspace: Path) -> None:
+        sessions = workspace / ".coda" / "sessions"
+        run = workspace / ".coda" / "runs" / "runtime-1"
         sessions.mkdir(parents=True)
         run.mkdir(parents=True)
         session: dict[str, Any] = {
@@ -182,7 +182,7 @@ class DuplicateResultClient(FakeT01Client):
         evidence_path: Path | None = None,
     ) -> ClientResult:
         result = super().run(workspace, prompt, evidence_path=evidence_path)
-        session_path = workspace / ".pico" / "sessions" / "session-1.json"
+        session_path = workspace / ".coda" / "sessions" / "session-1.json"
         session = json.loads(session_path.read_text(encoding="utf-8"))
         session["model_exchange"]["events"].append(
             {

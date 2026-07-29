@@ -7,10 +7,10 @@ from types import SimpleNamespace
 
 import pytest
 
-import pico.config as pico_config
-from pico.evaluation import evaluation_v2_config as configlib
-from pico.evaluation import live_client
-from pico.evaluation.evaluation_v2_config import (
+import coda.config as coda_config
+from coda.evaluation import evaluation_v2_config as configlib
+from coda.evaluation import live_client
+from coda.evaluation.evaluation_v2_config import (
     canonical_json,
     validate_live_start,
     verify_run_config,
@@ -78,7 +78,7 @@ def _ready(
     locator.write_text("{}\n", encoding="utf-8")
     monkeypatch.setenv(configlib.CONFIG_LOCATOR_ENV, str(locator))
     monkeypatch.setattr(
-        pico_config,
+        coda_config,
         "resolve_provider_config",
         lambda *_args, **_kwargs: _Provider(),
     )
@@ -266,7 +266,7 @@ def test_live_start_does_not_rebuild_config_or_construct_runtime(
         ("--cohort-id", "pilot-v3"),
         ("--stage", "P3-G0"),
         ("--task", "T01"),
-        ("--repo", "pico"),
+        ("--repo", "coda"),
         ("--repetitions", "1"),
     ],
 )
@@ -289,7 +289,7 @@ def test_verify_only_rejects_live_selection_and_has_no_live_dependencies(
         lambda **_kwargs: pytest.fail("--verify-only must not generate a config"),
     )
     monkeypatch.setattr(
-        pico_config,
+        coda_config,
         "resolve_provider_config",
         lambda *_args, **_kwargs: pytest.fail(
             "--verify-only must not resolve a provider"

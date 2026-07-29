@@ -6,8 +6,8 @@ from pathlib import Path
 
 import pytest
 
-from pico.config import resolve_provider_config
-from pico.evaluation.native_provider_profiles import (
+from coda.config import resolve_provider_config
+from coda.evaluation.native_provider_profiles import (
     build_public_provider_profile,
     canonical_profile_json,
 )
@@ -64,12 +64,12 @@ def _workspace(tmp_path: Path) -> tuple[Path, Path, Path]:
 
 def _clear_provider_overrides(monkeypatch: pytest.MonkeyPatch) -> None:
     for name in (
-        "PICO_PROVIDER",
-        "PICO_API_KEY",
-        "PICO_BASE_URL",
-        "PICO_MODEL",
-        "PICO_WIRE_DIALECT",
-        "PICO_PROTOCOL",
+        "CODA_PROVIDER",
+        "CODA_API_KEY",
+        "CODA_BASE_URL",
+        "CODA_MODEL",
+        "CODA_WIRE_DIALECT",
+        "CODA_PROTOCOL",
         CONFIG_LOCATOR_ENV,
     ):
         monkeypatch.delenv(name, raising=False)
@@ -145,7 +145,7 @@ def test_cli_resolves_profile_from_independent_worktree_without_config_option(
         return _passing_observation(case, repetitions[case["id"]])
 
     monkeypatch.setattr(
-        "pico.evaluation.native_provider_live.NativeProviderLiveRunner.__call__",
+        "coda.evaluation.native_provider_live.NativeProviderLiveRunner.__call__",
         fake_live_call,
     )
 
@@ -233,7 +233,7 @@ def test_missing_audited_config_locator_fails_before_case_start(
         return {}
 
     monkeypatch.setattr(
-        "pico.evaluation.native_provider_live.NativeProviderLiveRunner.__call__",
+        "coda.evaluation.native_provider_live.NativeProviderLiveRunner.__call__",
         unexpected_call,
     )
 
@@ -312,7 +312,7 @@ def test_existing_artifact_directory_is_never_overwritten(
     monkeypatch.chdir(run_root)
     monkeypatch.setenv(CONFIG_LOCATOR_ENV, str(config_path))
     monkeypatch.setattr(
-        "pico.evaluation.native_provider_live.NativeProviderLiveRunner.__call__",
+        "coda.evaluation.native_provider_live.NativeProviderLiveRunner.__call__",
         lambda _self, case, _profile: _passing_observation(case),
     )
 

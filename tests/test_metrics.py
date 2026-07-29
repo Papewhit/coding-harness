@@ -4,8 +4,8 @@ from unittest.mock import patch
 
 import pytest
 
-from pico.evaluation import metrics as metrics_module
-from pico.evaluation.metrics import (
+from coda.evaluation import metrics as metrics_module
+from coda.evaluation.metrics import (
     _provider_profile,
     render_benchmark_core_report,
     run_context_ablation_v2,
@@ -40,9 +40,9 @@ def test_run_context_ablation_v2_writes_expected_artifact(tmp_path):
     assert "current_request_preserved_rate" in artifact["summary"]
 
 
-def test_provider_profile_uses_project_toml_before_legacy_pico_env(tmp_path, monkeypatch):
+def test_provider_profile_uses_project_toml_before_legacy_coda_env(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    (tmp_path / ".pico.toml").write_text(
+    (tmp_path / ".coda.toml").write_text(
         "\n".join(
             [
                 "[providers.deepseek]",
@@ -59,9 +59,9 @@ def test_provider_profile_uses_project_toml_before_legacy_pico_env(tmp_path, mon
     with patch.dict(
         os.environ,
         {
-            "PICO_DEEPSEEK_API_KEY": "sk-legacy-deepseek",
-            "PICO_DEEPSEEK_MODEL": "legacy-deepseek-model",
-            "PICO_DEEPSEEK_API_BASE": "https://legacy.deepseek.example/anthropic",
+            "CODA_DEEPSEEK_API_KEY": "sk-legacy-deepseek",
+            "CODA_DEEPSEEK_MODEL": "legacy-deepseek-model",
+            "CODA_DEEPSEEK_API_BASE": "https://legacy.deepseek.example/anthropic",
         },
         clear=True,
     ):
@@ -141,8 +141,8 @@ def test_write_benchmark_core_report_marks_resume_safe_metrics(tmp_path):
         encoding="utf-8",
     )
 
-    report_path = tmp_path / "docs" / "metrics" / "pico-benchmark-core-report.md"
-    report_json_path = tmp_path / "docs" / "metrics" / "pico-benchmark-core-report.json"
+    report_path = tmp_path / "docs" / "metrics" / "coda-benchmark-core-report.md"
+    report_json_path = tmp_path / "docs" / "metrics" / "coda-benchmark-core-report.json"
     report_text = write_benchmark_core_report(
         report_path=report_path,
         report_json_path=report_json_path,

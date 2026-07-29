@@ -15,10 +15,10 @@ from scripts.verify_context_freeze import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
-BINDING = ROOT / "benchmarks" / "v3" / "context-assets" / "cases-v2.binding.json"
-EXPECTED_OID = "5e9bdf06e75f6661660947e880f07edfe7480880"
-EXPECTED_SHA256 = "e08066749520a52af5bb14a9435e359f4a85d3f3ae6e8dd0e962001f99c2df17"
-INVALIDATED_SHA256 = "d69dfc1808cb12b179f8a1fb30ffa74136339d7783d9f11a5fbe8fd4259400ba"
+BINDING = ROOT / "benchmarks" / "v3" / "context-assets" / "cases-v3.binding.json"
+EXPECTED_OID = "c3ca89d08163111f7612557a85e7ac477388378a"
+EXPECTED_SHA256 = "6feadd16451408ff77596e8cabf357b2fc20eda8ea0c0934f5db35373346638d"
+HISTORICAL_BINDING_OID = "3426371758b7bb9569680e271d3d782a486d2bd1"
 
 
 def _git(repo: Path, *args: str) -> str:
@@ -35,23 +35,32 @@ def test_repository_binding_reconstructs_canonical_git_blob() -> None:
     assert report["verified"] is True
     assert report["source_git_blob_oid"] == EXPECTED_OID
     assert report["source_git_blob_sha256"] == EXPECTED_SHA256
-    assert report["source_schema_version"] == "pico-context-asset-cases-v1"
+    assert report["source_schema_version"] == "coda-context-asset-cases-v1"
     assert report["source_case_count"] == 15
     assert report["canonical_hash_basis"] == "git_blob_bytes"
 
 
-def test_binding_preserves_and_invalidates_the_historical_declaration() -> None:
-    """Covers retention and explicit supersession of the unreproducible v1 digest."""
+def test_binding_records_the_historical_source_without_copying_its_schema() -> None:
+    """The successor records only the immutable source ref, path, and blob."""
 
     binding = json.loads(BINDING.read_text(encoding="utf-8"))
-    retained = binding["supersession"]["supersedes"]
+    provenance = binding["provenance"]
 
     assert binding["schema_version"] == BINDING_SCHEMA_VERSION
-    assert len(retained) == 1
-    assert retained[0]["declared_sha256"] == INVALIDATED_SHA256
-    assert retained[0]["status"] == "invalidated"
-    assert retained[0]["superseded_by"] == BINDING_SCHEMA_VERSION
-    assert retained[0]["invalidated_reason"]
+    assert binding["binding_version"] == 3
+    assert provenance == {
+        "source_ref": "eval-v2/p5-integrated",
+        "source_path_at_ref": "benchmarks/v3/context-assets/cases-v2.binding.json",
+        "source_git_blob_oid": HISTORICAL_BINDING_OID,
+    }
+    assert (
+        _git(
+            ROOT,
+            "rev-parse",
+            f"{provenance['source_ref']}:{provenance['source_path_at_ref']}",
+        )
+        == HISTORICAL_BINDING_OID
+    )
 
 
 def test_crlf_checkout_does_not_change_canonical_binding(tmp_path: Path) -> None:
@@ -64,7 +73,7 @@ def test_crlf_checkout_does_not_change_canonical_binding(tmp_path: Path) -> None
     _git(repo, "config", "user.name", "Context Freeze Test")
     source = repo / "cases.json"
     source.write_bytes(
-        b'{\n  "schema_version": "pico-context-asset-cases-v1",\n  "cases": [{}]\n}\n'
+        b'{\n  "schema_version": "coda-context-asset-cases-v1",\n  "cases": [{}]\n}\n'
     )
     _git(repo, "add", "cases.json")
     _git(repo, "commit", "-m", "add cases")
@@ -80,6 +89,11 @@ def test_crlf_checkout_does_not_change_canonical_binding(tmp_path: Path) -> None
             "case_count": 1,
         }
     )
+    binding["provenance"] = {
+        "source_ref": "HEAD",
+        "source_path_at_ref": "cases.json",
+        "source_git_blob_oid": oid,
+    }
     binding_path = repo / "binding.json"
     binding_path.write_text(json.dumps(binding), encoding="utf-8", newline="\n")
     source.write_bytes(blob.replace(b"\n", b"\r\n"))

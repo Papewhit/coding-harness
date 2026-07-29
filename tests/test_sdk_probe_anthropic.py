@@ -5,8 +5,8 @@ import json
 import httpx
 import pytest
 
-from pico.evaluation.sdk_probe import ProbeCase, ProbeProfile, RawResponse, ToolResult, run_sdk_viability_probe
-from pico.evaluation.sdk_probe_anthropic import (
+from coda.evaluation.sdk_probe import ProbeCase, ProbeProfile, RawResponse, ToolResult, run_sdk_viability_probe
+from coda.evaluation.sdk_probe_anthropic import (
     AnthropicMessagesDialect,
     AnthropicMessagesTransport,
     create_anthropic_messages_transport,
@@ -23,7 +23,7 @@ def _profile() -> ProbeProfile:
             "sdk": {"package": "anthropic", "version": "probe"},
             "base_url_fingerprint": "sha256:fake-endpoint",
             "capabilities": {"native_tools": True, "opaque_continuation_support": True},
-            "retry": {"sdk_max_retries": 0, "pico_attempts": 1},
+            "retry": {"sdk_max_retries": 0, "coda_attempts": 1},
         }
     )
 

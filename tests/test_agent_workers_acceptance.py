@@ -3,14 +3,14 @@ import threading
 import time
 
 from tests.native_fixtures import final, scripted_client, tool
-from pico import Pico, SessionStore, WorkspaceContext
+from coda import Coda, SessionStore, WorkspaceContext
 
 
 def build_agent(tmp_path, outputs, **kwargs):
     (tmp_path / "README.md").write_text("demo readme\n", encoding="utf-8")
     workspace = WorkspaceContext.build(tmp_path)
-    store = SessionStore(tmp_path / ".pico" / "sessions")
-    return Pico(
+    store = SessionStore(tmp_path / ".coda" / "sessions")
+    return Coda(
         model_client=scripted_client(outputs),
         workspace=workspace,
         session_store=store,
@@ -30,8 +30,8 @@ def read_jsonl(path):
 class BlockingModelClient:
     def __init__(self, outputs, started, release):
         self.client = scripted_client(outputs)
-        self._pico_test_native = True
-        self._pico_profile_identity = dict(self.client._pico_profile_identity)
+        self._coda_test_native = True
+        self._coda_profile_identity = dict(self.client._coda_profile_identity)
         self.started = started
         self.release = release
         self.prompts = self.client.prompts
@@ -391,7 +391,7 @@ def test_plan_mode_allows_only_explore_agents(tmp_path):
             ),
             tool("read_file", path="README.md", start=1, end=1),
             final("Explored."),
-            tool("write_file", path=".pico/plans/gate7-plan.md", content="# Gate7\n"),
+            tool("write_file", path=".coda/plans/gate7-plan.md", content="# Gate7\n"),
             final("Plan ready."),
         ],
         max_steps=5,
@@ -404,7 +404,7 @@ def test_plan_mode_allows_only_explore_agents(tmp_path):
             "description": "Write from plan",
             "prompt": "change files",
             "subagent_type": "worker",
-            "write_scope": ["pico"],
+            "write_scope": ["coda"],
         },
     )
 

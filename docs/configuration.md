@@ -1,16 +1,16 @@
 # 配置
 
-pico 的配置按下面这个优先级合并：
+coda 的配置按下面这个优先级合并：
 
 ```
-CLI 显式参数 > 环境变量 > 项目 .pico.toml > 全局 ~/.config/pico/config.toml > 代码默认
+CLI 显式参数 > 环境变量 > 项目 .coda.toml > 全局 ~/.config/coda/config.toml > 代码默认
 ```
 
 ## Provider profile
 
-provider 是 TOML 里的一段本地配置 profile，名字（如 `deepseek` `openai` `anthropic`）只用于人类辨识。Pico 不根据名字或 host 猜测 endpoint/协议；真正决定 wire 格式的是 `wire_dialect`，目前支持 `openai-responses` 和 `anthropic-messages`。
+provider 是 TOML 里的一段本地配置 profile，名字（如 `deepseek` `openai` `anthropic`）只用于人类辨识。Coda 不根据名字或 host 猜测 endpoint/协议；真正决定 wire 格式的是 `wire_dialect`，目前支持 `openai-responses` 和 `anthropic-messages`。
 
-### .pico.toml 示例
+### .coda.toml 示例
 
 放在仓库根目录，**不要提交真实 key**（默认已被 `.gitignore` 忽略）：
 
@@ -50,12 +50,14 @@ model = "claude-sonnet-4-6"
 
 session 创建时会锁定 model、profile、wire dialect、capabilities、base URL fingerprint 和 tool schema 签名。改变这些值后不能 resume 旧 session；API key 不属于 identity，可以安全轮换。早于该锁定格式的旧 session 会要求新建 session。
 
+本次产品命名采用硬切换：更名前的包入口、命令名、配置文件名、品牌环境变量和状态目录均不会被探测或读取。需要保留的配置、skills 或 memory 应先选择性复制到 Coda 路径；sessions、runs、plans、checkpoints 和 provider continuation 不迁移。
+
 切 provider：
 
 ```bash
-pico                       # 用 toml 里的默认 provider
-pico --provider openai     # 临时切换
-pico --provider anthropic --model claude-opus-4-6
+coda                       # 用 toml 里的默认 provider
+coda --provider openai     # 临时切换
+coda --provider anthropic --model claude-opus-4-6
 ```
 
 ## 环境变量
@@ -64,35 +66,35 @@ pico --provider anthropic --model claude-opus-4-6
 
 | 变量 | 用途 |
 |------|------|
-| `PICO_PROVIDER` | 默认 provider |
-| `PICO_API_KEY` / `PICO_BASE_URL` / `PICO_MODEL` | 通用 override |
+| `CODA_PROVIDER` | 默认 provider |
+| `CODA_API_KEY` / `CODA_BASE_URL` / `CODA_MODEL` | 通用 override |
 | `ANTHROPIC_API_KEY` / `ANTHROPIC_BASE_URL` / `ANTHROPIC_MODEL` | Anthropic |
 | `OPENAI_API_KEY` / `OPENAI_BASE_URL` / `OPENAI_MODEL` | OpenAI |
 | `DEEPSEEK_API_KEY` / `DEEPSEEK_BASE_URL` / `DEEPSEEK_MODEL` | DeepSeek |
 
-兼容历史 `.env`：`PICO_OPENAI_*` / `PICO_ANTHROPIC_*` / `PICO_DEEPSEEK_*` 仍然能用。
+兼容历史 `.env`：`CODA_OPENAI_*` / `CODA_ANTHROPIC_*` / `CODA_DEEPSEEK_*` 仍然能用。
 
 ## 全局配置
 
-`~/.config/pico/config.toml` 适合放跨项目都用的 provider profile。项目 `.pico.toml` 覆盖它，CLI 参数再覆盖项目。
+`~/.config/coda/config.toml` 适合放跨项目都用的 provider profile。项目 `.coda.toml` 覆盖它，CLI 参数再覆盖项目。
 
 ## CLI 参数
 
 ```bash
-pico --provider deepseek --model deepseek-v4-pro
-pico --api-key sk-... --base-url https://...
-pico --max-steps 50 --max-new-tokens 4096
-pico --temperature 0.0
-pico --approval ask          # ask | auto | never
-pico --sandbox best_effort   # off | best_effort | required
-pico --no-auto-dream         # 关闭后台 memory 整合
-pico --cwd /path/to/repo     # 切换工作目录
-pico --resume latest         # 续接上一个 session
-pico --config /path/to/custom.toml
-pico --inspect-provider         # 输出无 key、无原始 URL 的 profile identity
+coda --provider deepseek --model deepseek-v4-pro
+coda --api-key sk-... --base-url https://...
+coda --max-steps 50 --max-new-tokens 4096
+coda --temperature 0.0
+coda --approval ask          # ask | auto | never
+coda --sandbox best_effort   # off | best_effort | required
+coda --no-auto-dream         # 关闭后台 memory 整合
+coda --cwd /path/to/repo     # 切换工作目录
+coda --resume latest         # 续接上一个 session
+coda --config /path/to/custom.toml
+coda --inspect-provider         # 输出无 key、无原始 URL 的 profile identity
 ```
 
-跑 `pico --help` 看完整参数。
+跑 `coda --help` 看完整参数。
 
 ## 默认值速查
 
@@ -111,5 +113,5 @@ pico --inspect-provider         # 输出无 key、无原始 URL 的 profile iden
 - `/session` 查看 session 文件路径和当前 runtime 标识
 - `/context` 查看上下文用量切片
 - `/usage` 查看 token / call 数
-- 所有事件流写到 `.pico/sessions/<id>.events.jsonl`，可以用 `tail -f` 观察
-- 每次运行的 trace 在 `.pico/runs/<run_id>/trace.jsonl`
+- 所有事件流写到 `.coda/sessions/<id>.events.jsonl`，可以用 `tail -f` 观察
+- 每次运行的 trace 在 `.coda/runs/<run_id>/trace.jsonl`

@@ -7,9 +7,9 @@ Pydantic models underneath.
 
 import pytest
 
-from pico.core.runtime import Pico
-from pico.core.session_store import SessionStore
-from pico.core.workspace import WorkspaceContext
+from coda.core.runtime import Coda
+from coda.core.session_store import SessionStore
+from coda.core.workspace import WorkspaceContext
 from tests.native_fixtures import scripted_client
 
 
@@ -20,8 +20,8 @@ def build_workspace(tmp_path):
 
 def build_agent(tmp_path, **kwargs):
     workspace = build_workspace(tmp_path)
-    store = SessionStore(tmp_path / ".pico" / "sessions")
-    return Pico(
+    store = SessionStore(tmp_path / ".coda" / "sessions")
+    return Coda(
         model_client=scripted_client(),
         workspace=workspace,
         session_store=store,

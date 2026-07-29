@@ -1,16 +1,16 @@
 import json
 
 from tests.native_fixtures import final, lock_scripted_provider_profile, scripted_client, tool
-from pico import Pico, SessionStore, WorkspaceContext
-from pico.core.context_manager import ContextManager
+from coda import Coda, SessionStore, WorkspaceContext
+from coda.core.context_manager import ContextManager
 
 
 def build_agent(tmp_path, outputs=None, **kwargs):
     (tmp_path / "README.md").write_text("demo\n", encoding="utf-8")
     workspace = WorkspaceContext.build(tmp_path)
-    store = SessionStore(tmp_path / ".pico" / "sessions")
+    store = SessionStore(tmp_path / ".coda" / "sessions")
     return lock_scripted_provider_profile(
-        Pico(
+        Coda(
             model_client=scripted_client(outputs),
             workspace=workspace,
             session_store=store,

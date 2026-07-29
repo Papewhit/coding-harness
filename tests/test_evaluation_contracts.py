@@ -5,7 +5,7 @@ import json
 
 import pytest
 
-from pico.evaluation.contracts import (
+from coda.evaluation.contracts import (
     ARTIFACT_CONTRACT_VERSION,
     NATIVE_PROTOCOL_METADATA_SCHEMA,
     extend_artifact_contract,
@@ -49,7 +49,7 @@ def test_native_protocol_metadata_has_auditable_ratios_and_attempts() -> None:
         protocol_errors=[{"code": "unknown_block"}],
         http_attempts=2,
         sdk_retry_count=0,
-        pico_retry_count=1,
+        coda_retry_count=1,
         opaque_continuation={"hash": "sha256:abc", "type": "reasoning", "count": 2},
     )
 
@@ -74,7 +74,7 @@ def test_native_protocol_metadata_rejects_non_boolean_flags_and_non_integer_atte
         native_protocol_metadata(eligible="false", native_tool_call_observed=False)  # type: ignore[arg-type]
     with pytest.raises(ValueError, match="native_tool_call_observed must be a boolean"):
         native_protocol_metadata(eligible=False, native_tool_call_observed=0)  # type: ignore[arg-type]
-    for field in ("http_attempts", "sdk_retry_count", "pico_retry_count", "duplicate_call_after_result"):
+    for field in ("http_attempts", "sdk_retry_count", "coda_retry_count", "duplicate_call_after_result"):
         with pytest.raises(ValueError, match="integer"):
             native_protocol_metadata(eligible=False, native_tool_call_observed=False, **{field: "1"})  # type: ignore[arg-type]
 

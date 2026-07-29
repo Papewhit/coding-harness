@@ -1,0 +1,30 @@
+{
+  "schema_version": "coda-context-asset-cases-binding-v3",
+  "binding_version": 3,
+  "source": {
+    "path": "benchmarks/v3/context-assets/cases.json",
+    "revision": "HEAD",
+    "git_blob_oid": "c3ca89d08163111f7612557a85e7ac477388378a",
+    "sha256": "6feadd16451408ff77596e8cabf357b2fc20eda8ea0c0934f5db35373346638d",
+    "hash_basis": "git_blob_bytes",
+    "size_bytes": 59801,
+    "content_schema_version": "coda-context-asset-cases-v1",
+    "case_count": 15
+  },
+  "checkout_policy": {
+    "canonical_hash_basis": "git_blob_bytes",
+    "checkout_bytes_authoritative": false,
+    "line_ending_normalization": "none",
+    "reason": "Git blob bytes are stable across LF and CRLF checkout policies."
+  },
+  "evaluator_input": {
+    "resolution": "materialize_exact_git_blob_bytes",
+    "must_match_source_git_blob_oid": true,
+    "must_match_source_sha256": true
+  },
+  "provenance": {
+    "source_ref": "eval-v2/p5-integrated",
+    "source_path_at_ref": "benchmarks/v3/context-assets/cases-v2.binding.json",
+    "source_git_blob_oid": "3426371758b7bb9569680e271d3d782a486d2bd1"
+  }
+}

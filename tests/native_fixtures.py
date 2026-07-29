@@ -5,8 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from pico.providers.contracts import ModelRequest, ModelResponse
-from pico.testing import (
+from coda.providers.contracts import ModelRequest, ModelResponse
+from coda.testing import (
     ScriptedNativeModelClient,
     native_final_response,
     native_multi_tool_call_response,
@@ -90,8 +90,8 @@ class PromptLoggingNativeClient(ScriptedNativeModelClient):
         super().__init__(responses)
         self.prompts: list[str] = []
         self.last_completion_metadata: dict[str, Any] = {}
-        self._pico_test_native = True
-        self._pico_profile_identity = scripted_provider_identity()
+        self._coda_test_native = True
+        self._coda_profile_identity = scripted_provider_identity()
 
     def request(self, request: ModelRequest) -> ModelResponse:
         rendered_results = [str(result.output) for result in request.tool_results]

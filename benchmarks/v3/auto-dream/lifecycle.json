@@ -1,6 +1,6 @@
 {
-  "schema_version": "pico-dream-lifecycle-evaluation-v1",
-  "write_scope": ".pico/memory",
+  "schema_version": "coda-dream-lifecycle-evaluation-v1",
+  "write_scope": ".coda/memory",
   "cases": [
     {
       "id": "interval-gate",
@@ -18,7 +18,7 @@
         "current_session_excluded": true
       },
       "evidence_sources": [
-        "pico/features/memory_durable.py::evaluate_auto_dream_gate"
+        "coda/features/memory_durable.py::evaluate_auto_dream_gate"
       ]
     },
     {
@@ -37,7 +37,7 @@
         "current_session_excluded": true
       },
       "evidence_sources": [
-        "pico/features/memory_durable.py::evaluate_auto_dream_gate"
+        "coda/features/memory_durable.py::evaluate_auto_dream_gate"
       ]
     },
     {
@@ -56,7 +56,7 @@
         "current_session_excluded": true
       },
       "evidence_sources": [
-        "pico/features/memory_durable.py::evaluate_auto_dream_gate"
+        "coda/features/memory_durable.py::evaluate_auto_dream_gate"
       ]
     },
     {
@@ -71,7 +71,7 @@
         "classified_stale": false
       },
       "evidence_sources": [
-        "pico/features/memory_durable.py::try_acquire_lock"
+        "coda/features/memory_durable.py::try_acquire_lock"
       ]
     },
     {
@@ -86,7 +86,7 @@
         "classified_stale": true
       },
       "evidence_sources": [
-        "pico/features/memory_durable.py::try_acquire_lock"
+        "coda/features/memory_durable.py::try_acquire_lock"
       ]
     },
     {
@@ -106,8 +106,8 @@
         "error_recorded": true
       },
       "evidence_sources": [
-        "tests/test_pico.py::test_memory_maintenance_failure_does_not_mask_final_answer",
-        "tests/test_pico.py::test_background_auto_dream_failure_restores_lock_and_reports_error"
+        "tests/test_coda.py::test_memory_maintenance_failure_does_not_mask_final_answer",
+        "tests/test_coda.py::test_background_auto_dream_failure_restores_lock_and_reports_error"
       ]
     },
     {
@@ -115,22 +115,22 @@
       "category": "write_scope",
       "evidence": {
         "attempted_paths": [
-          ".pico/memory/MEMORY.md",
-          ".pico/memory/topics/project.md"
+          ".coda/memory/MEMORY.md",
+          ".coda/memory/topics/project.md"
         ],
         "denied_paths": [],
         "changed_paths": [
-          ".pico/memory/MEMORY.md",
-          ".pico/memory/topics/project.md"
+          ".coda/memory/MEMORY.md",
+          ".coda/memory/topics/project.md"
         ]
       },
       "expected": {
-        "scope": ".pico/memory",
+        "scope": ".coda/memory",
         "outside_changes": [],
         "outside_attempts_denied": true
       },
       "evidence_sources": [
-        "pico/features/memory.py::run_dream"
+        "coda/features/memory.py::run_dream"
       ]
     },
     {
@@ -146,13 +146,13 @@
         "changed_paths": []
       },
       "expected": {
-        "scope": ".pico/memory",
+        "scope": ".coda/memory",
         "outside_changes": [],
         "outside_attempts_denied": true
       },
       "evidence_sources": [
         "tests/test_skills_acceptance.py::test_dream_cannot_write_outside_memory_directory",
-        "pico/core/permissions.py::_check_write_scope"
+        "coda/core/permissions.py::_check_write_scope"
       ]
     }
   ]

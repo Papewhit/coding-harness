@@ -3,11 +3,11 @@ from __future__ import annotations
 import argparse
 import json
 
-from pico.evaluation.evidence_bundle import build_evidence_bundle_file, validate_claim_registry
+from coda.evaluation.evidence_bundle import build_evidence_bundle_file, validate_claim_registry
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Build a Pico v3 evidence bundle and claim registry.")
+    parser = argparse.ArgumentParser(description="Build a Coda v3 evidence bundle and claim registry.")
     parser.add_argument("--manifest", required=True, help="Evidence bundle manifest JSON path.")
     parser.add_argument("--output", required=True, help="Destination bundle JSON path.")
     return parser

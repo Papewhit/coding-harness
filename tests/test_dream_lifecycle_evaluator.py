@@ -5,8 +5,8 @@ import json
 
 import pytest
 
-from pico.evaluation.contracts import ARTIFACT_CONTRACT_VERSION
-from pico.evaluation.dream_lifecycle_eval import (
+from coda.evaluation.contracts import ARTIFACT_CONTRACT_VERSION
+from coda.evaluation.dream_lifecycle_eval import (
     DEFAULT_CASES_PATH,
     DreamLifecycleViolation,
     evaluate_dream_lifecycle,
@@ -71,7 +71,7 @@ def test_failure_row_proves_dream_failure_does_not_replace_primary_result() -> N
         "dream_status": "failed",
         "error_recorded": True,
     }
-    assert "tests/test_pico.py::test_background_auto_dream_failure_restores_lock_and_reports_error" in row[
+    assert "tests/test_coda.py::test_background_auto_dream_failure_restores_lock_and_reports_error" in row[
         "evidence_sources"
     ]
 
@@ -105,7 +105,7 @@ def test_out_of_scope_change_is_a_hard_failure_with_artifact(tmp_path) -> None:
 def test_scope_normalization_catches_parent_traversal(tmp_path) -> None:
     suite = copy.deepcopy(load_lifecycle_cases())
     case = next(case for case in suite["cases"] if case["id"] == "memory-write-contained")
-    case["evidence"]["changed_paths"] = [".pico/memory/../../README.md"]
+    case["evidence"]["changed_paths"] = [".coda/memory/../../README.md"]
     path = tmp_path / "lifecycle.json"
     path.write_text(json.dumps(suite), encoding="utf-8")
 
@@ -116,5 +116,5 @@ def test_scope_normalization_catches_parent_traversal(tmp_path) -> None:
 def test_committed_case_file_is_valid_and_has_unique_ids() -> None:
     suite = load_lifecycle_cases(DEFAULT_CASES_PATH)
 
-    assert suite["write_scope"] == ".pico/memory"
+    assert suite["write_scope"] == ".coda/memory"
     assert len({case["id"] for case in suite["cases"]}) == len(suite["cases"])

@@ -3,14 +3,14 @@ import shlex
 import sys
 
 from tests.native_fixtures import final, lock_scripted_provider_profile, scripted_client, tool
-from pico import Pico, SessionStore, WorkspaceContext
+from coda import Coda, SessionStore, WorkspaceContext
 
 
 def build_agent(tmp_path, outputs=None, **kwargs):
     (tmp_path / "README.md").write_text("hello world\n", encoding="utf-8")
     workspace = WorkspaceContext.build(tmp_path)
-    store = SessionStore(tmp_path / ".pico" / "sessions")
-    return lock_scripted_provider_profile(Pico(
+    store = SessionStore(tmp_path / ".coda" / "sessions")
+    return lock_scripted_provider_profile(Coda(
         model_client=scripted_client(outputs),
         workspace=workspace,
         session_store=store,
@@ -26,33 +26,33 @@ def read_jsonl(path):
 def test_patch_requires_prior_fresh_read_and_allows_after_read(tmp_path):
     agent = build_agent(tmp_path)
 
-    rejected = agent.run_tool("patch_file", {"path": "README.md", "old_text": "world", "new_text": "pico"})
+    rejected = agent.run_tool("patch_file", {"path": "README.md", "old_text": "world", "new_text": "coda"})
 
     assert "read_file" in rejected
     assert agent._last_tool_result_metadata["tool_error_code"] == "prior_read_required"
     assert (tmp_path / "README.md").read_text(encoding="utf-8") == "hello world\n"
 
     agent.run_tool("read_file", {"path": "README.md", "start": 1, "end": 1})
-    patched = agent.run_tool("patch_file", {"path": "README.md", "old_text": "world", "new_text": "pico"})
+    patched = agent.run_tool("patch_file", {"path": "README.md", "old_text": "world", "new_text": "coda"})
 
     assert patched == "patched README.md"
-    assert (tmp_path / "README.md").read_text(encoding="utf-8") == "hello pico\n"
+    assert (tmp_path / "README.md").read_text(encoding="utf-8") == "hello coda\n"
 
 
 def test_rejected_patch_can_be_retried_after_informing_read(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            tool("patch_file", path="README.md", old_text="world", new_text="pico"),
+            tool("patch_file", path="README.md", old_text="world", new_text="coda"),
             tool("read_file", path="README.md", start=1, end=1),
-            tool("patch_file", path="README.md", old_text="world", new_text="pico"),
+            tool("patch_file", path="README.md", old_text="world", new_text="coda"),
             final("done"),
         ],
         max_steps=4,
     )
 
     assert agent.ask("retry a patch only after reading the target file") == "done"
-    assert (tmp_path / "README.md").read_text(encoding="utf-8") == "hello pico\n"
+    assert (tmp_path / "README.md").read_text(encoding="utf-8") == "hello coda\n"
 
     trace = read_jsonl(agent.current_run_dir / "trace.jsonl")
     patch_events = [

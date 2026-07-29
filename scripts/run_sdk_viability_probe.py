@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from pico.evaluation.sdk_probe import (  # noqa: E402
+from coda.evaluation.sdk_probe import (  # noqa: E402
     ProbeProfile,
     load_probe_cases,
     load_probe_profile,

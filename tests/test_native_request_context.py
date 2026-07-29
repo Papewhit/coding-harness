@@ -1,18 +1,18 @@
 from pathlib import Path
 
-from pico import Pico, SessionStore, WorkspaceContext
-from pico.core.context_manager import ContextManager
-from pico.core.request_context import RequestMessage
-from pico.providers.contracts import ProviderContinuation, ToolCallResult
+from coda import Coda, SessionStore, WorkspaceContext
+from coda.core.context_manager import ContextManager
+from coda.core.request_context import RequestMessage
+from coda.providers.contracts import ProviderContinuation, ToolCallResult
 from tests.native_fixtures import scripted_client
 
 
 def build_agent(tmp_path):
     (tmp_path / "README.md").write_text("demo\n", encoding="utf-8")
-    return Pico(
+    return Coda(
         model_client=scripted_client(),
         workspace=WorkspaceContext.build(tmp_path),
-        session_store=SessionStore(tmp_path / ".pico" / "sessions"),
+        session_store=SessionStore(tmp_path / ".coda" / "sessions"),
         approval_policy="auto",
     )
 
@@ -133,7 +133,7 @@ def test_compaction_keeps_an_unfinished_native_turn_intact(tmp_path):
 
 def test_formal_runtime_source_has_no_text_envelope_instructions():
     source = (
-        Path(__file__).resolve().parents[1] / "pico" / "core" / "runtime.py"
+        Path(__file__).resolve().parents[1] / "coda" / "core" / "runtime.py"
     ).read_text(encoding="utf-8")
     assert "<" + "tool>" not in source
     assert "<" + "final>" not in source

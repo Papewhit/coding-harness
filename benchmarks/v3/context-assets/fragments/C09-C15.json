@@ -1,7 +1,7 @@
 {
-  "schema_version": "pico-context-asset-cases-fragment-v1",
+  "schema_version": "coda-context-asset-cases-fragment-v1",
   "fragment_id": "C09-C15",
-  "contract": {"context_assets_sha256": "d8349c034524cc488958a1f3b460a7b6080915eed0b03b64c635810c21bf8e15", "native_contract_sha256": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb", "tool_schema_sha256": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f"},
+  "contract": {"context_assets_sha256": "35daef1235d27af82bd7343d859eb0cc185ae01225c64e675109f6764ef25b01", "native_contract_sha256": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb", "tool_schema_sha256": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f"},
   "cases": [
     {"id":"C09","fixture":"fixtures/C09/input.json","expectations":"fixtures/C09/expectations.json","focus":["all_assets","canonical_surfaces","duplication"]},
     {"id":"C10","fixture":"fixtures/C10/input.json","expectations":"fixtures/C10/expectations.json","focus":["memory_pressure","history_pressure","drop_evidence"]},

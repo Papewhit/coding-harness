@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""将 pico session JSON 转换为人类可读的 Markdown 文本。
+"""将 coda session JSON 转换为人类可读的 Markdown 文本。
 
 用法:
-  uv run python scripts/readable_session.py .pico/sessions/20260513-183158-56c28c.json
-  uv run python scripts/readable_session.py .pico/sessions/20260513-183158-56c28c.json -o session.md
+  uv run python scripts/readable_session.py .coda/sessions/20260513-183158-56c28c.json
+  uv run python scripts/readable_session.py .coda/sessions/20260513-183158-56c28c.json -o session.md
   uv run python scripts/readable_session.py --all   # 转换所有 session
   uv run python scripts/readable_session.py --all -o sessions/   # 输出到目录
 """
@@ -98,11 +98,11 @@ def convert_session(session_path: Path, output_path: Path):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="将 pico session JSON 转换为可读 Markdown")
+    parser = argparse.ArgumentParser(description="将 coda session JSON 转换为可读 Markdown")
     parser.add_argument("input", nargs="?", help="session JSON 文件路径（--all 时可选）")
     parser.add_argument("-o", "--output", help="输出文件路径（默认: <input>.md）")
-    parser.add_argument("--all", action="store_true", help="转换 .pico/sessions/ 下所有 session")
-    parser.add_argument("--sessions-dir", default=".pico/sessions", help="sessions 目录（默认 .pico/sessions）")
+    parser.add_argument("--all", action="store_true", help="转换 .coda/sessions/ 下所有 session")
+    parser.add_argument("--sessions-dir", default=".coda/sessions", help="sessions 目录（默认 .coda/sessions）")
     args = parser.parse_args()
 
     if args.all:

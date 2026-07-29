@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from pico.evaluation.context_eval import (
+from coda.evaluation.context_eval import (
     ARTIFACT_SCHEMA_VERSION,
     CASES_SCHEMA_VERSION,
     FRAGMENT_SCHEMA_VERSION,
@@ -15,7 +15,7 @@ from pico.evaluation.context_eval import (
     merge_fragments,
     run_context_asset_evaluation,
 )
-from pico.providers.contracts import ModelRequest, ProviderContinuation, ToolDefinition
+from coda.providers.contracts import ModelRequest, ProviderContinuation, ToolDefinition
 
 
 SKILLS_SENTINEL = "CTX_SKILLS_91A7"

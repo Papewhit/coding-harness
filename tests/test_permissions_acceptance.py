@@ -1,18 +1,18 @@
 import json
 
 from tests.native_fixtures import final, lock_scripted_provider_profile, scripted_client, tool
-from pico import Pico, SessionStore, WorkspaceContext
-from pico.cli import handle_repl_command
-from pico.core.permissions import PermissionDecision
-from pico.features.sandbox.config import SandboxConfig
+from coda import Coda, SessionStore, WorkspaceContext
+from coda.cli import handle_repl_command
+from coda.core.permissions import PermissionDecision
+from coda.features.sandbox.config import SandboxConfig
 
 
 def build_agent(tmp_path, outputs=None, **kwargs):
     (tmp_path / "README.md").write_text("demo\n", encoding="utf-8")
     workspace = WorkspaceContext.build(tmp_path)
-    store = SessionStore(tmp_path / ".pico" / "sessions")
+    store = SessionStore(tmp_path / ".coda" / "sessions")
     approval_policy = kwargs.pop("approval_policy", "auto")
-    return lock_scripted_provider_profile(Pico(
+    return lock_scripted_provider_profile(Coda(
         model_client=scripted_client(outputs),
         workspace=workspace,
         session_store=store,
@@ -98,7 +98,7 @@ def test_plan_mode_switches_tool_profile_and_allows_only_active_plan_file(tmp_pa
         [
             tool(
                 "write_file",
-                path=".pico/plans/v3-plan.md",
+                path=".coda/plans/v3-plan.md",
                 content="# Plan\n- Gate 1\n",
             ),
             final("Plan ready."),
@@ -110,7 +110,7 @@ def test_plan_mode_switches_tool_profile_and_allows_only_active_plan_file(tmp_pa
 
     plan_path = agent.enter_plan_mode("v3")
 
-    assert plan_path == ".pico/plans/v3-plan.md"
+    assert plan_path == ".coda/plans/v3-plan.md"
     assert agent.active_tool_profile.name == "plan"
     assert "run_shell" not in agent.active_tool_profile.allowed_tools
 
@@ -119,7 +119,7 @@ def test_plan_mode_switches_tool_profile_and_allows_only_active_plan_file(tmp_pa
     )
     assert (
         rejected
-        == "error: plan mode can only write the active plan artifact (.pico/plans/v3-plan.md)"
+        == "error: plan mode can only write the active plan artifact (.coda/plans/v3-plan.md)"
     )
     assert not (tmp_path / "src.py").exists()
 
@@ -128,7 +128,7 @@ def test_plan_mode_switches_tool_profile_and_allows_only_active_plan_file(tmp_pa
     assert answer == "Plan ready."
     assert agent.active_tool_profile.name == "default"
     assert (
-        (tmp_path / ".pico" / "plans" / "v3-plan.md")
+        (tmp_path / ".coda" / "plans" / "v3-plan.md")
         .read_text(encoding="utf-8")
         .startswith("# Plan")
     )
@@ -159,7 +159,7 @@ def test_repeated_plan_mode_denial_is_blocked_before_hitting_step_limit(tmp_path
             bad_call,
             tool(
                 "write_file",
-                path=".pico/plans/repeat-plan.md",
+                path=".coda/plans/repeat-plan.md",
                 content="# Plan\n- Retry stopped.\n",
             ),
             final("Plan ready."),
@@ -202,7 +202,7 @@ def test_plan_mode_does_not_allow_retargeting_active_plan_with_enter_tool(tmp_pa
     )
 
     assert "plan mode" in rejected
-    assert agent.plan_mode.plan_path == ".pico/plans/original-plan.md"
+    assert agent.plan_mode.plan_path == ".coda/plans/original-plan.md"
 
 
 def test_plan_mode_rejects_arbitrary_workspace_plan_path(tmp_path):
@@ -212,7 +212,7 @@ def test_plan_mode_rejects_arbitrary_workspace_plan_path(tmp_path):
         "enter_plan_mode", {"topic": "retarget", "path": "src/auth.py"}
     )
 
-    assert "plan path must stay under .pico/plans/" in rejected
+    assert "plan path must stay under .coda/plans/" in rejected
     assert agent.runtime_mode == "default"
 
 
@@ -220,10 +220,10 @@ def test_repl_plan_command_reports_bad_plan_path_without_crashing(tmp_path):
     agent = build_agent(tmp_path)
 
     handled, should_exit, output = handle_repl_command(
-        agent, "/plan auth .pico/plans/../escape.md"
+        agent, "/plan auth .coda/plans/../escape.md"
     )
 
     assert handled is True
     assert should_exit is False
-    assert output == "error: plan path must stay under .pico/plans/"
+    assert output == "error: plan path must stay under .coda/plans/"
     assert agent.runtime_mode == "default"

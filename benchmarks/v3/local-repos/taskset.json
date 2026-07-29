@@ -1,6 +1,6 @@
 {
-  "schema_version": "pico-local-repo-taskset-v1",
-  "taskset_id": "pico-local-python-v1",
+  "schema_version": "coda-local-repo-taskset-v1",
+  "taskset_id": "coda-local-python-v1",
   "version": 1,
   "language": "python",
   "execution_policy": {

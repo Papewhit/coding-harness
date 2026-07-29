@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Run the prioritized Pico v3 human-scenario gate.
+"""Run the prioritized Coda v3 human-scenario gate.
 
-The runner intentionally drives Pico through its public CLI entrypoint. It does
-not import the Pico runtime; verification reads only the files Pico writes.
+The runner intentionally drives Coda through its public CLI entrypoint. It does
+not import the Coda runtime; verification reads only the files Coda writes.
 """
 
 from __future__ import annotations
@@ -21,11 +21,11 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 
-from pico.evaluation.run_evidence import RunEvidence
+from coda.evaluation.run_evidence import RunEvidence
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_CONFIG = ROOT / ".pico.toml"
+DEFAULT_CONFIG = ROOT / ".coda.toml"
 SUMMARY_JSON = "summary.json"
 SUMMARY_MD = "summary.md"
 
@@ -59,11 +59,11 @@ class HumanScenarioRunner:
         self.args = args
         stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
         self.output_dir = Path(
-            args.output_dir or Path("/tmp") / "pico-v3-human-scenarios" / stamp
+            args.output_dir or Path("/tmp") / "coda-v3-human-scenarios" / stamp
         ).resolve()
         if _is_relative_to(self.output_dir, ROOT):
             raise ValueError(
-                "output-dir must be outside the Pico repo; otherwise Pico discovers "
+                "output-dir must be outside the Coda repo; otherwise Coda discovers "
                 "the parent git root and the scenario no longer runs in an isolated workspace"
             )
         self.output_dir.mkdir(parents=True, exist_ok=True)
@@ -175,7 +175,7 @@ class HumanScenarioRunner:
             "3) run_shell `uv run --with pytest python -m pytest -q`。"
             "4) 测试 passed 后 final。不要改其他文件。"
         )
-        command = self.run_pico(
+        command = self.run_coda(
             "R01",
             workspace,
             prompt=prompt,
@@ -233,7 +233,7 @@ class HumanScenarioRunner:
             "4) run_shell `uv run --with pytest python -m pytest -q`。"
             "5) 测试 passed 后 final。不要改其他文件。"
         )
-        command = self.run_pico(
+        command = self.run_coda(
             "R02",
             workspace,
             prompt=prompt,
@@ -273,7 +273,7 @@ class HumanScenarioRunner:
         (workspace / "deploy.md").write_text(
             "- migrations applied\n- rollback owner assigned\n", encoding="utf-8"
         )
-        skill_dir = workspace / ".pico" / "skills" / "release"
+        skill_dir = workspace / ".coda" / "skills" / "release"
         skill_dir.mkdir(parents=True)
         (skill_dir / "SKILL.md").write_text(
             """---
@@ -290,7 +290,7 @@ allowed-tools: read_file, write_file
 """,
             encoding="utf-8",
         )
-        command = self.run_pico(
+        command = self.run_coda(
             "R03",
             workspace,
             repl_input="/release billing-api\n/exit\n",
@@ -349,7 +349,7 @@ allowed-tools: read_file, write_file
             "3) read_file src/incident_router.py start=1 end=80。"
             "4) final，说明已定位，等待恢复继续。不要改代码。"
         )
-        first = self.run_pico(
+        first = self.run_coda(
             "R04-first",
             workspace,
             prompt=first_prompt,
@@ -366,7 +366,7 @@ allowed-tools: read_file, write_file
             "3) todo_update todo_id='todo_1' status='done' note='threshold fixed and tests verified'。"
             "4) 测试 passed 后 final。不要改其他文件。"
         )
-        second = self.run_pico(
+        second = self.run_coda(
             "R04-resume",
             workspace,
             prompt=second_prompt,
@@ -413,7 +413,7 @@ allowed-tools: read_file, write_file
             "3) run_shell `uv run --with pytest python -m pytest -q`。"
             "4) 测试 passed 后 final。不要改其他文件。"
         )
-        command = self.run_pico(
+        command = self.run_coda(
             "R05",
             workspace,
             prompt=prompt,
@@ -447,7 +447,7 @@ allowed-tools: read_file, write_file
 
     def s07_repl_help(self) -> ScenarioResult:
         workspace = self._fresh_workspace("s07")
-        command = self.run_pico(
+        command = self.run_coda(
             "S07", workspace, repl_input="/help\n/exit\n", timeout=120
         )
         stdout = self.read_log(command.stdout_path)
@@ -468,7 +468,7 @@ allowed-tools: read_file, write_file
 
     def s06_tty_default_tui(self) -> ScenarioResult:
         workspace = self._fresh_workspace("s06")
-        command = self.run_pico_tty_smoke("S06", workspace, timeout=6)
+        command = self.run_coda_tty_smoke("S06", workspace, timeout=6)
         stdout = self.read_log(command.stdout_path)
         stderr = self.read_log(command.stderr_path)
         checks = [
@@ -479,8 +479,8 @@ allowed-tools: read_file, write_file
             ),
             check("no_traceback", "Traceback" not in stdout + stderr),
             check(
-                "mentions_pico_or_tui",
-                "pico" in (stdout + stderr).lower() or "Textual" in stdout + stderr,
+                "mentions_coda_or_tui",
+                "coda" in (stdout + stderr).lower() or "Textual" in stdout + stderr,
             ),
         ]
         return self.result(
@@ -490,10 +490,10 @@ allowed-tools: read_file, write_file
     def s08_prompt_one_shot(self) -> ScenarioResult:
         workspace = self._fresh_workspace("s08")
         (workspace / "README.md").write_text(
-            "# One shot\n\nPico one-shot fixture.\n", encoding="utf-8"
+            "# One shot\n\nCoda one-shot fixture.\n", encoding="utf-8"
         )
         prompt = "请先用 read_file 读取 README.md 第 1 至 20 行，然后最终只回答 one-shot ok。"
-        command = self.run_pico(
+        command = self.run_coda(
             "S08",
             workspace,
             prompt=prompt,
@@ -521,7 +521,7 @@ allowed-tools: read_file, write_file
 
     def s09_piped_stdin_repl(self) -> ScenarioResult:
         workspace = self._fresh_workspace("s09")
-        command = self.run_pico(
+        command = self.run_coda(
             "S09", workspace, repl_input="/help\n/exit\n", timeout=120
         )
         stdout = self.read_log(command.stdout_path)
@@ -547,7 +547,7 @@ allowed-tools: read_file, write_file
         command = self.run_python(
             "S10",
             workspace,
-            "from pico.commands.slash import suggest_commands\n"
+            "from coda.commands.slash import suggest_commands\n"
             "items = suggest_commands('/sub')\n"
             "print(items[0].name if items else '')\n",
         )
@@ -567,7 +567,7 @@ allowed-tools: read_file, write_file
 
     def s11_session_status(self) -> ScenarioResult:
         workspace = self._fresh_workspace("s11")
-        command = self.run_pico(
+        command = self.run_coda(
             "S11",
             workspace,
             repl_input="/plan refactor-auth\n/session\n/exit\n",
@@ -591,7 +591,7 @@ allowed-tools: read_file, write_file
 
     def s12_usage_metadata(self) -> ScenarioResult:
         workspace = self._fresh_workspace("s12")
-        first = self.run_pico(
+        first = self.run_coda(
             "S12-task",
             workspace,
             prompt="不要调用工具，直接返回 usage seed。",
@@ -599,7 +599,7 @@ allowed-tools: read_file, write_file
             max_new_tokens=512,
             timeout=180,
         )
-        second = self.run_pico(
+        second = self.run_coda(
             "S12-usage",
             workspace,
             repl_input="/usage\n/exit\n",
@@ -627,7 +627,7 @@ allowed-tools: read_file, write_file
 
     def s13_model_runtime_switch(self) -> ScenarioResult:
         workspace = self._fresh_workspace("s13")
-        command = self.run_pico(
+        command = self.run_coda(
             "S13",
             workspace,
             repl_input="/model gpt-test-local\n/model\n/exit\n",
@@ -638,7 +638,7 @@ allowed-tools: read_file, write_file
             check("command_exit_0", command.returncode == 0),
             check("model_switched", "model: gpt-test-local" in stdout),
             check(
-                "no_workspace_config_written", not (workspace / ".pico.toml").exists()
+                "no_workspace_config_written", not (workspace / ".coda.toml").exists()
             ),
         ]
         return self.result(
@@ -652,7 +652,7 @@ allowed-tools: read_file, write_file
 
     def s14_clear_new_session(self) -> ScenarioResult:
         workspace = self._fresh_workspace("s14")
-        command = self.run_pico(
+        command = self.run_coda(
             "S14",
             workspace,
             repl_input="/session\n/clear\n/session\n/exit\n",
@@ -687,10 +687,10 @@ allowed-tools: read_file, write_file
         prompt = (
             "请验证 plan mode 写保护。你必须先返回这个工具调用，不要解释："
             "调用 write_file，path='src/auth.py'，content=\"print('no')\\n\"。"
-            "如果被拒绝，再写 active plan artifact .pico/plans/auth-refactor-plan.md，内容为 # Plan。最后 final。"
+            "如果被拒绝，再写 active plan artifact .coda/plans/auth-refactor-plan.md，内容为 # Plan。最后 final。"
         )
         repl = f"/plan auth-refactor\n{prompt}\n/exit\n"
-        command = self.run_pico(
+        command = self.run_coda(
             "S15",
             workspace,
             repl_input=repl,
@@ -699,15 +699,15 @@ allowed-tools: read_file, write_file
             timeout=420,
         )
         commands = [command]
-        plan_path = workspace / ".pico" / "plans" / "auth-refactor-plan.md"
+        plan_path = workspace / ".coda" / "plans" / "auth-refactor-plan.md"
         if not plan_path.is_file():
             continue_prompt = (
                 "继续上一个 plan mode。不要再写 src/auth.py。"
-                "只调用一次 write_file，path 必须是 .pico/plans/auth-refactor-plan.md，"
+                "只调用一次 write_file，path 必须是 .coda/plans/auth-refactor-plan.md，"
                 "content 为 `# Plan\\n- Verified plan mode write guard.\\n`。然后 final。"
             )
             commands.append(
-                self.run_pico(
+                self.run_coda(
                     "S15-resume",
                     workspace,
                     prompt=continue_prompt,
@@ -746,9 +746,9 @@ allowed-tools: read_file, write_file
         workspace = self._fresh_workspace("s16")
         prompt = (
             "先不调用工具，直接给出最终答复 plan verbally complete。如果 runtime 提醒不能结束，"
-            "再 write_file .pico/plans/cache-plan.md，内容为 # Cache Plan，然后 final。"
+            "再 write_file .coda/plans/cache-plan.md，内容为 # Cache Plan，然后 final。"
         )
-        command = self.run_pico(
+        command = self.run_coda(
             "S16",
             workspace,
             repl_input=f"/plan cache\n{prompt}\n/exit\n",
@@ -757,7 +757,7 @@ allowed-tools: read_file, write_file
             timeout=360,
         )
         stdout = self.read_log(command.stdout_path)
-        plan_path = workspace / ".pico" / "plans" / "cache-plan.md"
+        plan_path = workspace / ".coda" / "plans" / "cache-plan.md"
         checks = [
             check("command_exit_0", command.returncode == 0),
             check(
@@ -778,9 +778,9 @@ allowed-tools: read_file, write_file
 
     def s17_absolute_plan_path(self) -> ScenarioResult:
         workspace = self._fresh_workspace("s17")
-        absolute_plan = workspace / ".pico" / "plans" / "student-plan.md"
-        prompt = "write_file .pico/plans/student-plan.md，内容为 # Student Plan，然后 final。"
-        command = self.run_pico(
+        absolute_plan = workspace / ".coda" / "plans" / "student-plan.md"
+        prompt = "write_file .coda/plans/student-plan.md，内容为 # Student Plan，然后 final。"
+        command = self.run_coda(
             "S17",
             workspace,
             repl_input=f"/plan student {absolute_plan}\n{prompt}\n/exit\n",
@@ -793,7 +793,7 @@ allowed-tools: read_file, write_file
             check("command_exit_0", command.returncode == 0),
             check(
                 "absolute_path_normalized",
-                "plan path: .pico/plans/student-plan.md" in stdout,
+                "plan path: .coda/plans/student-plan.md" in stdout,
             ),
             check("plan_written", absolute_plan.is_file()),
         ]
@@ -808,20 +808,20 @@ allowed-tools: read_file, write_file
 
     def s18_plan_path_escape_rejected(self) -> ScenarioResult:
         workspace = self._fresh_workspace("s18")
-        command = self.run_pico(
+        command = self.run_coda(
             "S18",
             workspace,
-            repl_input="/plan student .pico/plans/../escape.md\n/exit\n",
+            repl_input="/plan student .coda/plans/../escape.md\n/exit\n",
             timeout=120,
         )
         stdout = self.read_log(command.stdout_path)
         checks = [
             check("command_exit_0", command.returncode == 0),
             check(
-                "escape_rejected", "plan path must stay under .pico/plans/" in stdout
+                "escape_rejected", "plan path must stay under .coda/plans/" in stdout
             ),
             check(
-                "outside_not_written", not (workspace / ".pico" / "escape.md").exists()
+                "outside_not_written", not (workspace / ".coda" / "escape.md").exists()
             ),
         ]
         return self.result(
@@ -842,7 +842,7 @@ allowed-tools: read_file, write_file
             "严格按步骤执行：先调用 agent 工具，description='Inspect README'，"
             "prompt='Read README.md and summarize it.'，subagent_type='Explore'。然后 final。"
         )
-        command = self.run_pico(
+        command = self.run_coda(
             "S19",
             workspace,
             repl_input=f"/plan payments\n{prompt}\n/exit\n",
@@ -878,7 +878,7 @@ allowed-tools: read_file, write_file
 
     def s20_plan_rejects_worker_write(self) -> ScenarioResult:
         workspace = self._fresh_workspace("s20")
-        command = self.run_pico(
+        command = self.run_coda(
             "S20",
             workspace,
             repl_input="/plan payments\n/subagent worker --scope src change code\n/exit\n",
@@ -904,12 +904,12 @@ allowed-tools: read_file, write_file
         (workspace / "README.md").write_text("hello world\n", encoding="utf-8")
         prompt = (
             "验证改文件前必须先读。严格按步骤使用原生工具，完成后给出最终答复："
-            "1) 先尝试 patch_file README.md old_text='world' new_text='pico'，不要先 read_file。"
+            "1) 先尝试 patch_file README.md old_text='world' new_text='coda'，不要先 read_file。"
             "2) 如果被拒绝，再 read_file README.md start=1 end=1。"
-            "3) 再 patch_file README.md old_text='world' new_text='pico'。"
+            "3) 再 patch_file README.md old_text='world' new_text='coda'。"
             "4) final。"
         )
-        command = self.run_pico(
+        command = self.run_coda(
             "S21",
             workspace,
             prompt=prompt,
@@ -920,7 +920,7 @@ allowed-tools: read_file, write_file
         text = (workspace / "README.md").read_text(encoding="utf-8")
         checks = [
             check("command_exit_0", command.returncode == 0),
-            check("readme_patched_after_read", text == "hello pico\n", text),
+            check("readme_patched_after_read", text == "hello coda\n", text),
         ]
         checks.extend(
             self.report_has_runtime_reminder(workspace, "prior_read_required")
@@ -943,7 +943,7 @@ allowed-tools: read_file, write_file
             "3) 如果被拒绝，read_file README.md start=1 end=5。"
             "4) 再 write_file README.md 内容 overwrite。5) final。"
         )
-        command = self.run_pico(
+        command = self.run_coda(
             "S22",
             workspace,
             prompt=prompt,
@@ -982,7 +982,7 @@ allowed-tools: read_file, write_file
             "严格按步骤执行：1) write_file scripts/check.py 内容 `VALUE = False\\n`。"
             "2) patch_file scripts/check.py old_text='False' new_text='True'。3) final。"
         )
-        command = self.run_pico(
+        command = self.run_coda(
             "S23",
             workspace,
             prompt=prompt,
@@ -1015,7 +1015,7 @@ allowed-tools: read_file, write_file
         workspace = self._fresh_workspace("s24")
         (workspace / "README.md").write_text("TODO: search target\n", encoding="utf-8")
         prompt = "严格先调用 run_shell 命令 `grep -R TODO .`。如果被拒绝，调用 search pattern='TODO' path='.'，然后 final。"
-        command = self.run_pico(
+        command = self.run_coda(
             "S24",
             workspace,
             prompt=prompt,
@@ -1052,7 +1052,7 @@ allowed-tools: read_file, write_file
             "严格调用 run_shell 执行这个输出管理命令，然后 final："
             f"command={json.dumps(command_text)}，timeout=20。"
         )
-        command = self.run_pico(
+        command = self.run_coda(
             "S25",
             workspace,
             prompt=prompt,
@@ -1086,7 +1086,7 @@ allowed-tools: read_file, write_file
             "严格返回 run_shell 工具调用执行这个命令，然后 final："
             f"command={json.dumps(command_text)}，timeout=20。"
         )
-        command = self.run_pico(
+        command = self.run_coda(
             "S26",
             workspace,
             prompt=prompt,
@@ -1117,7 +1117,7 @@ allowed-tools: read_file, write_file
     def s27_approval_never_rejects_risky_tool(self) -> ScenarioResult:
         workspace = self._fresh_workspace("s27")
         prompt = "严格调用 write_file denied.txt 内容 no，然后 final。"
-        command = self.run_pico(
+        command = self.run_coda(
             "S27",
             workspace,
             prompt=prompt,
@@ -1148,7 +1148,7 @@ allowed-tools: read_file, write_file
     def s28_sandbox_required_fails_closed(self) -> ScenarioResult:
         workspace = self._fresh_workspace("s28")
         prompt = "严格调用 run_shell `echo hi`，然后 final。"
-        command = self.run_pico(
+        command = self.run_coda(
             "S28",
             workspace,
             prompt=prompt,
@@ -1178,7 +1178,7 @@ allowed-tools: read_file, write_file
     def s29_sandbox_best_effort_degrades(self) -> ScenarioResult:
         workspace = self._fresh_workspace("s29")
         prompt = "严格调用 run_shell `echo hi`，然后 final。"
-        command = self.run_pico(
+        command = self.run_coda(
             "S29",
             workspace,
             prompt=prompt,
@@ -1207,7 +1207,7 @@ allowed-tools: read_file, write_file
 
     def s30_skills_list_local(self) -> ScenarioResult:
         workspace = self._fresh_workspace("s30")
-        command = self.run_pico(
+        command = self.run_coda(
             "S30", workspace, repl_input="/skills\n/exit\n", timeout=120
         )
         stdout = self.read_log(command.stdout_path)
@@ -1219,8 +1219,8 @@ allowed-tools: read_file, write_file
             ),
             check(
                 "no_run_created",
-                not any((workspace / ".pico" / "runs").glob("run_*"))
-                if (workspace / ".pico" / "runs").exists()
+                not any((workspace / ".coda" / "runs").glob("run_*"))
+                if (workspace / ".coda" / "runs").exists()
                 else True,
             ),
         ]
@@ -1235,7 +1235,7 @@ allowed-tools: read_file, write_file
 
     def s31_builtin_review_with_arguments(self) -> ScenarioResult:
         workspace = self._fresh_workspace("s31")
-        command = self.run_pico(
+        command = self.run_coda(
             "S31",
             workspace,
             repl_input="/review focus auth\n/exit\n",
@@ -1265,7 +1265,7 @@ allowed-tools: read_file, write_file
 
     def s32_project_skill_arguments(self) -> ScenarioResult:
         workspace = self._fresh_workspace("s32")
-        skill_dir = workspace / ".pico" / "skills" / "deploy"
+        skill_dir = workspace / ".coda" / "skills" / "deploy"
         skill_dir.mkdir(parents=True)
         (skill_dir / "SKILL.md").write_text(
             """---
@@ -1273,11 +1273,11 @@ name: deploy
 description: Deploy checklist
 argument-hint: target
 ---
-请只返回 deploy checked $ARGUMENTS from ${PICO_SKILL_DIR}，不要调用工具。
+请只返回 deploy checked $ARGUMENTS from ${CODA_SKILL_DIR}，不要调用工具。
 """,
             encoding="utf-8",
         )
-        command = self.run_pico(
+        command = self.run_coda(
             "S32",
             workspace,
             repl_input="/deploy staging\n/exit\n",
@@ -1303,7 +1303,7 @@ argument-hint: target
 
     def s33_skill_allowed_tools_restricts_write(self) -> ScenarioResult:
         workspace = self._fresh_workspace("s33")
-        skill_dir = workspace / ".pico" / "skills" / "readonly"
+        skill_dir = workspace / ".coda" / "skills" / "readonly"
         skill_dir.mkdir(parents=True)
         (skill_dir / "SKILL.md").write_text(
             """---
@@ -1315,7 +1315,7 @@ allowed-tools: read_file
 """,
             encoding="utf-8",
         )
-        command = self.run_pico(
+        command = self.run_coda(
             "S33",
             workspace,
             repl_input="/readonly now\n/exit\n",
@@ -1344,7 +1344,7 @@ allowed-tools: read_file
 
     def s34_fork_skill_keeps_parent_history(self) -> ScenarioResult:
         workspace = self._fresh_workspace("s34")
-        skill_dir = workspace / ".pico" / "skills" / "inspect"
+        skill_dir = workspace / ".coda" / "skills" / "inspect"
         skill_dir.mkdir(parents=True)
         (skill_dir / "SKILL.md").write_text(
             """---
@@ -1356,7 +1356,7 @@ context: fork
 """,
             encoding="utf-8",
         )
-        first = self.run_pico(
+        first = self.run_coda(
             "S34-first",
             workspace,
             prompt="不要调用工具，直接返回 parent seed。",
@@ -1364,7 +1364,7 @@ context: fork
             max_new_tokens=512,
             timeout=180,
         )
-        second = self.run_pico(
+        second = self.run_coda(
             "S34-skill",
             workspace,
             repl_input="/inspect README.md\n/exit\n",
@@ -1394,7 +1394,7 @@ context: fork
 
     def s35_prompt_only_skill(self) -> ScenarioResult:
         workspace = self._fresh_workspace("s35")
-        skill_dir = workspace / ".pico" / "skills" / "template"
+        skill_dir = workspace / ".coda" / "skills" / "template"
         skill_dir.mkdir(parents=True)
         (skill_dir / "SKILL.md").write_text(
             """---
@@ -1406,7 +1406,7 @@ hello $ARGUMENTS from prompt only
 """,
             encoding="utf-8",
         )
-        command = self.run_pico(
+        command = self.run_coda(
             "S35", workspace, repl_input="/template world\n/exit\n", timeout=120
         )
         stdout = self.read_log(command.stdout_path)
@@ -1415,8 +1415,8 @@ hello $ARGUMENTS from prompt only
             check("rendered_without_model", "hello world from prompt only" in stdout),
             check(
                 "no_run_created",
-                not any((workspace / ".pico" / "runs").glob("run_*"))
-                if (workspace / ".pico" / "runs").exists()
+                not any((workspace / ".coda" / "runs").glob("run_*"))
+                if (workspace / ".coda" / "runs").exists()
                 else True,
             ),
             check(
@@ -1437,12 +1437,12 @@ hello $ARGUMENTS from prompt only
 
     def s36_invalid_skill_frontmatter_diagnostic(self) -> ScenarioResult:
         workspace = self._fresh_workspace("s36")
-        skill_dir = workspace / ".pico" / "skills" / "bad"
+        skill_dir = workspace / ".coda" / "skills" / "bad"
         skill_dir.mkdir(parents=True)
         (skill_dir / "SKILL.md").write_text(
             "---\nname: bad\n---\nBad skill still loadable.\n", encoding="utf-8"
         )
-        command = self.run_pico(
+        command = self.run_coda(
             "S36", workspace, repl_input="/skills\n/exit\n", timeout=120
         )
         stdout = self.read_log(command.stdout_path)
@@ -1473,7 +1473,7 @@ hello $ARGUMENTS from prompt only
             "1) agent description='Inspect README' prompt='Read README.md and summarize it in one sentence.' subagent_type='Explore'。"
             "2) 等待 worker notification 后 final。"
         )
-        command = self.run_pico(
+        command = self.run_coda(
             "S37",
             workspace,
             prompt=prompt,
@@ -1508,7 +1508,7 @@ hello $ARGUMENTS from prompt only
             "严格调用 agent 工具：description='Write notes'，subagent_type='worker'，write_scope=['notes']，"
             "prompt='write_file notes/first.txt content first\\n and final'。然后 final。"
         )
-        command = self.run_pico(
+        command = self.run_coda(
             "S38",
             workspace,
             prompt=prompt,
@@ -1545,7 +1545,7 @@ hello $ARGUMENTS from prompt only
             "2) send_message to='agent_1' message='write_file notes/second.txt content second\\n then final'。"
             "3) final。"
         )
-        command = self.run_pico(
+        command = self.run_coda(
             "S39",
             workspace,
             prompt=prompt,
@@ -1584,7 +1584,7 @@ hello $ARGUMENTS from prompt only
             "prompt='run_shell python -c \"import time; time.sleep(5); print(1)\" then final'。"
             "2) 立刻 send_message to='agent_1' message='continue now'。3) final。"
         )
-        command = self.run_pico(
+        command = self.run_coda(
             "S40",
             workspace,
             prompt=prompt,
@@ -1618,7 +1618,7 @@ hello $ARGUMENTS from prompt only
             "prompt='run_shell python -c \"import time; time.sleep(10)\" then final'。"
             "2) task_stop task_id='agent_1'。3) final。"
         )
-        command = self.run_pico(
+        command = self.run_coda(
             "S41",
             workspace,
             prompt=prompt,
@@ -1647,7 +1647,7 @@ hello $ARGUMENTS from prompt only
 
     def s42_clear_stops_worker(self) -> ScenarioResult:
         workspace = self._fresh_workspace("s42")
-        first = self.run_pico(
+        first = self.run_coda(
             "S42-start",
             workspace,
             prompt=(
@@ -1658,7 +1658,7 @@ hello $ARGUMENTS from prompt only
             max_new_tokens=1024,
             timeout=240,
         )
-        second = self.run_pico(
+        second = self.run_coda(
             "S42-clear",
             workspace,
             repl_input="/clear\n/agents\n/exit\n",
@@ -1682,13 +1682,13 @@ hello $ARGUMENTS from prompt only
 
     def s43_remember_daily_log(self) -> ScenarioResult:
         workspace = self._fresh_workspace("s43")
-        command = self.run_pico(
+        command = self.run_coda(
             "S43",
             workspace,
             repl_input="/remember 这个项目用 pytest，不用 unittest\n/exit\n",
             timeout=120,
         )
-        logs = list((workspace / ".pico" / "memory" / "logs").rglob("*.md"))
+        logs = list((workspace / ".coda" / "memory" / "logs").rglob("*.md"))
         text = "\n".join(path.read_text(encoding="utf-8") for path in logs)
         checks = [
             check("command_exit_0", command.returncode == 0),
@@ -1709,12 +1709,12 @@ hello $ARGUMENTS from prompt only
         workspace = self._fresh_workspace("s44")
         repl = (
             "/remember Project convention: use pytest for tests\n"
-            "/remember Decision: keep Pico artifacts under .pico/runs\n"
+            "/remember Decision: keep Coda artifacts under .coda/runs\n"
             "/remember Project convention: prefer small files\n"
             "/dream\n"
             "/exit\n"
         )
-        command = self.run_pico(
+        command = self.run_coda(
             "S44",
             workspace,
             repl_input=repl,
@@ -1722,7 +1722,7 @@ hello $ARGUMENTS from prompt only
             max_new_tokens=2048,
             timeout=420,
         )
-        memory_root = workspace / ".pico" / "memory"
+        memory_root = workspace / ".coda" / "memory"
         memory_text = (
             "\n".join(
                 path.read_text(encoding="utf-8") for path in memory_root.rglob("*.md")
@@ -1755,7 +1755,7 @@ hello $ARGUMENTS from prompt only
             "Dependency: API key is sk-live-secret-abc.\n"
             "Project convention: Use pytest for tests."
         )
-        command = self.run_pico(
+        command = self.run_coda(
             "S45",
             workspace,
             prompt=prompt,
@@ -1763,7 +1763,7 @@ hello $ARGUMENTS from prompt only
             max_new_tokens=1024,
             timeout=240,
         )
-        memory_root = workspace / ".pico" / "memory"
+        memory_root = workspace / ".coda" / "memory"
         memory_text = (
             "\n".join(
                 path.read_text(encoding="utf-8") for path in memory_root.rglob("*.md")
@@ -1796,7 +1796,7 @@ hello $ARGUMENTS from prompt only
     def s46_manual_compact(self) -> ScenarioResult:
         workspace = self._fresh_workspace("s46")
         long_turns = "\n".join(f"第 {i} 轮：{'padding ' * 60}" for i in range(8))
-        command = self.run_pico(
+        command = self.run_coda(
             "S46",
             workspace,
             repl_input=f"{long_turns}\n/compact\n/exit\n",
@@ -1827,7 +1827,7 @@ hello $ARGUMENTS from prompt only
 
     def s47_resume_workspace_mismatch(self) -> ScenarioResult:
         workspace = self._fresh_workspace("s47")
-        first = self.run_pico(
+        first = self.run_coda(
             "S47-first",
             workspace,
             prompt="read_file README.md start=1 end=20，然后 final。",
@@ -1838,7 +1838,7 @@ hello $ARGUMENTS from prompt only
         (workspace / "README.md").write_text(
             "# changed after checkpoint\n", encoding="utf-8"
         )
-        second = self.run_pico(
+        second = self.run_coda(
             "S47-resume",
             workspace,
             prompt="不要改文件，只返回 resume checked。",
@@ -1872,7 +1872,7 @@ hello $ARGUMENTS from prompt only
         commands = []
         checks = []
         for provider in ("openai", "anthropic", "deepseek"):
-            command = self.run_pico(
+            command = self.run_coda(
                 f"S48-{provider}",
                 workspace,
                 prompt="/usage",
@@ -1910,7 +1910,7 @@ hello $ARGUMENTS from prompt only
 
     def s49_provider_error_metadata(self) -> ScenarioResult:
         workspace = self._fresh_workspace("s49")
-        command = self.run_pico(
+        command = self.run_coda(
             "S49",
             workspace,
             prompt="不要调用工具，直接返回 provider ok。",
@@ -1955,12 +1955,12 @@ hello $ARGUMENTS from prompt only
             "3) final 时只说 safety checked，不要复述 secret。"
         )
         env = dict(os.environ)
-        env["PICO_HUMAN_SECRET"] = secret
-        command = self.run_pico(
+        env["CODA_HUMAN_SECRET"] = secret
+        command = self.run_coda(
             "S50",
             workspace,
             prompt=prompt,
-            extra=["--secret-env-name", "PICO_HUMAN_SECRET"],
+            extra=["--secret-env-name", "CODA_HUMAN_SECRET"],
             env=env,
             max_steps=5,
             max_new_tokens=1536,
@@ -1991,7 +1991,7 @@ hello $ARGUMENTS from prompt only
             checks,
         )
 
-    def run_pico(
+    def run_coda(
         self,
         name: str,
         workspace: Path,
@@ -2009,7 +2009,7 @@ hello $ARGUMENTS from prompt only
         args = [
             "uv",
             "run",
-            "pico",
+            "coda",
             "--cwd",
             str(workspace),
             "--config",
@@ -2083,13 +2083,13 @@ hello $ARGUMENTS from prompt only
             stderr_path=self._rel(stderr_path),
         )
 
-    def run_pico_tty_smoke(
+    def run_coda_tty_smoke(
         self, name: str, workspace: Path, *, timeout: int = 6
     ) -> CommandRecord:
         args = [
             "uv",
             "run",
-            "pico",
+            "coda",
             "--cwd",
             str(workspace),
             "--config",
@@ -2330,7 +2330,7 @@ hello $ARGUMENTS from prompt only
 
     def latest_events_path(self, workspace: Path) -> Path | None:
         events = sorted(
-            (workspace / ".pico" / "sessions").glob("*.events.jsonl"),
+            (workspace / ".coda" / "sessions").glob("*.events.jsonl"),
             key=lambda path: path.stat().st_mtime,
         )
         return events[-1] if events else None
@@ -2340,7 +2340,7 @@ hello $ARGUMENTS from prompt only
         return read_jsonl(path) if path else []
 
     def latest_run_dir(self, workspace: Path) -> Path | None:
-        runs_dir = workspace / ".pico" / "runs"
+        runs_dir = workspace / ".coda" / "runs"
         if not runs_dir.exists():
             return None
         runs = [path for path in runs_dir.iterdir() if path.is_dir()]
@@ -2353,7 +2353,7 @@ hello $ARGUMENTS from prompt only
 
     def latest_session_id(self, workspace: Path) -> str:
         sessions = sorted(
-            (workspace / ".pico" / "sessions").glob("*.json"),
+            (workspace / ".coda" / "sessions").glob("*.json"),
             key=lambda path: path.stat().st_mtime,
         )
         return sessions[-1].stem if sessions else ""
@@ -2508,7 +2508,7 @@ def to_jsonable(result: ScenarioResult) -> dict:
 
 def render_markdown(summary: dict) -> str:
     lines = [
-        "# Pico v3 Human Scenario Gate",
+        "# Coda v3 Human Scenario Gate",
         "",
         f"- status: `{summary['status']}`",
         f"- suite: `{summary['suite']}`",
@@ -2544,7 +2544,7 @@ def render_markdown(summary: dict) -> str:
 
 def build_arg_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Run Pico v3 human-scenario release gate."
+        description="Run Coda v3 human-scenario release gate."
     )
     parser.add_argument(
         "--suite",
@@ -2560,10 +2560,10 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--config",
         default=str(DEFAULT_CONFIG),
-        help="Pico config file. Defaults to this repo's ignored .pico.toml.",
+        help="Coda config file. Defaults to this repo's ignored .coda.toml.",
     )
     parser.add_argument(
-        "--provider", default="deepseek", help="Provider profile to pass to Pico."
+        "--provider", default="deepseek", help="Provider profile to pass to Coda."
     )
     parser.add_argument(
         "--scenario",

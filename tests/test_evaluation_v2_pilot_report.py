@@ -5,10 +5,10 @@ from pathlib import Path
 
 import pytest
 
-from pico.evaluation.evaluation_v2_evidence import checksums
-from pico.evaluation.evaluation_v2_row_capture import write_json
-from pico.evaluation.pilot_audit import AUDIT_SCHEMA, DECISION_SCHEMA
-from pico.evaluation.pilot_report import (
+from coda.evaluation.evaluation_v2_evidence import checksums
+from coda.evaluation.evaluation_v2_row_capture import write_json
+from coda.evaluation.pilot_audit import AUDIT_SCHEMA, DECISION_SCHEMA
+from coda.evaluation.pilot_report import (
     build_pilot_report,
     finalize_pilot,
     initialize_pilot,
@@ -36,7 +36,7 @@ def _make_row(
     row_id = f"pilot-v1-{task_id}-r1"
     row = root / "public" / "rows" / row_id
     verifier = row / "verifier"
-    run = row / "original" / ".pico" / "runs" / f"runtime-{task_id}"
+    run = row / "original" / ".coda" / "runs" / f"runtime-{task_id}"
     verifier.mkdir(parents=True)
     run.mkdir(parents=True)
     request_count = 0 if client_failure == "task" else 1
@@ -442,7 +442,7 @@ def test_finalizer_does_not_rebuild_frozen_client_with_control_interpreter(
     _make_row(root, "T01")
     audit = _audit(tmp_path / "audit.json", "T01")
     monkeypatch.setattr(
-        "pico.evaluation.pilot_report.verify_run_config",
+        "coda.evaluation.pilot_report.verify_run_config",
         lambda path: {"cohort_id": "pilot-v1", "path": str(path)},
     )
 

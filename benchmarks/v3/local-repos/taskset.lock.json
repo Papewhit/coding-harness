@@ -1,6 +1,6 @@
 {
-  "schema_version": "pico-local-repo-taskset-lock-v1",
-  "taskset_id": "pico-local-python-v1",
+  "schema_version": "coda-local-repo-taskset-lock-v1",
+  "taskset_id": "coda-local-python-v1",
   "version": 1,
   "hash_algorithm": "sha256",
   "hash_basis": {
@@ -10,20 +10,20 @@
   },
   "taskset": {
     "path": "taskset.json",
-    "sha256": "b6c1d16720583767b86cf8c8f535b0ff744a84216e0843a79660fea87389909a"
+    "sha256": "e02e1012de151984911690d259170fd6add8aeb9dc7e0840982130fa0c79ff54"
   },
   "source_fragments": {
     "tinyconfig": {
       "path": "fragments/tinyconfig.json",
-      "sha256": "24d42d41038f8fa08d90d27fc0664b8fda75579896f9072d058eadc4dfc7b3ba"
+      "sha256": "4e433830c9775ff89ab404ccf9a93ad527cb93f364e83b0244c126239bc79920"
     },
     "miniqueue": {
       "path": "fragments/miniqueue.json",
-      "sha256": "dcea7a08048653285782e8f00c9326322c6d5fe5eeab36e32c16c19d79d9f622"
+      "sha256": "96d6c959ca729a3fd86ab120952fefc57b3b081fb81a6b5bb12605acbea0a892"
     },
     "logslice": {
       "path": "fragments/logslice.json",
-      "sha256": "3e8d833b4b424b3d389705d51431b350142acc4367864ca1dcab870ed86fa382"
+      "sha256": "3282bacf44a1e0b7552f616dd78fb0c9557cd8ed9854cb216914d773d0fbf6c2"
     }
   },
   "repositories": {
@@ -35,12 +35,12 @@
     "miniqueue": {
       "path": "repos/miniqueue",
       "file_count": 5,
-      "tree_sha256": "24cf6d7fd17a7bc64e893a87bb02e1aa296ac3ac10ed7a56add082e62c65ebdd"
+      "tree_sha256": "3045592d511ba67db90a0886b4ac261f87d48774033f76ecb9dc60a4ceb55639"
     },
     "logslice": {
       "path": "repos/logslice",
       "file_count": 9,
-      "tree_sha256": "9e4f59569da20a502cdc6951dbe9989054c2992a87d4e0fd9d4e23fec649c4f0"
+      "tree_sha256": "60d068c17d6b9eccd74a6072b9242beb02ce5ea3274be467bc94c39ee6972735"
     }
   },
   "tasks": {

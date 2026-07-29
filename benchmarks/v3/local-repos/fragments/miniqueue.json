@@ -1,5 +1,5 @@
 {
-  "schema_version": "pico-local-repo-fragment-v1",
+  "schema_version": "coda-local-repo-fragment-v1",
   "repository": "miniqueue",
   "base_snapshot": "benchmarks/v3/local-repos/repos/miniqueue",
   "source_loc": 215,

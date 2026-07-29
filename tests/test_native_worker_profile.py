@@ -6,18 +6,18 @@ import json
 
 import pytest
 
-from pico import Pico, SessionStore, WorkspaceContext
-from pico.config import ProviderCapabilities, ProviderConfig
-from pico.core.worker_runtime import build_child_runtime
-from pico.providers import native_provider_profile
+from coda import Coda, SessionStore, WorkspaceContext
+from coda.config import ProviderCapabilities, ProviderConfig
+from coda.core.worker_runtime import build_child_runtime
+from coda.providers import native_provider_profile
 from tests.native_fixtures import final, scripted_client, scripted_provider_identity
 
 
 def _parent(tmp_path, child_client):
-    return Pico(
+    return Coda(
         model_client=scripted_client([]),
         workspace=WorkspaceContext.build(tmp_path),
-        session_store=SessionStore(tmp_path / ".pico" / "sessions"),
+        session_store=SessionStore(tmp_path / ".coda" / "sessions"),
         approval_policy="auto",
         model_client_factory=lambda: child_client,
     )
@@ -33,7 +33,7 @@ class ProductionLikeClient:
         self.sdk_max_retries = 0
         self.provider_attempts = 1
         if identity is not None:
-            self._pico_profile_identity = identity
+            self._coda_profile_identity = identity
 
     def request(self, request):
         return self._client.request(request)
@@ -54,7 +54,7 @@ def test_child_profile_matches_client_identity_and_final_tool_schema(
         "model": "scripted-child-model",
         "wire_dialect": "scripted-child-native",
     }
-    child_client._pico_profile_identity = child_identity
+    child_client._coda_profile_identity = child_identity
     parent = _parent(tmp_path, child_client)
 
     child = build_child_runtime(parent, subagent_type, write_scope)
@@ -94,10 +94,10 @@ def test_child_profile_verifies_production_client_before_inheriting_identity(tmp
     }
     parent_client = ProductionLikeClient(identity)
     child_client = ProductionLikeClient()
-    parent = Pico(
+    parent = Coda(
         model_client=parent_client,
         workspace=WorkspaceContext.build(tmp_path),
-        session_store=SessionStore(tmp_path / ".pico" / "sessions"),
+        session_store=SessionStore(tmp_path / ".coda" / "sessions"),
         approval_policy="auto",
         model_client_factory=lambda: child_client,
     )

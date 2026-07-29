@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pytest
 
-from pico.providers.contracts import ModelRequest, StopReason, ToolCallResult
-from pico.testing import (
+from coda.providers.contracts import ModelRequest, StopReason, ToolCallResult
+from coda.testing import (
     ScriptedNativeModelClient,
     native_continuation,
     native_final_response,

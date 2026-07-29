@@ -14,10 +14,10 @@
   "profile_id": "sha256:cce9cc18b052692b0609b338fcc885644b046d7872f9add618b37b1c4094c223",
   "provider": "replace-with-local-profile-name",
   "retry": {
-    "pico_provider_attempts": 1,
+    "coda_provider_attempts": 1,
     "sdk_max_retries": 0
   },
-  "schema_version": "pico-native-provider-profile-v1",
+  "schema_version": "coda-native-provider-profile-v1",
   "sdk": {
     "package": "anthropic",
     "version": "0.117.0"

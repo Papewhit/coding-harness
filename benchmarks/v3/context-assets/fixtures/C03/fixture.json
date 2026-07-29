@@ -1,12 +1,12 @@
 {
-  "schema_version": "pico-context-asset-fixture-v1",
+  "schema_version": "coda-context-asset-fixture-v1",
   "case_id": "C03",
   "budget": {"kind": "normal", "max_utf8_bytes": 8192},
   "assets": {
     "plan": {
       "activation_state": "active",
       "mode": "plan",
-      "plan_path": ".pico/plans/qz-5930.json",
+      "plan_path": ".coda/plans/qz-5930.json",
       "plan_content_hash": "sha256:2bf5c493f0a8e0d4",
       "plan_exists": true,
       "plan_complete": false,

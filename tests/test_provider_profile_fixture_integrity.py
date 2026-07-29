@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from pico import Pico, SessionStore, WorkspaceContext
+from coda import Coda, SessionStore, WorkspaceContext
 from tests.native_fixtures import (
     SCRIPTED_NATIVE_PROFILE_ID,
     final,
@@ -21,14 +21,14 @@ from tests.native_fixtures import (
 
 
 W5R2_BASE_SHAPE_SHA256 = {
-    "tests/test_pico.py": "8461659c7937216ef9816cfcf5ebf8b39e841b8c1f4d4d0ed08a5a518a3dd124",
+    "tests/test_coda.py": "364028d27a0b112c34158089e9464e7c1d248e916ba3f6f804c7b1ecdeaa3381",
     "tests/test_engine_acceptance.py": "4666877295920444172d4eed68104a477ba88c80b07e8db19b47cf02b811046c",
     "tests/test_context_governance_acceptance.py": "e88ee1cda9d9da79ba4992405942a10c1b4d62aa26832b10ae59730b1184cf4b",
-    "tests/test_release_smoke.py": "a6e46da4f1a0fa635f75cee56f2ccb5f29bf60371d4aaf1e83172e14fed6767a",
-    "tests/test_v3_runtime.py": "d7384c818b42428996f4945717a956b00d7758eb62ca8370abd4eafdf4b7d333",
-    "tests/test_skills_acceptance.py": "f48ba3d180170c91a7a8b7b5a4dadfa8847e469ca2362b5be3751c90d2364075",
+    "tests/test_release_smoke.py": "31b07fa25094b72f7bb78b951633b9986ac95e970fd8d8d2f96057af04d2844f",
+    "tests/test_v3_runtime.py": "f254a5dcf75f058074533d463818cf2c874b142e0216461a0cfddb15850998e8",
+    "tests/test_skills_acceptance.py": "6f14678fd8a7854fc7ec2635161cd5c21484722c14ef0fd631b3013c7fefcff6",
     "tests/test_runtime_evidence_acceptance.py": "66ccb6ec58c51ced65885000f05713c36576988bbf0749b6e86a2892ee6fb86a",
-    "tests/test_usage.py": "097c3f36738614a60b0d4c2c75eb6ae75a0085c6a60ba4ea9eed6c9aaa0078d5",
+    "tests/test_usage.py": "9894b797d4d906504bfcd0dfb5a16672dcd014b2c21ac5e95a8ed6e25a158b8c",
     "tests/test_todo_ledger_acceptance.py": "a6c35667cf632bc72334a23ebd57af7a0adcfb2b10843abf8f778c1e154d749d",
 }
 MIGRATED_TESTS = tuple(W5R2_BASE_SHAPE_SHA256)
@@ -50,12 +50,12 @@ def _shape_sha256(source: str) -> str:
     return hashlib.sha256(payload.encode()).hexdigest()
 
 
-def _agent(tmp_path: Path, *, lock_profile: bool) -> Pico:
+def _agent(tmp_path: Path, *, lock_profile: bool) -> Coda:
     (tmp_path / "README.md").write_text("demo\n", encoding="utf-8")
-    agent = Pico(
+    agent = Coda(
         model_client=scripted_client([final("Done.")]),
         workspace=WorkspaceContext.build(tmp_path),
-        session_store=SessionStore(tmp_path / ".pico" / "sessions"),
+        session_store=SessionStore(tmp_path / ".coda" / "sessions"),
         approval_policy="auto",
     )
     if lock_profile:
@@ -76,7 +76,7 @@ def test_scripted_profile_matches_runtime_tool_schema_and_is_json_safe(tmp_path)
     profile = agent.session["provider_profile"]
 
     assert profile == scripted_provider_profile(agent)
-    assert agent.model_client._pico_profile_identity == scripted_provider_identity()
+    assert agent.model_client._coda_profile_identity == scripted_provider_identity()
     assert profile["profile_id"] == SCRIPTED_NATIVE_PROFILE_ID
     assert profile["tool_schema"] == agent.tool_signature()
     assert json.loads(json.dumps(agent.session))["provider_profile"] == profile

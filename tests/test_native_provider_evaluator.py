@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from pico.evaluation.native_provider import (
+from coda.evaluation.native_provider import (
     ADJUDICATION_SCHEMA_VERSION_V2,
     FROZEN_INPUT_HASHES,
     NATIVE_SAFETY_EVIDENCE_VERSION,
@@ -35,7 +35,7 @@ PROFILE = {
     "sdk": {"package": "none", "version": "0"},
     "base_url_fingerprint": "sha256:fixture",
     "capabilities": {"native_tools": True},
-    "retry": {"sdk_max_retries": 0, "pico_provider_attempts": 1},
+    "retry": {"sdk_max_retries": 0, "coda_provider_attempts": 1},
 }
 
 
@@ -509,7 +509,7 @@ def test_oracle_v2_classifies_unmatched_call_from_runtime_entry_evidence(
 def test_oracle_v2_sdk_managed_execution_is_snapshot_hard_failure():
     case = load_case_set(CASE_PATH)["cases"][1]
     observation = _passing_observation(case)
-    observation["audit"]["sdk_managed_pico_tool_execution_used"] = True
+    observation["audit"]["sdk_managed_coda_tool_execution_used"] = True
     row = evaluate_native_provider_case(case, observation)
 
     adjudication = adjudicate_native_provider_rows_v2(

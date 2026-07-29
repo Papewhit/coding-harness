@@ -1,5 +1,5 @@
 {
-  "schema_version": "pico-context-asset-cases-fragment-v1",
+  "schema_version": "coda-context-asset-cases-fragment-v1",
   "description": "Frozen normal-budget, single-active-asset context cases. The assembler owns cases.json.",
   "cases": [
     {"id": "C01", "target_asset": "skills", "fixture": "fixtures/C01/fixture.json", "expectation": {"activated_asset_ids": ["skills"], "target_surface": "system_text", "sentinel": "QZ-7319", "required_structure": ["catalog", "activated_body"], "required_metadata": ["skill_id", "source", "version_or_hash", "user_invocable", "activation_reason"], "forbidden_surfaces": ["messages", "tools", "continuation"]}},

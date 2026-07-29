@@ -1,1 +1,1 @@
-"""Pico test support package."""
+"""Coda test support package."""

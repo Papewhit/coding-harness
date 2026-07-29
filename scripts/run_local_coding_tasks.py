@@ -11,7 +11,7 @@ import subprocess
 import tempfile
 from typing import Any, Mapping
 
-from pico.evaluation.evaluation_v2_config import (
+from coda.evaluation.evaluation_v2_config import (
     SUPPORTED_COHORTS,
     TASKSET_PATH,
     canonical_json,
@@ -19,7 +19,7 @@ from pico.evaluation.evaluation_v2_config import (
     verify_run_config,
     write_run_config,
 )
-from pico.evaluation.live_tasks import (
+from coda.evaluation.live_tasks import (
     ClientResult,
     FailureCategory,
     FailureOrigin,
@@ -38,7 +38,7 @@ SOURCE_ROOT = Path(__file__).resolve().parents[1]
 
 
 class CommandClient:
-    """Narrow subprocess adapter; it never executes or interprets Pico tools."""
+    """Narrow subprocess adapter; it never executes or interprets Coda tools."""
 
     def __init__(self, command: list[str], *, timeout_seconds: float):
         if not command:
@@ -55,7 +55,7 @@ class CommandClient:
     ) -> ClientResult:
         if evidence_path is not None:
             return self._run(workspace, prompt, evidence_path)
-        with tempfile.TemporaryDirectory(prefix="pico-live-client-") as temp_dir:
+        with tempfile.TemporaryDirectory(prefix="coda-live-client-") as temp_dir:
             return self._run(
                 workspace,
                 prompt,
@@ -64,8 +64,8 @@ class CommandClient:
 
     def _run(self, workspace: Path, prompt: str, evidence_path: Path) -> ClientResult:
         env = os.environ.copy()
-        env["PICO_LIVE_EVIDENCE_PATH"] = str(evidence_path)
-        env["PICO_LIVE_TASK_PROMPT"] = prompt
+        env["CODA_LIVE_EVIDENCE_PATH"] = str(evidence_path)
+        env["CODA_LIVE_TASK_PROMPT"] = prompt
         try:
             completed = subprocess.run(
                 self.command,
@@ -136,7 +136,7 @@ def _client_result(payload: Mapping[str, Any]) -> ClientResult:
         http_attempts=attempts,
         trace=tuple(payload.get("trace", [])),
         sdk_retry_count=int(payload.get("sdk_retry_count", 0)),
-        pico_retry_count=int(payload.get("pico_retry_count", 0)),
+        coda_retry_count=int(payload.get("coda_retry_count", 0)),
         protocol_errors=tuple(map(str, payload.get("protocol_errors", []))),
         error=str(payload.get("error", "")),
         error_type=str(payload.get("error_type", "")),
@@ -182,7 +182,7 @@ def _failure_stage(payload: Mapping[str, Any]) -> FailureStage:
 
 def _client_payload(evidence_path: Path) -> dict[str, Any]:
     if not evidence_path.is_file():
-        raise InfrastructureFailure("client did not write PICO_LIVE_EVIDENCE_PATH")
+        raise InfrastructureFailure("client did not write CODA_LIVE_EVIDENCE_PATH")
     envelope = _load_object(evidence_path)
     payload = envelope.get("client_result", envelope)
     if not isinstance(payload, Mapping):

@@ -11,7 +11,7 @@ def test_manifest_is_the_single_source_for_prompt_fixture_and_verifier() -> None
     manifest = load_manifest(DEFAULT_MANIFEST)
     scenarios = {scenario["id"]: scenario for scenario in manifest["scenarios"]}
 
-    assert "`pico sync`" in scenarios["HSMOKE-V2-A"]["expected_postcondition"]["files"]["docs/quickstart.md"]["contains"][0]
+    assert "`coda sync`" in scenarios["HSMOKE-V2-A"]["expected_postcondition"]["files"]["docs/quickstart.md"]["contains"][0]
     assert "test" not in json.dumps(scenarios["HSMOKE-V2-B"]["fixture"], ensure_ascii=False).lower()
     assert "den" not in scenarios["HSMOKE-V2-B"]["prompt"].lower()
 
@@ -23,13 +23,13 @@ def test_fake_provider_harness_persists_complete_pass_artifacts(tmp_path) -> Non
     assert summary["provider_http_attempts"] == 0
     assert summary["execution_mode"] == "fake_provider"
     for scenario in summary["scenarios"]:
-        assert scenario["pico_exit"] == 0
+        assert scenario["coda_exit"] == 0
         assert scenario["verifier_exit"] == 0
         assert scenario["provider_http_attempts"] == 0
         assert scenario["verification"]["status"] == "PASS"
-        assert (tmp_path / scenario["scenario_id"] / "pico.stdout.txt").is_file()
-        assert (tmp_path / scenario["scenario_id"] / "pico.stderr.txt").is_file()
-        assert (tmp_path / scenario["scenario_id"] / "pico.exit.txt").is_file()
+        assert (tmp_path / scenario["scenario_id"] / "coda.stdout.txt").is_file()
+        assert (tmp_path / scenario["scenario_id"] / "coda.stderr.txt").is_file()
+        assert (tmp_path / scenario["scenario_id"] / "coda.exit.txt").is_file()
         assert (tmp_path / scenario["scenario_id"] / "verifier.exit.txt").is_file()
 
 

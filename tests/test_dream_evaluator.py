@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from pico.evaluation.dream_eval import (
+from coda.evaluation.dream_eval import (
     ARTIFACT_SCHEMA_VERSION,
     CASES_SCHEMA_VERSION,
     build_semantic_snapshot,
@@ -51,7 +51,7 @@ def _case(case_id: str = "D01") -> dict:
                 "required": ["name", "description", "type"],
                 "allowed_types": ["user", "feedback", "project", "reference"],
             },
-            "allowed_write_scope": ".pico/memory",
+            "allowed_write_scope": ".coda/memory",
             "snapshot": {"ignore_frontmatter_fields": ["updated_at"]},
         },
     }
@@ -107,7 +107,7 @@ def test_atomic_oracle_checks_keep_replace_drop_topics_index_and_frontmatter(tmp
     row = evaluate_case_output(
         _case(),
         tmp_path,
-        changed_paths=[".pico/memory/MEMORY.md", ".pico/memory/user.md"],
+        changed_paths=[".coda/memory/MEMORY.md", ".coda/memory/user.md"],
     )
 
     assert row["status"] == "pass"
@@ -127,8 +127,8 @@ def test_atomic_oracle_checks_keep_replace_drop_topics_index_and_frontmatter(tmp
 @pytest.mark.parametrize(
     ("mutation", "changed_paths", "failed_gate"),
     [
-        ("secret", [".pico/memory/user.md"], "secret"),
-        ("dangling", [".pico/memory/MEMORY.md"], "dangling_link"),
+        ("secret", [".coda/memory/user.md"], "secret"),
+        ("dangling", [".coda/memory/MEMORY.md"], "dangling_link"),
         ("none", ["README.md"], "scope"),
     ],
 )
@@ -173,7 +173,7 @@ def test_case_evaluation_reports_idempotency_from_second_output(tmp_path):
     row = evaluate_case_output(
         _case(),
         first,
-        changed_paths=[".pico/memory/MEMORY.md", ".pico/memory/user.md"],
+        changed_paths=[".coda/memory/MEMORY.md", ".coda/memory/user.md"],
         second_memory_root=second,
     )
 
@@ -197,7 +197,7 @@ def test_runner_filters_cases_and_persists_independent_shard(tmp_path):
         artifact_path=artifact_path,
         case_ids=["D02"],
         changed_paths_by_case={
-            "D02": [".pico/memory/MEMORY.md", ".pico/memory/user.md"]
+            "D02": [".coda/memory/MEMORY.md", ".coda/memory/user.md"]
         },
         shard_id="dream-b",
         repetition=3,

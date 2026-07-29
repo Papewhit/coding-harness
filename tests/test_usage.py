@@ -2,17 +2,17 @@ from pathlib import Path
 import pytest
 
 from tests.native_fixtures import final, lock_scripted_provider_profile, scripted_client
-from pico import Pico, SessionStore, WorkspaceContext
+from coda import Coda, SessionStore, WorkspaceContext
 
 
 def build_agent(tmp_path, outputs=None, **kwargs):
     (tmp_path / "README.md").write_text("demo\n", encoding="utf-8")
     workspace = WorkspaceContext.build(tmp_path)
     return lock_scripted_provider_profile(
-        Pico(
+        Coda(
             model_client=scripted_client(outputs),
             workspace=workspace,
-            session_store=SessionStore(tmp_path / ".pico" / "sessions"),
+            session_store=SessionStore(tmp_path / ".coda" / "sessions"),
             approval_policy="auto",
             **kwargs,
         )
@@ -20,7 +20,7 @@ def build_agent(tmp_path, outputs=None, **kwargs):
 
 
 def test_usage_command_reports_provider_model_and_last_usage(tmp_path):
-    from pico.cli import handle_repl_command
+    from coda.cli import handle_repl_command
 
     agent = build_agent(tmp_path, [final("Done.")])
     agent.model_client.model = "gpt-test"
@@ -45,7 +45,7 @@ def test_usage_command_reports_provider_model_and_last_usage(tmp_path):
 
 
 def test_model_command_updates_current_runtime_only(tmp_path):
-    from pico.cli import handle_repl_command
+    from coda.cli import handle_repl_command
 
     agent = build_agent(tmp_path, [])
     agent.model_client.model = "old-model"
@@ -55,17 +55,17 @@ def test_model_command_updates_current_runtime_only(tmp_path):
     assert handled is True
     assert output == "model: new-model"
     assert agent.model_client.model == "new-model"
-    assert not (Path(tmp_path) / ".pico.toml").exists()
+    assert not (Path(tmp_path) / ".coda.toml").exists()
 
 
 def test_session_history_resume_and_clear_commands(tmp_path):
-    from pico.cli import handle_repl_command
+    from coda.cli import handle_repl_command
 
     first = build_agent(tmp_path, [final("First.")])
     assert first.ask("first request") == "First."
     first_id = first.session["id"]
 
-    second = Pico.from_session(
+    second = Coda.from_session(
         model_client=scripted_client([final("Second.")]),
         workspace=first.workspace,
         session_store=first.session_store,
@@ -96,7 +96,7 @@ def test_session_history_resume_and_clear_commands(tmp_path):
 
 
 def test_resume_rejects_path_traversal_session_id(tmp_path):
-    from pico.cli import handle_repl_command
+    from coda.cli import handle_repl_command
 
     agent = build_agent(tmp_path, [])
 
@@ -107,7 +107,7 @@ def test_resume_rejects_path_traversal_session_id(tmp_path):
 
 
 def test_session_store_rejects_path_traversal_ids(tmp_path):
-    store = SessionStore(tmp_path / ".pico" / "sessions")
+    store = SessionStore(tmp_path / ".coda" / "sessions")
 
     with pytest.raises(ValueError, match="invalid session id"):
         store.load("../outside")

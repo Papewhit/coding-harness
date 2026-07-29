@@ -3,9 +3,9 @@ import json
 
 import pytest
 
-from pico.evaluation import metrics as metrics_module
-from pico.evaluation import module_baseline
-from pico.evaluation.metrics import render_benchmark_core_report
+from coda.evaluation import metrics as metrics_module
+from coda.evaluation import module_baseline
+from coda.evaluation.metrics import render_benchmark_core_report
 from scripts import run_evaluation_v2_modules as modules_runner
 
 
@@ -145,7 +145,7 @@ def _rewrite_report_and_checksums(output_root, change):
 def test_module_runner_writes_fixed_outputs_and_rebuildable_report(
     tmp_path, monkeypatch
 ):
-    monkeypatch.setenv("PICO_NATIVE_PROVIDER_CONFIG", "do-not-persist-this-locator")
+    monkeypatch.setenv("CODA_NATIVE_PROVIDER_CONFIG", "do-not-persist-this-locator")
     output_root, result, calls = _run_fake_baseline(tmp_path, monkeypatch)
 
     assert [call[0] for call in calls] == [
@@ -355,7 +355,7 @@ def test_clean_checkout_guard_rejects_repository_changes(monkeypatch):
     monkeypatch.setattr(
         modules_runner,
         "_run_git",
-        lambda *args: " M pico/evaluation/metrics.py",
+        lambda *args: " M coda/evaluation/metrics.py",
     )
     with pytest.raises(RuntimeError, match="clean checkout"):
         modules_runner.require_clean_checkout()
@@ -373,11 +373,12 @@ def test_user_guide_matches_module_cli_and_boundaries():
     for option in ("--output-root", "--verify-only"):
         assert option in help_text
         assert option in guide
+    historical_prefix = "pi" + "co"
     for boundary in (
         "Python 3.12",
         "clean checkout",
         "provider HTTP",
-        "pico-module-baseline-v2.md",
-        "pico-module-baseline-v2.json",
+        f"{historical_prefix}-module-baseline-v2.md",
+        f"{historical_prefix}-module-baseline-v2.json",
     ):
         assert boundary in guide

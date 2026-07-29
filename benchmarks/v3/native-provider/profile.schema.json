@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://pico.local/schemas/native-provider-profile-v1.json",
-  "title": "Pico native provider public profile",
+  "$id": "https://coda.local/schemas/native-provider-profile-v1.json",
+  "title": "Coda native provider public profile",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -20,7 +20,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "pico-native-provider-profile-v1"
+      "const": "coda-native-provider-profile-v1"
     },
     "provider": {
       "type": "string",
@@ -101,7 +101,7 @@
     "retry": {
       "const": {
         "sdk_max_retries": 0,
-        "pico_provider_attempts": 1
+        "coda_provider_attempts": 1
       }
     },
     "stream": {

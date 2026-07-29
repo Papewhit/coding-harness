@@ -7,7 +7,7 @@ import argparse
 import json
 from pathlib import Path
 
-from pico.evaluation.evaluation_report import verify_evaluation_report
+from coda.evaluation.evaluation_report import verify_evaluation_report
 
 
 def build_parser() -> argparse.ArgumentParser:

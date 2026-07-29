@@ -5,7 +5,7 @@ from typing import Any, Mapping, Sequence
 
 import pytest
 
-from pico.evaluation.sdk_probe import (
+from coda.evaluation.sdk_probe import (
     HttpAttempt,
     ParsedResponse,
     ProbeCase,
@@ -115,7 +115,7 @@ def _profile() -> ProbeProfile:
             "sdk": {"package": "fake-sdk", "version": "1.2.3"},
             "base_url_fingerprint": "sha256:endpoint",
             "capabilities": {"native_tools": True, "opaque_continuation_support": True},
-            "retry": {"sdk_max_retries": 0, "pico_attempts": 1},
+            "retry": {"sdk_max_retries": 0, "coda_attempts": 1},
         }
     )
 
@@ -172,7 +172,7 @@ def test_probe_supports_all_case_kinds_and_one_to_one_result_roundtrip(tmp_path)
     assert protocol["batch_completeness"]["value"] == 1.0
     assert protocol["http_attempts"] == 9
     assert protocol["sdk_retry_count"] == 1
-    assert protocol["pico_retry_count"] == 0
+    assert protocol["coda_retry_count"] == 0
 
     output = tmp_path / "artifact.json"
     write_probe_artifact(output, artifact)

@@ -6,12 +6,12 @@ from importlib import metadata
 import httpx
 import pytest
 
-from pico.providers import sdk_imports
-from pico.providers.provider_transport import (
+from coda.providers import sdk_imports
+from coda.providers.provider_transport import (
     AnthropicMessagesTransport,
     OpenAIResponsesTransport,
 )
-from pico.providers.sdk_imports import ProviderSDKConfigurationError
+from coda.providers.sdk_imports import ProviderSDKConfigurationError
 
 
 def _openai_response(output: list[dict[str, object]]) -> dict[str, object]:

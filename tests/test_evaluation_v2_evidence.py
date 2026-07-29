@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import replace
 import json
+import os
 from pathlib import Path
 import shlex
 import shutil
@@ -9,18 +10,18 @@ import sys
 
 import pytest
 
-import pico.config as pico_config
-from pico.evaluation import evaluation_v2_config as configlib
-from pico.evaluation import evaluation_v2_row_capture as capturelib
-from pico.evaluation.evaluation_v2_config import (
+import coda.config as coda_config
+from coda.evaluation import evaluation_v2_config as configlib
+from coda.evaluation import evaluation_v2_row_capture as capturelib
+from coda.evaluation.evaluation_v2_config import (
     canonical_json,
     sha256_bytes,
     verify_run_config,
     verify_taskset_lock,
 )
-from pico.evaluation.evaluation_v2_evidence import checksums, verify_checksums
-from pico.evaluation.live_client import required_network_sandbox
-from pico.evaluation.live_tasks import (
+from coda.evaluation.evaluation_v2_evidence import checksums, verify_checksums
+from coda.evaluation.live_client import required_network_sandbox
+from coda.evaluation.live_tasks import (
     ClientResult,
     FailureCategory,
     FailureOrigin,
@@ -47,7 +48,7 @@ def test_taskset_lock_recomputes_all_frozen_inputs() -> None:
     assert result["task_count"] == 9
     assert (
         result["taskset_sha256"]
-        == "b6c1d16720583767b86cf8c8f535b0ff744a84216e0843a79660fea87389909a"
+        == "e02e1012de151984911690d259170fd6add8aeb9dc7e0840982130fa0c79ff54"
     )
 
 
@@ -65,7 +66,7 @@ def test_fake_t01_end_to_end_writes_protocol_artifacts(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setattr(
-        pico_config,
+        coda_config,
         "resolve_provider_config",
         lambda *_args, **_kwargs: pytest.fail(
             "fake flow must not resolve provider configuration"
@@ -94,7 +95,7 @@ def test_fake_t01_end_to_end_writes_protocol_artifacts(
     assert view["provider_requests"] == {
         "count": 0,
         "exact": True,
-        "pico_retry_count": 0,
+        "coda_retry_count": 0,
         "sdk_retry_count": 0,
         "source": "run-record.json#/client_result",
     }
@@ -265,8 +266,11 @@ def test_run_config_normalizes_venv_python_alias(
     )
     payload = json.loads(config_path.read_text(encoding="utf-8"))
 
+    relative = (
+        Path("Scripts/python.exe") if os.name == "nt" else Path("bin/python")
+    )
     assert payload["client"]["command"][0] == str(
-        Path(configlib.sys.prefix) / "bin" / "python"
+        Path(configlib.sys.prefix) / relative
     )
 
 
@@ -537,7 +541,7 @@ def test_checksum_verifier_rejects_schema_and_unsafe_paths(tmp_path: Path) -> No
     with pytest.raises(ValueError, match="schema"):
         verify_checksums(manifest, root)
 
-    payload["schema_version"] = "pico-evaluation-v2-checksums-v1"
+    payload["schema_version"] = "coda-evaluation-v2-checksums-v1"
     payload["files"][0]["path"] = "../record.json"
     manifest.write_bytes(canonical_json(payload))
     with pytest.raises(ValueError, match="unsafe"):

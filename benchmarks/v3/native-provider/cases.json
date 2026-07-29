@@ -1,8 +1,8 @@
 {
-  "schema_version": "pico-native-provider-cases-v1",
+  "schema_version": "coda-native-provider-cases-v1",
   "id": "native-provider-conformance-8-v1",
   "frozen_hashes": {
-    "artifact_contract": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
+    "artifact_contract": "a4882493c07ae7582c8286882d22f5da495482e34070f60bae8fa1daef258dea",
     "native_contract": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb",
     "tool_schema": "994a17e9f5c37d275f303176a67bf776324f972914d2b451df785b8205d7818f",
     "sdk_transport_decision": "9e404083771a23e4bb05e1b3a19b085156f062ac1c76fef43f6c2653a3cb1215"

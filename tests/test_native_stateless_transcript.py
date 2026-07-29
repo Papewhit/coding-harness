@@ -3,14 +3,14 @@ from __future__ import annotations
 import json
 from typing import Any
 
-from pico.core.tool_call_batch import run_native_tool_loop
-from pico.providers.contracts import ModelRequest, ToolDefinition
-from pico.providers.openai_responses import OpenAIResponsesAdapter
-from pico.providers.provider_transport import ProviderTransportResponse
+from coda.core.tool_call_batch import run_native_tool_loop
+from coda.providers.contracts import ModelRequest, ToolDefinition
+from coda.providers.openai_responses import OpenAIResponsesAdapter
+from coda.providers.provider_transport import ProviderTransportResponse
 
 
 RUNTIME_PROMPT = (
-    "Runtime task: update README.md so it contains the marker PICO-STATELESS, "
+    "Runtime task: update README.md so it contains the marker CODA-STATELESS, "
     "then verify the saved file."
 )
 

@@ -8,9 +8,9 @@ import json
 import os
 from pathlib import Path
 
-from pico.config import resolve_provider_config
-from pico.evaluation.evaluation_report import write_evaluation_report
-from pico.evaluation.evaluation_v2_config import CONFIG_LOCATOR_ENV
+from coda.config import resolve_provider_config
+from coda.evaluation.evaluation_report import write_evaluation_report
+from coda.evaluation.evaluation_v2_config import CONFIG_LOCATOR_ENV
 
 
 ROOT = Path(__file__).resolve().parents[1]

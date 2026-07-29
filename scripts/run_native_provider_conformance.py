@@ -16,18 +16,18 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from pico.config import resolve_provider_config  # noqa: E402
-from pico.evaluation.native_provider import (  # noqa: E402
+from coda.config import resolve_provider_config  # noqa: E402
+from coda.evaluation.native_provider import (  # noqa: E402
     FROZEN_INPUT_HASHES,
     load_case_set,
     preflight_failure_artifact,
     run_native_provider_conformance,
     write_native_provider_bundle,
 )
-from pico.evaluation.native_provider_live import (  # noqa: E402
+from coda.evaluation.native_provider_live import (  # noqa: E402
     NativeProviderLiveRunner,
 )
-from pico.evaluation.native_provider_profiles import (  # noqa: E402
+from coda.evaluation.native_provider_profiles import (  # noqa: E402
     assert_provider_profile_matches,
     canonical_profile_json,
     load_public_provider_profile,
@@ -37,8 +37,8 @@ from pico.evaluation.native_provider_profiles import (  # noqa: E402
 NATIVE_GATE_SHA256 = (
     "2fc1ebbe4d64c5be80e7fe063584915f12aabf3a8f8c08796d2cf009e94849a5"
 )
-CONFIG_LOCATOR_SCHEMA_VERSION = "pico-native-provider-config-locator-v1"
-CONFIG_LOCATOR_ENV = "PICO_NATIVE_PROVIDER_CONFIG"
+CONFIG_LOCATOR_SCHEMA_VERSION = "coda-native-provider-config-locator-v1"
+CONFIG_LOCATOR_ENV = "CODA_NATIVE_PROVIDER_CONFIG"
 
 
 def _positive_integer(value: str) -> int:
@@ -53,7 +53,7 @@ def build_parser() -> argparse.ArgumentParser:
         description="Run frozen native-provider conformance cases."
     )
     parser.add_argument("--case-set", required=True, help="Frozen cases JSON.")
-    parser.add_argument("--provider", required=True, help="Local Pico profile name.")
+    parser.add_argument("--provider", required=True, help="Local Coda profile name.")
     parser.add_argument(
         "--expected-profile",
         required=True,
@@ -146,12 +146,12 @@ def _input_bindings(case_path: Path, profile_path: Path) -> dict[str, Any]:
     return {
         "source_sha": _source_sha(),
         "evaluator_sha256": _file_sha256(
-            ROOT / "pico" / "evaluation" / "native_provider.py"
+            ROOT / "coda" / "evaluation" / "native_provider.py"
         ),
         "cases_sha256": _optional_file_sha256(case_path),
         "cases_git_blob_oid": _git_blob_oid(case_path),
         "live_runner_sha256": _file_sha256(
-            ROOT / "pico" / "evaluation" / "native_provider_live.py"
+            ROOT / "coda" / "evaluation" / "native_provider_live.py"
         ),
         "public_profile_sha256": _profile_sha256(profile_path),
         "public_profile_id": _profile_id(profile_path),

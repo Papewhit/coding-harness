@@ -6,8 +6,8 @@ import shutil
 
 import pytest
 
-from pico.evaluation.contracts import ARTIFACT_CONTRACT_VERSION, REDACTED
-from pico.evaluation.live_tasks import (
+from coda.evaluation.contracts import ARTIFACT_CONTRACT_VERSION, REDACTED
+from coda.evaluation.live_tasks import (
     ClientResult,
     FailureCategory,
     HttpAttempt,
@@ -70,7 +70,7 @@ def _result(
             "sdk": {"package": "none", "version": "0"},
             "base_url_fingerprint": "offline",
             "capabilities": {"native_tools": True},
-            "retry": {"sdk_max_retries": 0, "pico_attempts": 1},
+            "retry": {"sdk_max_retries": 0, "coda_attempts": 1},
         },
         native_gate_hash="synthetic-gate-hash",
         call_ids=call_ids,

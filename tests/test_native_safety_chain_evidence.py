@@ -5,8 +5,8 @@ from pathlib import Path
 
 import pytest
 
-from pico import Pico, SessionStore, WorkspaceContext
-from pico.evaluation.native_provider_live import (
+from coda import Coda, SessionStore, WorkspaceContext
+from coda.evaluation.native_provider_live import (
     NATIVE_SAFETY_EVIDENCE_VERSION,
     NATIVE_SAFETY_STAGES,
     bind_native_safety_evidence,
@@ -14,20 +14,20 @@ from pico.evaluation.native_provider_live import (
 from tests.native_fixtures import lock_scripted_provider_profile, scripted_client
 
 
-def _agent(tmp_path: Path, *, approval_policy: str = "auto") -> Pico:
+def _agent(tmp_path: Path, *, approval_policy: str = "auto") -> Coda:
     (tmp_path / "README.md").write_text("evidence\n", encoding="utf-8")
     return lock_scripted_provider_profile(
-        Pico(
+        Coda(
             model_client=scripted_client(),
             workspace=WorkspaceContext.build(tmp_path),
-            session_store=SessionStore(tmp_path / ".pico" / "sessions"),
+            session_store=SessionStore(tmp_path / ".coda" / "sessions"),
             approval_policy=approval_policy,
         )
     )
 
 
 def _arm_call(
-    agent: Pico,
+    agent: Coda,
     *,
     call_id: str,
     name: str,
@@ -56,7 +56,7 @@ def _arm_call(
     )
 
 
-def _evidence(agent: Pico) -> list[dict]:
+def _evidence(agent: Coda) -> list[dict]:
     return [
         record
         for line in agent.session_event_bus.path.read_text(

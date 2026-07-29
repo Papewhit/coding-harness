@@ -6,5 +6,5 @@
   "sdk": {"package": "example-sdk", "version": "0.0.0"},
   "base_url_fingerprint": "sha256:replace-me",
   "capabilities": {"native_tools": true, "opaque_continuation_support": true},
-  "retry": {"sdk_max_retries": 0, "pico_attempts": 1}
+  "retry": {"sdk_max_retries": 0, "coda_attempts": 1}
 }

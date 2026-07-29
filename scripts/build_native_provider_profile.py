@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from pico.evaluation.native_provider_profiles import (  # noqa: E402
+from coda.evaluation.native_provider_profiles import (  # noqa: E402
     resolve_public_provider_profile,
     write_public_provider_profile,
 )
@@ -20,14 +20,14 @@ from pico.evaluation.native_provider_profiles import (  # noqa: E402
 def build_arg_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
-            "Resolve a named local Pico provider and write its canonical, "
+            "Resolve a named local Coda provider and write its canonical, "
             "credential-free public evaluation profile."
         )
     )
     parser.add_argument(
         "--provider",
         required=True,
-        help="Named provider profile resolved by Pico's existing config resolver.",
+        help="Named provider profile resolved by Coda's existing config resolver.",
     )
     parser.add_argument(
         "--manifest-out",
@@ -37,7 +37,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--config",
         default=None,
-        help="Optional Pico config TOML path; credentials are never written.",
+        help="Optional Coda config TOML path; credentials are never written.",
     )
     return parser
 

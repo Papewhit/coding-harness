@@ -5,35 +5,35 @@ from pathlib import Path
 
 import pytest
 
-from pico import Pico
-from pico.config import ProviderConfig
-from pico.evaluation.native_provider import (
+from coda import Coda
+from coda.config import ProviderConfig
+from coda.evaluation.native_provider import (
     adjudicate_native_provider_rows_v2,
     evaluate_native_provider_case,
     load_case_set,
     run_native_provider_conformance,
 )
-from pico.evaluation.native_provider_live import (
+from coda.evaluation.native_provider_live import (
     NativeProviderLiveRunner,
     run_native_provider_live_case,
 )
-from pico.evaluation.native_provider_profiles import (
+from coda.evaluation.native_provider_profiles import (
     ProviderProfileMismatchError,
     build_public_provider_profile,
 )
-from pico.providers.anthropic_messages import AnthropicMessagesAdapter
-from pico.providers.contracts import (
+from coda.providers.anthropic_messages import AnthropicMessagesAdapter
+from coda.providers.contracts import (
     ModelResponse,
     ProviderContinuation,
     StopReason,
     ToolCall,
 )
-from pico.providers.provider_transport import (
+from coda.providers.provider_transport import (
     HttpAttempt,
     ProviderTransportResponse,
 )
-from pico.providers.openai_responses import OpenAIResponsesAdapter
-from pico.testing import ScriptedNativeModelClient
+from coda.providers.openai_responses import OpenAIResponsesAdapter
+from coda.testing import ScriptedNativeModelClient
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -137,12 +137,12 @@ def _config(
 
 def _clear_provider_overrides(monkeypatch: pytest.MonkeyPatch) -> None:
     for name in (
-        "PICO_PROVIDER",
-        "PICO_API_KEY",
-        "PICO_BASE_URL",
-        "PICO_MODEL",
-        "PICO_WIRE_DIALECT",
-        "PICO_PROTOCOL",
+        "CODA_PROVIDER",
+        "CODA_API_KEY",
+        "CODA_BASE_URL",
+        "CODA_MODEL",
+        "CODA_WIRE_DIALECT",
+        "CODA_PROTOCOL",
     ):
         monkeypatch.delenv(name, raising=False)
 
@@ -377,7 +377,7 @@ def _factory(config: ProviderConfig, case: dict) -> FakeAdapterClient:
 
 
 def _profile(config_path: Path) -> dict:
-    from pico.config import resolve_provider_config
+    from coda.config import resolve_provider_config
 
     return build_public_provider_profile(
         resolve_provider_config("fixture", config_path=str(config_path))
@@ -459,7 +459,7 @@ def test_both_dialects_cover_identical_eight_case_repetition_matrix(
             (item["case_id"], item["repetition"], item["call_id"])
             for item in evidence
         } == {("NP08-opaque-block-roundtrip", 3, "opaque-read")}
-        assert opaque["pico_retry_count"] == 0
+        assert opaque["coda_retry_count"] == 0
 
     parity_fields = (
         "row_id",
@@ -485,7 +485,7 @@ def test_both_dialects_cover_identical_eight_case_repetition_matrix(
         "protocol_errors",
         "http_attempts",
         "sdk_retry_count",
-        "pico_retry_count",
+        "coda_retry_count",
     )
     assert [
         {
@@ -622,9 +622,9 @@ def test_step_limit_rejection_is_pre_runtime_and_excluded_from_oracle_v2(
         for number in range(1, 14)
     )
     runtime_call_count = 0
-    original_run_tool = Pico.run_tool
+    original_run_tool = Coda.run_tool
 
-    def tracked_run_tool(self: Pico, name: str, args: dict) -> str:
+    def tracked_run_tool(self: Coda, name: str, args: dict) -> str:
         nonlocal runtime_call_count
         runtime_call_count += 1
         return original_run_tool(self, name, args)
@@ -637,7 +637,7 @@ def test_step_limit_rejection_is_pre_runtime_and_excluded_from_oracle_v2(
             [_response(calls=calls), _response(text="budget exhausted")],
         )
 
-    monkeypatch.setattr(Pico, "run_tool", tracked_run_tool)
+    monkeypatch.setattr(Coda, "run_tool", tracked_run_tool)
     observation = run_native_provider_live_case(
         case=case,
         expected_profile=_profile(config_path),
@@ -686,10 +686,10 @@ def test_safety_chain_bypass_is_detected(
     _clear_provider_overrides(monkeypatch)
     config_path = _config(tmp_path)
 
-    def bypass(_self: Pico, _name: str, _args: dict) -> str:
+    def bypass(_self: Coda, _name: str, _args: dict) -> str:
         return "bypassed"
 
-    monkeypatch.setattr(Pico, "run_tool", bypass)
+    monkeypatch.setattr(Coda, "run_tool", bypass)
     observation = run_native_provider_live_case(
         case=load_case_set(CASE_PATH)["cases"][1],
         expected_profile=_profile(config_path),

@@ -30,7 +30,7 @@ htmlcov/
 # Local scratch space
 tmp/
 .worktrees/
-.pico/
+.coda/
 artifacts/
 readme_intro_locked/
 
@@ -38,8 +38,8 @@ readme_intro_locked/
 .env
 .env.*
 !.env.example
-.pico.toml
-!.pico.toml.example
+.coda.toml
+!.coda.toml.example
 
 # Local docs not intended for publication
 docs/**
@@ -48,12 +48,15 @@ docs/**
 !docs/memory.md
 !docs/skills.md
 !docs/sandbox.md
+!docs/metrics/
+docs/metrics/**
+!docs/metrics/coda-v3-context-asset-contract.md
 
 # OS files
 .DS_Store
 
 # Packaging metadata
-pico.egg-info/
+coda.egg-info/
 
 # IDE settings
 .vscode/

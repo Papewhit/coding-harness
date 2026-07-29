@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run deterministic real-session acceptance scenarios for Pico."""
+"""Run deterministic real-session acceptance scenarios for Coda."""
 
 from __future__ import annotations
 
@@ -13,15 +13,15 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from pico.testing import (  # noqa: E402
+from coda.testing import (  # noqa: E402
     ScriptedNativeModelClient,
     native_final_response,
     native_tool_call_response,
 )
-from pico import Pico, SessionStore, WorkspaceContext  # noqa: E402
-from pico.config import resolve_provider_config  # noqa: E402
-from pico.features.skills_runtime import invoke_skill  # noqa: E402
-from pico.providers import (  # noqa: E402
+from coda import Coda, SessionStore, WorkspaceContext  # noqa: E402
+from coda.config import resolve_provider_config  # noqa: E402
+from coda.features.skills_runtime import invoke_skill  # noqa: E402
+from coda.providers import (  # noqa: E402
     ProviderError,
     build_native_model_client,
     native_provider_profile,
@@ -29,7 +29,7 @@ from pico.providers import (  # noqa: E402
 
 SUMMARY_JSON = "gate8-real-session-acceptance.json"
 SUMMARY_MARKDOWN = "gate8-real-session-acceptance.md"
-LIVE_ENV_FLAG = "PICO_ACCEPTANCE_LIVE"
+LIVE_ENV_FLAG = "CODA_ACCEPTANCE_LIVE"
 
 
 def run_acceptance(output_dir, include_live=None):
@@ -242,7 +242,7 @@ def _scenario_plan_todo_explore(output_dir, workspace):
                 "plan-write",
                 "write_file",
                 {
-                    "path": ".pico/plans/gate8-plan.md",
+                    "path": ".coda/plans/gate8-plan.md",
                     "content": "# Gate8 Plan\n- Evidence harness\n",
                 },
             ),
@@ -260,7 +260,7 @@ def _scenario_plan_todo_explore(output_dir, workspace):
         checks=[
             _check("answer", answer == "Gate8 plan ready.", answer),
             _check(
-                "plan_file", (workspace / ".pico" / "plans" / "gate8-plan.md").is_file()
+                "plan_file", (workspace / ".coda" / "plans" / "gate8-plan.md").is_file()
             ),
             _check("todo_done", agent.session["todos"]["items"][0]["status"] == "done"),
             _check(
@@ -273,7 +273,7 @@ def _scenario_plan_todo_explore(output_dir, workspace):
 
 def _scenario_skill_inline(output_dir, workspace):
     _write_readme(workspace, "Gate8 skill fixture.\n")
-    skill_dir = workspace / ".pico" / "skills" / "evidence"
+    skill_dir = workspace / ".coda" / "skills" / "evidence"
     skill_dir.mkdir(parents=True, exist_ok=True)
     (skill_dir / "SKILL.md").write_text(
         """---
@@ -380,8 +380,8 @@ def _scenario_worker_write_scope(output_dir, workspace):
 
 def _scenario_resume_continuation(output_dir, workspace):
     _write_readme(workspace, "Gate8 resume fixture.\n")
-    store = SessionStore(workspace / ".pico" / "sessions")
-    first = Pico(
+    store = SessionStore(workspace / ".coda" / "sessions")
+    first = Coda(
         model_client=_scripted_client(
             [
                 native_tool_call_response(
@@ -403,7 +403,7 @@ def _scenario_resume_continuation(output_dir, workspace):
     )
     _lock_native_profile(first)
     first_answer = first.ask("Start a resumable task")
-    resumed = Pico.from_session(
+    resumed = Coda.from_session(
         model_client=_scripted_client(
             [
                 native_tool_call_response(
@@ -461,8 +461,8 @@ def _scenario_resume_continuation(output_dir, workspace):
 
 def _scenario_security_rejection(output_dir, workspace):
     _write_readme(workspace, "Gate8 security fixture.\n")
-    old_secret = os.environ.get("PICO_ACCEPTANCE_SECRET")
-    os.environ["PICO_ACCEPTANCE_SECRET"] = "pico-secret-value-123"
+    old_secret = os.environ.get("CODA_ACCEPTANCE_SECRET")
+    os.environ["CODA_ACCEPTANCE_SECRET"] = "coda-secret-value-123"
     agent = _build_agent(
         workspace,
         [
@@ -490,7 +490,7 @@ def _scenario_security_rejection(output_dir, workspace):
             native_tool_call_response(
                 "security-shell",
                 "run_shell",
-                {"command": "echo $PICO_ACCEPTANCE_SECRET", "timeout": 5},
+                {"command": "echo $CODA_ACCEPTANCE_SECRET", "timeout": 5},
             ),
             native_final_response("Path escape blocked."),
         ],
@@ -524,14 +524,14 @@ def _scenario_security_rejection(output_dir, workspace):
                 _check(
                     "no_blocked_write", not (workspace / "blocked" / "out.txt").exists()
                 ),
-                _check("secret_redacted", "pico-secret-value-123" not in trace_text),
+                _check("secret_redacted", "coda-secret-value-123" not in trace_text),
             ],
         )
     finally:
         if old_secret is None:
-            os.environ.pop("PICO_ACCEPTANCE_SECRET", None)
+            os.environ.pop("CODA_ACCEPTANCE_SECRET", None)
         else:
-            os.environ["PICO_ACCEPTANCE_SECRET"] = old_secret
+            os.environ["CODA_ACCEPTANCE_SECRET"] = old_secret
 
 
 def _scenario_context_pressure(output_dir, workspace):
@@ -609,7 +609,7 @@ def _scenario_context_pressure(output_dir, workspace):
 
 def _scenario_provider_error_recovery(output_dir, workspace):
     _write_readme(workspace, "Gate9 provider reliability fixture.\n")
-    agent = Pico(
+    agent = Coda(
         model_client=_scripted_client(
             [
                 ProviderError(
@@ -627,7 +627,7 @@ def _scenario_provider_error_recovery(output_dir, workspace):
             ]
         ),
         workspace=_scenario_workspace(workspace),
-        session_store=SessionStore(workspace / ".pico" / "sessions"),
+        session_store=SessionStore(workspace / ".coda" / "sessions"),
         approval_policy="auto",
         max_steps=2,
     )
@@ -694,19 +694,19 @@ def _scenario_live_provider_smoke(output_dir, workspace, include_live=None):
         timeout=60,
         max_retries=0,
     )
-    model_client._pico_profile_identity = {
+    model_client._coda_profile_identity = {
         **config.public_identity(),
         **native_provider_profile(config.wire_dialect),
     }
-    agent = Pico(
+    agent = Coda(
         model_client=model_client,
         workspace=_scenario_workspace(workspace),
-        session_store=SessionStore(workspace / ".pico" / "sessions"),
+        session_store=SessionStore(workspace / ".coda" / "sessions"),
         approval_policy="never",
         max_steps=1,
         max_new_tokens=64,
         secret_env_names=[
-            "PICO_API_KEY",
+            "CODA_API_KEY",
             "OPENAI_API_KEY",
             "ANTHROPIC_API_KEY",
             "DEEPSEEK_API_KEY",
@@ -728,10 +728,10 @@ def _scenario_live_provider_smoke(output_dir, workspace, include_live=None):
 
 def _build_agent(workspace, outputs, max_steps=6):
     workspace_context = _scenario_workspace(workspace)
-    agent = Pico(
+    agent = Coda(
         model_client=_scripted_client(outputs),
         workspace=workspace_context,
-        session_store=SessionStore(workspace / ".pico" / "sessions"),
+        session_store=SessionStore(workspace / ".coda" / "sessions"),
         approval_policy="auto",
         max_steps=max_steps,
     )
@@ -741,7 +741,7 @@ def _build_agent(workspace, outputs, max_steps=6):
 
 def _scripted_client(outputs):
     client = ScriptedNativeModelClient(outputs)
-    client._pico_profile_identity = {
+    client._coda_profile_identity = {
         "profile_id": "scripted-native:acceptance",
         "profile": "scripted",
         "model": "scripted-model",
@@ -756,7 +756,7 @@ def _scripted_client(outputs):
 
 
 def _lock_native_profile(agent):
-    identity = getattr(agent.model_client, "_pico_profile_identity", None)
+    identity = getattr(agent.model_client, "_coda_profile_identity", None)
     if identity is None:
         identity = {
             "profile_id": "scripted-native:acceptance",
@@ -858,7 +858,7 @@ def _remove_tree(path):
 
 def build_arg_parser():
     parser = argparse.ArgumentParser(
-        description="Run Pico Gate8 deterministic real-session acceptance scenarios."
+        description="Run Coda Gate8 deterministic real-session acceptance scenarios."
     )
     parser.add_argument(
         "--output-dir",

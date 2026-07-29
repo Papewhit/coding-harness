@@ -5,8 +5,8 @@ from pathlib import Path
 
 import pytest
 
-from pico.config import resolve_provider_config
-from pico.evaluation.native_provider_profiles import (
+from coda.config import resolve_provider_config
+from coda.evaluation.native_provider_profiles import (
     PROFILE_SCHEMA_VERSION,
     ProviderProfileMismatchError,
     assert_provider_profile_matches,
@@ -52,12 +52,12 @@ def _config(tmp_path: Path) -> Path:
 
 def _clear_provider_overrides(monkeypatch: pytest.MonkeyPatch) -> None:
     for name in (
-        "PICO_PROVIDER",
-        "PICO_API_KEY",
-        "PICO_BASE_URL",
-        "PICO_MODEL",
-        "PICO_WIRE_DIALECT",
-        "PICO_PROTOCOL",
+        "CODA_PROVIDER",
+        "CODA_API_KEY",
+        "CODA_BASE_URL",
+        "CODA_MODEL",
+        "CODA_WIRE_DIALECT",
+        "CODA_PROTOCOL",
     ):
         monkeypatch.delenv(name, raising=False)
 
@@ -90,7 +90,7 @@ def test_builder_writes_canonical_sanitized_manifest(
     assert profile["provider"] == "fixture"
     assert profile["sdk"] == {"package": "anthropic", "version": "0.117.0"}
     assert profile["retry"] == {
-        "pico_provider_attempts": 1,
+        "coda_provider_attempts": 1,
         "sdk_max_retries": 0,
     }
     assert profile["stream"] is False
@@ -129,7 +129,7 @@ def test_versioned_schema_and_example_cover_the_public_contract() -> None:
     assert schema["additionalProperties"] is False
     assert schema["properties"]["retry"]["const"] == {
         "sdk_max_retries": 0,
-        "pico_provider_attempts": 1,
+        "coda_provider_attempts": 1,
     }
     assert "api_key" not in json.dumps(schema)
     assert "base_url\"" not in json.dumps(schema)

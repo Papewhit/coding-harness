@@ -16,17 +16,17 @@ from pathlib import Path
 from collections.abc import Callable
 from typing import Any, Mapping
 
-from pico import Pico, SessionStore, WorkspaceContext
-from pico.config import resolve_provider_config
-from pico.evaluation.native_provider_live import bind_native_safety_evidence
-from pico.evaluation.native_provider_profiles import (
+from coda import Coda, SessionStore, WorkspaceContext
+from coda.config import resolve_provider_config
+from coda.evaluation.native_provider_live import bind_native_safety_evidence
+from coda.evaluation.native_provider_profiles import (
     assert_provider_profile_matches,
     load_public_provider_profile,
     provider_session_identity,
 )
-from pico.providers import build_native_model_client
-from pico.providers.contracts import ModelResponse
-from pico.testing import native_final_response, native_tool_call_response
+from coda.providers import build_native_model_client
+from coda.providers.contracts import ModelResponse
+from coda.testing import native_final_response, native_tool_call_response
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -40,7 +40,7 @@ class FakeNativeProvider:
         self._responses = list(responses)
         self.requests: list[Any] = []
         self.http_attempts = 0
-        self._pico_profile_identity = {
+        self._coda_profile_identity = {
             "profile_id": "scripted-native:human-smoke-v2",
             "profile": "scripted-native",
             "model": "fake-human-smoke-v2",
@@ -67,7 +67,7 @@ class AuditedLiveProvider:
     def __init__(self, inner: Any, identity: Mapping[str, Any]) -> None:
         self.inner = inner
         self.http_attempts = 0
-        self._pico_profile_identity = dict(identity)
+        self._coda_profile_identity = dict(identity)
 
     def request(self, request: Any) -> ModelResponse:
         self.http_attempts += 1
@@ -79,7 +79,7 @@ class AuditedLiveProvider:
 
 def load_manifest(path: Path) -> dict[str, Any]:
     manifest = json.loads(path.read_text(encoding="utf-8"))
-    if manifest.get("schema_version") != "pico-native-human-smoke-v2":
+    if manifest.get("schema_version") != "coda-native-human-smoke-v2":
         raise ValueError("unsupported human-smoke manifest schema")
     modes = manifest.get("execution_modes")
     if not isinstance(modes, Mapping):
@@ -111,7 +111,7 @@ def _write_fixture(workspace: Path, scenario: Mapping[str, Any]) -> None:
         path.write_text(content, encoding="utf-8")
 
 
-def _events(agent: Pico) -> list[dict[str, Any]]:
+def _events(agent: Coda) -> list[dict[str, Any]]:
     return [
         json.loads(line)
         for line in agent.session_event_bus.path.read_text(encoding="utf-8").splitlines()
@@ -211,46 +211,46 @@ def run_manifest(
             workspace = Path(temporary)
             _write_fixture(workspace, scenario)
             provider = provider_factory(scenario)
-            agent = Pico(
+            agent = Coda(
                 model_client=provider,
                 workspace=WorkspaceContext.build(workspace),
-                session_store=SessionStore(workspace / ".pico" / "sessions"),
+                session_store=SessionStore(workspace / ".coda" / "sessions"),
                 approval_policy=scenario["approval_policy"],
                 max_steps=max(12, len(scenario["fake_responses"]) + 1),
                 auto_dream=False,
             )
             bind_native_safety_evidence(agent, case_id=scenario["id"], repetition=1)
-            pico_exit = 0
+            coda_exit = 0
             stdout = ""
             stderr = ""
             try:
                 stdout = agent.ask(scenario["prompt"])
             except Exception as exc:  # verifier must retain the Runtime failure.
-                pico_exit = 1
+                coda_exit = 1
                 stderr = f"{type(exc).__name__}: {exc}"
             events = _events(agent)
             verification = verify_scenario(scenario, workspace, events)
             verifier_exit = 0 if verification["status"] == "PASS" else 1
             result = {
-                "scenario_id": scenario["id"], "pico_exit": pico_exit,
+                "scenario_id": scenario["id"], "coda_exit": coda_exit,
                 "verifier_exit": verifier_exit, "stdout": stdout, "stderr": stderr,
                 "provider_http_attempts": provider.http_attempts,
                 "verification": verification, "events": events,
             }
             (scenario_dir / "result.json").write_text(json.dumps(result, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-            (scenario_dir / "pico.stdout.txt").write_text(stdout, encoding="utf-8")
-            (scenario_dir / "pico.stderr.txt").write_text(stderr, encoding="utf-8")
-            (scenario_dir / "pico.exit.txt").write_text(f"{pico_exit}\n", encoding="utf-8")
+            (scenario_dir / "coda.stdout.txt").write_text(stdout, encoding="utf-8")
+            (scenario_dir / "coda.stderr.txt").write_text(stderr, encoding="utf-8")
+            (scenario_dir / "coda.exit.txt").write_text(f"{coda_exit}\n", encoding="utf-8")
             (scenario_dir / "verifier.exit.txt").write_text(f"{verifier_exit}\n", encoding="utf-8")
             scenarios.append(result)
             close = getattr(provider, "close", None)
             if callable(close):
                 close()
     summary = {
-        "schema_version": "pico-native-human-smoke-v2-artifact",
+        "schema_version": "coda-native-human-smoke-v2-artifact",
         "manifest": str(manifest_path), "execution_mode": execution_mode,
         "provider_http_attempts": sum(item["provider_http_attempts"] for item in scenarios),
-        "scenarios": scenarios, "status": "PASS" if all(item["verification"]["status"] == "PASS" and item["pico_exit"] == 0 for item in scenarios) else "FAIL",
+        "scenarios": scenarios, "status": "PASS" if all(item["verification"]["status"] == "PASS" and item["coda_exit"] == 0 for item in scenarios) else "FAIL",
     }
     (output_dir / "summary.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     return summary

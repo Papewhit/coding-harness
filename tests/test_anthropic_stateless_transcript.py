@@ -5,22 +5,22 @@ from typing import Any
 
 import pytest
 
-from pico.core.tool_call_batch import run_native_tool_loop
-from pico.providers.anthropic_messages import (
+from coda.core.tool_call_batch import run_native_tool_loop
+from coda.providers.anthropic_messages import (
     AnthropicMessagesAdapter,
     AnthropicMessagesProtocolError,
 )
-from pico.providers.contracts import (
+from coda.providers.contracts import (
     ModelRequest,
     ProviderContinuation,
     ToolCallResult,
     ToolDefinition,
 )
-from pico.providers.provider_transport import ProviderTransportResponse
+from coda.providers.provider_transport import ProviderTransportResponse
 
 
 RUNTIME_PROMPT = (
-    "Runtime task: update README.md so it contains the marker PICO-STATELESS, "
+    "Runtime task: update README.md so it contains the marker CODA-STATELESS, "
     "then verify the saved file."
 )
 
@@ -225,7 +225,7 @@ def test_continuation_is_json_safe_and_legacy_v1_fails_before_transport() -> Non
 
     assert first.continuation is not None
     assert first.continuation.payload == {
-        "version": "pico-anthropic-messages-continuation-v2",
+        "version": "coda-anthropic-messages-continuation-v2",
         "original_prompt": RUNTIME_PROMPT,
         "messages": [
             {"role": "user", "content": RUNTIME_PROMPT},
@@ -243,7 +243,7 @@ def test_continuation_is_json_safe_and_legacy_v1_fails_before_transport() -> Non
     legacy = ProviderContinuation(
         "anthropic-messages:stateless-test",
         {
-            "version": "pico-anthropic-messages-continuation-v1",
+            "version": "coda-anthropic-messages-continuation-v1",
             "assistant_content": assistant_content,
         },
     )

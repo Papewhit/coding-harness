@@ -6,7 +6,7 @@ from typing import Any
 
 import pytest
 
-from pico.providers.contracts import (
+from coda.providers.contracts import (
     ModelRequest,
     ProviderContinuation,
     StopReason,
@@ -15,12 +15,12 @@ from pico.providers.contracts import (
     ToolChoiceMode,
     ToolDefinition,
 )
-from pico.providers.openai_responses import (
+from coda.providers.openai_responses import (
     CONTINUATION_VERSION,
     OpenAIResponsesAdapter,
     OpenAIResponsesProtocolError,
 )
-from pico.providers.provider_transport import HttpAttempt, ProviderTransportResponse
+from coda.providers.provider_transport import HttpAttempt, ProviderTransportResponse
 
 
 def _tool() -> ToolDefinition:
@@ -81,7 +81,7 @@ def _adapter(
             transport=transport,
             model="gpt-test",
             profile_id="openai-responses:test-profile",
-            instructions="Follow Pico policy.",
+            instructions="Follow Coda policy.",
         ),
         transport,
     )
@@ -98,7 +98,7 @@ def test_request_golden_compiles_instructions_input_tools_and_named_choice() -> 
 
     assert adapter.compile_request(request) == {
         "model": "gpt-test",
-        "instructions": "Follow Pico policy.",
+        "instructions": "Follow Coda policy.",
         "input": "Check Hong Kong.",
         "max_output_tokens": 256,
         "stream": False,
@@ -556,7 +556,7 @@ def test_no_text_protocol_or_chat_completions_fallback_is_present() -> None:
 
     source = (
         Path(__file__).resolve().parents[1]
-        / "pico"
+        / "coda"
         / "providers"
         / "openai_responses.py"
     ).read_text(encoding="utf-8")

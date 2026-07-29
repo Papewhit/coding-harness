@@ -8,8 +8,8 @@ import sys
 
 import pytest
 
-from pico.evaluation.evaluation_v2_config import CONFIG_LOCATOR_ENV, canonical_json
-from pico.evaluation.live_tasks import (
+from coda.evaluation.evaluation_v2_config import CONFIG_LOCATOR_ENV, canonical_json
+from coda.evaluation.live_tasks import (
     InfrastructureFailure,
     LocalLiveTaskRunner,
     load_task_specs,
@@ -84,7 +84,7 @@ def test_command_client_rejects_lost_original_failure(
                 "import json",
                 "import os",
                 "from pathlib import Path",
-                "path = Path(os.environ['PICO_LIVE_EVIDENCE_PATH'])",
+                "path = Path(os.environ['CODA_LIVE_EVIDENCE_PATH'])",
                 "path.write_text(json.dumps({",
                 "    'failure_category': 'none',",
                 "    'http_attempts': [],",

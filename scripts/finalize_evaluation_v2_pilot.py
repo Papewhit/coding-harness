@@ -11,9 +11,9 @@ from pathlib import Path
 import subprocess
 from typing import Any
 
-from pico.config import resolve_provider_config
-from pico.evaluation.evaluation_v2_config import CONFIG_LOCATOR_ENV
-from pico.evaluation.pilot_report import (
+from coda.config import resolve_provider_config
+from coda.evaluation.evaluation_v2_config import CONFIG_LOCATOR_ENV
+from coda.evaluation.pilot_report import (
     finalize_pilot,
     initialize_pilot,
     verify_pilot,

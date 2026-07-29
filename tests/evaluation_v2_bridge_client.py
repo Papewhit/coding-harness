@@ -12,14 +12,14 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from pico.evaluation.evaluation_v2_config import CONFIG_LOCATOR_ENV  # noqa: E402
-from pico.providers import NativeProviderModelClient  # noqa: E402
-from pico.providers.openai_responses import OpenAIResponsesAdapter  # noqa: E402
-from pico.providers.provider_transport import (  # noqa: E402
+from coda.evaluation.evaluation_v2_config import CONFIG_LOCATOR_ENV  # noqa: E402
+from coda.providers import NativeProviderModelClient  # noqa: E402
+from coda.providers.openai_responses import OpenAIResponsesAdapter  # noqa: E402
+from coda.providers.provider_transport import (  # noqa: E402
     HttpAttempt,
     ProviderTransportResponse,
 )
-from scripts.run_pico_live_task_client import (  # noqa: E402
+from scripts.run_coda_live_task_client import (  # noqa: E402
     EVIDENCE_ENV,
     PROMPT_ENV,
     run_live_task,

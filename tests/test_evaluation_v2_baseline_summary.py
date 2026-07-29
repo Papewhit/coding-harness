@@ -5,14 +5,14 @@ from pathlib import Path
 
 import pytest
 
-from pico.evaluation.baseline_summary import (
+from coda.evaluation.baseline_summary import (
     build_baseline_summary,
     finalize_baseline,
     verify_baseline,
 )
-from pico.evaluation.evaluation_v2_evidence import checksums
-from pico.evaluation.evaluation_v2_row_capture import write_json
-from pico.evaluation.pilot_audit import AUDIT_SCHEMA, DECISION_SCHEMA
+from coda.evaluation.evaluation_v2_evidence import checksums
+from coda.evaluation.evaluation_v2_row_capture import write_json
+from coda.evaluation.pilot_audit import AUDIT_SCHEMA, DECISION_SCHEMA
 from scripts import finalize_evaluation_v2_baseline as cli
 from scripts import run_local_coding_tasks as runner_cli
 from tests.evaluation_v2_helpers import write_config
@@ -29,7 +29,7 @@ def _make_row(
     row_id = f"baseline-v1-{task_id}-r{repetition}"
     row = root / "public" / "rows" / row_id
     verifier = row / "verifier"
-    run = row / "original" / ".pico" / "runs" / f"runtime-{task_id}-{repetition}"
+    run = row / "original" / ".coda" / "runs" / f"runtime-{task_id}-{repetition}"
     verifier.mkdir(parents=True)
     run.mkdir(parents=True)
     write_json(

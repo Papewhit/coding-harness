@@ -10,8 +10,8 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
-from pico.evaluation.evaluator import run_harness_regression_v2
-from pico.evaluation.module_baseline import (
+from coda.evaluation.evaluator import run_harness_regression_v2
+from coda.evaluation.module_baseline import (
     CHECKSUMS_PATH,
     COHORT_ID,
     MODULE_PATHS,
@@ -20,7 +20,7 @@ from pico.evaluation.module_baseline import (
     build_module_checksums,
     verify_module_baseline,
 )
-from pico.evaluation.metrics import (
+from coda.evaluation.metrics import (
     run_context_ablation_v2,
     run_memory_ablation_v2,
     run_recovery_ablation_v2,
@@ -89,7 +89,7 @@ def run_module_baseline(output_root: Path, source_sha: str) -> dict[str, Any]:
     module_root = output_root / "public" / "modules"
     reports_root = output_root / "reports"
 
-    with tempfile.TemporaryDirectory(prefix="pico-evaluation-v2-modules-") as temp_dir:
+    with tempfile.TemporaryDirectory(prefix="coda-evaluation-v2-modules-") as temp_dir:
         run_harness_regression_v2(
             benchmark_path=REPO_ROOT / "benchmarks" / "coding_tasks.json",
             artifact_path=module_root / MODULE_PATHS["harness"].name,

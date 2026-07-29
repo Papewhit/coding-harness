@@ -5,8 +5,8 @@ from pathlib import Path
 
 import pytest
 
-from pico.providers.base import complete_model
-from pico.providers.contracts import (
+from coda.providers.base import complete_model
+from coda.providers.contracts import (
     ModelRequest,
     ModelResponse,
     ProviderContinuation,
@@ -171,7 +171,7 @@ def test_legacy_prompt_to_text_boundary_remains_active() -> None:
 
 def test_contract_module_has_no_sdk_or_text_envelope_dependency() -> None:
     source = (
-        Path(__file__).resolve().parents[1] / "pico" / "providers" / "contracts.py"
+        Path(__file__).resolve().parents[1] / "coda" / "providers" / "contracts.py"
     ).read_text(encoding="utf-8")
     assert "openai" not in source.lower()
     assert "anthropic" not in source.lower()

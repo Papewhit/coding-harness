@@ -8,8 +8,7 @@ import subprocess
 from typing import Any, Mapping
 
 
-BINDING_SCHEMA_VERSION = "pico-context-asset-cases-binding-v2"
-INVALIDATED_V1_SHA256 = "d69dfc1808cb12b179f8a1fb30ffa74136339d7783d9f11a5fbe8fd4259400ba"
+BINDING_SCHEMA_VERSION = "coda-context-asset-cases-binding-v3"
 
 
 class BindingVerificationError(ValueError):
@@ -82,6 +81,8 @@ def verify_binding(
         raise BindingVerificationError(
             f"schema_version must be {BINDING_SCHEMA_VERSION!r}"
         )
+    if binding.get("binding_version") != 3:
+        raise BindingVerificationError("binding_version must be 3")
 
     source = _required_mapping(binding, "source")
     source_path = _safe_repo_path(_required_string(source, "path"))
@@ -136,25 +137,25 @@ def verify_binding(
         destination.write_bytes(blob_bytes)
         materialized_path = str(destination)
 
-    supersession = _required_mapping(binding, "supersession")
-    superseded = supersession.get("supersedes")
-    retained_v1 = [
-        item
-        for item in superseded or []
-        if isinstance(item, Mapping)
-        and item.get("declared_sha256") == INVALIDATED_V1_SHA256
-        and item.get("status") == "invalidated"
-        and item.get("superseded_by") == BINDING_SCHEMA_VERSION
-        and isinstance(item.get("invalidated_reason"), str)
-        and item["invalidated_reason"]
-    ]
-    if len(retained_v1) != 1:
+    provenance = _required_mapping(binding, "provenance")
+    source_ref = _required_string(provenance, "source_ref")
+    source_path_at_ref = _safe_repo_path(
+        _required_string(provenance, "source_path_at_ref")
+    )
+    expected_source_oid = _required_string(provenance, "source_git_blob_oid")
+    actual_source_oid = (
+        _git(root, "rev-parse", f"{source_ref}:{source_path_at_ref}")
+        .decode("ascii")
+        .strip()
+    )
+    if actual_source_oid != expected_source_oid:
         raise BindingVerificationError(
-            "the invalidated d69dfc declaration must be retained exactly once"
+            "historical source Git blob OID mismatch: "
+            f"expected {expected_source_oid}, got {actual_source_oid}"
         )
 
     return {
-        "schema_version": "pico-context-asset-binding-verification-v1",
+        "schema_version": "coda-context-asset-binding-verification-v1",
         "verified": True,
         "binding_path": str(binding_file),
         "binding_file_sha256": hashlib.sha256(binding_bytes).hexdigest(),
@@ -169,7 +170,10 @@ def verify_binding(
         "checkout_file_sha256": checkout_sha256,
         "checkout_matches_git_blob": checkout_bytes == blob_bytes,
         "canonical_hash_basis": "git_blob_bytes",
-        "invalidated_declaration_retained": True,
+        "provenance_source_ref": source_ref,
+        "provenance_source_path": source_path_at_ref,
+        "provenance_source_git_blob_oid": actual_source_oid,
+        "provenance_verified": True,
         "materialized_path": materialized_path,
     }
 
@@ -178,7 +182,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Verify a versioned Context cases binding from canonical Git blob bytes."
     )
-    parser.add_argument("--binding", required=True, help="Path to the v2 binding JSON.")
+    parser.add_argument("--binding", required=True, help="Path to the v3 binding JSON.")
     parser.add_argument("--repo-root", help="Git worktree root; auto-detected by default.")
     parser.add_argument("--revision", help="Revision to verify instead of binding source.revision.")
     parser.add_argument(

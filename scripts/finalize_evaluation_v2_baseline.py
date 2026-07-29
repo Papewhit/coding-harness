@@ -8,13 +8,13 @@ import json
 import os
 from pathlib import Path
 
-from pico.config import resolve_provider_config
-from pico.evaluation.baseline_summary import (
+from coda.config import resolve_provider_config
+from coda.evaluation.baseline_summary import (
     STAGE_TASKS,
     finalize_baseline,
     verify_baseline,
 )
-from pico.evaluation.evaluation_v2_config import CONFIG_LOCATOR_ENV
+from coda.evaluation.evaluation_v2_config import CONFIG_LOCATOR_ENV
 
 
 ROOT = Path(__file__).resolve().parents[1]

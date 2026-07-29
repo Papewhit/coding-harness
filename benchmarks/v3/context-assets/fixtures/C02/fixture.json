@@ -1,5 +1,5 @@
 {
-  "schema_version": "pico-context-asset-fixture-v1",
+  "schema_version": "coda-context-asset-fixture-v1",
   "case_id": "C02",
   "budget": {"kind": "normal", "max_utf8_bytes": 8192},
   "assets": {

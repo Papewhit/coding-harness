@@ -7,9 +7,9 @@ from typing import Any
 
 import pytest
 
-from pico.evaluation.baseline_summary import summarize_coding_rows
-from pico.evaluation.evaluation_v2_config import canonical_json
-from pico.evaluation import evaluation_report as reportlib
+from coda.evaluation.baseline_summary import summarize_coding_rows
+from coda.evaluation.evaluation_v2_config import canonical_json
+from coda.evaluation import evaluation_report as reportlib
 from scripts import verify_evaluation_v2_report as verify_cli
 
 
@@ -79,10 +79,10 @@ def _formal_results() -> dict[str, Any]:
                             f"public/rows/{row_id}/verifier/result.json"
                         ),
                         "public_originals": [
-                            f"public/rows/{row_id}/original/.pico/report.json"
+                            f"public/rows/{row_id}/original/.coda/report.json"
                         ],
                         "private_originals": [
-                            f"private/rows/{row_id}/original/.pico/session.json"
+                            f"private/rows/{row_id}/original/.coda/session.json"
                         ],
                     },
                 }
@@ -131,7 +131,7 @@ def _formal_results() -> dict[str, Any]:
             "exact_provider_request_rows": 27,
             "credential_scan_passed_rows": 27,
             "sdk_retry_total": 0,
-            "pico_retry_total": 0,
+            "coda_retry_total": 0,
             "protocol_error_rows": [],
         },
         "modules": _modules(),
@@ -198,7 +198,7 @@ def _report() -> dict[str, Any]:
     formal = _formal_results()
     return {
         "schema_version": reportlib.REPORT_SCHEMA,
-        "artifact_type": "pico-evaluation-v2-baseline-report",
+        "artifact_type": "coda-evaluation-v2-baseline-report",
         "formal_results_sha256": hashlib.sha256(
             canonical_json(formal)
         ).hexdigest(),

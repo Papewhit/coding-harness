@@ -3,19 +3,19 @@ import subprocess
 import sys
 
 from tests.native_fixtures import final, lock_scripted_provider_profile, scripted_client, tool
-from pico import Pico, SessionStore, WorkspaceContext
-from pico.cli import handle_repl_command
-from pico.features import skills as skillslib
+from coda import Coda, SessionStore, WorkspaceContext
+from coda.cli import handle_repl_command
+from coda.features import skills as skillslib
 
 
 def build_agent(tmp_path, outputs):
     (tmp_path / "README.md").write_text("demo\n", encoding="utf-8")
     workspace = WorkspaceContext.build(tmp_path)
     return lock_scripted_provider_profile(
-        Pico(
+        Coda(
             model_client=scripted_client(outputs),
             workspace=workspace,
-            session_store=SessionStore(tmp_path / ".pico" / "sessions"),
+            session_store=SessionStore(tmp_path / ".coda" / "sessions"),
             approval_policy="auto",
         )
     )
@@ -38,7 +38,7 @@ def test_builtin_skills_are_available_in_context(tmp_path):
 
 
 def test_prompt_includes_auto_memory_policy_and_index(tmp_path):
-    memory_root = tmp_path / ".pico" / "memory"
+    memory_root = tmp_path / ".coda" / "memory"
     memory_root.mkdir(parents=True)
     (memory_root / "MEMORY.md").write_text(
         "# Durable Memory Index\n\n- [Project](project.md): Project facts\n",
@@ -58,16 +58,16 @@ def test_prompt_includes_auto_memory_policy_and_index(tmp_path):
 def test_prompt_documents_project_skill_frontmatter_contract(tmp_path):
     agent = build_agent(tmp_path, [])
 
-    prompt = agent.prompt("Create .pico/skills/audit/SKILL.md")
+    prompt = agent.prompt("Create .coda/skills/audit/SKILL.md")
 
-    assert "When creating Pico skill files" in prompt
-    assert ".pico/skills/<name>/SKILL.md" in prompt
+    assert "When creating Coda skill files" in prompt
+    assert ".coda/skills/<name>/SKILL.md" in prompt
     assert "user-invocable: true" in prompt
     assert "Audit $ARGUMENTS for risky changes." in prompt
 
 
 def test_project_skill_slash_invocation_runs_inline_session(tmp_path):
-    skill_dir = tmp_path / ".pico" / "skills" / "deploy"
+    skill_dir = tmp_path / ".coda" / "skills" / "deploy"
     skill_dir.mkdir(parents=True)
     (skill_dir / "SKILL.md").write_text(
         """---
@@ -75,7 +75,7 @@ name: deploy
 description: Deploy checklist
 argument-hint: target
 ---
-Use target $ARGUMENTS from ${PICO_SKILL_DIR}.
+Use target $ARGUMENTS from ${CODA_SKILL_DIR}.
 """,
         encoding="utf-8",
     )
@@ -107,7 +107,7 @@ def test_memory_slash_commands_use_kairos_assets(tmp_path):
     assert handled is True
     assert should_exit is False
     assert "Saved to daily log" in output
-    log_files = list((tmp_path / ".pico" / "memory" / "logs").rglob("*.md"))
+    log_files = list((tmp_path / ".coda" / "memory" / "logs").rglob("*.md"))
     events = agent.session_store.event_path(agent.session["id"]).read_text(
         encoding="utf-8"
     )
@@ -121,7 +121,7 @@ def test_memory_slash_commands_use_kairos_assets(tmp_path):
     assert should_exit is False
     assert "No durable memories yet" in output
 
-    (tmp_path / ".pico" / "memory" / "MEMORY.md").write_text(
+    (tmp_path / ".coda" / "memory" / "MEMORY.md").write_text(
         "# Durable Memory Index\n\n- [User](user.md): User preferences\n",
         encoding="utf-8",
     )
@@ -136,15 +136,15 @@ def test_dream_slash_command_consolidates_daily_log_into_memory_files(tmp_path):
     agent = build_agent(
         tmp_path,
         [
-            tool("read_file", path=".pico/memory/MEMORY.md", start=1, end=50),
+            tool("read_file", path=".coda/memory/MEMORY.md", start=1, end=50),
             tool(
                 "write_file",
-                path=".pico/memory/MEMORY.md",
+                path=".coda/memory/MEMORY.md",
                 content="# Durable Memory Index\n\n- [User Preferences](topics/user-preferences.md): User preferences\n",
             ),
             tool(
                 "write_file",
-                path=".pico/memory/topics/user-preferences.md",
+                path=".coda/memory/topics/user-preferences.md",
                 content="# User Preferences\n\n## Notes\n- Prefers concise reports.\n",
             ),
             final("Dream consolidation complete."),
@@ -158,10 +158,10 @@ def test_dream_slash_command_consolidates_daily_log_into_memory_files(tmp_path):
     assert should_exit is False
     assert "Dream consolidation complete" in output
     assert "User preferences" in (
-        tmp_path / ".pico" / "memory" / "MEMORY.md"
+        tmp_path / ".coda" / "memory" / "MEMORY.md"
     ).read_text(encoding="utf-8")
     assert "Prefers concise reports" in (
-        tmp_path / ".pico" / "memory" / "topics" / "user-preferences.md"
+        tmp_path / ".coda" / "memory" / "topics" / "user-preferences.md"
     ).read_text(encoding="utf-8")
     # dream prompt 是发给 dream 子 agent 的，加了 read step 后总 prompt 数 +1，索引相应调整
     assert "Dream: Memory Consolidation" in agent.model_client.prompts[-4]
@@ -185,7 +185,7 @@ def test_dream_cannot_write_outside_memory_directory(tmp_path):
 
 
 def test_skill_frontmatter_metadata_and_argument_substitution(tmp_path):
-    skill_dir = tmp_path / ".pico" / "skills" / "audit"
+    skill_dir = tmp_path / ".coda" / "skills" / "audit"
     skill_dir.mkdir(parents=True)
     (skill_dir / "SKILL.md").write_text(
         """---
@@ -219,7 +219,7 @@ Audit ${target} with $ARGUMENTS in ${CLAUDE_SKILL_DIR}.
 
 
 def test_fork_skill_runs_in_isolated_session_and_records_completion(tmp_path):
-    skill_dir = tmp_path / ".pico" / "skills" / "inspect"
+    skill_dir = tmp_path / ".coda" / "skills" / "inspect"
     skill_dir.mkdir(parents=True)
     (skill_dir / "SKILL.md").write_text(
         """---
@@ -256,7 +256,7 @@ Inspect $ARGUMENTS.
 
 
 def test_skill_allowed_tools_restricts_inline_execution(tmp_path):
-    skill_dir = tmp_path / ".pico" / "skills" / "readonly"
+    skill_dir = tmp_path / ".coda" / "skills" / "readonly"
     skill_dir.mkdir(parents=True)
     (skill_dir / "SKILL.md").write_text(
         """---
@@ -290,7 +290,7 @@ Use only read tools.
 
 
 def test_disable_model_invocation_skill_returns_expanded_prompt(tmp_path):
-    skill_dir = tmp_path / ".pico" / "skills" / "template"
+    skill_dir = tmp_path / ".coda" / "skills" / "template"
     skill_dir.mkdir(parents=True)
     (skill_dir / "SKILL.md").write_text(
         """---
@@ -346,7 +346,7 @@ def test_cli_lists_skills_without_calling_model(tmp_path):
     env["PYTHONPATH"] = os.getcwd()
     launcher = """
 import sys
-import pico.cli as cli
+import coda.cli as cli
 
 class NoIOModelClient:
     model = "offline-test"
@@ -358,7 +358,7 @@ class NoIOModelClient:
         raise AssertionError("model should not be invoked")
 
 cli.build_native_model_client = lambda **kwargs: NoIOModelClient()
-sys.argv = ["pico", "--cwd", sys.argv[1]]
+sys.argv = ["coda", "--cwd", sys.argv[1]]
 raise SystemExit(cli.main())
 """
     result = subprocess.run(

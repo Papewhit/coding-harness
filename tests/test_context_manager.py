@@ -1,6 +1,6 @@
 from tests.native_fixtures import scripted_client
-from pico import Pico, SessionStore, WorkspaceContext
-from pico.core.context_manager import ContextManager
+from coda import Coda, SessionStore, WorkspaceContext
+from coda.core.context_manager import ContextManager
 
 
 def build_workspace(tmp_path):
@@ -10,9 +10,9 @@ def build_workspace(tmp_path):
 
 def build_agent(tmp_path, outputs, **kwargs):
     workspace = build_workspace(tmp_path)
-    store = SessionStore(tmp_path / ".pico" / "sessions")
+    store = SessionStore(tmp_path / ".coda" / "sessions")
     approval_policy = kwargs.pop("approval_policy", "auto")
-    return Pico(
+    return Coda(
         model_client=scripted_client(outputs),
         workspace=workspace,
         session_store=store,
@@ -43,7 +43,7 @@ def test_context_manager_assembles_sections_in_expected_order(tmp_path):
 
     prompt, metadata = ContextManager(agent).build("Where is the deploy key?")
 
-    assert prompt.index("You are pico") < prompt.index("Memory:")
+    assert prompt.index("You are coda") < prompt.index("Memory:")
     assert prompt.index("Memory:") < prompt.index("Available skills:")
     assert prompt.index("Available skills:") < prompt.index("Relevant memory:")
     assert prompt.index("Relevant memory:") < prompt.index("Transcript:")
@@ -295,7 +295,7 @@ def test_context_manager_summarizes_older_tool_output_into_one_line(tmp_path):
 
 
 def test_context_manager_relevant_memory_can_mix_durable_notes(tmp_path):
-    memory_root = tmp_path / ".pico" / "memory"
+    memory_root = tmp_path / ".coda" / "memory"
     topics_dir = memory_root / "topics"
     topics_dir.mkdir(parents=True)
     (memory_root / "MEMORY.md").write_text(

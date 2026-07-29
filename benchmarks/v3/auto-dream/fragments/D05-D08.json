@@ -1,5 +1,5 @@
 {
-  "schema_version": "pico-auto-dream-cases-v1",
+  "schema_version": "coda-auto-dream-cases-v1",
   "cases": [
     {
       "id": "D05",
@@ -17,7 +17,7 @@
         ],
         "index": {"path": "MEMORY.md", "must_link": ["topics/user-collaboration.md", "topics/atlas-project.md"], "max_lines": 12},
         "frontmatter": {"required": ["name", "description", "type"], "allowed_types": ["user", "project"]},
-        "allowed_write_scope": ".pico/memory",
+        "allowed_write_scope": ".coda/memory",
         "snapshot": {"ignore_frontmatter_fields": ["updated_at", "last_dream_at"]}
       }
     },
@@ -30,7 +30,7 @@
         "topics": [{"path": "topics/scheduling.md", "facts": ["design-review-absolute-date"]}],
         "index": {"path": "MEMORY.md", "must_link": ["topics/scheduling.md"], "max_lines": 8},
         "frontmatter": {"required": ["name", "description", "type"], "allowed_types": ["user"]},
-        "allowed_write_scope": ".pico/memory",
+        "allowed_write_scope": ".coda/memory",
         "snapshot": {"ignore_frontmatter_fields": ["updated_at", "last_dream_at"]}
       }
     },
@@ -47,7 +47,7 @@
         "topics": [{"path": "topics/orion-project.md", "facts": ["orion-staging-target"]}],
         "index": {"path": "MEMORY.md", "must_link": ["topics/orion-project.md"], "max_lines": 8},
         "frontmatter": {"required": ["name", "description", "type"], "allowed_types": ["project"]},
-        "allowed_write_scope": ".pico/memory",
+        "allowed_write_scope": ".coda/memory",
         "snapshot": {"ignore_frontmatter_fields": ["updated_at", "last_dream_at"]}
       }
     },
@@ -63,7 +63,7 @@
         "topics": [{"path": "topics/cedar-project.md", "facts": ["cedar-eu-sandbox"]}],
         "index": {"path": "MEMORY.md", "must_link": ["topics/cedar-project.md"], "max_lines": 8},
         "frontmatter": {"required": ["name", "description", "type"], "allowed_types": ["project"]},
-        "allowed_write_scope": ".pico/memory",
+        "allowed_write_scope": ".coda/memory",
         "snapshot": {"ignore_frontmatter_fields": ["updated_at", "last_dream_at"]}
       }
     }

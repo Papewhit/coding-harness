@@ -1,11 +1,11 @@
 """Golden coverage for canonical registered-tool schemas."""
 
-from pico.core.runtime import Pico
-from pico.core.session_store import SessionStore
-from pico.core.workspace import WorkspaceContext
+from coda.core.runtime import Coda
+from coda.core.session_store import SessionStore
+from coda.core.workspace import WorkspaceContext
 from tests.native_fixtures import scripted_client
-from pico.tools.definitions import TOOL_DEFINITIONS
-from pico.tools.schemas import (
+from coda.tools.definitions import TOOL_DEFINITIONS
+from coda.tools.schemas import (
     AgentArgs,
     AskUserArgs,
     ReadFileArgs,
@@ -15,9 +15,9 @@ from pico.tools.schemas import (
 
 def build_agent(tmp_path):
     (tmp_path / "README.md").write_text("demo\n", encoding="utf-8")
-    return Pico(
+    return Coda(
         workspace=WorkspaceContext.build(tmp_path),
-        session_store=SessionStore(tmp_path / ".pico" / "sessions"),
+        session_store=SessionStore(tmp_path / ".coda" / "sessions"),
         model_client=scripted_client(),
     )
 

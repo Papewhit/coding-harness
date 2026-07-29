@@ -4,16 +4,16 @@ from types import SimpleNamespace
 
 import pytest
 
-from pico.core.runtime import Pico
-from pico.core.session_lifecycle import NativeSessionRecorder
-from pico.core.tool_repetition import is_repeated_tool_call
-from pico.providers.contracts import ToolCall
+from coda.core.runtime import Coda
+from coda.core.session_lifecycle import NativeSessionRecorder
+from coda.core.tool_repetition import is_repeated_tool_call
+from coda.providers.contracts import ToolCall
 
 
 PATCH_ARGS = {
     "path": "README.md",
     "old_text": "world",
-    "new_text": "pico",
+    "new_text": "coda",
 }
 
 
@@ -107,7 +107,7 @@ def test_runtime_anchors_repetition_fingerprint_to_workspace_root(tmp_path) -> N
         session={"history": history},
     )
 
-    assert Pico.repeated_tool_call(
+    assert Coda.repeated_tool_call(
         agent,
         "patch_file",
         {**PATCH_ARGS, "path": str(tmp_path / "docs" / "guide.md")},
@@ -220,7 +220,7 @@ def test_native_recorder_persists_structured_status_in_internal_history(
 ) -> None:
     history: list[dict[str, object]] = []
     monkeypatch.setattr(
-        "pico.core.session_lifecycle.ModelExchangeEvent.tool_result",
+        "coda.core.session_lifecycle.ModelExchangeEvent.tool_result",
         lambda **kwargs: {},
     )
     recorder = object.__new__(NativeSessionRecorder)

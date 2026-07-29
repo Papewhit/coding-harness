@@ -1,5 +1,5 @@
 {
-  "schema_version": "pico-auto-dream-fixture-sessions-v1",
+  "schema_version": "coda-auto-dream-fixture-sessions-v1",
   "reference_time": "2026-04-15T12:00:00Z",
   "sessions": [
     {"id": "d04-001", "recorded_at": "2026-04-01T10:00:00Z", "observations": ["The weekly release window is Thursday at 16:00 UTC."]},

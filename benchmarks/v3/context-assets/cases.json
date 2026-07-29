@@ -191,7 +191,7 @@
       "id": "C03",
       "model_request": {
         "max_output_tokens": 256,
-        "prompt": "{\"activation_state\":\"active\",\"control_header\":\"Plan mode controls QZ-5930; continue only through the active plan pointer.\",\"mode\":\"plan\",\"plan_complete\":false,\"plan_content_hash\":\"sha256:2bf5c493f0a8e0d4\",\"plan_exists\":true,\"plan_path\":\".pico/plans/qz-5930.json\"}\n\nREQUEST-C03-KEEP-VERBATIM",
+        "prompt": "{\"activation_state\":\"active\",\"control_header\":\"Plan mode controls QZ-5930; continue only through the active plan pointer.\",\"mode\":\"plan\",\"plan_complete\":false,\"plan_content_hash\":\"sha256:2bf5c493f0a8e0d4\",\"plan_exists\":true,\"plan_path\":\".coda/plans/qz-5930.json\"}\n\nREQUEST-C03-KEEP-VERBATIM",
         "tool_choice": {
           "mode": "auto",
           "name": null
@@ -209,7 +209,7 @@
               "plan_complete": false,
               "plan_content_hash": "sha256:2bf5c493f0a8e0d4",
               "plan_exists": true,
-              "plan_path": ".pico/plans/qz-5930.json"
+              "plan_path": ".coda/plans/qz-5930.json"
             },
             "required_metadata": [
               "mode",
@@ -246,7 +246,7 @@
               "plan_complete": false,
               "plan_content_hash": "sha256:2bf5c493f0a8e0d4",
               "plan_exists": true,
-              "plan_path": ".pico/plans/qz-5930.json"
+              "plan_path": ".coda/plans/qz-5930.json"
             },
             "priority": "critical",
             "producer": "fixture_plan",
@@ -264,14 +264,14 @@
           }
         ],
         "native_turn_status": "terminal",
-        "system_text": "{\"activation_state\":\"active\",\"control_header\":\"Plan mode controls QZ-5930; continue only through the active plan pointer.\",\"mode\":\"plan\",\"plan_complete\":false,\"plan_content_hash\":\"sha256:2bf5c493f0a8e0d4\",\"plan_exists\":true,\"plan_path\":\".pico/plans/qz-5930.json\"}"
+        "system_text": "{\"activation_state\":\"active\",\"control_header\":\"Plan mode controls QZ-5930; continue only through the active plan pointer.\",\"mode\":\"plan\",\"plan_complete\":false,\"plan_content_hash\":\"sha256:2bf5c493f0a8e0d4\",\"plan_exists\":true,\"plan_path\":\".coda/plans/qz-5930.json\"}"
       }
     },
     {
       "id": "C04",
       "model_request": {
         "max_output_tokens": 256,
-        "prompt": "{\"activation_reason\":\"resume_context_relevant\",\"activation_state\":\"active\",\"checkpoint_id\":\"ckpt-qz-7604\",\"freshness\":\"fresh\",\"parent_checkpoint_id\":null,\"resume_core\":\"Resume QZ-7604: verify the migration report, then publish the next step.\",\"runtime_identity\":\"runtime-qz-7604\",\"schema_version\":\"pico-checkpoint-v1\"}\n\nREQUEST-C04-KEEP-VERBATIM",
+        "prompt": "{\"activation_reason\":\"resume_context_relevant\",\"activation_state\":\"active\",\"checkpoint_id\":\"ckpt-qz-7604\",\"freshness\":\"fresh\",\"parent_checkpoint_id\":null,\"resume_core\":\"Resume QZ-7604: verify the migration report, then publish the next step.\",\"runtime_identity\":\"runtime-qz-7604\",\"schema_version\":\"coda-checkpoint-v1\"}\n\nREQUEST-C04-KEEP-VERBATIM",
         "tool_choice": {
           "mode": "auto",
           "name": null
@@ -290,7 +290,7 @@
               "freshness": "fresh",
               "parent_checkpoint_id": null,
               "runtime_identity": "runtime-qz-7604",
-              "schema_version": "pico-checkpoint-v1"
+              "schema_version": "coda-checkpoint-v1"
             },
             "required_metadata": [
               "checkpoint_id",
@@ -329,7 +329,7 @@
               "freshness": "fresh",
               "parent_checkpoint_id": null,
               "runtime_identity": "runtime-qz-7604",
-              "schema_version": "pico-checkpoint-v1"
+              "schema_version": "coda-checkpoint-v1"
             },
             "priority": "high",
             "producer": "fixture_checkpoint",
@@ -347,7 +347,7 @@
           }
         ],
         "native_turn_status": "terminal",
-        "system_text": "{\"activation_reason\":\"resume_context_relevant\",\"activation_state\":\"active\",\"checkpoint_id\":\"ckpt-qz-7604\",\"freshness\":\"fresh\",\"parent_checkpoint_id\":null,\"resume_core\":\"Resume QZ-7604: verify the migration report, then publish the next step.\",\"runtime_identity\":\"runtime-qz-7604\",\"schema_version\":\"pico-checkpoint-v1\"}"
+        "system_text": "{\"activation_reason\":\"resume_context_relevant\",\"activation_state\":\"active\",\"checkpoint_id\":\"ckpt-qz-7604\",\"freshness\":\"fresh\",\"parent_checkpoint_id\":null,\"resume_core\":\"Resume QZ-7604: verify the migration report, then publish the next step.\",\"runtime_identity\":\"runtime-qz-7604\",\"schema_version\":\"coda-checkpoint-v1\"}"
       }
     },
     {
@@ -446,7 +446,7 @@
       "id": "C06",
       "model_request": {
         "max_output_tokens": 256,
-        "prompt": "{\"activation_state\":\"active\",\"memory_policy\":\"selected_note_only\",\"selected_notes\":[{\"content\":\"The QZ-9821 release train requires the offline verifier.\",\"content_hash\":\"sha256:8e12fd44a0cc\",\"kind\":\"project\",\"memory_id\":\"memory-qz-9821\",\"selection_score\":1.0,\"source_path\":\".pico/memory/qz-9821.md\",\"tags\":[\"release\"],\"updated_at\":\"2026-07-21T00:00:00Z\"}]}\n\nREQUEST-C06-KEEP-VERBATIM",
+        "prompt": "{\"activation_state\":\"active\",\"memory_policy\":\"selected_note_only\",\"selected_notes\":[{\"content\":\"The QZ-9821 release train requires the offline verifier.\",\"content_hash\":\"sha256:8e12fd44a0cc\",\"kind\":\"project\",\"memory_id\":\"memory-qz-9821\",\"selection_score\":1.0,\"source_path\":\".coda/memory/qz-9821.md\",\"tags\":[\"release\"],\"updated_at\":\"2026-07-21T00:00:00Z\"}]}\n\nREQUEST-C06-KEEP-VERBATIM",
         "tool_choice": {
           "mode": "auto",
           "name": null
@@ -464,7 +464,7 @@
               "kind": "project",
               "memory_id": "memory-qz-9821",
               "selection_score": 1.0,
-              "source_path": ".pico/memory/qz-9821.md",
+              "source_path": ".coda/memory/qz-9821.md",
               "tags": [
                 "release"
               ],
@@ -507,7 +507,7 @@
               "kind": "project",
               "memory_id": "memory-qz-9821",
               "selection_score": 1.0,
-              "source_path": ".pico/memory/qz-9821.md",
+              "source_path": ".coda/memory/qz-9821.md",
               "tags": [
                 "release"
               ],
@@ -529,7 +529,7 @@
           }
         ],
         "native_turn_status": "terminal",
-        "system_text": "{\"activation_state\":\"active\",\"memory_policy\":\"selected_note_only\",\"selected_notes\":[{\"content\":\"The QZ-9821 release train requires the offline verifier.\",\"content_hash\":\"sha256:8e12fd44a0cc\",\"kind\":\"project\",\"memory_id\":\"memory-qz-9821\",\"selection_score\":1.0,\"source_path\":\".pico/memory/qz-9821.md\",\"tags\":[\"release\"],\"updated_at\":\"2026-07-21T00:00:00Z\"}]}"
+        "system_text": "{\"activation_state\":\"active\",\"memory_policy\":\"selected_note_only\",\"selected_notes\":[{\"content\":\"The QZ-9821 release train requires the offline verifier.\",\"content_hash\":\"sha256:8e12fd44a0cc\",\"kind\":\"project\",\"memory_id\":\"memory-qz-9821\",\"selection_score\":1.0,\"source_path\":\".coda/memory/qz-9821.md\",\"tags\":[\"release\"],\"updated_at\":\"2026-07-21T00:00:00Z\"}]}"
       }
     },
     {
@@ -1781,11 +1781,11 @@
     }
   ],
   "contract": {
-    "artifact_contract_sha256": "2add016fdfdd3ca9a0f80146097b470fbc7f8afd082a2799bd891b6b5c3ce8d1",
-    "context_assets_sha256": "d8349c034524cc488958a1f3b460a7b6080915eed0b03b64c635810c21bf8e15",
-    "fragment_C01_C08_sha256": "6bef856d9df68209d60d0ef7e9df1dc927fd861f64a6f646f0cc58fba9c808b8",
-    "fragment_C09_C15_sha256": "1c2975e53696faed737a676e14faef7008cb4a2c4c5db27c804a903af3e1455c",
+    "artifact_contract_sha256": "a4882493c07ae7582c8286882d22f5da495482e34070f60bae8fa1daef258dea",
+    "context_assets_sha256": "35daef1235d27af82bd7343d859eb0cc185ae01225c64e675109f6764ef25b01",
+    "fragment_C01_C08_sha256": "d9e65ee5570ba862af8e8cd6ef5d5bca15b27f9bb1bf3a8e0a8219b85e93ff5e",
+    "fragment_C09_C15_sha256": "ba0141a548a70a1aedd292a70cf7960bf190144bf1985c540bc27ec60a11ef03",
     "native_contract_sha256": "cf961b5f72b06a024abadaff48dbccb4520fb93a9a1665fc66742652db5a79eb"
   },
-  "schema_version": "pico-context-asset-cases-v1"
+  "schema_version": "coda-context-asset-cases-v1"
 }
