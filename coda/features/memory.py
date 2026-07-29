@@ -10,6 +10,7 @@ import hashlib
 import json
 import os
 import threading
+from collections.abc import Mapping
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, TypedDict
 
@@ -248,6 +249,18 @@ def run_dream(agent: Coda, quiet: bool = False, session_ids: list[str] | None = 
         auto_dream=False,
     )
     dream_agent.set_tool_profile("dream")
+    parent_profile = agent.session.get("provider_profile")
+    if not isinstance(parent_profile, Mapping):
+        raise ValueError("dream parent requires a locked provider_profile")
+    dream_agent.session["provider_profile"] = {
+        **{
+            key: value
+            for key, value in parent_profile.items()
+            if key != "tool_schema"
+        },
+        "tool_schema": dream_agent.tool_signature(),
+    }
+    dream_agent.session_path = dream_agent.session_store.save(dream_agent.session)
     dream_agent.refresh_prefix(force=True)
     result = dream_agent.ask(dream_prompt)
     record_consolidation(agent.memory_dir)

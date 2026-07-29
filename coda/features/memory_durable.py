@@ -68,6 +68,13 @@ DURABLE_MEMORY_INTENT_ZH_PATTERN = re.compile(r"(记住|保存|记录|沉淀|长
 DURABLE_MEMORY_LIST_PREFIX_PATTERN = re.compile(r"^(?:[-*]|\d+[.)])\s+")
 
 
+DURABLE_MEMORY_EMPHASIZED_LABEL_PATTERN = re.compile(
+    r"(?i)^(?:\*\*|__)"
+    r"(Project convention|Decision|Dependency|Preference|项目约定|决策|依赖|偏好)"
+    r"([:：])(?:\*\*|__)\s*(.+)$"
+)
+
+
 DURABLE_MEMORY_LINE_PATTERNS = (
     ("project-conventions", re.compile(r"(?i)^Project convention:\s*(.+)$")),
     ("key-decisions", re.compile(r"(?i)^Decision:\s*(.+)$")),
@@ -457,6 +464,12 @@ def extract_durable_promotions(user_message: str, final_answer: str, redacted_va
     rejections = []
     for line in str(final_answer or "").splitlines():
         text = DURABLE_MEMORY_LIST_PREFIX_PATTERN.sub("", line.strip(), count=1)
+        emphasized_label = DURABLE_MEMORY_EMPHASIZED_LABEL_PATTERN.match(text)
+        if emphasized_label:
+            text = (
+                f"{emphasized_label.group(1)}{emphasized_label.group(2)} "
+                f"{emphasized_label.group(3)}"
+            )
         if not text or redacted_value in text:
             continue
         for topic, pattern in DURABLE_MEMORY_LINE_PATTERNS:
