@@ -1153,6 +1153,7 @@ allowed-tools: read_file, write_file
             workspace,
             prompt=prompt,
             extra=["--sandbox", "required", "--sandbox-backend", "bubblewrap"],
+            env=self.env_without_executable("bwrap"),
             max_steps=3,
             max_new_tokens=768,
             timeout=240,
@@ -1183,6 +1184,7 @@ allowed-tools: read_file, write_file
             workspace,
             prompt=prompt,
             extra=["--sandbox", "best_effort", "--sandbox-backend", "bubblewrap"],
+            env=self.env_without_executable("bwrap"),
             max_steps=3,
             max_new_tokens=768,
             timeout=240,
@@ -2082,6 +2084,19 @@ hello $ARGUMENTS from prompt only
             stdout_path=self._rel(stdout_path),
             stderr_path=self._rel(stderr_path),
         )
+
+    @staticmethod
+    def env_without_executable(name: str) -> dict[str, str]:
+        env = dict(os.environ)
+        path_entries = [
+            entry
+            for entry in env.get("PATH", "").split(os.pathsep)
+            if entry and shutil.which(name, path=entry) is None
+        ]
+        env["PATH"] = os.pathsep.join(path_entries)
+        if shutil.which(name, path=env["PATH"]) is not None:
+            raise RuntimeError(f"could not hide executable from scenario PATH: {name}")
+        return env
 
     def run_coda_tty_smoke(
         self, name: str, workspace: Path, *, timeout: int = 6
