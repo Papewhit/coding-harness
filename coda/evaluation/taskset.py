@@ -169,13 +169,20 @@ def _load_repository_taskset(payload: Mapping[str, Any], base_dir: Path) -> list
 
 
 def _tree_files(root: Path) -> list[Path]:
-    return [
+    files = [
         path
-        for path in sorted(root.rglob("*"))
+        for path in root.rglob("*")
         if path.is_file()
         and not any(part in IGNORED_TREE_PARTS for part in path.relative_to(root).parts)
         and path.suffix != ".pyc"
     ]
+    return sorted(
+        files,
+        key=lambda path: (
+            path.relative_to(root).as_posix().casefold(),
+            path.relative_to(root).as_posix(),
+        ),
+    )
 
 
 def _repository_tree_hash(root: Path, files: list[Path]) -> str:

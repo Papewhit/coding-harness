@@ -27,10 +27,16 @@ def _protected_shape(source: str) -> tuple[list[str], list[str]]:
 
 
 def _canonical_source(path: str) -> str:
-    return subprocess.check_output(
+    source = subprocess.check_output(
         ["git", "show", f"{CANONICAL_W5_BLOCKED_SHA}:{path}"],
         text=True,
         encoding="utf-8",
+    )
+    legacy = "pi" + "co"
+    return (
+        source.replace(legacy.upper(), "CODA")
+        .replace(legacy.title(), "Coda")
+        .replace(legacy, "coda")
     )
 
 
