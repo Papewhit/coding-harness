@@ -7,7 +7,7 @@
 
 **轻量、本地、有记忆的终端 coding agent**
 
-Coda 跑在本地仓库里，接上一个模型 provider，就能读代码、跑命令、改文件、保留运行证据，并把有价值的上下文沉淀成本地记忆。
+Coda 运行在你的本地仓库中。连接一个模型 provider 后，它可以读代码、执行命令、修改文件、保留运行证据，并把值得复用的上下文沉淀为项目记忆。
 
 </div>
 
@@ -19,20 +19,20 @@ Coda 跑在本地仓库里，接上一个模型 provider，就能读代码、跑
 
 ## Coda 是什么
 
-Coda 是一个本地终端里的 coding agent，运行在你的仓库上下文里。一次 agent 运行会被拆成几个可观察的部分：
+Coda 提供 Textual TUI、普通终端 REPL 和 one-shot 三种使用方式，适合从快速问答到持续推进一个编码任务：
 
-- **provider profile**：决定调用哪个模型、哪个 endpoint、用什么协议。
-- **context**：把系统提示、仓库信息、skills、记忆和最近对话装进 prompt。
-- **tools**：文件读取、搜索、shell、写文件、patch、子 agent 都走统一工具协议。
-- **approval / sandbox**：写操作和 shell 命令可以被审批或沙箱限制。
-- **session / run evidence**：对话、事件流、trace、report 都写到本地 `.coda/`。
-- **memory / dream**：把 daily log 整理成长期 topic，下次 session 可以继续用。
+- **理解代码**：读取和搜索仓库、运行命令与测试，快速熟悉陌生项目。
+- **修改与验证**：编辑文件、应用补丁，并根据检查和测试结果继续修正。
+- **规划与审查**：先梳理复杂任务的执行方案，或检查当前改动的质量与风险。
+- **续接任务**：保存会话和任务进度，稍后从上次中断的位置继续。
+- **Skills 与子 Agent**：复用 review、test、commit 等工作流，也可以并行探索代码或处理限定范围的修改。
+- **项目记忆**：记录约定、决策和排查结论，在后续会话中继续使用。
 
-Coda 关注本地 coding agent 的工程边界：配置清楚、任务能续接、结果能复盘。
+Coda 关注的不只是“能改代码”，也包括配置是否清楚、修改是否受控、任务能否续接，以及结果能否复盘。
 
 ## 界面
 
-TUI 直接连接同一个 runtime。输入框、工具结果、状态栏、slash command 和补全都来自当前 session。
+默认入口是 Textual TUI，可集中查看对话、工具执行结果和任务状态，并使用 slash command 与命令补全。
 
 | 工具和子 agent | Skills、help 和命令补全 |
 | --- | --- |
@@ -42,40 +42,60 @@ TUI 直接连接同一个 runtime。输入框、工具结果、状态栏、slash
 | --- | --- |
 | ![coda TUI memory 和 skills](assets/screenshots/coda-tui-memory-skills.png) | ![coda TUI slash command 补全](assets/screenshots/coda-tui-latest.png) |
 
+## 测评
+
+Coda 已完成公开入口真人场景、固定编码任务和确定性模块评测：
+
+| 评测 | 样本范围 | 结果 |
+| --- | --- | --- |
+| v3 真人场景 | 50 个 CLI、REPL、TUI 及功能组合场景 | 50/50 通过；同期 pytest 为 224 passed、2 skipped |
+| Evaluation v2 正式编码基线 | 3 个本地仓库、9 个任务、每个任务 3 次，共 27 条运行 | 27/27 有效，26/27 通过隐藏验证，verified-run success 96.30%，invalid=0 |
+| Evaluation v2 模块基线 | Harness、Context、Working memory、Recovery | Harness 12/12；Context 平均字符压缩率 10.66%、当前请求保留率 100%；`memory_on` 重复读取为 0、正确率 100%；恢复成功率 90%、workspace drift 检出率 100%、false accept 0% |
+
+Evaluation v2 同期全仓回归为 654 passed、2 skipped。
+
+> 结果对应各自记录的代码快照、模型和样本范围；方法、逐项结果、证据边界与改进建议见 [综合测评报告](docs/evaluation.md)。
+
 ## 安装
 
-要求：Python 3.10+，以及至少一个可用的模型 provider key。
+主要支持 Linux 和 macOS。开始前需要 Git、Python 3.10+，以及至少一个可用的模型 provider key。
 
-一键安装：
+### 一键安装脚本
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Papewhit/coda/main/install.sh | bash
 ```
 
-源码安装：
+安装器会创建独立虚拟环境、安装运行所需依赖，并把 `coda` 启动器放到 `~/.local/bin/`。
+
+### 从源码安装
+
+先取得源码：
 
 ```bash
 git clone https://github.com/Papewhit/coda.git
 cd coda
-pip install -e .
 ```
 
-开发 checkout 里也可以直接跑：
+使用 pip：
 
 ```bash
+python -m pip install -e ".[providers]"
+coda
+```
+
+或使用 uv：
+
+```bash
+uv sync --extra providers
 uv run coda
 ```
 
+Windows 可以使用源码安装流程运行 Coda；一键安装脚本面向类 Unix shell。完整的 `bubblewrap` shell sandbox 仅支持 Linux。
+
 ## 配置 provider
 
-Coda 启动前先解析一个 **provider profile**。一个 profile 主要由四项组成：
-
-| 字段 | 作用 |
-| --- | --- |
-| `protocol` | 请求协议，目前支持 `openai` 和 `anthropic`。 |
-| `api_key` | 发给 provider 的 key。 |
-| `base_url` | provider endpoint。 |
-| `model` | 本次请求使用的模型名。 |
+**Provider profile** 是一组可复用的模型连接设置，包括凭据、endpoint、模型和请求格式。
 
 配置合并优先级是：
 
@@ -83,75 +103,39 @@ Coda 启动前先解析一个 **provider profile**。一个 profile 主要由四
 CLI 参数 > 环境变量 > 项目 .coda.toml > 全局 ~/.config/coda/config.toml > 代码默认值
 ```
 
-### 方式一：项目 `.coda.toml`
+### 项目 `.coda.toml`（推荐）
 
-这是最推荐的配置方式，适合每个仓库独立指定 provider：
-
-```bash
-cp .coda.toml.example .coda.toml
-$EDITOR .coda.toml
-```
-
-`.coda.toml` 默认被 `.gitignore` 忽略，不要把真实 key 提交进 git。
-
-最小可用示例：
+为每个仓库建立独立 profile：
 
 ```toml
-provider = "deepseek"
+provider = "example"
 
-[providers.deepseek]
-protocol = "anthropic"
-api_key = "sk-..."
-base_url = "https://api.deepseek.com/anthropic"
-model = "deepseek-v4-pro"
+[providers.example]
+wire_dialect = "openai-responses"
+api_key = "replace-with-your-key"
+base_url = "https://provider.example/v1"
+model = "model-name"
 
-[providers.openai]
-protocol = "openai"
-api_key = "sk-..."
-base_url = "https://www.right.codes/codex/v1"
-model = "gpt-5.4"
-
-[providers.anthropic]
-protocol = "anthropic"
-api_key = "sk-ant-..."
-base_url = "https://www.right.codes/claude/v1"
-model = "claude-sonnet-4-6"
+[providers.example.capabilities]
+native_tools = true
 ```
 
-注意：`provider = "deepseek"` 只是选择 profile 名字，真正决定请求格式的是
-`protocol`。例如 DeepSeek 可以通过 Anthropic-compatible endpoint 使用，所以这里写
-`protocol = "anthropic"`。
+把 `api_key`、`base_url`、`model` 和 `wire_dialect` 改为所用服务的值。兼容 OpenAI Responses API 的 endpoint 使用 `openai-responses`；兼容 Anthropic Messages API 的 endpoint 使用 `anthropic-messages`。Coda 的编码任务需要 `native_tools = true`。
 
-### 方式二：环境变量
+### 环境变量覆盖
 
-不想把 key 写进 TOML 时，用环境变量：
-
-```bash
-export CODA_PROVIDER=deepseek
-export DEEPSEEK_API_KEY=sk-...
-export DEEPSEEK_BASE_URL=https://api.deepseek.com/anthropic
-export DEEPSEEK_MODEL=deepseek-v4-pro
-
-coda
-```
-
-常用 provider 变量：
-
-| Provider | 变量 |
-| --- | --- |
-| DeepSeek | `DEEPSEEK_API_KEY`, `DEEPSEEK_BASE_URL`, `DEEPSEEK_MODEL` |
-| OpenAI-compatible | `OPENAI_API_KEY`, `OPENAI_BASE_URL`, `OPENAI_MODEL` |
-| Anthropic-compatible | `ANTHROPIC_API_KEY`, `ANTHROPIC_BASE_URL`, `ANTHROPIC_MODEL` |
-
-也可以用通用覆盖变量：
+环境变量适合注入密钥或临时覆盖已有 profile：
 
 ```bash
 export CODA_API_KEY=sk-...
-export CODA_BASE_URL=https://api.openai.com/v1
-export CODA_MODEL=gpt-5.4
+export CODA_BASE_URL=https://provider.example/v1
+export CODA_MODEL=model-name
+coda
 ```
 
-### 方式三：命令行临时覆盖
+可用的通用变量包括 `CODA_PROVIDER`、`CODA_API_KEY`、`CODA_BASE_URL`、`CODA_MODEL` 和 `CODA_WIRE_DIALECT`。
+
+### 命令行临时覆盖
 
 临时换 provider 或模型：
 
@@ -161,28 +145,29 @@ coda --provider deepseek --approval ask --max-steps 80
 coda --config /path/to/custom.toml --cwd /path/to/repo
 ```
 
-完整配置说明见 [docs/configuration.md](docs/configuration.md)。
+> 完整的字段、能力声明和配置方式见 [配置文档](docs/configuration.md)。
 
 ## 启动
 
-常用入口：
+Coda 默认进入 Textual TUI，也可以使用普通终端 REPL、直接执行 one-shot 任务，或续接已有会话：
 
 ```bash
-coda                              # 默认 Textual TUI
-coda --repl                       # 普通终端 REPL
-coda "找出测试失败的根因"          # one-shot 任务
-coda --resume latest              # 续接最近 session
-coda --cwd /path/to/repo          # 指定工作目录
+coda                                # Textual TUI
+coda --repl                         # 普通终端 REPL
+coda "找出测试失败的根因"            # one-shot 任务
+coda --resume latest                # 续接最近 session
+coda --cwd /path/to/repo            # 指定工作目录
 ```
 
-常用运行参数：
+常用控制参数：
 
 ```bash
-coda --approval ask               # shell / 写文件前询问
-coda --approval auto              # 普通操作自动通过
-coda --approval never             # 非交互模式
-coda --sandbox best_effort        # 尽量隔离 shell 命令
-coda --no-auto-dream              # 关闭后台 memory 整合
+coda --approval ask                 # 高风险工具在交互环境中请求确认（默认）
+coda --approval auto                # 自动通过普通操作
+coda --approval never               # 拒绝高风险工具，仍允许只读工具
+coda --sandbox best_effort          # 尝试隔离 run_shell，不可用时退化为直跑
+coda --sandbox required             # sandbox 不可用时拒绝 run_shell
+coda --no-auto-dream                # 关闭后台 memory 整合
 ```
 
 ## 日常用法
@@ -191,99 +176,137 @@ coda --no-auto-dream              # 关闭后台 memory 整合
 
 ```text
 > /help
-> /skills
 > 找出测试失败的根因
-> /plan 重构 provider 配置加载逻辑
+> /plan 为 API 客户端增加重试并补充测试
+> /subagent explore 梳理支付模块的调用流程
 > /review
 > /test tests/test_config.py
-> /remember 这个项目用 DeepSeek 的 Anthropic-compatible endpoint
+> /remember 新增接口时需要同时更新集成测试
 > /dream
 ```
 
-常用命令：
+### 内置命令
 
 | 命令 | 作用 |
 | --- | --- |
 | `/help` | 查看内置命令。 |
-| `/skills` | 列出可用 skills。 |
-| `/session` | 查看当前 session、events、run 路径。 |
-| `/history` | 列出历史 session。 |
-| `/resume latest` | 续接最近 session。 |
-| `/context` | 查看 prompt context 使用情况。 |
-| `/usage` | 查看 provider、model、token 元数据。 |
-| `/memory` | 查看 durable memory 索引。 |
-| `/working-memory` | 查看当前 session 工作记忆。 |
-| `/remember <text>` | 保存一条 durable note 到 daily log。 |
-| `/dream` | 把 daily log 整合成 durable memory topics。 |
-| `/plan <topic>` | 进入 plan mode。 |
-| `/plan-exit` | 退出 plan mode。 |
-| `/agents` | 查看子 agent 状态。 |
-| `/model <name>` | 当前 session 临时切模型。 |
-| `/compact` | 压缩较早的对话历史。 |
-| `/clear` | 开一个新的空 session。 |
-| `/exit` | 退出 coda。 |
+| `/clear` | 创建一个新的空 session。 |
+| `/compact` | 缩短较早的对话，同时保留当前任务重点。 |
+| `/context` | 查看当前上下文的使用情况。 |
+| `/dream` | 整理近期项目记忆，提炼可长期复用的内容。 |
+| `/history` | 列出可以续接的历史会话。 |
+| `/memory` | 查看已保存的项目记忆。 |
+| `/mode` | 查看当前工作模式和正在进行的计划。 |
+| `/model [name]` | 查看或临时切换当前模型。 |
+| `/plan <topic>` | 为指定任务进入规划模式。 |
+| `/plan-exit` | 退出规划模式。 |
+| `/remember <text>` | 保存一条可供后续会话使用的项目记忆。 |
+| `/reset` | 重置当前会话的记忆与历史。 |
+| `/resume <id\|index\|latest>` | 续接指定或最近的会话。 |
+| `/session` | 查看当前会话及相关本地记录。 |
+| `/skills` | 列出当前可调用的 Skills。 |
+| `/agents`（`/agent`） | 查看子 agent 状态。 |
+| `/subagent explore <task>`（`/sub`） | 启动只读 Explore 子 agent。 |
+| `/subagent worker --scope <path[,path]> <task>` | 启动限定写入范围的 Worker。 |
+| `/usage` | 查看当前 provider、model 和 token 用量。 |
+| `/working-memory` | 查看当前任务的工作记忆。 |
+| `/exit`（`/quit`） | 退出 Coda。 |
 
-## Coda 能做什么
+> 记忆的记录、整理和复用方式见 [记忆文档](docs/memory.md)。
 
-| 能力 | 说明 |
+### 内置 Skills
+
+| Skill | 作用 |
 | --- | --- |
-| TUI / REPL / one-shot | 同一个 runtime，通过不同入口使用。 |
-| 工具执行 | 文件列表、读文件、搜索、shell、写文件、patch、ask_user、子 agent、todo。 |
-| Plan mode | 先读代码和拆计划，再进入可写执行阶段。 |
-| 子 agent | 启动 bounded Explore / Worker 任务。 |
-| Skills | 复用 `/review`、`/test`、`/commit`、`/simplify` 等工作流。 |
-| Memory | working memory、daily logs、durable topics、auto-dream。 |
-| Evidence | session JSON、event stream、run trace、task state、report。 |
-| Sandbox | 对 `run_shell` 做可选隔离。 |
+| `/simplify [focus]` | 检查已改代码的复用、质量和效率，并直接修正问题。 |
+| `/review [focus]` | 审查当前改动并报告问题，不执行修复。 |
+| `/commit [message]` | 从当前改动创建聚焦的 Git commit。 |
+| `/test [filter]` | 运行相关测试并分析结果。 |
+
+用户和项目 Skills 也可以直接以 `/<name>` 调用；用 `/skills` 查看当前 session 实际发现的完整清单。
+
+> 内置和自定义 Skills 的使用与编写方式见 [Skills 文档](docs/skills.md)。
+
+## 隐私与权限
+
+Coda 的配置、会话、运行记录和记忆保存在本地。向 provider 请求模型响应时，当前任务及完成任务所需的上下文会发送给该 provider，其中可能包含代码片段、对话历史和相关记忆。
+
+- **操作确认**：`ask` 会在执行写文件、shell 等高风险操作前请求确认；`auto` 无需逐次确认；`never` 拒绝高风险操作，但仍可读取和分析代码。
+- **文件范围**：文件操作限制在当前 workspace 内；启动 Worker 时，`--scope` 指定它可以修改的目录。
+- **Shell 隔离**：sandbox 只作用于 `run_shell`。默认 `off`；`best_effort` 在隔离不可用时继续直接执行；`required` 则拒绝未隔离的 shell。完整的 `bubblewrap` sandbox 仅支持 Linux。
+- **凭据保护**：shell 仅接收有限的环境变量；已识别的密钥以及通过 `--secret-env-name` 指定的变量会在本地运行记录中脱敏。使用时仍应避免把凭据写入源码、对话或长期记忆。
+
+> 详细边界与配置见 [Sandbox 文档](docs/sandbox.md)。
 
 ## 本地文件
+
+### 常用文件
 
 | 数据 | 路径 |
 | --- | --- |
 | 项目配置 | `.coda.toml` |
 | 全局配置 | `~/.config/coda/config.toml` |
 | 会话历史 | `.coda/sessions/<id>.json` |
+| 记忆索引 | `.coda/memory/MEMORY.md` |
+| 每日记忆 | `.coda/memory/logs/YYYY/MM/YYYY-MM-DD.md` |
+| 长期主题记忆 | `.coda/memory/topics/*.md` |
+| 用户 Skills | `~/.coda/skills/<name>/SKILL.md` |
+| 项目 Skills | `skills/<name>/SKILL.md` 或 `.coda/skills/<name>/SKILL.md` |
+| 计划文件 | `.coda/plans/<topic>-plan.md` |
+
+### 追踪与审计
+
+| 数据 | 路径 |
+| --- | --- |
 | 事件流 | `.coda/sessions/<id>.events.jsonl` |
 | 运行证据 | `.coda/runs/<run_id>/` |
-| 记忆索引 | `.coda/memory/MEMORY.md` |
-| Daily logs | `.coda/memory/logs/YYYY/MM/YYYY-MM-DD.md` |
-| Durable topics | `.coda/memory/topics/*.md` |
-| 用户 skills | `~/.coda/skills/<name>/SKILL.md` |
-| 项目 skills | `skills/<name>/SKILL.md` 或 `.coda/skills/<name>/SKILL.md` |
 
-## 项目结构
+## 开发和维护
+
+以下内容面向参与项目开发和维护的读者。
+
+### 项目结构
 
 ```text
 coda/
 ├── cli.py                 # CLI 参数、启动模式、REPL 命令
+├── tui/                   # Textual TUI
+├── commands/              # slash commands
 ├── config/                # provider profile、TOML、env 解析
 ├── core/                  # runtime、engine、session、workers、context
 ├── features/              # memory、skills、sandbox
 ├── providers/             # OpenAI-compatible / Anthropic-compatible client
 ├── tools/                 # tool registry 和具体工具
-├── tui/                   # Textual TUI
 └── evaluation/            # run evidence、metrics、evaluation helpers
 ```
 
-## 测试
+### 测试
 
 ```bash
-pip install -e ".[dev]"
-pytest tests/ -q
+uv sync --extra providers
+uv run ruff check .
+uv run pytest tests -q
 
-# 真实 provider 烟测需要 key
-CODA_LIVE_SMOKE=1 pytest tests/test_release_smoke.py -q
+# 真人场景检查
+uv run python scripts/run_v3_human_scenario_gate.py
+
+# 连接真实 provider 的烟测，需要先配置 key
+CODA_LIVE_SMOKE=1 uv run pytest tests/test_release_smoke.py -q
 ```
 
-## 文档
+发布前需要运行完整真人场景套件：`uv run python scripts/run_v3_human_scenario_gate.py --suite full`。
+
+### 架构资料
+
+维护 provider 或工具执行链时，请参阅 [原生工具调用协议](docs/architecture/native-tool-contract.md)。
+
+## 参考文档
 
 | 入口 | 内容 |
 | --- | --- |
-| [配置](docs/configuration.md) | provider profile、`.coda.toml`、环境变量和 sandbox 配置。 |
+| [配置](docs/configuration.md) | provider profiles、wire dialect、能力声明、环境变量和 CLI 覆盖。 |
 | [分层记忆 + auto-dream](docs/memory.md) | working memory、daily logs、durable topics 和后台整合。 |
 | [Skills](docs/skills.md) | `SKILL.md` 目录结构、内置技能和自定义 workflow。 |
 | [Sandbox](docs/sandbox.md) | `run_shell` 隔离模式、backend 选择和文件系统边界。 |
-
-## License
-
-MIT
+| [综合测评](docs/evaluation.md) | v3 真人场景、Evaluation v2 编码基线、模块指标及综合结论。 |
+| [原生工具调用协议](docs/architecture/native-tool-contract.md) | provider-native tool call/result 的核心边界与安全链。 |

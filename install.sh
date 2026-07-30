@@ -56,7 +56,7 @@ main() {
 
     info "安装依赖 ..."
     "$VENV_DIR/bin/pip" install --quiet --upgrade pip
-    "$VENV_DIR/bin/pip" install --quiet -e "$INSTALL_DIR"
+    "$VENV_DIR/bin/pip" install --quiet -e "${INSTALL_DIR}[providers]"
 
     BIN_DIR="${CODA_BIN_DIR:-$HOME/.local/bin}"
     mkdir -p "$BIN_DIR"

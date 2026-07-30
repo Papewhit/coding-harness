@@ -1,8 +1,8 @@
 # Native Tool Contract
 
-本文定义 provider adapter 与 Pico 上层之间的原生模型/工具调用边界。合同位于
-`pico/providers/contracts.py`，只包含 Python 标准库类型，不包含任何 provider SDK
-对象。当前 Runtime 仍通过 `pico/providers/base.py` 中既有的 prompt-to-text
+本文定义 provider adapter 与 Coda 上层之间的原生模型/工具调用边界。合同位于
+`coda/providers/contracts.py`，只包含 Python 标准库类型，不包含任何 provider SDK
+对象。当前 Runtime 仍通过 `coda/providers/base.py` 中既有的 prompt-to-text
 `ModelClient` 工作；本次只新增并行的 `NativeModelClient` 边界，不切换 active Runtime。
 
 ## 交换模型
