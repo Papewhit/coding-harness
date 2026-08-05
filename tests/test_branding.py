@@ -4,6 +4,7 @@ from importlib import metadata, util
 import os
 from pathlib import Path, PurePosixPath
 import subprocess
+import xml.etree.ElementTree as ET
 
 from coda import config as configlib
 
@@ -89,6 +90,21 @@ def test_distribution_and_console_scripts_expose_only_coda() -> None:
         "coda": "coda.cli:main",
         "coda-tui": "coda.tui.main:main",
     }
+
+
+def test_logo_uses_valid_bright_teal_brand_palette() -> None:
+    logo = ROOT / "assets" / "coda-logo.svg"
+
+    ET.parse(logo)
+    source = logo.read_text(encoding="utf-8").lower()
+
+    assert "#ffffff" in source
+    assert "#e9f6f2" in source
+    assert "#9fcfc5" in source
+    assert "#62b8aa" in source
+    assert "#237a70" in source
+    assert "#164f49" in source
+    assert "#0f1117" not in source
 
 
 def test_previous_brand_config_and_environment_are_not_discovered(

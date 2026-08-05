@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title description">
   <title id="title">Coda logo</title>
-  <desc id="description">A serif-inspired musical coda mark with tapered horizontal and vertical strokes.</desc>
+  <desc id="description">A serif-inspired musical coda mark with bold, tapered horizontal and vertical strokes.</desc>
 
   <defs>
     <linearGradient
@@ -11,18 +11,18 @@
       x2="416"
       y2="432"
     >
-      <stop offset="0" stop-color="#f7faff" />
-      <stop offset="0.42" stop-color="#d7e6ff" />
-      <stop offset="0.72" stop-color="#b6d1ff" />
-      <stop offset="1" stop-color="#8db8ff" />
+      <stop offset="0" stop-color="#8bd2c5" />
+      <stop offset="0.42" stop-color="#62b8aa" />
+      <stop offset="0.72" stop-color="#419b8f" />
+      <stop offset="1" stop-color="#237a70" />
     </linearGradient>
     <filter id="mark-depth" x="-12%" y="-12%" width="124%" height="128%">
       <feDropShadow
         dx="0"
-        dy="3"
+        dy="2"
         stdDeviation="3"
-        flood-color="#050a13"
-        flood-opacity="0.48"
+        flood-color="#164f49"
+        flood-opacity="0.18"
       />
     </filter>
   </defs>
@@ -33,26 +33,28 @@
     width="448"
     height="448"
     rx="88"
-    fill="#0f1117"
-    stroke="#273244"
-    stroke-width="3"
+    fill="#ffffff"
+    stroke="#9fcfc5"
+    stroke-width="5"
   />
+
+  <circle cx="256" cy="256" r="165" fill="#e9f6f2" />
 
   <g fill="url(#mark-gradient)" filter="url(#mark-depth)">
     <path d="
       M 64 256
-      C 122 253, 190 247, 256 246
-      C 322 247, 390 253, 448 256
-      C 390 259, 322 265, 256 266
-      C 190 265, 122 259, 64 256
+      C 122 252, 190 242, 256 241
+      C 322 242, 390 252, 448 256
+      C 390 260, 322 270, 256 271
+      C 190 270, 122 260, 64 256
       Z
     " />
     <path d="
       M 256 64
-      C 253 122, 247 190, 246 256
-      C 247 322, 253 390, 256 448
-      C 259 390, 265 322, 266 256
-      C 265 190, 259 122, 256 64
+      C 252 122, 242 190, 241 256
+      C 242 322, 252 390, 256 448
+      C 260 390, 270 322, 271 256
+      C 270 190, 260 122, 256 64
       Z
     " />
     <path
@@ -62,9 +64,9 @@
         a 126 126 0 1 0 0 252
         a 126 126 0 1 0 0 -252
         Z
-        M 256 146
-        a 92 110 0 1 1 0 220
-        a 92 110 0 1 1 0 -220
+        M 256 158
+        a 84 98 0 1 1 0 196
+        a 84 98 0 1 1 0 -196
         Z
       "
     />

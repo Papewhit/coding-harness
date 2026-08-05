@@ -32,7 +32,7 @@ Coda 关注的不只是“能改代码”，也包括配置是否清楚、修改
 
 ## 界面
 
-默认入口是 Textual TUI，可集中查看对话、工具执行结果和任务状态，并使用 slash command 与命令补全。
+默认入口是 Textual TUI，可集中查看对话、工具执行结果和任务状态，并使用 slash command 与命令补全。界面默认使用浅色青绿主题；运行期间可通过 `/theme light` 或 `/theme dark` 在浅色与原深色主题之间切换。
 
 | 工具和子 agent | Skills、help 和命令补全 |
 | --- | --- |
@@ -208,6 +208,7 @@ coda --no-auto-dream                # 关闭后台 memory 整合
 | `/agents`（`/agent`） | 查看子 agent 状态。 |
 | `/subagent explore <task>`（`/sub`） | 启动只读 Explore 子 agent。 |
 | `/subagent worker --scope <path[,path]> <task>` | 启动限定写入范围的 Worker。 |
+| `/theme [light\|dark]` | 查看或切换当前 TUI 主题；设置仅在本次运行期间有效。 |
 | `/usage` | 查看当前 provider、model 和 token 用量。 |
 | `/working-memory` | 查看当前任务的工作记忆。 |
 | `/exit`（`/quit`） | 退出 Coda。 |

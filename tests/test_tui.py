@@ -235,6 +235,37 @@ async def test_tui_slash_suggestions_complete_partial_command(tmp_path):
         assert suggestions.visible is False
 
 
+@pytest.mark.asyncio
+async def test_tui_slash_suggestions_include_theme_without_changing_repl(tmp_path):
+    from coda.cli import handle_repl_command
+    from coda.tui.app import CodaTuiApp
+    from coda.tui.widgets import InputBar, SlashSuggestions
+
+    agent = build_agent(tmp_path, [])
+    app = CodaTuiApp(agent)
+
+    handled, should_exit, output = handle_repl_command(agent, "/theme dark")
+    assert handled is False
+    assert should_exit is False
+    assert output == ""
+
+    async with app.run_test() as pilot:
+        bar = app.query_one(InputBar)
+        bar.input.value = "/th"
+        bar.update_slash_suggestions()
+
+        suggestions = app.query_one(SlashSuggestions)
+        assert suggestions.visible is True
+        assert "/theme" in rendered_text(suggestions)
+        assert "toggle" not in rendered_text(suggestions)
+
+        await pilot.press("tab")
+        await pilot.pause(delay=0.1)
+
+        assert bar.input.value == "/theme "
+        assert suggestions.visible is False
+
+
 def test_agents_slash_command_shows_worker_status(tmp_path):
     from coda.cli import handle_repl_command
 
@@ -279,6 +310,83 @@ async def test_tui_help_command_uses_existing_repl_commands(tmp_path):
         text = "\n".join(assistant_contents(app))
         assert "Commands:" in text
         assert "/memory" in text
+        assert "/theme [light|dark]" in text
+        assert "toggle" not in text
+
+
+@pytest.mark.asyncio
+async def test_tui_theme_command_switches_session_local_palette_without_losing_state(
+    tmp_path,
+):
+    from coda.tui.app import CodaTuiApp
+    from coda.tui.widgets import ChatLog, InputBar, StatusBar, WelcomeBanner
+
+    app = CodaTuiApp(build_agent(tmp_path, []))
+
+    async with app.run_test(size=(100, 20)) as pilot:
+        bar = app.query_one(InputBar)
+        chat = app.query_one(ChatLog)
+        status = app.query_one(StatusBar)
+        welcome = app.query_one(WelcomeBanner)
+        chat.add_message("assistant", "keep this transcript")
+        card = chat.add_tool_call("read_file", {"path": "README.md"})
+        await pilot.pause(delay=0.1)
+
+        assert app.coda_theme == "light"
+        assert app.theme == "textual-light"
+        assert "theme-light" in app.screen.classes
+        assert chat.styles.background.hex.lower() == "#f3f8f6"
+        assert status.styles.background.hex.lower() == "#ddf1ec"
+        assert welcome.styles.background.hex.lower() == "#ffffff"
+        assert welcome.styles.border_top[1].hex.lower() == "#a7d7cd"
+        assert card.styles.background.hex.lower() == "#f7fbfa"
+        assert bar.input.styles.background.hex.lower() == "#ffffff"
+        assert bar.input.styles.border_top[1].hex.lower() == "#0f766e"
+
+        bar.input.value = "/theme light"
+        await pilot.press("enter")
+        await pilot.pause(delay=0.1)
+        assert app.coda_theme == "light"
+
+        bar.input.value = "/theme"
+        await pilot.press("enter")
+        await pilot.pause(delay=0.1)
+        assert "theme: light" in "\n".join(assistant_contents(app))
+        assert "available themes: light, dark" in "\n".join(assistant_contents(app))
+
+        bar.input.value = "/theme dark"
+        await pilot.press("enter")
+        await pilot.pause(delay=0.1)
+        assert app.coda_theme == "dark"
+        assert app.theme == "textual-dark"
+        assert "theme-dark" in app.screen.classes
+        assert chat.styles.background.hex.lower() == "#0f1117"
+        assert status.styles.background.hex.lower() == "#1b1f2a"
+        assert welcome.styles.background.hex.lower() == "#15161c"
+        assert welcome.styles.border_top[1].hex.lower() == "#5c7cfa"
+        assert card.styles.background.hex.lower() == "#14171d"
+        assert bar.input.styles.background.hex.lower() == "#1e1e1e"
+        assert bar.input.styles.border_top[1].hex.lower() == "#0178d4"
+        assert bar.input.has_focus
+        assert "keep this transcript" in "\n".join(assistant_contents(app))
+
+        bar.input.value = "/theme light"
+        await pilot.press("enter")
+        await pilot.pause(delay=0.1)
+        assert app.coda_theme == "light"
+        assert app.theme == "textual-light"
+        assert chat.styles.background.hex.lower() == "#f3f8f6"
+        assert bar.input.has_focus
+
+        bar.input.value = "/theme toggle"
+        await pilot.press("enter")
+        await pilot.pause(delay=0.1)
+        assert app.coda_theme == "light"
+        assert "Usage: /theme [light|dark]" in "\n".join(assistant_contents(app))
+
+    second_app = CodaTuiApp(build_agent(tmp_path, []))
+    assert second_app.coda_theme == "light"
+    assert second_app.theme == "textual-light"
 
 
 @pytest.mark.asyncio
@@ -349,11 +457,11 @@ async def test_tui_chat_stream_uses_terminal_transcript_layout(tmp_path):
         assert "我是 coda。" in text
         assert chat.styles.scrollbar_size_horizontal == 0
         assert chat.styles.scrollbar_size_vertical == 1
-        assert chat.styles.scrollbar_background.hex.lower() == "#0f1117"
+        assert chat.styles.scrollbar_background.hex.lower() == "#f3f8f6"
         assert user.styles.border_left[0] == ""
         assert assistant.styles.border_left[0] == ""
-        assert user.styles.background.hex.lower() == "#0f1117"
-        assert assistant.styles.background.hex.lower() == "#0f1117"
+        assert user.styles.background.hex.lower() == "#f3f8f6"
+        assert assistant.styles.background.hex.lower() == "#f3f8f6"
         assert user.region.x <= chat.region.x + 2
         assert assistant.region.x <= chat.region.x + 2
         assert user.region.width >= chat.region.width - 4

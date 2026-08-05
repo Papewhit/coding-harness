@@ -24,14 +24,14 @@ from .widgets import (
     WelcomeBanner,
     format_tool_args,
 )
-
-
-CODA_TUI_CSS = """
-Screen {
-    layout: vertical;
-    background: #0f1117;
-}
-"""
+from .theme import (
+    CODA_TUI_CSS,
+    DEFAULT_THEME,
+    THEME_NAMES,
+    THEME_USAGE,
+    ThemeName,
+    tui_help_details,
+)
 
 
 class CodaTuiApp(App):
@@ -51,6 +51,8 @@ class CodaTuiApp(App):
 
     def __init__(self, agent: Coda, **kwargs) -> None:
         super().__init__(**kwargs)
+        self.coda_theme: ThemeName = DEFAULT_THEME
+        self._sync_textual_theme()
         self.agent = agent
         self._turn_count = 0
         self._running_tool_cards: list[ToolCard] = []
@@ -75,6 +77,7 @@ class CodaTuiApp(App):
         yield InputBar()
 
     def on_mount(self) -> None:
+        self._apply_theme_class()
         self.query_one(StatusBar).update_agent(self.agent)
         self.query_one(InputBar).focus_input()
         self.set_interval(0.5, self._drain_idle_worker_notifications)
@@ -157,17 +160,61 @@ class CodaTuiApp(App):
             event.prevent_default()
 
     def _handle_command(self, text: str) -> None:
+        if text == "/theme" or text.startswith("/theme "):
+            self.query_one(ChatLog).add_message(
+                "assistant", self._handle_theme_command(text)
+            )
+            return
         handled, should_exit, output = handle_repl_command(self.agent, text)
         if should_exit:
             self.exit()
             return
         if handled:
+            if text == "/help":
+                output = tui_help_details(output)
             self.query_one(ChatLog).add_message("assistant", output)
             self.query_one(StatusBar).update_agent(self.agent)
             return
         self.query_one(ChatLog).add_message(
-            "assistant", f"Unknown command. Use /help.\n\n{HELP_DETAILS}"
+            "assistant",
+            f"Unknown command. Use /help.\n\n{tui_help_details(HELP_DETAILS)}",
         )
+
+    def _handle_theme_command(self, text: str) -> str:
+        _, _, raw_theme = text.partition(" ")
+        theme_name = raw_theme.strip().lower()
+        if not theme_name:
+            return (
+                f"theme: {self.coda_theme}\n"
+                f"available themes: {', '.join(THEME_NAMES)}"
+            )
+        if theme_name not in THEME_NAMES:
+            return THEME_USAGE
+        self.set_coda_theme(theme_name)
+        return f"theme: {theme_name}"
+
+    def set_coda_theme(self, theme_name: str) -> None:
+        """Apply a session-local TUI theme without disturbing widget state."""
+
+        if theme_name not in THEME_NAMES:
+            raise ValueError(THEME_USAGE)
+        self.coda_theme = theme_name  # type: ignore[assignment]
+        self._sync_textual_theme()
+        if self.is_running:
+            self._apply_theme_class()
+            self.screen.refresh(layout=True)
+
+    def _sync_textual_theme(self) -> None:
+        textual_theme = f"textual-{self.coda_theme}"
+        if hasattr(self, "theme"):
+            self.theme = textual_theme
+        elif hasattr(self, "dark"):
+            self.dark = self.coda_theme == "dark"
+
+    def _apply_theme_class(self) -> None:
+        for theme_name in THEME_NAMES:
+            self.screen.remove_class(f"theme-{theme_name}")
+        self.screen.add_class(f"theme-{self.coda_theme}")
 
     def _run_agent(self, text: str) -> None:
         self.query_one(InputBar).set_busy(True)

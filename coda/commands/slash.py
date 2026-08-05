@@ -62,7 +62,12 @@ def resolve_command(name: str) -> SlashCommand | None:
     return None
 
 
-def suggest_commands(text: str, limit: int = 8) -> list[SlashCommand]:
+def suggest_commands(
+    text: str,
+    limit: int = 8,
+    *,
+    commands: tuple[SlashCommand, ...] = SLASH_COMMANDS,
+) -> list[SlashCommand]:
     raw = str(text or "")
     if not raw.startswith("/"):
         return []
@@ -71,7 +76,7 @@ def suggest_commands(text: str, limit: int = 8) -> list[SlashCommand]:
         return []
     token = body.lower()
     matches = []
-    for command in SLASH_COMMANDS:
+    for command in commands:
         names = (command.name, *command.aliases)
         if not token or any(name.startswith(token) for name in names):
             matches.append(command)

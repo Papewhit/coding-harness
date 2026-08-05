@@ -11,6 +11,7 @@ from textual.widgets import Collapsible, Input, Markdown, Static
 
 from ..cli import CODA_BANNER_ART, CODA_NAME, CODA_SUBTITLE
 from ..commands.slash import SlashCommand, suggest_commands
+from .theme import TUI_SLASH_COMMANDS, palette_for
 
 
 def format_tool_args(name: str, args: dict | None) -> str:
@@ -39,9 +40,6 @@ class WelcomeBanner(Static):
         height: auto;
         margin: 1 1 0 1;
         padding: 1 2;
-        background: #15161c;
-        color: #f1f3f8;
-        border: round #5c7cfa;
     }
     WelcomeBanner.hidden {
         display: none;
@@ -56,8 +54,9 @@ class WelcomeBanner(Static):
 
     def render(self) -> Text:
         cwd_name = Path(self.cwd).name + "/" if self.cwd else "-"
-        muted = "#8b93a7"
-        accent = "#9ec5fe"
+        palette = palette_for(self)
+        muted = palette.muted
+        accent = palette.accent
         rows = [
             Text.assemble(
                 Text(CODA_NAME, style=f"bold {accent}"),
@@ -93,13 +92,10 @@ class UserMessage(Static):
         height: auto;
         margin: 0 0 1 0;
         padding: 0;
-        background: #0f1117;
-        color: #d8f7df;
         border-left: none;
     }
     UserMessage .message-label {
         height: 1;
-        color: #7ce38b;
         text-style: bold;
     }
     """
@@ -119,21 +115,16 @@ class AssistantMessage(Static):
         height: auto;
         margin: 0 0 2 0;
         padding: 0;
-        background: #0f1117;
-        color: #edf2ff;
         border-left: none;
     }
     AssistantMessage .message-label {
         height: 1;
-        color: #9ec5fe;
         text-style: bold;
     }
     AssistantMessage Markdown {
         height: auto;
         width: 100%;
         padding: 0 0 0 2;
-        color: #edf2ff;
-        background: #0f1117;
     }
     """
 
@@ -160,12 +151,9 @@ class ToolCard(Static):
         height: auto;
         margin: 0 0 1 0;
         padding: 0 1;
-        background: #14171d;
-        border: tall #273244;
     }
     ToolCard .tool-output {
         max-height: 14;
-        color: #adb5bd;
         padding: 0 1;
         overflow-x: hidden;
     }
@@ -225,9 +213,6 @@ class ConfirmPrompt(Static):
         height: auto;
         margin: 0 0 1 0;
         padding: 1 2;
-        background: #211d12;
-        color: #ffe8a1;
-        border: round #f59f00;
     }
     """
 
@@ -238,16 +223,20 @@ class ConfirmPrompt(Static):
         self.selected = False
 
     def render(self) -> Text:
+        palette = palette_for(self)
         allow = "[allow]" if self.selected else " allow "
         deny = " deny " if self.selected else "[deny]"
         return Text.assemble(
-            Text("Approve tool call? ", style="bold yellow"),
-            Text(self.tool_name, style="yellow"),
-            Text(f" {self.args_summary}\n", style="#ffe8a1"),
-            Text("Left/Right choose, Enter confirms, Esc denies: ", style="#c9a227"),
-            Text(deny, style="bold red"),
+            Text("Approve tool call? ", style=f"bold {palette.warning_border}"),
+            Text(self.tool_name, style=palette.warning_border),
+            Text(f" {self.args_summary}\n", style=palette.warning_text),
+            Text(
+                "Left/Right choose, Enter confirms, Esc denies: ",
+                style=palette.warning_hint,
+            ),
+            Text(deny, style=f"bold {palette.error}"),
             Text("  "),
-            Text(allow, style="bold green"),
+            Text(allow, style=f"bold {palette.success}"),
         )
 
     def select_allow(self) -> None:
@@ -266,9 +255,6 @@ class AskUserPrompt(Static):
         height: auto;
         margin: 0 0 1 0;
         padding: 1 2;
-        background: #121f2b;
-        color: #d0ebff;
-        border: round #4dabf7;
     }
     """
 
@@ -285,23 +271,31 @@ class AskUserPrompt(Static):
         return self.choices[self.selected_index]
 
     def render(self) -> Text:
+        palette = palette_for(self)
         if not self.choices:
             return Text.assemble(
-                Text(self.question + "\n", style="bold #d0ebff"),
-                Text("Enter continues, Esc cancels", style="#74c0fc"),
+                Text(self.question + "\n", style=f"bold {palette.ask_text}"),
+                Text("Enter continues, Esc cancels", style=palette.ask_hint),
             )
-        parts = [Text(self.question + "\n", style="bold #d0ebff")]
+        parts = [Text(self.question + "\n", style=f"bold {palette.ask_text}")]
         for index, choice in enumerate(self.choices):
             marker = f"[{choice}]" if index == self.selected_index else f" {choice} "
             parts.append(
                 Text(
                     marker,
-                    style="bold #a5d8ff" if index == self.selected_index else "#74c0fc",
+                    style=(
+                        f"bold {palette.ask_selected}"
+                        if index == self.selected_index
+                        else palette.ask_hint
+                    ),
                 )
             )
             parts.append(Text("  "))
         parts.append(
-            Text("\nLeft/Right choose, Enter confirms, Esc cancels", style="#74c0fc")
+            Text(
+                "\nLeft/Right choose, Enter confirms, Esc cancels",
+                style=palette.ask_hint,
+            )
         )
         return Text.assemble(*parts)
 
@@ -321,17 +315,9 @@ class ChatLog(VerticalScroll):
     ChatLog {
         height: 1fr;
         padding: 1 2 0 2;
-        background: #0f1117;
         overflow-x: hidden;
         scrollbar-size-horizontal: 0;
         scrollbar-size-vertical: 1;
-        scrollbar-background: #0f1117;
-        scrollbar-background-hover: #0f1117;
-        scrollbar-background-active: #0f1117;
-        scrollbar-color: #2a3142;
-        scrollbar-color-hover: #3c465e;
-        scrollbar-color-active: #6ea8fe;
-        scrollbar-corner-color: #0f1117;
     }
     """
 
@@ -364,8 +350,6 @@ class ThinkingIndicator(Static):
     ThinkingIndicator {
         height: 1;
         padding: 0 2;
-        color: #8b93a7;
-        background: #0f1117;
     }
     ThinkingIndicator.hidden {
         display: none;
@@ -406,8 +390,6 @@ class StatusBar(Static):
     StatusBar {
         height: 1;
         padding: 0 2;
-        background: #1b1f2a;
-        color: #c5d1e8;
     }
     """
 
@@ -462,9 +444,6 @@ class SlashSuggestions(Static):
         height: auto;
         max-height: 8;
         padding: 0 1;
-        background: #111827;
-        color: #d8dcff;
-        border: round #4b61a8;
     }
     SlashSuggestions.visible {
         display: block;
@@ -494,14 +473,19 @@ class SlashSuggestions(Static):
     def render(self) -> Text:
         if not self.suggestions:
             return Text("")
+        palette = palette_for(self)
         lines = []
         for index, command in enumerate(self.suggestions):
             marker = ">" if index == self.selected_index else " "
-            style = "bold cyan" if index == self.selected_index else "#a7a9bb"
+            style = (
+                f"bold {palette.accent}"
+                if index == self.selected_index
+                else palette.suggestion_muted
+            )
             lines.append(
                 Text.assemble(
                     Text(f"{marker} /{command.name:<15}", style=style),
-                    Text(command.description, style="#d8dcff"),
+                    Text(command.description, style=palette.suggestion_text),
                 )
             )
         return Text("\n").join(lines)
@@ -513,11 +497,9 @@ class InputBar(Static):
         height: auto;
         min-height: 3;
         padding: 0 1 1 1;
-        background: #0f1117;
     }
     InputBar Input {
         height: 3;
-        border: round #4dabf7;
     }
     """
 
@@ -563,7 +545,9 @@ class InputBar(Static):
 
     def update_slash_suggestions(self, text: str | None = None) -> None:
         text = self.input.value if text is None else str(text)
-        self._slash_suggestions = suggest_commands(text)
+        self._slash_suggestions = suggest_commands(
+            text, commands=TUI_SLASH_COMMANDS
+        )
         self._slash_index = 0
         self.query_one(SlashSuggestions).update_suggestions(
             self._slash_suggestions, self._slash_index
